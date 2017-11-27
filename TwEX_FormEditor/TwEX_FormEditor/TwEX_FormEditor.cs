@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TwEX_FormEditor
@@ -15,6 +8,11 @@ namespace TwEX_FormEditor
         public TwEX_FormEditor()
         {
             InitializeComponent();
+        }
+
+        private void button_test_Click(object sender, EventArgs e)
+        {
+            textBox_message.Text = "CLICKED : " + TwEX_API.ExchangeManager.GetNonce();
         }
     }
 }

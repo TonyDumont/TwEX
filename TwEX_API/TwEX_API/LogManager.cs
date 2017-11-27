@@ -1,55 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace TwEX_API
 {
     class LogManager
     {
-        public static void AddDebugMessage(String source, String functionCall, String message)
+        // PROPERTIES
+        public static BindingList<LogMessage> LogMessageList = new BindingList<LogMessage>();
+        // FUNCTIONS
+        public static void AddLogMessage(String source, String functionCall, String message, LogMessageType type = LogMessageType.LOG)
         {
-            DebugMessage debugMessage = new DebugMessage();
-            debugMessage.TimeStamp = DateTime.Now;
-            debugMessage.Source = source;
-            debugMessage.FunctionCall = functionCall;
-            debugMessage.Message = message;
-
-            switch (source)
-            {
-                case "AdministrationClientManager":
-                case "AdministrationMessageClient":
-
-                    break;
-
-                case "ExchangeManager":
-                case "BittrexManager":
-                case "BleuTradeManager":
-                case "CCEXManager":
-                case "CryptopiaManager":
-                case "GateIOManager":
-                case "GDAXManager":
-                case "HitBTCManager":
-                case "LiveCoinManager":
-                case "PoloniexManager":
-                case "YoBitManager":
-                    //AdministrationMessageServerManager.administrationServerView.ProcessDebugMessage(debugMessage);
-                    break;
-
-
-                default:
-                    // code
-                    break;
-            }
+            LogMessage logMessage = new LogMessage();
+            logMessage.TimeStamp = DateTime.Now;
+            logMessage.Source = source;
+            logMessage.FunctionCall = functionCall;
+            logMessage.Message = message;
+            logMessage.type = type;
+            LogMessageList.Add(logMessage);
         }
-
-        public class DebugMessage
+        // ENUMS
+        public enum LogMessageType
+        {
+            LOG,
+            DEBUG,
+            EXCHANGE,
+            OTHER
+        }
+        // MODELS
+        public class LogMessage
         {
             public DateTime TimeStamp { get; set; }
             public string Source { get; set; }
             public string FunctionCall { get; set; }
             public string Message { get; set; }
+            public LogMessageType type { get; set; }
         }
     }
 }

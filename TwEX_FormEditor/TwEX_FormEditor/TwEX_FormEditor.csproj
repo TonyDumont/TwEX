@@ -105,5 +105,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\TwEX_API\TwEX_API\TwEX_API.csproj">
+      <Project>{c9dc6ed4-f9a8-4fc0-adcd-aed315a38461}</Project>
+      <Name>TwEX_API</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

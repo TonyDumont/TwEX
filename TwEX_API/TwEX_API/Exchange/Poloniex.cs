@@ -66,7 +66,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "get24VolumeList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "get24VolumeList", "EXCEPTION!!! : " + ex.Message);
                 //return null;
             }
             return list;
@@ -88,7 +88,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getChartData", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getChartData", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -114,7 +114,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getCurrencies", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getCurrencies", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -148,7 +148,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getLoanOrders", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getLoanOrders", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -165,7 +165,7 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddDebugMessage(thisClassName, "getOrderBook", "response.Content=" + response.Content);
+                LogManager.AddLogMessage(thisClassName, "getOrderBook", "response.Content=" + response.Content);
                 /*
                 // MIGRATION
                 //PoloniexOrderBookItem orderBookItem = new JavaScriptSerializer().Deserialize<PoloniexOrderBookItem>(response.Content);
@@ -182,7 +182,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getOrderBook", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getOrderBook", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -217,7 +217,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getOrderBooks", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getOrderBooks", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -271,7 +271,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getTradeHistory", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getTradeHistory", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -308,7 +308,7 @@ namespace TwEX_API.Exchange
             string url = "https://poloniex.com/tradingApi";
             string myParam = "command=returnBalances&nonce=" + ExchangeManager.GetNonce();
             string result = await getPrivateApiRequestAsync(url, myParam);
-            LogManager.AddDebugMessage("PoloniexManager", "returnBalances", "result=" + result);
+            LogManager.AddLogMessage("PoloniexManager", "returnBalances", "result=" + result);
 
             var jsonObject = JObject.Parse(result);
             List<PoloniexBalance> list = new List<PoloniexBalance>();
@@ -391,7 +391,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "returnDepositsWithdrawals", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "returnDepositsWithdrawals", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }     
@@ -474,7 +474,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "returnOpenOrders", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -502,7 +502,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getOrderTrades", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getOrderTrades", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         } 
@@ -603,7 +603,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "setBuy", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "setBuy", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -646,7 +646,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "setSell", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "setSell", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
