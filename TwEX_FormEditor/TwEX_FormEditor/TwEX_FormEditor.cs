@@ -9,10 +9,5 @@ namespace TwEX_FormEditor
         {
             InitializeComponent();
         }
-
-        private void button_test_Click(object sender, EventArgs e)
-        {
-            textBox_message.Text = "CLICKED : " + TwEX_API.ExchangeManager.GetNonce();
-        }
     }
 }
