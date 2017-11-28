@@ -47,6 +47,7 @@
             this.Controls.Add(this.logManagerControl);
             this.Name = "TwEX_FormEditor";
             this.Text = "TwEX Form Editor";
+            this.Load += new System.EventHandler(this.TwEX_FormEditor_Load);
             this.ResumeLayout(false);
 
         }

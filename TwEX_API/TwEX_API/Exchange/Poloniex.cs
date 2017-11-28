@@ -16,13 +16,16 @@ namespace TwEX_API.Exchange
     {
         #region Properties
         public static string thisClassName = "Poloniex";
-        private static string ApiKey = String.Empty;
-        private static string ApiSecret = String.Empty;
+        public static string ApiKey = String.Empty;
+        public static string ApiSecret = String.Empty;
         private static RestClient client = new RestClient("https://poloniex.com");
         #endregion Properties
 
         #region API_Public
         #region API_PUBLIC_Getters
+        /// <summary>Returns the 24-hour volume for all markets, plus totals for primary currencies.
+        /// <para>return24Volume</para>
+        /// </summary>
         public static List<Poloniex24hVolume> get24hVolumeList()
         {
             List<Poloniex24hVolume> list = new List<Poloniex24hVolume>();
@@ -30,16 +33,15 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public?command=return24hVolume", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddDebugMessage(thisClassName, "get24VolumeList", "response.Content=" + response.Content);
-                var jsonObject = JObject.Parse(response.Content);
+                //LogManager.AddLogMessage(thisClassName, "get24VolumeList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
 
-                //List<Poloniex24hVolume> list = new List<Poloniex24hVolume>();
+                var jsonObject = JObject.Parse(response.Content);
 
                 foreach (var entry in jsonObject)
                 {
                     if (!entry.Key.Contains("total"))
                     {
-                        //LogManager.AddDebugMessage(thisClassName, "get24VolumeList", entry.Key + " | " + entry.Value);
+                        //LogManager.AddLogMessage(thisClassName, "get24VolumeList", "Key=" + entry.Key + " | Value=" + entry.Value, LogManager.LogMessageType.DEBUG);
                         Poloniex24hVolume item = new Poloniex24hVolume();
                         item.pair = entry.Key; // MKT_SYM
                         string[] stringSplit = item.pair.Split('_');
@@ -47,8 +49,8 @@ namespace TwEX_API.Exchange
                         item.marketVolume = Convert.ToDecimal(jsonObject[item.pair][item.market]);
                         item.symbol = stringSplit[1];
                         item.symbolVolume = Convert.ToDecimal(jsonObject[item.pair][item.symbol]);
+                    
                         list.Add(item);
-                        //LogManager.AddDebugMessage(thisClassName, "get24VolumeList", entry.Key + " | " + jsonObject[item.pair][item.market] + " | " + jsonObject[item.pair][item.symbol]);
                     }
                     else
                     {
@@ -62,73 +64,83 @@ namespace TwEX_API.Exchange
                         list.Add(item);
                     }
                 }
-                //return list;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "get24VolumeList", "EXCEPTION!!! : " + ex.Message);
-                //return null;
+                LogManager.AddLogMessage(thisClassName, "get24VolumeList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
-        public static List<PoloniexChartData> getChartData(string symbol, string market, long start, long end, PoloniexChartPeriod period)
+
+        /// <summary>Returns candlestick chart data. Required GET parameters are "currencyPair", "period" (candlestick period in seconds; valid values are 300, 900, 1800, 7200, 14400, and 86400), "start", and "end". "Start" and "end" are given in UNIX timestamp format and used to specify the date range for the data returned.
+        /// <para>returnChartData</para>
+        /// </summary>
+        public static List<PoloniexChartData> getChartDataList(PoloniexChartDataParameters parameters)
         {
             try
             {
-                //RestClient client = new RestClient("https://poloniex.com");
-                //LogManager.AddDebugMessage(thisClassName, "getChartData", "period=" + (Int32)period);
-                string url = "/public?command=returnChartData&currencyPair=" + market + "_" + symbol + "&start=" + start + "&end=" + end + "&period=" + (Int32)period;
-                //LogManager.AddDebugMessage(thisClassName, "returnChartData", "url=" + url);
+                string url = "/public?command=returnChartData&currencyPair=" + parameters.market + "_" + parameters.symbol + 
+                    "&start=" + parameters.start + 
+                    "&end=" + parameters.end + 
+                    "&period=" + (Int32)parameters.period;
+
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddDebugMessage(thisClassName, "returnTicker", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(thisClassName, "getChartData", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 PoloniexChartData[] array = jsonVal.ToObject<PoloniexChartData[]>();
                 return array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getChartData", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getChartData", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
-        public static List<PoloniexCurrency> getCurrencies()
+
+        /// <summary>Returns information about currencies.
+        /// <para>returnCurrencies</para>
+        /// </summary>
+        public static List<PoloniexCurrency> getCurrencyList()
         {
+            List<PoloniexCurrency> list = new List<PoloniexCurrency>();
             try
             {
                 string url = "/public?command=returnCurrencies";
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddDebugMessage(thisClassName, "getCurrencies", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(thisClassName, "getCurrencies", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
-                List<PoloniexCurrency> list = new List<PoloniexCurrency>();
 
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddDebugMessage(thisClassName, "getCurrencies", "key=" + item.Key + " | " + item.Value);         
+                    //LogManager.AddLogMessage(thisClassName, "getCurrencies", "Key=" + item.Key + " | Value=" + item.Value, LogManager.LogMessageType.DEBUG);         
                     PoloniexCurrency currency = jsonObject[item.Key].ToObject<PoloniexCurrency>();
                     currency.symbol = item.Key;
                     list.Add(currency);
                 }
-                return list;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCurrencies", "EXCEPTION!!! : " + ex.Message);
-                return null;
+                LogManager.AddLogMessage(thisClassName, "getCurrencies", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
+            return list;
         }
-        public static List<PoloniexLoanOrder> getLoanOrders(string currency)
+
+        /// <summary>Returns the list of loan offers and demands for a given currency, specified by the "currency" GET parameter.
+        /// <para>returnLoanOrders</para>
+        /// </summary>
+        public static List<PoloniexLoanOrder> getLoanOrdersList(string currency)
         {
+            List<PoloniexLoanOrder> list = new List<PoloniexLoanOrder>();
             try
             {
                 string url = "/public?command=returnLoanOrders&currency=" + currency;
-
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddDebugMessage(thisClassName, "getOrderBooks", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(thisClassName, "getLoanOrdersList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
-                List<PoloniexLoanOrder> list = new List<PoloniexLoanOrder>();
+                
                 List<PoloniexLoanOrder> offers = jsonObject["offers"].ToObject<List<PoloniexLoanOrder>>();
                 List<PoloniexLoanOrder> demands = jsonObject["demands"].ToObject<List<PoloniexLoanOrder>>();
 
@@ -143,20 +155,22 @@ namespace TwEX_API.Exchange
                     demand.type = "demand";
                     list.Add(demand);
                 }
-
-                return list;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getLoanOrders", "EXCEPTION!!! : " + ex.Message);
-                return null;
+                LogManager.AddLogMessage(thisClassName, "getLoanOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
+            return list;
         }
-        public static PoloniexOrderBookItem getOrderBook(string currencyPair, int depth = 0)
+
+        /// <summary>Returns the order book for a given market, as well as a sequence number for use with the Push API and an indicator specifying whether the market is frozen.
+        /// <para>returnOrderBook</para>
+        /// </summary>
+        public static PoloniexOrderBookItem getOrderBook(string market, string symbol, int depth = 0)
         {
             try
             {
-                string url = "/public?command=returnOrderBook&currencyPair=" + currencyPair;
+                string url = "/public?command=returnOrderBook&currencyPair=" + market.ToUpper() + "_" + symbol.ToUpper();
 
                 if (depth > 0)
                 {
@@ -165,29 +179,28 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getOrderBook", "response.Content=" + response.Content);
-                /*
-                // MIGRATION
-                //PoloniexOrderBookItem orderBookItem = new JavaScriptSerializer().Deserialize<PoloniexOrderBookItem>(response.Content);
+                //LogManager.AddLogMessage(thisClassName, "getOrderBook", "response.Content=" + response.Content);
+                var jsonObject = JObject.Parse(response.Content);
 
-                //LogManager.AddDebugMessage(thisClassName, "returnTicker", "items.seq=" + item.seq);
-                orderBookItem.pair = currencyPair;
-                string[] pairSplit = currencyPair.Split('_');
-                orderBookItem.symbol = pairSplit[1];
-                orderBookItem.market = pairSplit[0];
-                
-                return orderBookItem;
-                */
-                return null;
+                PoloniexOrderBookItem item = jsonObject.ToObject<PoloniexOrderBookItem>();
+                item.pair = market.ToUpper() + "_" + symbol.ToUpper();
+                item.symbol = symbol;
+                item.market = market;
+                return item;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBook", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getOrderBook", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
-        public static List<PoloniexOrderBookItem> getOrderBooks(int depth = 0)
+
+        /// <summary>Returns the order books for all markets.
+        /// <para>returnOrderBook</para>
+        /// </summary>
+        public static List<PoloniexOrderBookItem> getOrderBookList(int depth = 0)
         {
+            List<PoloniexOrderBookItem> list = new List<PoloniexOrderBookItem>();
             try
             {
                 string url = "/public?command=returnOrderBook&currencyPair=all";
@@ -199,13 +212,11 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddDebugMessage(thisClassName, "getOrderBooks", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(thisClassName, "getOrderBookList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
-                List<PoloniexOrderBookItem> list = new List<PoloniexOrderBookItem>();
-
+                
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddDebugMessage(thisClassName, "getOrderBooks", "key=" + item.Key + " | " + item.Value);
                     PoloniexOrderBookItem orderBook = jsonObject[item.Key].ToObject<PoloniexOrderBookItem>();
                     orderBook.pair = item.Key;
                     string[] pairSplit = orderBook.pair.Split('_');
@@ -213,46 +224,48 @@ namespace TwEX_API.Exchange
                     orderBook.market = pairSplit[0];
                     list.Add(orderBook);
                 }
-                return list;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBooks", "EXCEPTION!!! : " + ex.Message);
-                return null;
+                LogManager.AddLogMessage(thisClassName, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
+            return list;
         }
+
+        /// <summary>Returns the ticker for all markets.
+        /// <para>returnTicker</para>
+        /// </summary>
         public static List<PoloniexTicker> getTickerList()
         {
             List<PoloniexTicker> list = new List<PoloniexTicker>();
-            /*
+            
             try
             {
-                // GET TICKERS
                 var request = new RestRequest("/public?command=returnTicker", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddDebugMessage(thisClassName, "getTickerList", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(thisClassName, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
-
-                List<PoloniexTicker> list = new List<PoloniexTicker>();
 
                 foreach (var entry in jsonObject)
                 {
-                    PoloniexTicker ticker = new JavaScriptSerializer().Deserialize<PoloniexTicker>(entry.Value.ToString());
+                    PoloniexTicker ticker = jsonObject[entry.Key].ToObject<PoloniexTicker>();
                     ticker.pair = entry.Key;
                     list.Add(ticker);
                 }
-                return list;
             }
             catch (Exception ex)
             {
-                LogManager.AddDebugMessage(thisClassName, "getTickerList", "EXCEPTION!!! : " + ex.Message);
-                return null;
+                LogManager.AddLogMessage(thisClassName, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
-            */
             return list;
         }
-        public static List<PoloniexTradeHistory> getTradeHistory(string symbol, string market, long start = 0, long end = 0) // RETURNS LAST 200 if no start or end
+
+        /// <summary>Returns the past 200 trades for a given market, or up to 50,000 trades between a range specified in UNIX timestamps by the "start" and "end" GET parameters.
+        /// <para>returnTradeHistory</para>
+        /// </summary>
+        public static List<PoloniexTradeHistory> getTradeHistory(string symbol, string market, long start = 0, long end = 0)
         {
+            List<PoloniexTradeHistory> list = new List<PoloniexTradeHistory>();
             try
             {
                 string url = "/public?command=returnTradeHistory&currencyPair=" + market + "_" + symbol;
@@ -263,17 +276,16 @@ namespace TwEX_API.Exchange
                 }
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddDebugMessage(thisClassName, "getTradeHistory", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(thisClassName, "getTradeHistory", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 PoloniexTradeHistory[] array = jsonVal.ToObject<PoloniexTradeHistory[]>();
-                //LogManager.AddDebugMessage(thisClassName, "getTradeHistory", "Length=" + array.Length);
-                return array.ToList();
+                list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradeHistory", "EXCEPTION!!! : " + ex.Message);
-                return null;
+                LogManager.AddLogMessage(thisClassName, "getTradeHistory", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
+            return list;
         }
         #endregion
         #endregion API_Public
@@ -303,76 +315,109 @@ namespace TwEX_API.Exchange
             }
         }
         // -------------------------------------------------------------
-        public static async Task<List<PoloniexBalance>> getBalances()
-        {
-            string url = "https://poloniex.com/tradingApi";
-            string myParam = "command=returnBalances&nonce=" + ExchangeManager.GetNonce();
-            string result = await getPrivateApiRequestAsync(url, myParam);
-            LogManager.AddLogMessage("PoloniexManager", "returnBalances", "result=" + result);
-
-            var jsonObject = JObject.Parse(result);
-            List<PoloniexBalance> list = new List<PoloniexBalance>();
-            return list;
-        }  
-        public static async Task<List<PoloniexBalance>> getCompleteBalances()
+        /// <summary>Returns all of your available balances.
+        /// <para>returnBalances</para>
+        /// </summary>
+        public static async Task<List<PoloniexBalance>> getBalanceList()
         {
             List<PoloniexBalance> list = new List<PoloniexBalance>();
-            
-            string url = "https://poloniex.com/tradingApi";
-            string myParam = "command=returnCompleteBalances&nonce=" + ExchangeManager.GetNonce();
-            string result = await getPrivateApiRequestAsync(url, myParam);
-            //LogManager.AddDebugMessage("PoloniexManager", "returnCompleteBalances", "result=" + result);
-
-            var jsonObject = JObject.Parse(result);
-            //List<PoloniexBalance> list = new List<PoloniexBalance>();
-
-            foreach (var item in jsonObject)
+            try
             {
-                //PoloniexBalance balance = new JavaScriptSerializer().Deserialize<PoloniexBalance>(item.Value.ToString());
-                //balance.symbol = item.Key;
-                //list.Add(balance);
+                string url = "https://poloniex.com/tradingApi";
+                string myParam = "command=returnBalances&nonce=" + ExchangeManager.GetNonce();
+                string result = await getPrivateApiRequestAsync(url, myParam);
+                //LogManager.AddLogMessage(thisClassName, "getBalances", "result=" + result);
+
+                var jsonObject = JObject.Parse(result);
+
+                foreach (var item in jsonObject)
+                {
+                    //LogManager.AddLogMessage(thisClassName, "getBalances", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                    PoloniexBalance balance = new PoloniexBalance();
+                    balance.symbol = item.Key;
+                    balance.available = Convert.ToDecimal(item.Value);
+                    list.Add(balance);
+                }
             }
-            
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
             return list;
         }
-        public static async Task<List<PoloniexWallet>> getDepositAddresses()
-        {
-            string url = "https://poloniex.com/tradingApi";
-            string myParam = "command=returnDepositAddresses&nonce=" + ExchangeManager.GetNonce();
-            string result = await getPrivateApiRequestAsync(url, myParam);
-            //LogManager.AddDebugMessage("PoloniexManager", "getDepositAddresses", "result=" + result);
 
-            var jsonObject = JObject.Parse(result);
+        /// <summary>Returns all of your balances, including available balance, balance on orders, and the estimated BTC value of your balance. By default, this call is limited to your exchange account; set the "account" POST parameter to "all" to include your margin and lending accounts.
+        /// <para>returnCompleteBalances</para>
+        /// </summary>
+        public static async Task<List<PoloniexBalance>> getCompleteBalanceList()
+        {
+            List<PoloniexBalance> list = new List<PoloniexBalance>();
+            try
+            {
+                string url = "https://poloniex.com/tradingApi";
+                string myParam = "command=returnCompleteBalances&nonce=" + ExchangeManager.GetNonce();
+                string result = await getPrivateApiRequestAsync(url, myParam);
+                //LogManager.AddLogMessage(thisClassName, "getCompleteBalances", "result=" + result);
+                var jsonObject = JObject.Parse(result);
+
+                foreach (var item in jsonObject)
+                {
+                    PoloniexBalance balance = jsonObject[item.Key].ToObject<PoloniexBalance>();
+                    balance.symbol = item.Key;
+                    list.Add(balance);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getCompleteBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;
+        }
+
+        /// <summary>Returns all of your deposit addresses.
+        /// <para>returnDepositAddresses</para>
+        /// </summary>
+        public static async Task<List<PoloniexWallet>> getDepositAddressList()
+        {
             List<PoloniexWallet> list = new List<PoloniexWallet>();
-
-            foreach (var item in jsonObject)
+            try
             {
-                PoloniexWallet wallet = new PoloniexWallet();
-                wallet.symbol = item.Key;
-                wallet.address = item.Value.ToString();
-                list.Add(wallet);
-            }
+                string url = "https://poloniex.com/tradingApi";
+                string myParam = "command=returnDepositAddresses&nonce=" + ExchangeManager.GetNonce();
+                string result = await getPrivateApiRequestAsync(url, myParam);
+                //LogManager.AddLogMessage("PoloniexManager", "getDepositAddresses", "result=" + result, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(result);
 
+                foreach (var item in jsonObject)
+                {
+                    PoloniexWallet wallet = new PoloniexWallet();
+                    wallet.symbol = item.Key;
+                    wallet.address = item.Value.ToString();
+                    list.Add(wallet);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getDepositAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
             return list;
         }
-        public static async Task<List<PoloniexTransaction>> getDepositsWithdrawals(long unixStart, long unixEnd)
+
+        /// <summary>Returns your deposit and withdrawal history within a range, specified by the "start" and "end" POST parameters, both of which should be given as UNIX timestamps.
+        /// <para>returnDepositsWithdrawals</para>
+        /// </summary>
+        public static async Task<List<PoloniexTransaction>> getDepositsWithdrawalsList(long unixStart, long unixEnd)
         {
             List<PoloniexTransaction> list = new List<PoloniexTransaction>();
             try
             {
-                
                 string url = "https://poloniex.com/tradingApi";
-                string myParam = "command=returnDepositsWithdrawals&start=" + unixStart + "&end=" + unixEnd + "&nonce=" + ExchangeManager.GetNonce();
-
-                string result = await getPrivateApiRequestAsync(url, myParam);
-                //LogManager.AddDebugMessage(thisClassName, "returnDepositsWithdrawals", "result=" + result);
+                string parameters = "command=returnDepositsWithdrawals&start=" + unixStart + "&end=" + unixEnd + "&nonce=" + ExchangeManager.GetNonce();
+                string result = await getPrivateApiRequestAsync(url, parameters);
+                //LogManager.AddLogMessage(thisClassName, "getDepositsWithdrawals", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
-                //LogManager.AddDebugMessage(thisClassName, "returnDepositsWithdrawals", jsonObject["deposits"].ToString());
-                /*
-                //List<PoloniexTransaction> list = new List<PoloniexTransaction>();
-                List<PoloniexTransaction> deposits = new JavaScriptSerializer().Deserialize<List<PoloniexTransaction>>(jsonObject["deposits"].ToString());
-                List<PoloniexTransaction> withdrawals = new JavaScriptSerializer().Deserialize<List<PoloniexTransaction>>(jsonObject["withdrawals"].ToString());
-
+                List<PoloniexTransaction> deposits = jsonObject["deposits"].ToObject<List<PoloniexTransaction>>();
+                List<PoloniexTransaction> withdrawals = jsonObject["withdrawals"].ToObject<List<PoloniexTransaction>>();
                 foreach (PoloniexTransaction deposit in deposits)
                 {
                     deposit.type = "deposit";
@@ -384,39 +429,50 @@ namespace TwEX_API.Exchange
                     withdrawal.type = "withdraw";
                     list.Add(withdrawal);
                 }
-
-                return list;
-                */
-                
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "returnDepositsWithdrawals", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "getDepositAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
-        }     
+        }
+
+        /// <summary>Generates a new deposit address for the currency specified by the "currency" POST parameter.
+        /// <para>generateNewAddress</para>
+        /// </summary>
         public static async Task<string> getNewAddresses(string symbol)
         {
-            string url = "https://poloniex.com/tradingApi";
-            string myParam = "command=generateNewAddress&currency=" + symbol + "&nonce=" + ExchangeManager.GetNonce();
-            string result = await getPrivateApiRequestAsync(url, myParam);
-            //LogManager.AddDebugMessage("PoloniexManager", "getNewAddresses", "result=" + result);
-
-            var jsonObject = JObject.Parse(result);
-
-            int success = Convert.ToInt32(jsonObject["success"]);
-
-            if (success == 1)
+            try
             {
-                return jsonObject["response"].ToString();
+                string url = "https://poloniex.com/tradingApi";
+                string myParam = "command=generateNewAddress&currency=" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                string result = await getPrivateApiRequestAsync(url, myParam);
+                //LogManager.AddLogMessage("PoloniexManager", "getNewAddresses", "result=" + result, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(result);
+                int success = Convert.ToInt32(jsonObject["success"]);
+
+                if (success == 1)
+                {
+                    return jsonObject["response"].ToString();
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                LogManager.AddLogMessage(thisClassName, "getNewAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return string.Empty;
-            }
+            }     
         }
-        public static async Task<List<PoloniexOpenOrder>> getOpenOrders(string symbol, string market)
+
+        /// <summary>Returns your open orders for a given market, specified by the "currencyPair" POST parameter, e.g. "BTC_XCP". Set "currencyPair" to "all" to return open orders for all markets.
+        /// <para>returnOpenOrders</para>
+        /// </summary>
+        public static async Task<List<PoloniexOpenOrder>> getOpenOrdersList(string symbol, string market)
         {
+            List<PoloniexOpenOrder> list = new List<PoloniexOpenOrder>();
             try
             {
                 string url = "https://poloniex.com/tradingApi";
@@ -429,12 +485,11 @@ namespace TwEX_API.Exchange
                 }
 
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", "result=" + result);
+                //LogManager.AddLogMessage(thisClassName, "getOpenOrders", "result=" + result, LogManager.LogMessageType.DEBUG);
 
                 if (isAll)
                 {
                     var jsonObject = JObject.Parse(result);
-                    List<PoloniexOpenOrder> list = new List<PoloniexOpenOrder>();
 
                     foreach (var item in jsonObject)
                     {
@@ -454,42 +509,42 @@ namespace TwEX_API.Exchange
                             }
                         }
                     }
-                    return list;
                 }
                 else
                 {
                     JArray jsonVal = JArray.Parse(result) as JArray;
-                    //PoloniexChartData[] array = jsonVal.ToObject<PoloniexChartData[]>();
-                    List<PoloniexOpenOrder> list = jsonVal.ToObject<List<PoloniexOpenOrder>>();
+                    List<PoloniexOpenOrder> resultList = jsonVal.ToObject<List<PoloniexOpenOrder>>();
 
-                    foreach (PoloniexOpenOrder order in list)
+                    foreach (PoloniexOpenOrder order in resultList)
                     {
                         order.symbol = symbol;
                         order.market = market;
                         order.pair = market + "_" + symbol;
                         list.Add(order);
                     }
-                    return list;
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "returnOpenOrders", "EXCEPTION!!! : " + ex.Message);
-                return null;
+                LogManager.AddLogMessage(thisClassName, "getOpenOrders", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
+            return list;
         }
-        public static async Task<List<PoloniexTradeHistory>> getOrderTrades(string orderNumber)
+
+        /// <summary>Returns all trades involving a given order, specified by the "orderNumber" POST parameter. If no trades for the order have occurred or you specify an order that does not belong to you, you will receive an error.
+        /// <para>returnOrderTrades</para>
+        /// </summary>
+        public static async Task<List<PoloniexTradeHistory>> getOrderTradesList(string orderNumber)
         {
+            List<PoloniexTradeHistory> list = new List<PoloniexTradeHistory>();
             try
             {
                 string url = "https://poloniex.com/tradingApi";
                 string param = "command=returnOrderTrades&orderNumber=" + orderNumber + "&nonce=" + ExchangeManager.GetNonce();
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddDebugMessage(thisClassName, "getOrderTrades", "result=" + result);
-
-                // ARRAY
+                //LogManager.AddLogMessage(thisClassName, "getOrderTradesList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(result) as JArray;
-                List<PoloniexTradeHistory> list = jsonVal.ToObject<List<PoloniexTradeHistory>>();
+                list = jsonVal.ToObject<List<PoloniexTradeHistory>>();
 
                 foreach (PoloniexTradeHistory item in list)
                 {
@@ -498,92 +553,105 @@ namespace TwEX_API.Exchange
                     item.symbol = pairSplit[1];
                     item.market = pairSplit[0];
                 }
-                return list;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderTrades", "EXCEPTION!!! : " + ex.Message);
-                return null;
+                LogManager.AddLogMessage(thisClassName, "getOrderTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
-        } 
+            return list;
+        }
+
+        /// <summary>Returns your trade history for a given market, specified by the "currencyPair" POST parameter. You may specify "all" as the currencyPair to receive your trade history for all markets. You may optionally specify a range via "start" and/or "end" POST parameters, given in UNIX timestamp format; if you do not specify a range, it will be limited to one day. You may optionally limit the number of entries returned using the "limit" parameter, up to a maximum of 10,000. If the "limit" parameter is not specified, no more than 500 entries will be returned.
+        /// <para>returnTradeHistory</para>
+        /// </summary>
         public static async Task<List<PoloniexTradeHistory>> getTradeHistoryList(string symbol, string market, long unixStart = 0, long unixEnd = 0, int limit = 500) // limit up to 10,000
         {
-            string url = "https://poloniex.com/tradingApi";
-            string param = String.Empty;
-            Boolean isAll = (symbol.ToLower() == "all" || market.ToLower() == "all");
+            List<PoloniexTradeHistory> list = new List<PoloniexTradeHistory>();
 
-            if (isAll)
+            try
             {
-                param = "command=returnTradeHistory&currencyPair=all&nonce=" + ExchangeManager.GetNonce();
-            }
-            else
-            {
-                param = "command=returnTradeHistory&currencyPair=" + market + "_" + symbol + "&nonce=" + ExchangeManager.GetNonce();
-            }
+                string url = "https://poloniex.com/tradingApi";
+                string param = String.Empty;
+                Boolean isAll = (symbol.ToLower() == "all" || market.ToLower() == "all");
 
-            if (unixStart > 0)
-            {
-                param += "&start=" + unixStart;
-
-                if (unixEnd > 0)
+                if (isAll)
                 {
-                    param += "&end=" + unixEnd;
+                    param = "command=returnTradeHistory&currencyPair=all&nonce=" + ExchangeManager.GetNonce();
                 }
-            }
-
-            if (limit > 500)
-            {
-                param += "&limit=" + limit;
-            }
-            //LogManager.AddDebugMessage(thisClassName, "returnTradeHistory", "param=" + param);
-
-            string result = await getPrivateApiRequestAsync(url, param);
-            //LogManager.AddDebugMessage(thisClassName, "returnTradeHistory", "result=" + result);
-
-            if (isAll)
-            {
-                // OBJECT        
-                var jsonObject = JObject.Parse(result);
-                List<PoloniexTradeHistory> list = new List<PoloniexTradeHistory>();
-
-                foreach (var item in jsonObject)
+                else
                 {
-                    //LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", item.Key + " | " + item.Value);
-                    PoloniexTradeHistory[] trades = jsonObject[item.Key].ToObject<PoloniexTradeHistory[]>();
-                    //LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", "count=" + orders.Count());
-                    if (trades.Count() > 0)
+                    param = "command=returnTradeHistory&currencyPair=" + market + "_" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                }
+
+                if (unixStart > 0)
+                {
+                    param += "&start=" + unixStart;
+
+                    if (unixEnd > 0)
                     {
-                        foreach (PoloniexTradeHistory trade in trades)
+                        param += "&end=" + unixEnd;
+                    }
+                }
+
+                if (limit > 500)
+                {
+                    param += "&limit=" + limit;
+                }
+                //LogManager.AddDebugMessage(thisClassName, "returnTradeHistory", "param=" + param);
+
+                string result = await getPrivateApiRequestAsync(url, param);
+                //LogManager.AddDebugMessage(thisClassName, "returnTradeHistory", "result=" + result);
+
+                if (isAll)
+                {
+                    // OBJECT        
+                    var jsonObject = JObject.Parse(result);
+                    list = new List<PoloniexTradeHistory>();
+
+                    foreach (var item in jsonObject)
+                    {
+                        //LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", item.Key + " | " + item.Value);
+                        PoloniexTradeHistory[] trades = jsonObject[item.Key].ToObject<PoloniexTradeHistory[]>();
+                        if (trades.Count() > 0)
                         {
-                            trade.pair = item.Key;
-                            string[] pairSplit = trade.pair.Split('_');
-                            trade.market = pairSplit[0];
-                            trade.symbol = pairSplit[1];
-                            list.Add(trade);
+                            foreach (PoloniexTradeHistory trade in trades)
+                            {
+                                trade.pair = item.Key;
+                                string[] pairSplit = trade.pair.Split('_');
+                                trade.market = pairSplit[0];
+                                trade.symbol = pairSplit[1];
+                                list.Add(trade);
+                            }
                         }
                     }
                 }
-                return list;
-            }
-            else
-            {
-                // ARRAY
-                JArray jsonVal = JArray.Parse(result) as JArray;
-                List<PoloniexTradeHistory> list = jsonVal.ToObject<List<PoloniexTradeHistory>>();
-
-                foreach (PoloniexTradeHistory item in list)
+                else
                 {
-                    item.symbol = symbol;
-                    item.market = market;
-                    item.pair = market + "_" + symbol;
-                    list.Add(item);
+                    // ARRAY
+                    JArray jsonVal = JArray.Parse(result) as JArray;
+                    list = jsonVal.ToObject<List<PoloniexTradeHistory>>();
+
+                    foreach (PoloniexTradeHistory item in list)
+                    {
+                        item.symbol = symbol;
+                        item.market = market;
+                        item.pair = market + "_" + symbol;
+                        list.Add(item);
+                    }
                 }
-                return list;
             }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getOrderTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;  
         }
         #endregion
+
         #region API_PRIVATE_Setters
-        // SETTERS
+        /// <summary>Places a limit buy order in a given market. Required POST parameters are "currencyPair", "rate", and "amount". If successful, the method will return the order number.
+        /// <para>buy</para>
+        /// </summary>
         public static async Task<PoloniexNewOrderResult> setBuy(string symbol, string market, Decimal rate, Decimal amount, PoloniexOrderOption option = PoloniexOrderOption.None) //You may optionally set "fillOrKill", "immediateOrCancel", "postOnly" to 1.
         {
             try
@@ -595,18 +663,21 @@ namespace TwEX_API.Exchange
                 {
                     param += "&" + option + "=1";
                 }
-                //LogManager.AddDebugMessage(thisClassName, "buyOrder", "option=" + option + " | " + param);
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddDebugMessage(thisClassName, "buyOrder", "result=" + result);
-                //return new JavaScriptSerializer().Deserialize<PoloniexNewOrderResult>(result);
-                return null;
+                //LogManager.AddLogMessage(thisClassName, "setBuy", "result=" + result, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(result);
+                return jsonObject.ToObject<PoloniexNewOrderResult>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setBuy", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(thisClassName, "setBuy", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
+
+        /// <summary>Cancels an order you have placed in a given market. Required POST parameter is "orderNumber".
+        /// <para>cancelOrder</para>
+        /// </summary>
         public static async Task<Boolean> setCancel(string orderNumber)
         {
             string url = "https://poloniex.com/tradingApi";
@@ -614,8 +685,8 @@ namespace TwEX_API.Exchange
             string myParam = "command=cancelOrder&orderNumber=" + orderNumber + "&nonce=" + ExchangeManager.GetNonce();
             string result = await getPrivateApiRequestAsync(url, myParam);
             //LogManager.AddDebugMessage(thisClassName, "cancelOrder", "result=" + result);
-            /*
-            PoloniexCancelResult cancelResult = new JavaScriptSerializer().Deserialize<PoloniexCancelResult>(result);
+            var jsonObject = JObject.Parse(result);
+            PoloniexCancelResult cancelResult = jsonObject.ToObject<PoloniexCancelResult>();
             if (cancelResult.success == 1)
             {
                 return true;
@@ -624,9 +695,11 @@ namespace TwEX_API.Exchange
             {
                 return false;
             }
-            */
-            return false;
         }
+
+        /// <summary>Places a sell order in a given market. Parameters and output are the same as for the buy method.
+        /// <para>sell</para>
+        /// </summary>
         public static async Task<PoloniexNewOrderResult> setSell(string symbol, string market, Decimal rate, Decimal amount, PoloniexOrderOption option = PoloniexOrderOption.None) //You may optionally set "fillOrKill", "immediateOrCancel", "postOnly" to 1.
         {
             try
@@ -651,6 +724,7 @@ namespace TwEX_API.Exchange
             }
         }
         #endregion
+
         #region API_PRIVATE_TBD
         // NOT IMPLEMENTED
         // moveOrder - Cancels an order and places a new one of the same type in a single atomic transaction
@@ -726,6 +800,38 @@ namespace TwEX_API.Exchange
             public double volume { get; set; }
             public double quoteVolume { get; set; }
             public double weightedAverage { get; set; }
+        }
+        public class PoloniexChartDataParameters
+        {
+            /// <summary>Symbol identifier of the currency pair.
+            /// <para>REQUIRED</para>
+            /// </summary>
+            [Category("required")]
+            public string symbol { get; set; } = String.Empty;
+
+            /// <summary>Market identifier of the currency pair.
+            /// <para>REQUIRED</para>
+            /// </summary>
+            [Category("required")]
+            public string market { get; set; } = String.Empty;
+
+            /// <summary>Candlestick period in seconds; valid values are 300, 900, 1800, 7200, 14400, and 86400
+            /// <para>REQUIRED</para>
+            /// </summary>
+            [Category("required")]
+            public PoloniexChartPeriod period { get; set; } = PoloniexChartPeriod.Minutes_5;
+
+            /// <summary>Start Time. (in UNIX Time format in milliseconds)
+            /// <para>REQUIRED</para>
+            /// </summary>
+            [Category("required")]
+            public long start { get; set; } = 0;
+
+            /// <summary>End Time. (in UNIX Time format in milliseconds)
+            /// <para>REQUIRED</para>
+            /// </summary>
+            [Category("required")]
+            public long end { get; set; } = 0;
         }
         public class PoloniexCurrency
         {

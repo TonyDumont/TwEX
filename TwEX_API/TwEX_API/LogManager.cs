@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace TwEX_API
 {
-    class LogManager
+    public class LogManager
     {
         // PROPERTIES
         public static BindingList<LogMessage> LogMessageList = new BindingList<LogMessage>();
@@ -16,7 +16,7 @@ namespace TwEX_API
             logMessage.FunctionCall = functionCall;
             logMessage.Message = message;
             logMessage.type = type;
-            LogMessageList.Add(logMessage);
+            LogMessageList.Insert(0, logMessage);
         }
         // ENUMS
         public enum LogMessageType
@@ -24,6 +24,7 @@ namespace TwEX_API
             LOG,
             DEBUG,
             EXCHANGE,
+            EXCEPTION,
             OTHER
         }
         // MODELS
