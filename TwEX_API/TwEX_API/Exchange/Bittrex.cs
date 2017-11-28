@@ -1,0 +1,861 @@
+﻿using Newtonsoft.Json.Linq;
+using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace TwEX_API.Exchange
+{
+    class Bittrex
+    {
+        #region Properties
+        public static String thisClassName = "Bittrex";
+        private static string ApiKey = String.Empty;
+        private static string ApiSecret = String.Empty;
+        private static RestClient client = new RestClient("https://bittrex.com/api/v1.1");
+        #endregion Properties
+
+        #region API_Public
+        #region API_PUBLIC_Getters
+        /// <summary>Used to get all supported currencies at Bittrex along with other meta data.
+        /// <para>/public/getcurrencies</para>
+        /// </summary>
+        public static List<BittrexCurrency> getCurrencyList()
+        {
+            List<BittrexCurrency> list = new List<BittrexCurrency>();
+            try
+            {
+                var request = new RestRequest("/public/getcurrencies", Method.GET);
+                var response = client.Execute(request);
+                //LogManager.AddLogMessage(thisClassName, "getCurrencyList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(response.Content);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexCurrency>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getCurrencyList", "EXCEPTION!!! : " + ex.Message);
+            }
+            return list;
+        }
+
+        /// <summary>Used to get the open and available trading markets at Bittrex along with other meta data.
+        /// <para>/public/getmarkets</para>
+        /// </summary>
+        public static List<BittrexMarket> getMarketList()
+        {
+            List<BittrexMarket> list = new List<BittrexMarket>();
+            try
+            {
+                var request = new RestRequest("/public/getmarkets", Method.GET);
+                var response = client.Execute(request);
+                //LogManager.AddLogMessage(thisClassName, "getMarketsList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(response.Content);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexMarket>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getMarketsList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;
+        }
+
+        /// <summary>Used to retrieve the latest trades that have occured for a specific market.
+        /// <para>/public/getmarkethistory</para>
+        /// </summary>
+        public static List<BittrexMarketHistory> getMarketHistoryList(string market, string symbol)
+        {
+            List<BittrexMarketHistory> list = new List<BittrexMarketHistory>();
+            try
+            {
+                var request = new RestRequest("/public/getmarkethistory?market=" + market + "-" + symbol, Method.GET);
+                var response = client.Execute(request);
+                //LogManager.AddLogMessage(thisClassName, "getMarketHistory", "response.Content=" + response.Content);
+                var jsonObject = JObject.Parse(response.Content);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexMarketHistory>>();
+                }
+                else
+                {
+                    LogManager.AddLogMessage(thisClassName, "getMarketHistory", "ERROR LOADING : SUCCESS false on market : " + market + " | " + symbol, LogManager.LogMessageType.DEBUG);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getMarketHistory", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;
+        }
+
+        /// <summary>Used to get the last 24 hour summary of all active exchanges
+        /// <para>/public/getmarketsummary</para>
+        /// </summary>
+        public static BittrexMarketSummary getMarketSummary(string market, string symbol)
+        {
+            try
+            {
+                var request = new RestRequest("/public/getmarketsummary?market=" + market + "-" + symbol, Method.GET);
+                var response = client.Execute(request);
+                //LogManager.AddLogMessage(thisClassName, "getMarketSummary", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(response.Content);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    List<BittrexMarketSummary> list = jsonObject["result"].ToObject<List<BittrexMarketSummary>>();
+                    if (list.Count > 0)
+                    {
+                        return list[0];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    LogManager.AddLogMessage(thisClassName, "getMarketSummary", "ERROR LOADING : SUCCESS false on market : " + market, LogManager.LogMessageType.DEBUG);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getMarketSummary", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                return null;
+            }
+        }
+
+        /// <summary>Used to get the last 24 hour summary of all active exchanges
+        /// <para>/public/getmarketsummaries</para>
+        /// </summary>
+        public static List<BittrexMarketSummary> getMarketSummariesList()
+        {
+            List<BittrexMarketSummary> list = new List<BittrexMarketSummary>();
+            try
+            {
+                var request = new RestRequest("/public/getmarketsummaries", Method.GET);
+                var response = client.Execute(request);
+                //LogManager.AddLogMessage(thisClassName, "getMarketSummaries", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(response.Content);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexMarketSummary>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "returnTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;
+        }
+
+        /// <summary>Used to get retrieve the orderbook for a given market
+        /// <para>/public/getorderbook</para>
+        /// </summary>
+        public static List<BittrexOrderBookData> getOrderBookList(string market, string symbol, BittrexOrderBookType type = BittrexOrderBookType.both)
+        {
+            List<BittrexOrderBookData> list = new List<BittrexOrderBookData>();
+            try
+            {
+                var request = new RestRequest("/public/getorderbook?market=" + market + "-" + symbol + "&type=" + type.ToString(), Method.GET);
+                var response = client.Execute(request);
+                //LogManager.AddLogMessage(thisClassName, "getOrderBookList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(response.Content);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    if (type != BittrexOrderBookType.both)
+                    {
+                        List<BittrexOrderBookData> resultList = jsonObject["result"].ToObject<List<BittrexOrderBookData>>();
+                        foreach (BittrexOrderBookData data in resultList)
+                        {
+                            data.Type = type.ToString();
+                            list.Add(data);
+                        }
+                    }
+                    else
+                    {
+                        List<BittrexOrderBookData> buyList = jsonObject["result"]["buy"].ToObject<List<BittrexOrderBookData>>();
+                        List<BittrexOrderBookData> sellList = jsonObject["result"]["sell"].ToObject<List<BittrexOrderBookData>>();
+
+                        foreach (BittrexOrderBookData buy in buyList)
+                        {
+                            buy.Type = "buy";
+                            list.Add(buy);
+                        }
+
+                        foreach (BittrexOrderBookData sell in sellList)
+                        {
+                            sell.Type = "sell";
+                            list.Add(sell);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;
+        }
+
+        /// <summary>Used to get the current tick values for a market.
+        /// <para>/public/getticker</para>
+        /// </summary>
+        public static BittrexTicker getTicker(string market, string symbol)
+        {
+            try
+            {
+                var request = new RestRequest("/public/getticker?market=" + market + "-" + symbol, Method.GET);
+                var response = client.Execute(request);
+
+                //LogManager.AddLogMessage(thisClassName, "getTicker", "response.Content=" + response.Content);
+                var jsonObject = JObject.Parse(response.Content);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    BittrexTicker ticker = jsonObject["result"].ToObject<BittrexTicker>();
+                    return ticker;
+                }
+                else
+                {
+                    LogManager.AddLogMessage(thisClassName, "getTicker", "ERROR LOADING : SUCCESS false on market : " + market, LogManager.LogMessageType.DEBUG);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                return null;
+            }
+        }
+        #endregion
+        #endregion API_Public
+
+        #region API_Private
+        #region API_PRIVATE_Getters
+        // ------------------------
+        private static string getHMAC(string secret, string url)
+        {
+            var hmac = new HMACSHA512(Encoding.ASCII.GetBytes(secret));
+            var messagebyte = Encoding.ASCII.GetBytes(url);
+            var hashmessage = hmac.ComputeHash(messagebyte);
+            var sign = BitConverter.ToString(hashmessage).Replace("-", "");
+            return sign;
+        }
+        // ------------------------
+        /// <summary>Used to retrieve the balance from your account for a specific currency.
+        /// <para>/account/getbalance</para>
+        /// </summary>
+        public static BittrexBalance getBalance(string currency)
+        {
+            try
+            {
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getbalance?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "getBalanceList", result);
+                var jsonObject = JObject.Parse(result);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    return jsonObject["result"].ToObject<BittrexBalance>();
+                }
+                else
+                {
+                    LogManager.AddLogMessage(thisClassName, "getBalance", "success false : message=" + jsonObject["message"]);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getBalance", "EXCEPTION!!! : " + ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>Used to retrieve all balances from your account
+        /// <para>/account/getbalances</para>
+        /// </summary>
+        public static List<BittrexBalance> getBalanceList()
+        {
+            List<BittrexBalance> list = new List<BittrexBalance>();
+            try
+            {
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getbalances?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "getBalanceList", result);
+                var jsonObject = JObject.Parse(result);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexBalance>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getBalanceList", "EXCEPTION!!! : " + ex.Message);
+            }
+            return list;
+        }
+
+        /// <summary>Used to retrieve or generate an address for a specific currency. If one does not exist, the call will fail and return ADDRESS_GENERATING until one is available.
+        /// <para>/account/getdepositaddress</para>
+        /// </summary>
+        public static BittrexDepositMessage getDepositAddress(string currency)
+        {
+            try
+            {
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getdepositaddress?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "getDepositAddress", result);
+                var jsonObject = JObject.Parse(result);
+                return jsonObject.ToObject<BittrexDepositMessage>();
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getDepositAddress", "EXCEPTION!!! : " + ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>Used to retrieve your deposit history.
+        /// <para>/account/getdeposithistory</para>
+        /// </summary>
+        public static List<BittrexDeposit> getDepositHistoryList(string currency = "")
+        {
+            List<BittrexDeposit> list = new List<BittrexDeposit>();
+
+            try
+            {
+                string requestUrl = String.Empty;
+
+                if (currency.Length > 0)
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                }
+                else
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                }
+
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "getDepositHistoryList", "result=" + result);
+                var jsonObject = JObject.Parse(result);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexDeposit>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getDepositHistoryList", "EXCEPTION!!! : " + ex.Message);
+            }
+            return list;
+        }
+
+        /// <summary>Used to retrieve a single order by uuid.
+        /// <para>/account/getorder</para>
+        /// </summary>
+        public static BittrexOrder getOrder(string uuid)
+        {
+            try
+            {
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getorder?apikey=" + ApiKey + "&uuid=" + uuid + "&nonce=" + ExchangeManager.GetNonce();
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "getOrder", result);
+                var jsonObject = JObject.Parse(result);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    return jsonObject["result"].ToObject<BittrexOrder>();
+                }
+                else
+                {
+                    LogManager.AddLogMessage(thisClassName, "getOrder", "success false : message=" + jsonObject["message"]);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getOrder", "EXCEPTION!!! : " + ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>Used to retrieve your order history.
+        /// <para>/account/getorderhistory</para>
+        /// </summary>
+        public static List<BittrexOrderHistoryItem> getOrderHistoryList(string market = "", string symbol = "")
+        {
+            List<BittrexOrderHistoryItem> list = new List<BittrexOrderHistoryItem>();
+            try
+            {
+                string requestUrl = String.Empty;
+
+                if (market.Length > 0 && symbol.Length > 0)
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                }
+                else
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                }
+
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "returnOrderHistory", "result=" + result);
+                var jsonObject = JObject.Parse(result);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexOrderHistoryItem>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getOrderHistory", "EXCEPTION!!! : " + ex.Message);
+            }
+            return list;
+        }
+
+        /// <summary>Get all orders that you currently have opened. A specific market can be requested
+        /// <para>/market/getopenorders</para>
+        /// </summary>
+        public static List<BittrexOpenOrder> getOpenOrdersList(string market = "", string symbol = "")
+        {
+            List<BittrexOpenOrder> list = new List<BittrexOpenOrder>();
+            try
+            {
+                string requestUrl = String.Empty;
+
+                if (market.Length > 0 && symbol.Length > 0)
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                }
+                else
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                }
+
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(result);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexOpenOrder>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getOpenOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;
+        }
+
+        /// <summary>Used to retrieve your withdrawal history.
+        /// <para>/account/getwithdrawalhistory</para>
+        /// </summary>
+        public static List<BittrexWithdrawal> getWithdrawalHistoryList(string currency = "")
+        {
+            List<BittrexWithdrawal> list = new List<BittrexWithdrawal>();
+            try
+            {
+                string requestUrl = String.Empty;
+
+                if (currency.Length > 0)
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                }
+                else
+                {
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                }
+
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "getWithdrawalHistoryList", "result=" + result);
+                var jsonObject = JObject.Parse(result);
+                string success = jsonObject["success"].ToString().ToLower();
+
+                if (success == "true")
+                {
+                    list = jsonObject["result"].ToObject<List<BittrexWithdrawal>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "getWithdrawalHistoryList", "EXCEPTION!!! : " + ex.Message);
+            }
+            return list;
+        }
+        #endregion
+
+        #region API_PRIVATE_Setters
+        /// <summary>Used to place a buy order in a specific market. Use buylimit to place limit orders.
+        /// <para>/market/buylimit</para>
+        /// </summary>
+        public static BittrexBuySellMessage setBuy(string market, string symbol, Decimal quantity, Decimal rate)
+        {
+            try
+            {
+                string requestUrl = "https://bittrex.com/api/v1.1/market/buylimit?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&quantity=" + quantity + "&rate=" + rate + "&nonce=" + ExchangeManager.GetNonce();
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "setBuy", result);
+                var jsonObject = JObject.Parse(result);
+                return jsonObject.ToObject<BittrexBuySellMessage>();
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "setBuy", "EXCEPTION!!! : " + ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>Used to cancel a buy or sell order.
+        /// <para>/market/cancel</para>
+        /// </summary>
+        public static BittrexBuySellMessage setCancel(string uuid)
+        {
+            try
+            {
+                string requestUrl = "https://bittrex.com/api/v1.1/market/cancel?apikey=" + ApiKey + "&uuid=" + uuid + "&nonce=" + ExchangeManager.GetNonce();
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "setCancel", result);
+                var jsonObject = JObject.Parse(result);
+                return jsonObject.ToObject<BittrexBuySellMessage>();
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "setCancel", "EXCEPTION!!! : " + ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>Used to place an sell order in a specific market. Use selllimit to place limit orders.
+        /// <para>/market/selllimit</para>
+        /// </summary>
+        public static BittrexBuySellMessage setSell(string market, string symbol, Decimal quantity, Decimal rate)
+        {
+            try
+            {
+                string requestUrl = "https://bittrex.com/api/v1.1/market/selllimit?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&quantity=" + quantity + "&rate=" + rate + "&nonce=" + ExchangeManager.GetNonce();
+                var url = new Uri(requestUrl);
+                var webreq = WebRequest.Create(url);
+                var signature = getHMAC(ApiSecret, requestUrl);
+                webreq.Headers.Add("apisign", signature);
+                var webresp = webreq.GetResponse();
+                var stream = webresp.GetResponseStream();
+                var strRead = new StreamReader(stream);
+                String result = strRead.ReadToEnd();
+                //LogManager.AddLogMessage(thisClassName, "setSell", result);
+                var jsonObject = JObject.Parse(result);
+                return jsonObject.ToObject<BittrexBuySellMessage>();
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(thisClassName, "setSell", "EXCEPTION!!! : " + ex.Message);
+                return null;
+            }
+        }
+        #endregion
+        #region API_PRIVATE_TBD
+        // NOT IMPLEMENTED
+        // Withdraw
+        #endregion
+        #endregion API_Private
+
+        #region DataModels
+        #region DATAMODELS_Enums
+        public enum BittrexOrderBookType
+        {
+            both,
+            buy,
+            sell
+        }
+        #endregion
+        #region DATAMODELS_Public 
+        public class BittrexCurrency
+        {
+            public string Currency { get; set; }
+            public string CurrencyLong { get; set; }
+            public int MinConfirmation { get; set; }
+            public double TxFee { get; set; }
+            public bool IsActive { get; set; }
+            public string CoinType { get; set; }
+            public string BaseAddress { get; set; }
+            public string Notice { get; set; }
+        }
+        public class BittrexMarket
+        {
+            public string MarketCurrency { get; set; }
+            public string BaseCurrency { get; set; }
+            public string MarketCurrencyLong { get; set; }
+            public string BaseCurrencyLong { get; set; }
+            public double MinTradeSize { get; set; }
+            public string MarketName { get; set; }
+            public bool IsActive { get; set; }
+            public DateTime Created { get; set; }
+            public string Notice { get; set; }
+            public bool? IsSponsored { get; set; }
+            public string LogoUrl { get; set; }
+        }
+        public class BittrexMarketHistory
+        {
+            public int Id { get; set; }
+            public DateTime TimeStamp { get; set; }
+            public double Quantity { get; set; }
+            public double Price { get; set; }
+            public double Total { get; set; }
+            public string FillType { get; set; }
+            public string OrderType { get; set; }
+        }
+        public class BittrexMarketSummary
+        {
+            public string MarketName { get; set; }
+            public Decimal High { get; set; }
+            public Decimal Low { get; set; }
+            public Decimal Volume { get; set; }
+            public Decimal Last { get; set; }
+            public Decimal BaseVolume { get; set; }
+            public string TimeStamp { get; set; }
+            public Decimal Bid { get; set; }
+            public Decimal Ask { get; set; }
+            public int OpenBuyOrders { get; set; }
+            public int OpenSellOrders { get; set; }
+            public Decimal PrevDay { get; set; }
+            public string Created { get; set; }
+        }
+        public class BittrexOrderBookData
+        {
+            public double Quantity { get; set; }
+            public double Rate { get; set; }
+            public string Type { get; set; }
+        }
+        public class BittrexTicker
+        {
+            public Decimal Bid { get; set; }
+            public Decimal Ask { get; set; }
+            public Decimal Last { get; set; }
+        }
+        #endregion
+        #region DATAMODELS_Private
+        public class BittrexBalance
+        {
+            public string Currency { get; set; }
+            public Decimal Balance { get; set; }
+            public Decimal Available { get; set; }
+            public Decimal Pending { get; set; }
+            public string CryptoAddress { get; set; }
+            // ADDON DATA
+            public Decimal totalBTC { get; set; }
+            public Decimal totalUSD { get; set; }
+        }
+        public class BittrexBuySellResult
+        {
+            public string uuid { get; set; }
+        }
+        public class BittrexBuySellMessage
+        {
+            public bool success { get; set; }
+            public string message { get; set; }
+            public BittrexBuySellResult result { get; set; }
+        }
+        public class BittrexDeposit
+        {
+            public int Id { get; set; }
+            public Double Amount { get; set; }
+            public string Currency { get; set; }
+            public int Confirmations { get; set; }
+            public DateTime LastUpdated { get; set; }
+            public string TxId { get; set; }
+            public string CryptoAddress { get; set; }
+        }
+        public class BittrexDepositMessage
+        {
+            public bool success { get; set; }
+            public string message { get; set; }
+            public BittrexDepositResult result { get; set; }
+        }
+        public class BittrexDepositResult
+        {
+            public string Currency { get; set; }
+            public string Address { get; set; }
+        }
+        public class BittrexOpenOrder
+        {
+            public object Uuid { get; set; }
+            public string OrderUuid { get; set; }
+            public string Exchange { get; set; }
+            public string OrderType { get; set; }
+            public double Quantity { get; set; }
+            public double QuantityRemaining { get; set; }
+            public double Limit { get; set; }
+            public double CommissionPaid { get; set; }
+            public double Price { get; set; }
+            public object PricePerUnit { get; set; }
+            public DateTime Opened { get; set; }
+            public object Closed { get; set; }
+            public bool CancelInitiated { get; set; }
+            public bool ImmediateOrCancel { get; set; }
+            public bool IsConditional { get; set; }
+            public string Condition { get; set; }
+            public object ConditionTarget { get; set; }
+        }
+        public class BittrexOrder
+        {
+            public object AccountId { get; set; }
+            public string OrderUuid { get; set; }
+            public string Exchange { get; set; }
+            public string Type { get; set; }
+            public double Quantity { get; set; }
+            public double QuantityRemaining { get; set; }
+            public double Limit { get; set; }
+            public double Reserved { get; set; }
+            public double ReserveRemaining { get; set; }
+            public double CommissionReserved { get; set; }
+            public double CommissionReserveRemaining { get; set; }
+            public double CommissionPaid { get; set; }
+            public double Price { get; set; }
+            public object PricePerUnit { get; set; }
+            public DateTime Opened { get; set; }
+            public object Closed { get; set; }
+            public bool IsOpen { get; set; }
+            public string Sentinel { get; set; }
+            public bool CancelInitiated { get; set; }
+            public bool ImmediateOrCancel { get; set; }
+            public bool IsConditional { get; set; }
+            public string Condition { get; set; }
+            public object ConditionTarget { get; set; }
+        }
+        public class BittrexOrderHistoryItem
+        {
+            public string OrderUuid { get; set; }
+            public string Exchange { get; set; }
+            public DateTime TimeStamp { get; set; }
+            public string OrderType { get; set; }
+            public Double Limit { get; set; }
+            public Double Quantity { get; set; }
+            public Double QuantityRemaining { get; set; }
+            public Double Commission { get; set; }
+            public Double Price { get; set; }
+            public Double PricePerUnit { get; set; }
+            public bool IsConditional { get; set; }
+            public string Condition { get; set; }
+            public object ConditionTarget { get; set; }
+            public bool ImmediateOrCancel { get; set; }
+            public string Closed { get; set; }
+        }
+        public class BittrexWithdrawal
+        {
+            public string PaymentUuid { get; set; }
+            public string Currency { get; set; }
+            public double Amount { get; set; }
+            public string Address { get; set; }
+            public DateTime Opened { get; set; }
+            public bool Authorized { get; set; }
+            public bool PendingPayment { get; set; }
+            public double TxCost { get; set; }
+            public string TxId { get; set; }
+            public bool Canceled { get; set; }
+            public bool InvalidAddress { get; set; }
+        }
+
+        #endregion
+        #endregion DataModels
+    }
+}
