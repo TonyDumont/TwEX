@@ -23,8 +23,10 @@ namespace TwEX_API.Exchange
 
         #region API_Public
         #region API_PUBLIC_Getters
-        /// <summary>Returns the 24-hour volume for all markets, plus totals for primary currencies.
-        /// <para>return24Volume</para>
+        /// <summary>return24Volume
+        /// <para>Returns the 24-hour volume for all markets, plus totals for primary currencies.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<Poloniex24hVolume> get24hVolumeList()
         {
@@ -72,8 +74,13 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns candlestick chart data. Required GET parameters are "currencyPair", "period" (candlestick period in seconds; valid values are 300, 900, 1800, 7200, 14400, and 86400), "start", and "end". "Start" and "end" are given in UNIX timestamp format and used to specify the date range for the data returned.
-        /// <para>returnChartData</para>
+        /// <summary>returnChartData
+        /// <para>Returns candlestick chart data.</para>
+        /// <para>Required : currencyPair (MKT_SYM)</para>
+        /// <para>Required : period (candlestick period in seconds; valid values are 300, 900, 1800, 7200, 14400, and 86400)</para>
+        /// <para>Required : start (unix)</para>
+        /// <para>Required : end (unix)</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<PoloniexChartData> getChartDataList(PoloniexChartDataParameters parameters)
         {
@@ -98,8 +105,10 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Returns information about currencies.
-        /// <para>returnCurrencies</para>
+        /// <summary>returnCurrencies
+        /// <para>Returns information about currencies.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<PoloniexCurrency> getCurrencyList()
         {
@@ -127,8 +136,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns the list of loan offers and demands for a given currency, specified by the "currency" GET parameter.
-        /// <para>returnLoanOrders</para>
+        /// <summary>returnLoanOrders
+        /// <para>Returns the list of loan offers and demands for a given currency, specified by the "currency" GET parameter.</para>
+        /// <para>Required : currency (BTC)</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<PoloniexLoanOrder> getLoanOrdersList(string currency)
         {
@@ -163,8 +174,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns the order book for a given market, as well as a sequence number for use with the Push API and an indicator specifying whether the market is frozen.
-        /// <para>returnOrderBook</para>
+        /// <summary>returnOrderBook (PAIR)
+        /// <para>Returns the order book for a given market, as well as a sequence number for use with the Push API and an indicator specifying whether the market is frozen.</para>
+        /// <para>Required : currencyPair (MKT_SYM)</para>
+        /// <para>Optional : depth (defaults to 0 to get all)</para>
         /// </summary>
         public static PoloniexOrderBookItem getOrderBook(string market, string symbol, int depth = 0)
         {
@@ -195,8 +208,9 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Returns the order books for all markets.
-        /// <para>returnOrderBook</para>
+        /// <summary>returnOrderBook (ALL)
+        /// <para>Returns the order books for all markets, as well as a sequence number for use with the Push API and an indicator specifying whether the market is frozen.</para>
+        /// <para>Optional : depth (defaults to 0 to get all)</para>
         /// </summary>
         public static List<PoloniexOrderBookItem> getOrderBookList(int depth = 0)
         {
@@ -232,8 +246,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns the ticker for all markets.
-        /// <para>returnTicker</para>
+        /// <summary>returnTicker
+        /// <para>Returns the ticker for all markets.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<PoloniexTicker> getTickerList()
         {
@@ -260,8 +276,11 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns the past 200 trades for a given market, or up to 50,000 trades between a range specified in UNIX timestamps by the "start" and "end" GET parameters.
-        /// <para>returnTradeHistory</para>
+        /// <summary>returnTradeHistory
+        /// <para>Returns the past 200 trades for a given market, or up to 50,000 trades between a range specified in UNIX timestamps by the "start" and "end" GET parameters.</para>
+        /// <para>Required : currencyPair (MKT_SYM)</para>
+        /// <para>Optional : start (unix)</para>
+        /// <para>Optional : end (unix)</para>
         /// </summary>
         public static List<PoloniexTradeHistory> getTradeHistory(string symbol, string market, long start = 0, long end = 0)
         {
@@ -315,8 +334,10 @@ namespace TwEX_API.Exchange
             }
         }
         // -------------------------------------------------------------
-        /// <summary>Returns all of your available balances.
-        /// <para>returnBalances</para>
+        /// <summary>returnBalances
+        /// <para>Returns all of your available balances.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static async Task<List<PoloniexBalance>> getBalanceList()
         {
@@ -346,8 +367,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns all of your balances, including available balance, balance on orders, and the estimated BTC value of your balance. By default, this call is limited to your exchange account; set the "account" POST parameter to "all" to include your margin and lending accounts.
-        /// <para>returnCompleteBalances</para>
+        /// <summary>returnCompleteBalances
+        /// <para>Returns all of your balances, including available balance, balance on orders, and the estimated BTC value of your balance. By default, this call is limited to your exchange account; set the "account" POST parameter to "all" to include your margin and lending accounts.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static async Task<List<PoloniexBalance>> getCompleteBalanceList()
         {
@@ -374,8 +397,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns all of your deposit addresses.
-        /// <para>returnDepositAddresses</para>
+        /// <summary>returnDepositAddresses
+        /// <para>Returns all of your deposit addresses.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static async Task<List<PoloniexWallet>> getDepositAddressList()
         {
@@ -403,16 +428,19 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns your deposit and withdrawal history within a range, specified by the "start" and "end" POST parameters, both of which should be given as UNIX timestamps.
-        /// <para>returnDepositsWithdrawals</para>
+        /// <summary>returnDepositsWithdrawals
+        /// <para>Returns your deposit and withdrawal history within a range, specified by the "start" and "end" POST parameters, both of which should be given as UNIX timestamps.</para>
+        /// <para>Required : start (unix)</para>
+        /// <para>Required : end (unix)</para>
+        /// <para>Optional : none</para>
         /// </summary>
-        public static async Task<List<PoloniexTransaction>> getDepositsWithdrawalsList(long unixStart, long unixEnd)
+        public static async Task<List<PoloniexTransaction>> getDepositsWithdrawalsList(long start, long end)
         {
             List<PoloniexTransaction> list = new List<PoloniexTransaction>();
             try
             {
                 string url = "https://poloniex.com/tradingApi";
-                string parameters = "command=returnDepositsWithdrawals&start=" + unixStart + "&end=" + unixEnd + "&nonce=" + ExchangeManager.GetNonce();
+                string parameters = "command=returnDepositsWithdrawals&start=" + start + "&end=" + end + "&nonce=" + ExchangeManager.GetNonce();
                 string result = await getPrivateApiRequestAsync(url, parameters);
                 //LogManager.AddLogMessage(thisClassName, "getDepositsWithdrawals", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
@@ -437,15 +465,17 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Generates a new deposit address for the currency specified by the "currency" POST parameter.
-        /// <para>generateNewAddress</para>
+        /// <summary>generateNewAddress
+        /// <para>Generates a new deposit address for the currency specified by the "currency" POST parameter.</para>
+        /// <para>Required : currency (BTC)</para>
+        /// <para>Optional : none</para>
         /// </summary>
-        public static async Task<string> getNewAddresses(string symbol)
+        public static async Task<string> getNewAddresses(string currency)
         {
             try
             {
                 string url = "https://poloniex.com/tradingApi";
-                string myParam = "command=generateNewAddress&currency=" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                string myParam = "command=generateNewAddress&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
                 string result = await getPrivateApiRequestAsync(url, myParam);
                 //LogManager.AddLogMessage("PoloniexManager", "getNewAddresses", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
@@ -467,10 +497,12 @@ namespace TwEX_API.Exchange
             }     
         }
 
-        /// <summary>Returns your open orders for a given market, specified by the "currencyPair" POST parameter, e.g. "BTC_XCP". Set "currencyPair" to "all" to return open orders for all markets.
-        /// <para>returnOpenOrders</para>
+        /// <summary>returnOpenOrder
+        /// <para>Returns your open orders for a given market, specified by the "currencyPair" POST parameter, e.g. "BTC_XCP".</para>
+        /// <para>Required : currencyPair (MKT_SYM) - Set "currencyPair" to "all" to return open orders for all markets.</para>
+        /// <para>Optional : none</para>
         /// </summary>
-        public static async Task<List<PoloniexOpenOrder>> getOpenOrdersList(string symbol, string market)
+        public static async Task<List<PoloniexOpenOrder>> getOpenOrdersList(string market, string symbol)
         {
             List<PoloniexOpenOrder> list = new List<PoloniexOpenOrder>();
             try
@@ -531,8 +563,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns all trades involving a given order, specified by the "orderNumber" POST parameter. If no trades for the order have occurred or you specify an order that does not belong to you, you will receive an error.
-        /// <para>returnOrderTrades</para>
+        /// <summary>returnOrderTrades
+        /// <para>Returns all trades involving a given order, specified by the "orderNumber" POST parameter. If no trades for the order have occurred or you specify an order that does not belong to you, you will receive an error.</para>
+        /// <para>Required : orderNumber</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static async Task<List<PoloniexTradeHistory>> getOrderTradesList(string orderNumber)
         {
@@ -561,10 +595,14 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Returns your trade history for a given market, specified by the "currencyPair" POST parameter. You may specify "all" as the currencyPair to receive your trade history for all markets. You may optionally specify a range via "start" and/or "end" POST parameters, given in UNIX timestamp format; if you do not specify a range, it will be limited to one day. You may optionally limit the number of entries returned using the "limit" parameter, up to a maximum of 10,000. If the "limit" parameter is not specified, no more than 500 entries will be returned.
-        /// <para>returnTradeHistory</para>
+        /// <summary>returnTradeHistory
+        /// <para>Returns your trade history for a given market, specified by the "currencyPair" POST parameter. You may optionally specify a range via "start" and/or "end" POST parameters, given in UNIX timestamp format; if you do not specify a range, it will be limited to one day.</para>
+        /// <para>Required : currencyPair (MKT_SYM) - You may specify "all" as the currencyPair to receive your trade history for all markets.</para>
+        /// <para>Optional : start (unix)</para>
+        /// <para>Optional : end (unix)</para>
+        /// <para>Optional : limit - You may optionally limit the number of entries returned using the "limit" parameter, up to a maximum of 10,000. If the "limit" parameter is not specified, no more than 500 entries will be returned.</para>
         /// </summary>
-        public static async Task<List<PoloniexTradeHistory>> getTradeHistoryList(string symbol, string market, long unixStart = 0, long unixEnd = 0, int limit = 500) // limit up to 10,000
+        public static async Task<List<PoloniexTradeHistory>> getTradeHistoryList(string market, string symbol, long unixStart = 0, long unixEnd = 0, int limit = 500) // limit up to 10,000
         {
             List<PoloniexTradeHistory> list = new List<PoloniexTradeHistory>();
 
@@ -649,10 +687,14 @@ namespace TwEX_API.Exchange
         #endregion
 
         #region API_PRIVATE_Setters
-        /// <summary>Places a limit buy order in a given market. Required POST parameters are "currencyPair", "rate", and "amount". If successful, the method will return the order number.
-        /// <para>buy</para>
+        /// <summary>buy
+        /// <para>Places a limit buy order in a given market. If successful, the method will return the order number.</para>
+        /// <para>Required : currencyPair (MKT_SYM)</para>
+        /// <para>Required : rate</para>
+        /// <para>Required : amount</para>
+        /// <para>Optional : none</para>
         /// </summary>
-        public static async Task<PoloniexNewOrderResult> setBuy(string symbol, string market, Decimal rate, Decimal amount, PoloniexOrderOption option = PoloniexOrderOption.None) //You may optionally set "fillOrKill", "immediateOrCancel", "postOnly" to 1.
+        public static async Task<PoloniexNewOrderResult> setBuy(string market, string symbol, Decimal rate, Decimal amount, PoloniexOrderOption option = PoloniexOrderOption.None) //You may optionally set "fillOrKill", "immediateOrCancel", "postOnly" to 1.
         {
             try
             {
@@ -675,8 +717,10 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Cancels an order you have placed in a given market. Required POST parameter is "orderNumber".
-        /// <para>cancelOrder</para>
+        /// <summary>cancelOrder
+        /// <para>Cancels an order you have placed in a given market. Required POST parameter is "orderNumber".</para>
+        /// <para>Required : orderNumber</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static async Task<Boolean> setCancel(string orderNumber)
         {
@@ -697,8 +741,12 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Places a sell order in a given market. Parameters and output are the same as for the buy method.
-        /// <para>sell</para>
+        /// <summary>sell
+        /// <para>Places a limit sell order in a given market. If successful, the method will return the order number.</para>
+        /// <para>Required : currencyPair (MKT_SYM)</para>
+        /// <para>Required : rate</para>
+        /// <para>Required : amount</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static async Task<PoloniexNewOrderResult> setSell(string symbol, string market, Decimal rate, Decimal amount, PoloniexOrderOption option = PoloniexOrderOption.None) //You may optionally set "fillOrKill", "immediateOrCancel", "postOnly" to 1.
         {

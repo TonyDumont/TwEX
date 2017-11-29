@@ -20,8 +20,10 @@ namespace TwEX_API.Exchange
 
         #region API_Public
         #region API_PUBLIC_Getters
-        /// <summary>Used to get all supported currencies at Bittrex along with other meta data.
-        /// <para>/public/getcurrencies</para>
+        /// <summary>/public/getcurrencies
+        /// <para>Used to get all supported currencies at Bittrex along with other meta data.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<BittrexCurrency> getCurrencyList()
         {
@@ -46,8 +48,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to get the open and available trading markets at Bittrex along with other meta data.
-        /// <para>/public/getmarkets</para>
+        /// <summary>/public/getmarkets
+        /// <para>Used to get the open and available trading markets at Bittrex along with other meta data.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<BittrexMarket> getMarketList()
         {
@@ -72,8 +76,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to retrieve the latest trades that have occured for a specific market.
-        /// <para>/public/getmarkethistory</para>
+        /// <summary>/public/getmarkethistory
+        /// <para>Used to retrieve the latest trades that have occured for a specific market.</para>
+        /// <para>Required : market	- a string literal for the market (ex: MKT-SYM)</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<BittrexMarketHistory> getMarketHistoryList(string market, string symbol)
         {
@@ -102,8 +108,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to get the last 24 hour summary of all active exchanges
-        /// <para>/public/getmarketsummary</para>
+        /// <summary>/public/getmarketsummary
+        /// <para>Used to get the last 24 hour summary of all active exchanges</para>
+        /// <para>Required : market	- a string literal for the market (ex: MKT-SYM)</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexMarketSummary getMarketSummary(string market, string symbol)
         {
@@ -140,8 +148,10 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Used to get the last 24 hour summary of all active exchanges
-        /// <para>/public/getmarketsummaries</para>
+        /// <summary>/public/getmarketsummaries
+        /// <para>Used to get the last 24 hour summary of all active exchanges</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<BittrexMarketSummary> getMarketSummariesList()
         {
@@ -166,8 +176,11 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to get retrieve the orderbook for a given market
-        /// <para>/public/getorderbook</para>
+        /// <summary>/public/getorderbook
+        /// <para>Used to get retrieve the orderbook for a given market</para>
+        /// <para>Required : market	- a string literal for the market (ex: MKT-SYM)</para>
+        /// <para>Required : type - buy, sell or both to identify the type of orderbook to return.</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<BittrexOrderBookData> getOrderBookList(string market, string symbol, BittrexOrderBookType type = BittrexOrderBookType.both)
         {
@@ -217,8 +230,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to get the current tick values for a market.
-        /// <para>/public/getticker</para>
+        /// <summary>/public/getticker
+        /// <para>Used to get the current tick values for a market.</para>
+        /// <para>Required : market	- a string literal for the market (ex: MKT-SYM)</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexTicker getTicker(string market, string symbol)
         {
@@ -263,8 +278,10 @@ namespace TwEX_API.Exchange
             return sign;
         }
         // ------------------------
-        /// <summary>Used to retrieve the balance from your account for a specific currency.
-        /// <para>/account/getbalance</para>
+        /// <summary>/account/getbalance
+        /// <para>Used to retrieve the balance from your account for a specific currency.</para>
+        /// <para>Required : currency - a string literal for the currency (ex: LTC)</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexBalance getBalance(string currency)
         {
@@ -300,8 +317,10 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Used to retrieve all balances from your account
-        /// <para>/account/getbalances</para>
+        /// <summary>/account/getbalances
+        /// <para>Used to retrieve all balances from your account</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static List<BittrexBalance> getBalanceList()
         {
@@ -333,8 +352,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to retrieve or generate an address for a specific currency. If one does not exist, the call will fail and return ADDRESS_GENERATING until one is available.
-        /// <para>/account/getdepositaddress</para>
+        /// <summary>/account/getdepositaddress
+        /// <para>Used to retrieve or generate an address for a specific currency. If one does not exist, the call will fail and return ADDRESS_GENERATING until one is available.</para>
+        /// <para>Required : currency - a string literal for the currency (ie. BTC)</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexDepositMessage getDepositAddress(string currency)
         {
@@ -360,8 +381,10 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Used to retrieve your deposit history.
-        /// <para>/account/getdeposithistory</para>
+        /// <summary>/account/getdeposithistory
+        /// <para>Used to retrieve your deposit history.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : currency - a string literal for the currecy (ie. BTC). If omitted, will return for all currencies</para>
         /// </summary>
         public static List<BittrexDeposit> getDepositHistoryList(string currency = "")
         {
@@ -404,8 +427,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to retrieve a single order by uuid.
-        /// <para>/account/getorder</para>
+        /// <summary>/account/getorder
+        /// <para>Used to retrieve a single order by uuid.</para>
+        /// <para>Required : uuid - the uuid of the buy or sell order</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexOrder getOrder(string uuid)
         {
@@ -441,8 +466,10 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Used to retrieve your order history.
-        /// <para>/account/getorderhistory</para>
+        /// <summary>/account/getorderhistory
+        /// <para>Used to retrieve your order history.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : market	- a string literal for the market (ie. MKT-SYM). If ommited, will return for all markets</para>
         /// </summary>
         public static List<BittrexOrderHistoryItem> getOrderHistoryList(string market = "", string symbol = "")
         {
@@ -484,8 +511,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Get all orders that you currently have opened. A specific market can be requested
-        /// <para>/market/getopenorders</para>
+        /// <summary>/market/getopenorders
+        /// <para>Get all orders that you currently have opened. A specific market can be requested</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : market	- a string literal for the market (ie. MKT-SYM).</para>
         /// </summary>
         public static List<BittrexOpenOrder> getOpenOrdersList(string market = "", string symbol = "")
         {
@@ -527,8 +556,10 @@ namespace TwEX_API.Exchange
             return list;
         }
 
-        /// <summary>Used to retrieve your withdrawal history.
-        /// <para>/account/getwithdrawalhistory</para>
+        /// <summary>/account/getwithdrawalhistory
+        /// <para>Used to retrieve your withdrawal history.</para>
+        /// <para>Required : none</para>
+        /// <para>Optional : currency - a string literal for the currecy (ie. BTC). If omitted, will return for all currencies</para>
         /// </summary>
         public static List<BittrexWithdrawal> getWithdrawalHistoryList(string currency = "")
         {
@@ -572,8 +603,12 @@ namespace TwEX_API.Exchange
         #endregion
 
         #region API_PRIVATE_Setters
-        /// <summary>Used to place a buy order in a specific market. Use buylimit to place limit orders.
-        /// <para>/market/buylimit</para>
+        /// <summary>/market/buylimit
+        /// <para>Used to place a buy order in a specific market. Use buylimit to place limit orders.</para>
+        /// <para>Required : market	- a string literal for the market (ex: MKT-SYM)</para>
+        /// <para>Required : quantity - the amount to purchase</para>
+        /// <para>Required : rate - the rate at which to place the order</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexBuySellMessage setBuy(string market, string symbol, Decimal quantity, Decimal rate)
         {
@@ -599,8 +634,12 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Used to cancel a buy or sell order.
-        /// <para>/market/cancel</para>
+        /// <summary>/market/cancel
+        /// <para>Used to cancel a buy or sell order.</para>
+        /// <para>Required : market	- a string literal for the market (ex: MKT-SYM)</para>
+        /// <para>Required : quantity - the amount to purchase</para>
+        /// <para>Required : rate - the rate at which to place the order</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexBuySellMessage setCancel(string uuid)
         {
@@ -626,8 +665,12 @@ namespace TwEX_API.Exchange
             }
         }
 
-        /// <summary>Used to place an sell order in a specific market. Use selllimit to place limit orders.
-        /// <para>/market/selllimit</para>
+        /// <summary>/market/selllimit
+        /// <para>Used to place an sell order in a specific market. Use selllimit to place limit orders.</para>
+        /// <para>Required : market	- a string literal for the market (ex: MKT-SYM)</para>
+        /// <para>Required : quantity - the amount to purchase</para>
+        /// <para>Required : rate - the rate at which to place the order</para>
+        /// <para>Optional : none</para>
         /// </summary>
         public static BittrexBuySellMessage setSell(string market, string symbol, Decimal quantity, Decimal rate)
         {
