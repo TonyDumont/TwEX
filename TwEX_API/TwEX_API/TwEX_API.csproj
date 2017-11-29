@@ -61,6 +61,7 @@
     <Compile Include="ExchangeManager.cs" />
     <Compile Include="Exchange\Bittrex.cs" />
     <Compile Include="Exchange\BleuTrade.cs" />
+    <Compile Include="Exchange\CCEX.cs" />
     <Compile Include="Exchange\Poloniex.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
