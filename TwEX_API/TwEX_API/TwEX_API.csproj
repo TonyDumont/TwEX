@@ -71,6 +71,7 @@
     <Compile Include="Exchange\HitBTC.cs" />
     <Compile Include="Exchange\LiveCoin.cs" />
     <Compile Include="Exchange\Poloniex.cs" />
+    <Compile Include="Exchange\TEMPLATE.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
