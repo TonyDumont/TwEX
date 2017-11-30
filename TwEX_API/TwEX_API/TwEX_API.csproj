@@ -69,6 +69,7 @@
     <Compile Include="Exchange\GateIO.cs" />
     <Compile Include="Exchange\GDAX.cs" />
     <Compile Include="Exchange\HitBTC.cs" />
+    <Compile Include="Exchange\LiveCoin.cs" />
     <Compile Include="Exchange\Poloniex.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
