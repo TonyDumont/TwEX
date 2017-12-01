@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using TwEX_API.Exchange;
 using static TwEX_API.LogManager;
 
 namespace TwEX_API.Controls

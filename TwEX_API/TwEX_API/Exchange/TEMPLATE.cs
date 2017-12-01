@@ -7,8 +7,8 @@ namespace TwEX_API.Exchange
     {
         #region Properties
         public static String thisClassName = "ExchangeClassName";
-        private static string ApiKey = String.Empty;
-        private static string ApiSecret = String.Empty;
+        public static string ApiKey = String.Empty;
+        public static string ApiSecret = String.Empty;
         private static RestClient client = new RestClient("API_URL");
         #endregion Properties
 

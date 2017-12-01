@@ -72,6 +72,7 @@
     <Compile Include="Exchange\LiveCoin.cs" />
     <Compile Include="Exchange\Poloniex.cs" />
     <Compile Include="Exchange\TEMPLATE.cs" />
+    <Compile Include="Exchange\YoBit.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
