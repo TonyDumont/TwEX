@@ -74,6 +74,9 @@
     <Compile Include="Exchange\TEMPLATE.cs" />
     <Compile Include="Exchange\YoBit.cs" />
     <Compile Include="LogManager.cs" />
+    <Compile Include="Market\CoinMarketCap.cs" />
+    <Compile Include="Market\CryptoCompare.cs" />
+    <Compile Include="Market\TradingView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

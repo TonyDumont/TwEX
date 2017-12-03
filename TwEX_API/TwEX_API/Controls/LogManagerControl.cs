@@ -13,7 +13,6 @@ namespace TwEX_API.Controls
         }
         private void LogManagerControl_Load(object sender, EventArgs e)
         {
-            
             listView.DataSource = LogManager.LogMessageList;
         }
         // EVENT HANDLERS
@@ -30,7 +29,7 @@ namespace TwEX_API.Controls
             //AddLogMessage(this.Name, "toolStripButton_update_Click", "message", LogManager.LogMessageType.OTHER);    
             //long unixStart = ((DateTimeOffset)new DateTime(2017, 9, 1)).ToUnixTimeSeconds();
             //long unixEnd = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-            
+
         }
     }
 }
