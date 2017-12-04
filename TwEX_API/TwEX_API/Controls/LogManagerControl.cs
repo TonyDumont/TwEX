@@ -29,7 +29,11 @@ namespace TwEX_API.Controls
             //AddLogMessage(this.Name, "toolStripButton_update_Click", "message", LogManager.LogMessageType.OTHER);    
             //long unixStart = ((DateTimeOffset)new DateTime(2017, 9, 1)).ToUnixTimeSeconds();
             //long unixEnd = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-
+            /*
+            string[] symbolarray = { "ETH", "LTC", "DASH" };
+            string[] marketarray = { "BTC", "USD", "EUR" };
+            List<CryptoComparePrice> list = CryptoCompare.getPriceHistoricalList("ETH", marketarray);
+            */
         }
     }
 }
