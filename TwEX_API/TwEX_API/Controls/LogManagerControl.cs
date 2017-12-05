@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using TwEX_API.Market;
 using static TwEX_API.LogManager;
+using static TwEX_API.Market.CryptoCompare;
 
 namespace TwEX_API.Controls
 {
@@ -29,11 +32,11 @@ namespace TwEX_API.Controls
             //AddLogMessage(this.Name, "toolStripButton_update_Click", "message", LogManager.LogMessageType.OTHER);    
             //long unixStart = ((DateTimeOffset)new DateTime(2017, 9, 1)).ToUnixTimeSeconds();
             //long unixEnd = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-            /*
+            
             string[] symbolarray = { "ETH", "LTC", "DASH" };
             string[] marketarray = { "BTC", "USD", "EUR" };
             List<CryptoComparePrice> list = CryptoCompare.getPriceHistoricalList("ETH", marketarray);
-            */
+            AddLogMessage(this.Name, "toolStripButton_update_Click", "count=" + list.Count, LogManager.LogMessageType.OTHER);
         }
     }
 }
