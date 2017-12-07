@@ -104,7 +104,7 @@ namespace TwEX_API
                 }
             }
         }
-
+        
         private static string GetMemberDescription(MemberInfo member, bool inherited)
         {
             string result = null;
@@ -121,7 +121,7 @@ namespace TwEX_API
 
             return result;
         }
-
+        
         public static string GetDescription<T>(T value, string defaultValue)
         {
             return EnumCache<T>.GetDescription(value, defaultValue);
@@ -131,7 +131,7 @@ namespace TwEX_API
         {
             return EnumCache<T>.GetDescription(value, string.Empty);
         }
-
+        
         public static IDictionary<T, string> GetAllDescriptions<T>()
         {
             EnumCache<T>.LoadDescriptions();

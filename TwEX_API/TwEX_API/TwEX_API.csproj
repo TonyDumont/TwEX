@@ -96,6 +96,12 @@
     <Compile Include="Controls\CryptoCompareWidgetControl.Designer.cs">
       <DependentUpon>CryptoCompareWidgetControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CryptoCompareWidgetEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CryptoCompareWidgetEditorControl.Designer.cs">
+      <DependentUpon>CryptoCompareWidgetEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LogManagerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -128,6 +134,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\CryptoCompareWidgetControl.resx">
       <DependentUpon>CryptoCompareWidgetControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CryptoCompareWidgetEditorControl.resx">
+      <DependentUpon>CryptoCompareWidgetEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogManagerControl.resx">
       <DependentUpon>LogManagerControl.cs</DependentUpon>
