@@ -2,10 +2,11 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace TwEX_API.Market
 {
-    class CryptoCompare
+    public class CryptoCompare
     {
         #region Properties
         public static String thisClassName = "CryptoCompare";
@@ -288,6 +289,72 @@ namespace TwEX_API.Market
         #region DataModels
         #region DATAMODELS_Enums
         // ENUMS
+        public enum CryptoCompareChartPeriod
+        {
+            [Description("1 Day")]
+            Day_1D,
+            [Description("1 Week")]
+            Week_1W,
+            [Description("2 Weeks")]
+            Week_2W,
+            [Description("1 Month")]
+            Month_1M,
+            [Description("3 Months")]
+            Month_3M,
+            [Description("6 Months")]
+            Month_6M,
+            [Description("1 Year")]
+            Year_1Y
+        }
+        public enum CryptoCompareFeedType
+        {
+            CoinTelegraph,
+            CryptoSource,
+            EspacioBit,
+            CoreMediaWaves,
+            CoreMediaBlockchain,
+            CoreMediaSupernet,
+            DashPayMagazine,
+            CoinJoker
+        }
+        public enum CryptoCompareWidgetType
+        {
+            [Description("symbol,market,period")]
+            Chart,
+
+            [Description("symbol,market,feedType")]
+            NewsFeed,
+
+            [Description("symbol,markets_25")]
+            PricesList,
+
+            [Description("symbol,markets_25")]
+            PricesTiles,
+
+            [Description("symbols_5,markets_5")]
+            Tabbed,
+
+            [Description("symbols_5,markets_5")]
+            Horizontal,
+
+            [Description("symbol,markets_25")]
+            Summary,
+
+            [Description("symbol,market")]
+            Historical,
+
+            [Description("symbol,markets_10")]
+            ChartAdvanced,
+
+            [Description("symbol,markets_25")]
+            Converter,
+
+            [Description("symbols_5,market_25")]
+            HeaderV2,
+
+            [Description("symbols_5,markets_5")]
+            HeaderV3
+        }
         #endregion
         #region DATAMODELS_Public 
         // PUBLIC MODELS

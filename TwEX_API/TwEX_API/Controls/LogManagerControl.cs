@@ -36,7 +36,7 @@ namespace TwEX_API.Controls
             string[] symbolarray = { "ETH", "LTC", "DASH" };
             string[] marketarray = { "BTC", "USD", "EUR" };
             List<CryptoComparePrice> list = CryptoCompare.getPriceHistoricalList("ETH", marketarray);
-            AddLogMessage(this.Name, "toolStripButton_update_Click", "count=" + list.Count, LogManager.LogMessageType.OTHER);
+            AddLogMessage(this.Name, "toolStripButton_update_Click", "count=" + list.Count, LogManager.LogMessageType.DEBUG);
         }
     }
 }
