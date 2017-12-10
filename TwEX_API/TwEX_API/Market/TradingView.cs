@@ -95,6 +95,51 @@ namespace TwEX_API.Market
             TheRockTrading,
             Xcoin
         }
+        public enum TradingViewCryptocurrencyMarketDefaultColumn
+        {
+            overview,
+            performance,
+            oscillators,
+            moving_averages
+        }
+        public enum TradingViewCryptocurrencyMarketDisplayCurrency
+        {
+            USD,
+            BTC
+        }
+        public enum TradingViewCurrency
+        {
+            EUR,
+            USD,
+            JPY,
+            GBP,
+            CHF,
+            AUD,
+            CAD,
+            NZD,
+            CNY,
+            TRY,
+            SEK,
+            NOK,
+            DKK,
+            ZAR,
+            HKD,
+            SGD,
+            THB,
+            MXN,
+            IDR,
+            KRW,
+            PLN,
+            ISK,
+            KWD,
+            PHP,
+            MYR,
+            INR,
+            TWD,
+            SAR,
+            RUB,
+            ILS
+        }
         public enum TradingViewIndicator
         {
             [Description("Accumulation/Distribution")]
@@ -280,6 +325,73 @@ namespace TwEX_API.Market
             [Description("Zig Zag")]
             ZigZag
         }
+        public enum TradingViewExchange
+        {
+            [Description("USA (US Exchanges)")]
+            US,
+
+            [Description("USA (NASDAQ)")]
+            NASDAQ,
+
+            [Description("USA (NYSE)")]
+            NYSE,
+
+            [Description("USA (NYSE ARCA)")]
+            AMEX,
+
+            [Description("USA (OTC)")]
+            OTC,
+
+            [Description("Canada (TSX)")]
+            TSX,
+
+            [Description("Canada (TSXV)")]
+            TSXV,
+
+            [Description("Germany (FWB)")]
+            FWB,
+
+            [Description("Germany (XETR)")]
+            XETR,
+
+            [Description("India (BSE)")]
+            BSE,
+
+            [Description("India (NSE)")]
+            NSE,
+
+            [Description("Italy (MIL)")]
+            MIL,
+
+            [Description("Turkey (BIST)")]
+            BIST,
+
+            [Description("United Kingdom (LSE)")]
+            LSE,
+
+            [Description("United Kingdom (LSIN)")]
+            LSIN
+        }
+        public enum TradingViewSymbolOverviewInterval
+        {
+            [Description("1d")]
+            day_1d,
+
+            [Description("1m")]
+            month_1m,
+
+            [Description("3m")]
+            month_3m,
+
+            [Description("1y")]
+            year_1y,
+
+            [Description("5y")]
+            year_5y,
+
+            [Description("max")]
+            max_max
+        }
         #endregion
 
         #region DATAMODELS_Parameters
@@ -329,8 +441,149 @@ namespace TwEX_API.Market
             public List<TradingViewWatchlistItem> WatchList { get; set; } = new List<TradingViewWatchlistItem>();
             public List<TradingViewIndicator> IndicatorList { get; set; } = new List<TradingViewIndicator>();
         }
+        public class TradingViewCryptocurrencyMarketParameters
+        {
+            public TradingViewCryptocurrencyMarketDisplayCurrency displayCurrency { get; set; } = TradingViewCryptocurrencyMarketDisplayCurrency.USD;
+            public TradingViewCryptocurrencyMarketDefaultColumn defaultColumn { get; set; } = TradingViewCryptocurrencyMarketDefaultColumn.overview;
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public int width { get; set; } = 1000;
+            public int height { get; set; } = 500;
+            public Boolean autosize { get; set; }
+        }
+        public class TradingViewEconomicCalendarParameters
+        {
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+            public int width { get; set; } = 510;
+            public int height { get; set; } = 610;
+            public Boolean autosize { get; set; }
+
+            public string importanceFilter { get; set; } = "-1,0,1";
+            public string currencyFilter { get; set; } = string.Empty;
+        }
+        public class TradingViewForexParameters
+        {
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public int width { get; set; } = 770;
+            public int height { get; set; } = 400;
+            public Boolean autosize { get; set; }
+
+            public TradingViewCurrency[] currencies { get; set; }
+            //public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>();
+        }
+        public class TradingViewMarketMoversParameters
+        {
+            public TradingViewExchange exchange { get; set; } = TradingViewExchange.US;
+            public Boolean showChart { get; set; } = true;
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public int width { get; set; } = 400;
+            public int height { get; set; } = 600;
+            public Boolean autosize { get; set; }
+
+            public string plotLineColorGrowing { get; set; } = "rgba(60, 188, 152, 1)";
+            public string plotLineColorFalling { get; set; } = "rgba(255, 74, 104, 1)";
+            public string gridLineColor { get; set; } = "rgba(242, 242, 242, 1)";
+            public string scaleFontColor { get; set; } = "rgba(218, 221, 224, 1)";
+            public string belowLineFillColorGrowing { get; set; } = "rgba(60, 188, 152, 0.05)";
+            public string belowLineFillColorFalling { get; set; } = "rgba(255, 74, 104, 0.05)";
+            public string symbolActiveColor { get; set; } = "rgba(242, 250, 254, 1)";
+        }
+        public class TradingViewMarketOverviewParameters
+        {
+            public Boolean showChart { get; set; } = true;
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public int width { get; set; } = 400;
+            public int height { get; set; } = 660;
+            public Boolean autosize { get; set; }
+
+            public string plotLineColorGrowing { get; set; } = "rgba(60, 188, 152, 1)";
+            public string plotLineColorFalling { get; set; } = "rgba(255, 74, 104, 1)";
+            public string gridLineColor { get; set; } = "rgba(233, 233, 234, 1)";
+            public string scaleFontColor { get; set; } = "rgba(218, 221, 224, 1)";
+            public string belowLineFillColorGrowing { get; set; } = "rgba(60, 188, 152, 0.05)";
+            public string belowLineFillColorFalling { get; set; } = "rgba(255, 74, 104, 0.05)";
+            public string symbolActiveColor { get; set; } = "rgba(242, 250, 254, 1)";
+
+            public List<TradingViewMarketOverviewTab> tabs { get; set; } = new List<TradingViewMarketOverviewTab>();
+        }
+        public class TradingViewMarketQuotesParameters
+        {
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public int width { get; set; } = 770;
+            public int height { get; set; } = 450;
+            public Boolean autosize { get; set; }
+
+            public List<TradingViewMarketQuotesTab> tabs { get; set; } = new List<TradingViewMarketQuotesTab>();
+        }
+        public class TradingViewSymbolOverviewParameters
+        {
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public int width { get; set; } = 1000;
+            public int height { get; set; } = 400;
+            public Boolean autosize { get; set; }
+
+            public Boolean chartOnly { get; set; } = false;
+
+            public string greyText { get; set; } = "Quotes by";
+            public string gridLineColor { get; set; } = "#e9e9ea";
+            public string fontColor { get; set; } = "#83888D";
+            public string underLineColor { get; set; } = "#dbeffb";
+            public string trendLineColor { get; set; } = "#4bafe9";
+
+            public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>();
+        }
+        public class TradingViewTickerParameters
+        {
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+            public List<TradingViewTicker> symbols { get; set; } = new List<TradingViewTicker>();
+        }
         #endregion
 
+        public class TradingViewMarketOverviewTab
+        {
+            public List<TradingViewMarketOverviewTabItem> symbols { get; set; } = new List<TradingViewMarketOverviewTabItem>();
+            public string title { get; set; }
+        }
+        public class TradingViewMarketOverviewTabItem
+        {
+            [Description("Symbol : ex. COINBASE:BTCUSD")]
+            public string s { get; set; }
+            [Description("Description")]
+            public string d { get; set; }
+        }      
+        public class TradingViewMarketQuotesTab
+        {
+            public string name { get; set; }
+            public List<TradingViewMarketQuotesTabItem> symbols { get; set; } = new List<TradingViewMarketQuotesTabItem>();
+        }
+        public class TradingViewMarketQuotesTabItem
+        {
+            public string name { get; set; }
+            public string displayName { get; set; }
+        }
+        public class TradingViewSymbolOverview
+        {
+            public TradingViewCryptoExchange exchange { get; set; }
+            public string symbol { get; set; }
+            public string market { get; set; }
+            public string tabName { get; set; }
+            public TradingViewSymbolOverviewInterval interval { get; set; } = TradingViewSymbolOverviewInterval.day_1d;
+
+            public string GetSymbol()
+            {
+                return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper() + "|" + EnumUtils.GetDescription(interval);
+            }
+        }
+        public class TradingViewTicker
+        {
+            public string description { get; set; }
+            public string proName { get; set; }
+        }
         public class TradingViewWatchlistItem
         {
             public TradingViewCryptoExchange exchange { get; set; }
