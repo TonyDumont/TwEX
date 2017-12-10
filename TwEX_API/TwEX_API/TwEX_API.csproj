@@ -108,6 +108,18 @@
     <Compile Include="Controls\LogManagerControl.Designer.cs">
       <DependentUpon>LogManagerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TradingViewWidgetControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TradingViewWidgetControl.Designer.cs">
+      <DependentUpon>TradingViewWidgetControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TradingViewWidgetEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TradingViewWidgetEditorControl.Designer.cs">
+      <DependentUpon>TradingViewWidgetEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeManager.cs" />
     <Compile Include="Exchange\Bittrex.cs" />
     <Compile Include="Exchange\BleuTrade.cs" />
@@ -140,6 +152,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogManagerControl.resx">
       <DependentUpon>LogManagerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TradingViewWidgetControl.resx">
+      <DependentUpon>TradingViewWidgetControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TradingViewWidgetEditorControl.resx">
+      <DependentUpon>TradingViewWidgetEditorControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

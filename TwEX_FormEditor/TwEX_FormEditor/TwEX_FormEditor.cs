@@ -38,5 +38,16 @@ namespace TwEX_FormEditor
             control.Dock = DockStyle.Fill;
             form.Show();
         }
+
+        private void toolStripButton_TVWidgetEditor_Click(object sender, EventArgs e)
+        {
+            Form form = new Form();
+            form.Size = new System.Drawing.Size(950, 550);
+            form.Text = "TradingView Widget Editor";
+            TradingViewWidgetEditorControl control = new TradingViewWidgetEditorControl();
+            form.Controls.Add(control);
+            control.Dock = DockStyle.Fill;
+            form.Show();
+        }
     }
 }

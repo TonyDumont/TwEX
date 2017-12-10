@@ -39,7 +39,7 @@ namespace TwEX_API.Controls
         }
         public void InitializeBrowser()
         {
-            Cef.Initialize(new CefSettings());
+            //Cef.Initialize(new CefSettings());
             browser = new ChromiumWebBrowser(String.Empty);
             panel.Controls.Add(browser);
             browser.Dock = DockStyle.Fill;
