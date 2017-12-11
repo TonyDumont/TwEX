@@ -392,8 +392,69 @@ namespace TwEX_API.Market
             [Description("max")]
             max_max
         }
-        #endregion
+        public enum TradingViewWidgetType
+        {
+            /// <summary>Advanced Chart Widget is a free and powerful charting solution that easily embeds into any website. Simply adjust the settings and click Apply to see a preview, then copy the embed code and paste it into your site code. You can personalize the chart by modifying the default symbol, watchlist, adding tools for technical analysis and a lot more. You can even add news, hotlists, or an economic calendar to make the widget into an entire analytics platform.
+            /// </summary>
+            [Description("Advanced Real-Time Chart Widget")]
+            AdvancedRealTimeChartWidget,
 
+            /// <summary>Market Overview Widget provides a quick glance at the latest market activity across various sectors. It works great for homepages, and it can be configured to take users to a page with a larger chart on your site. Set your own instrument lists and tabs to cover what you need, adjust the timeframe for the chart or even hide the chart completely
+            /// </summary>
+            [Description("Market Overview Widget")]
+            MarketOverviewWidget,
+
+            /// <summary>Market Quotes Widget includes a detailed overview of global markets performance, including change value (both in absolute and percentage numbers), Open, High, Low and Close values for the selected financial instruments
+            /// </summary>
+            [Description("Market Quotes Widget")]
+            MarketQuotesWidget,
+
+            /// <summary>Market Movers Widget shows top 5 gaining, losing and active stocks for the day. Market Movers are updated based on current market activity, so they always show the most relevant stocks.
+            /// </summary>
+            [Description("Market Movers Widget")]
+            MarketMoversWidget,
+
+            /// <summary>Economic Calendar Widget shows key upcoming economic events, announcements and news. You can set up relevant economic calendar filters in a few clicks, selecting event importance and affected currencies.
+            /// </summary>
+            [Description("Economic Calendar Widget")]
+            EconomicCalendarWidget,
+
+            /// <summary>Ticker Widget is a horizontal quick-glance bar with instrument prices. You can display up to 15 different symbols with their latest price and daily change.
+            /// </summary>
+            [Description("Ticker Widget")]
+            TickerWidget,
+
+            /// <summary>Symbol Overview Widget shows latest quotes, a simple chart and key fundamental fields for a single stock. It’s in-depth, yet detailed, and it’s a great solution for web and mobile. You can add multiple tabs to cover several stocks and use a “Chart Only” mode for a simpler look.
+            /// </summary>
+            [Description("Symbol Overview Widget")]
+            SymbolOverviewWidget,
+
+            /// <summary>Forex Cross Rates Widget allows you to display real-time quotes of the selected currencies in comparison to the other major currencies at a glance. Select relevant currencies and generate your rates table in just a few clicks
+            /// </summary>
+            [Description("Forex Cross Rates Widget")]
+            ForexCrossRatesWidget,
+
+            /// <summary>Forex Heat Map Widget gives a quick overview of action in the currency markets. It lets you spot strong and weak currencies in real-time & how strong they are in relation to one another. This trading tool can help choose trading strategies, find opportunities and trade with confidence. Create a personal rates table with just a few clicks by selecting the currencies you want. Give this free tool to your users by copying the Embed code once finished with customization.
+            /// </summary>
+            [Description("Forex Heat Map Widget")]
+            ForexHeatMapWidget,
+
+            /// <summary>Screener widget is a powerful tool that allows to filter stocks based on fundamental data and various technical indicators. Widget allows to create custom filters and columns and lets you change display modes by selecting either a symbol list or a toolbar mode.
+            /// </summary>
+            [Description("Screener Widget")]
+            ScreenerWidget,
+
+            /// <summary>Cryptocurrency Market Widget is our latest tool for crypto traders and enthusiasts. This widget displays most of the available crypto assets and sorts them based on the market capitalization. The key metrics such as the closing price, total and available number of coins, traded volume and price change percentage are all available at a quick glance
+            /// </summary>
+            [Description("Cryptocurrency Market Widget")]
+            CryptocurrencyMarketWidget,
+
+            /// <summary>Fundamental Chart Widget is an essential free tool for business, economics and finance related websites. Fundamental data about stocks provides insights into how the company is doing beyond simple stock price information. Check our wide range of fundamentals for any symbol from many of the world’s major exchanges.
+            /// </summary>
+            [Description("Fundamental Chart Widget")]
+            FundamentalChartWidget,
+        }
+        #endregion
         #region DATAMODELS_Parameters
         public class TradingViewAdvancedChartParameters
         {
@@ -472,6 +533,54 @@ namespace TwEX_API.Market
             public TradingViewCurrency[] currencies { get; set; }
             //public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>();
         }
+        public class TradingViewFundamentalChartParameters
+        {
+            public TradingViewCryptoExchange exchange { get; set; }
+
+            public string symbol { get; set; }
+            public string market { get; set; }
+
+            public TradingViewChartInterval interval { get; set; } = TradingViewChartInterval.Minute_15;
+            //public string timezone { get; set; } = "America/New_York";
+
+            public int width { get; set; } = 980;
+            public int height { get; set; } = 610;
+            public Boolean autosize { get; set; }
+
+            public TradingViewColorTheme theme { get; set; } = TradingViewColorTheme.Light;
+            //public TradingViewChartStyle style { get; set; } = TradingViewChartStyle.Candles;
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public Boolean percentageScale { get; set; } = true;
+
+            public string toolbarBackgroundColor { get; set; } = "#f1f3f6";
+            public Boolean ShowTopToolbar { get; set; } = true;
+            //public Boolean ShowBottomToolbar { get; set; } = false;
+            public Boolean AllowSymbolChange { get; set; } = true;
+            public Boolean GetImageButton { get; set; } = true;
+            public Boolean ShowDrawingToolsBar { get; set; } = false;
+            public Boolean ShowIdeasOnChart { get; set; } = false;
+            public Boolean ShowIdeasButton { get; set; } = false;
+
+            public Boolean LaunchInPopupButton { get; set; } = false;
+            public int popupWidth { get; set; } = 1000;
+            public int popupHeight { get; set; } = 650;
+
+            public Boolean EnablePublishing { get; set; } = false;
+            public Boolean ActivateReferralProgram { get; set; } = false;
+            public string referral_id { get; set; } = string.Empty;
+
+            //public Boolean ShowWatchlist { get; set; } = false;
+            //public Boolean ShowDetails { get; set; } = false;
+            //public Boolean ShowStockTwits { get; set; } = false;
+            //public Boolean ShowHeadlines { get; set; } = false;
+            //public Boolean ShowHotlist { get; set; } = false;
+            //public Boolean ShowCalendar { get; set; } = false;
+            //public Boolean ShowIndicators { get; set; } = false;
+
+            //public List<TradingViewWatchlistItem> WatchList { get; set; } = new List<TradingViewWatchlistItem>();
+            //public List<TradingViewIndicator> IndicatorList { get; set; } = new List<TradingViewIndicator>();
+        }
         public class TradingViewMarketMoversParameters
         {
             public TradingViewExchange exchange { get; set; } = TradingViewExchange.US;
@@ -543,7 +652,7 @@ namespace TwEX_API.Market
             public List<TradingViewTicker> symbols { get; set; } = new List<TradingViewTicker>();
         }
         #endregion
-
+        #region DATAMODELS_Widgets
         public class TradingViewMarketOverviewTab
         {
             public List<TradingViewMarketOverviewTabItem> symbols { get; set; } = new List<TradingViewMarketOverviewTabItem>();
@@ -595,7 +704,7 @@ namespace TwEX_API.Market
                 return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper();
             }
         }
-
+        #endregion
         #endregion DataModels
     }
 }

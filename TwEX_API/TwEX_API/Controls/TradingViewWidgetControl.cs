@@ -568,7 +568,7 @@ namespace TwEX_API.Controls
                         "\"exchange\": \"" + parameters.exchange + "\"," +
                         "\"showChart\": " + GetBoolean(parameters.showChart) + "," +
                         "\"locale\": \"en\"," +
-                        GetSizeString(parameters.autosize, parameters.width, parameters.height) +
+                        GetForexSizeString(parameters.autosize, parameters.width, parameters.height) +
                         "\"plotLineColorGrowing\": \"" + parameters.plotLineColorGrowing + "\"," +
                         "\"plotLineColorFalling\": \"" + parameters.plotLineColorFalling + "\"," +
                         "\"gridLineColor\": \"" + parameters.gridLineColor + "\"," +
@@ -608,7 +608,7 @@ namespace TwEX_API.Controls
 
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-events.js\">" +
                     "{" +
-                        GetSizeString(parameters.autosize, parameters.width, parameters.height) +
+                        GetForexSizeString(parameters.autosize, parameters.width, parameters.height) +
                         "\"locale\": \"en\"," +
                         GetCurrencyFilter(parameters.currencyFilter) +
                         "\"importanceFilter\": \"" + parameters.importanceFilter + "\"" +
@@ -804,6 +804,60 @@ namespace TwEX_API.Controls
         }
 
         // Fundamental Chart Widget
+        delegate void setFundamentalChartCallback(TradingViewFundamentalChartParameters parameters);
+        public void setFundamentalChart(TradingViewFundamentalChartParameters parameters)
+        {
+            if (this.InvokeRequired)
+            {
+                setFundamentalChartCallback d = new setFundamentalChartCallback(setFundamentalChart);
+                this.Invoke(d, new object[] { parameters });
+            }
+            else
+            {
+                if (browser != null)
+                {
+                    string symbolString = parameters.exchange.ToString().ToUpper() + ":" + parameters.symbol.ToUpper() + parameters.market.ToUpper();
+
+                    string html =
+                    "<html>" +
+                    "<head></head>" +
+                    "<body>" +
+                    //"<div id=\"container\">" +
+                    "<span id=\"tradingview-copyright\">Fundamental data is powered by <a href=\"http://www.tradingview.com\" rel=\"nofollow\" target=\"_blank\" style=\"color: #3BB3E4\">TradingView</a></span>" +
+                    "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>" +
+                    "<script type=\"text/javascript\">" +
+                    "new TradingView.widget({" +
+                    GetSizeString(parameters.autosize, parameters.width, parameters.height) +
+                    "\"symbol\": \"" + symbolString + "\"," +
+                    "\"interval\": \"" + GetInterval(parameters.interval) + "\"," +
+                    //"\"timezone\": \"America/New_York\"," +
+                    "\"theme\": \"" + parameters.theme + "\"," +
+                    //"\"style\": \"" + parameters.style.GetHashCode() + "\"," +
+                    
+                    "\"toolbar_bg\": \"" + parameters.toolbarBackgroundColor + "\"," +
+
+                    "\"fundamental\": \"Script$EDGR_DEGREE_OF_COMBINED_LEVERAGE_V2@tv-scripting\"," +
+                    "\"percentage\": " + GetBoolean(parameters.percentageScale) + "," +
+
+                    //"\"enable_publishing\": " + GetBoolean(parameters.EnablePublishing) + "," +
+                    //"\"withdateranges\": " + GetBoolean(parameters.ShowBottomToolbar) + "," +
+                    "\"hide_top_toolbar\": " + GetBoolean(parameters.ShowTopToolbar) + "," +
+                    "\"hide_side_toolbar\": " + GetBoolean(parameters.ShowDrawingToolsBar) + "," +
+                    "\"allow_symbol_change\": " + GetBoolean(parameters.AllowSymbolChange) + "," +
+                    "\"save_image\": " + GetBoolean(parameters.GetImageButton) + "," +
+                    GetPopupString(parameters.LaunchInPopupButton, parameters.popupWidth, parameters.popupHeight) +
+                    GetReferralString(parameters.ActivateReferralProgram, parameters.referral_id) +
+                    // LAST ENTRY
+                    "\"locale\": \"en\"" +
+                    "});" +
+                    "</script>" +
+                    "</div>" +
+                    "</body></html>";
+                    LogManager.AddLogMessage(this.Name, "setAdvancedChart", html, LogManager.LogMessageType.DEBUG);
+                    browser.LoadHtml(html, "http://rendering/");
+                }
+            }
+        }
         #endregion
     }
 }
