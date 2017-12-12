@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwEX_API", "TwEX_API\TwEX_API.csproj", "{C9DC6ED4-F9A8-4FC0-ADCD-AED315A38461}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwEX_FormEditor", "..\TwEX_FormEditor\TwEX_FormEditor\TwEX_FormEditor.csproj", "{81BE1ECE-26EF-4244-9870-90F1411DA6F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwEX_Console", "..\TwEX_Console\TwEX_Console\TwEX_Console.csproj", "{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{81BE1ECE-26EF-4244-9870-90F1411DA6F5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{81BE1ECE-26EF-4244-9870-90F1411DA6F5}.Release|x86.ActiveCfg = Release|x86
 		{81BE1ECE-26EF-4244-9870-90F1411DA6F5}.Release|x86.Build.0 = Release|x86
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Debug|x86.Build.0 = Debug|Any CPU
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Release|x86.ActiveCfg = Release|Any CPU
+		{0C6DA786-F1E3-42C7-AFA1-194E13DC2BBF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
