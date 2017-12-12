@@ -10,7 +10,7 @@ using System.Text;
 
 namespace TwEX_API.Exchange
 {
-    class CCEX
+    public class CCEX
     {
         #region Properties
         public static string thisClassName = "CCEX";

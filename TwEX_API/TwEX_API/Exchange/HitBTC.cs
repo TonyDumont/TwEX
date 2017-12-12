@@ -11,7 +11,7 @@ using System.Text;
 
 namespace TwEX_API.Exchange
 {
-    class HitBTC
+    public class HitBTC
     {
         #region Properties
         public static String thisClassName = "HitBTC";

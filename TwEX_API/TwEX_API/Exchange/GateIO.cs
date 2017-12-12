@@ -10,7 +10,7 @@ using System.Text;
 
 namespace TwEX_API.Exchange
 {
-    class GateIO
+    public class GateIO
     {
         #region Properties
         public static String thisClassName = "GateIO";

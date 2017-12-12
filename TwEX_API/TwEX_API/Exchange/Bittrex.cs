@@ -9,7 +9,7 @@ using System.Text;
 
 namespace TwEX_API.Exchange
 {
-    class Bittrex
+    public class Bittrex
     {
         #region Properties
         public static String thisClassName = "Bittrex";

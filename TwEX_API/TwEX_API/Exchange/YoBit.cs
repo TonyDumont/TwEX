@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace TwEX_API.Exchange
 {
-    class YoBit
+    public class YoBit
     {
         #region Properties
         public static String thisClassName = "YoBit";

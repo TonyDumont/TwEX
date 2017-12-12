@@ -3,7 +3,7 @@ using System;
 
 namespace TwEX_API.Exchange
 {
-    class TEMPLATE
+    class TEMPLATE // MAKE PUBLIC
     {
         #region Properties
         public static String thisClassName = "ExchangeClassName";

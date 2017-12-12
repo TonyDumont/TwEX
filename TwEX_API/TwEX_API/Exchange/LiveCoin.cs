@@ -12,7 +12,7 @@ using System.Text;
 
 namespace TwEX_API.Exchange
 {
-    class LiveCoin
+    public class LiveCoin
     {
         #region Properties
         public static string thisClassName = "LiveCoin";

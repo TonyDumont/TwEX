@@ -12,7 +12,7 @@ using System.Web;
 
 namespace TwEX_API.Exchange
 {
-    class Cryptopia
+    public class Cryptopia
     {
         #region Properties
         public static string thisClassName = "Cryptopia";

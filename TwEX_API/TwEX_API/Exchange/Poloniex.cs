@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace TwEX_API.Exchange
 {
-    class Poloniex
+    public class Poloniex
     {
         #region Properties
         public static string thisClassName = "Poloniex";

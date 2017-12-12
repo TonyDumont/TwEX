@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TwEX_API.Exchange
 {
-    class GDAX
+    public class GDAX
     {
         #region Properties
         public static String thisClassName = "GDAX";

@@ -11,7 +11,7 @@ using System.Text;
 
 namespace TwEX_API.Exchange
 {
-    class BleuTrade
+    public class BleuTrade
     {
         #region Properties
         public static String thisClassName = "BleuTrade";
