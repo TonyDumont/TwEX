@@ -372,6 +372,137 @@ namespace TwEX_API.Market
             [Description("United Kingdom (LSIN)")]
             LSIN
         }
+        public enum TradingViewExchangeMarket
+        {
+            [Description("USA (NASDAQ, NYSE, ARCA, OTC)")]
+            exchange_america,
+
+            [Description("Canada (TSX, TXSV)")]
+            exchange_canada,
+
+            [Description("Germany (FWB, XETR)")]
+            exchange_germany,
+
+            [Description("India (BSE, NSE)")]
+            exchange_india,
+
+            [Description("Italy (MIL)")]
+            exchange_italy,
+
+            [Description("Turkey (BIST)")]
+            exchange_turkey,
+
+            [Description("United Kingdom (LSE, LSIN)")]
+            exchange_uk,
+
+            [Description("Forex")]
+            market_forex,
+
+            [Description("Cryptocurrencies")]
+            market_crypto
+        }
+        public enum TradingViewStockScreenerDefaultColumn
+        {
+            [Description("Overview|market")]
+            overview,
+
+            [Description("Performance|market")]
+            performance,
+
+            [Description("Oscillators|market")]
+            oscillators,
+
+            [Description("Trend-Following|market")]
+            moving_averages,
+
+            [Description("Pivot Points Classic|market")]
+            pivot_points_classic,
+
+            [Description("Pivot Points Fibonacci|market")]
+            pivot_points_fibonacci,
+
+            [Description("Pivot Points Camarilla|market")]
+            pivot_points_camarilla,
+
+            [Description("Pivot Points Woodie|market")]
+            pivot_points_woodie,
+
+            [Description("Pivot Points Denmark|market")]
+            pivot_points_denmark,
+
+            [Description("Valuation|exchange")]
+            valuation,
+
+            [Description("Dividends|exchange")]
+            dividends,
+
+            [Description("Margins|exchange")]
+            margins,
+
+            [Description("Income Statement|exchange")]
+            income_statement,
+
+            [Description("Balance Sheet|exchange")]
+            balance_sheet
+        }
+        public enum TradingViewStockScreenerDefaultScreen
+        {
+            // MARKETS
+            [Description("Top Gainers|market")]
+            top_gainers,
+
+            [Description("Top Losers|market")]
+            top_losers,
+
+            [Description("All Time High|market")]
+            ath,
+
+            [Description("All Time Low|market")]
+            atl,
+
+            [Description("New 52 Week High|market")]
+            above_52wk_high,
+
+            [Description("New 52 Week Low|market")]
+            below_52wk_low,
+
+            [Description("New Monthly High|market")]
+            monthly_high,
+
+            [Description("New Monthly Low|market")]
+            monthly_low,
+
+            [Description("Most Volatile|market")]
+            most_volatile,
+
+            [Description("Overbought|market")]
+            overbought,
+
+            [Description("Oversold|market")]
+            oversold,
+
+            [Description("Outperforming SMA50|market")]
+            outperforming_SMA50,
+
+            [Description("Underperforming SMA50|market")]
+            underperforming_SMA50,
+
+            // EXCHANGES
+            [Description("Most Capitalized|exchange")]
+            most_capitalized,
+
+            [Description("Volume Leaders|exchange")]
+            volume_leaders,
+
+            [Description("Top Volume|exchange")]
+            top_volume,
+
+            [Description("Unusual Volume|exchange")]
+            unusual_volume,
+
+            [Description("Earnings This Week|exchange")]
+            earnings_this_week
+        }
         public enum TradingViewSymbolOverviewInterval
         {
             [Description("1d")]
@@ -459,7 +590,6 @@ namespace TwEX_API.Market
         public class TradingViewAdvancedChartParameters
         {
             public TradingViewCryptoExchange exchange { get; set; }
-
             public string symbol { get; set; }
             public string market { get; set; }
 
@@ -468,7 +598,7 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 980;
             public int height { get; set; } = 610;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public TradingViewColorTheme theme { get; set; } = TradingViewColorTheme.Light;
             public TradingViewChartStyle style { get; set; } = TradingViewChartStyle.Candles;
@@ -501,6 +631,11 @@ namespace TwEX_API.Market
 
             public List<TradingViewWatchlistItem> WatchList { get; set; } = new List<TradingViewWatchlistItem>();
             public List<TradingViewIndicator> IndicatorList { get; set; } = new List<TradingViewIndicator>();
+
+            public string GetSymbolString()
+            {
+                return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper();
+            }
         }
         public class TradingViewCryptocurrencyMarketParameters
         {
@@ -510,14 +645,14 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 1000;
             public int height { get; set; } = 500;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
         }
         public class TradingViewEconomicCalendarParameters
         {
             public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
             public int width { get; set; } = 510;
             public int height { get; set; } = 610;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public string importanceFilter { get; set; } = "-1,0,1";
             public string currencyFilter { get; set; } = string.Empty;
@@ -528,10 +663,9 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 770;
             public int height { get; set; } = 400;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public TradingViewCurrency[] currencies { get; set; }
-            //public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>();
         }
         public class TradingViewFundamentalChartParameters
         {
@@ -541,21 +675,18 @@ namespace TwEX_API.Market
             public string market { get; set; }
 
             public TradingViewChartInterval interval { get; set; } = TradingViewChartInterval.Minute_15;
-            //public string timezone { get; set; } = "America/New_York";
 
             public int width { get; set; } = 980;
             public int height { get; set; } = 610;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public TradingViewColorTheme theme { get; set; } = TradingViewColorTheme.Light;
-            //public TradingViewChartStyle style { get; set; } = TradingViewChartStyle.Candles;
             public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
 
             public Boolean percentageScale { get; set; } = true;
 
             public string toolbarBackgroundColor { get; set; } = "#f1f3f6";
             public Boolean ShowTopToolbar { get; set; } = true;
-            //public Boolean ShowBottomToolbar { get; set; } = false;
             public Boolean AllowSymbolChange { get; set; } = true;
             public Boolean GetImageButton { get; set; } = true;
             public Boolean ShowDrawingToolsBar { get; set; } = false;
@@ -570,16 +701,10 @@ namespace TwEX_API.Market
             public Boolean ActivateReferralProgram { get; set; } = false;
             public string referral_id { get; set; } = string.Empty;
 
-            //public Boolean ShowWatchlist { get; set; } = false;
-            //public Boolean ShowDetails { get; set; } = false;
-            //public Boolean ShowStockTwits { get; set; } = false;
-            //public Boolean ShowHeadlines { get; set; } = false;
-            //public Boolean ShowHotlist { get; set; } = false;
-            //public Boolean ShowCalendar { get; set; } = false;
-            //public Boolean ShowIndicators { get; set; } = false;
-
-            //public List<TradingViewWatchlistItem> WatchList { get; set; } = new List<TradingViewWatchlistItem>();
-            //public List<TradingViewIndicator> IndicatorList { get; set; } = new List<TradingViewIndicator>();
+            public string GetSymbolString()
+            {
+                return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper();
+            }
         }
         public class TradingViewMarketMoversParameters
         {
@@ -589,7 +714,7 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 400;
             public int height { get; set; } = 600;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public string plotLineColorGrowing { get; set; } = "rgba(60, 188, 152, 1)";
             public string plotLineColorFalling { get; set; } = "rgba(255, 74, 104, 1)";
@@ -606,7 +731,7 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 400;
             public int height { get; set; } = 660;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public string plotLineColorGrowing { get; set; } = "rgba(60, 188, 152, 1)";
             public string plotLineColorFalling { get; set; } = "rgba(255, 74, 104, 1)";
@@ -624,9 +749,23 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 770;
             public int height { get; set; } = 450;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public List<TradingViewMarketQuotesTab> tabs { get; set; } = new List<TradingViewMarketQuotesTab>();
+        }
+        public class TradingViewStockScreenerParameters
+        {
+            public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
+
+            public int width { get; set; } = 1100;
+            public int height { get; set; } = 500;
+            public Boolean autosize { get; set; } = true;
+
+            public Boolean showToolbar { get; set; } = true;
+
+            public TradingViewExchangeMarket exchangeMarket { get; set; } = TradingViewExchangeMarket.exchange_america;
+            public TradingViewStockScreenerDefaultColumn defaultColumn = TradingViewStockScreenerDefaultColumn.overview;
+            public TradingViewStockScreenerDefaultScreen defaultScreen = TradingViewStockScreenerDefaultScreen.top_gainers;
         }
         public class TradingViewSymbolOverviewParameters
         {
@@ -634,7 +773,7 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 1000;
             public int height { get; set; } = 400;
-            public Boolean autosize { get; set; }
+            public Boolean autosize { get; set; } = true;
 
             public Boolean chartOnly { get; set; } = false;
 
@@ -683,7 +822,7 @@ namespace TwEX_API.Market
             public string tabName { get; set; }
             public TradingViewSymbolOverviewInterval interval { get; set; } = TradingViewSymbolOverviewInterval.day_1d;
 
-            public string GetSymbol()
+            public string GetSymbolString()
             {
                 return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper() + "|" + EnumUtils.GetDescription(interval);
             }
@@ -699,7 +838,7 @@ namespace TwEX_API.Market
             public string symbol { get; set; }
             public string market { get; set; }
 
-            public string GetWatchlistString()
+            public string GetSymbolString()
             {
                 return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper();
             }

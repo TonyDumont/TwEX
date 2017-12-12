@@ -271,6 +271,7 @@ namespace TwEX_API.Market
         }
         #endregion API_Public
 
+        // TO BE DEVELOPED
         // CoinSnapshotFullById
 
         // SocialStats
@@ -286,6 +287,7 @@ namespace TwEX_API.Market
         // MiningEquipment
 
         // TopPairs
+        
         #region DataModels
         #region DATAMODELS_Enums
         // ENUMS

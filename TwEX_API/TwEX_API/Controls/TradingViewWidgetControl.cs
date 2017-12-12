@@ -30,7 +30,6 @@ namespace TwEX_API.Controls
             //Cef.Initialize(new CefSettings());
             browser = new ChromiumWebBrowser(String.Empty);
             this.Controls.Add(browser);
-            //panel.Controls.Add(browser);
             browser.Dock = DockStyle.Fill;
         }
         #endregion
@@ -45,7 +44,7 @@ namespace TwEX_API.Controls
             string html = "<span id=\"tradingview-copyright\">" +
                             "<a ref=\"nofollow noopener\" target=\"_blank\" href=\"http://www.tradingview.com\" " +
                             "style=\"color: rgb(173, 174, 176); font-family: &quot;Trebuchet MS&quot;, Tahoma, Arial, sans-serif; font-size: 13px;\">" +
-                            "Quotes by <span style=\"color: #3BB3E4\">TradingView</span>" +
+                            "Data by <span style=\"color: #3BB3E4\">TradingView</span>" +
                             "</a >" +
                             "</span>";
             return html;
@@ -87,17 +86,6 @@ namespace TwEX_API.Controls
             else
             {
                 return string.Empty;
-            }
-        }
-        private string GetForexSizeString(Boolean autosize, int width, int height)
-        {
-            if (autosize)
-            {
-                return "\"width\": \"100%\", \"height\": \"100%\",";
-            }
-            else
-            {
-                return "\"width\": \"" + width + "\", \"height\": \"" + height + "\",";
             }
         }
         private string GetInterval(TradingViewChartInterval interval)
@@ -158,7 +146,7 @@ namespace TwEX_API.Controls
                 return string.Empty;
             }
         }
-        private string GetSizeString(Boolean autosize, int width, int height)
+        private string GetSizeAutoString(Boolean autosize, int width, int height)
         {
             if (autosize)
             {
@@ -167,6 +155,24 @@ namespace TwEX_API.Controls
             else
             {
                 return "\"width\": " + width + "," + "\"height\": " + height + ",";
+            }
+        }
+        private string GetSizePercentString(Boolean autosize, int width, int height, Boolean showpx = false)
+        {
+            if (autosize)
+            {
+                return "\"width\": \"100%\", \"height\": \"100%\",";
+            }
+            else
+            {
+                if (showpx)
+                {
+                    return "\"width\": \"" + width + "\", \"height\": \"" + height + "\",";
+                }
+                else
+                {
+                    return "\"width\": \"" + width + "px\", \"height\": \"" + height + "px\",";
+                }
             }
         }
         private string GetStudiesString(List<TradingViewIndicator> list)
@@ -293,8 +299,8 @@ namespace TwEX_API.Controls
                         builder.AppendLine("]}");
                     }
                 }
-                builder.AppendLine("]");
-                LogManager.AddLogMessage(this.Name, "GetMarketQuotesTabsString", builder.ToString(), LogManager.LogMessageType.DEBUG);
+                builder.AppendLine("],");
+                //LogManager.AddLogMessage(this.Name, "GetMarketQuotesTabsString", builder.ToString(), LogManager.LogMessageType.DEBUG);
                 return builder.ToString();
             }
             else
@@ -314,7 +320,7 @@ namespace TwEX_API.Controls
                 {
                     builder.Append("[");
                     builder.Append("\"" + item.tabName + "\",");
-                    builder.Append("\"" + item.GetSymbol() + "\"");
+                    builder.Append("\"" + item.GetSymbolString() + "\"");
 
                     if (index != list.Count)
                     {
@@ -334,17 +340,6 @@ namespace TwEX_API.Controls
             else
             {
                 return string.Empty;
-            }
-        }
-        private string GetSymbolOverviewSizeString(Boolean autosize, int width, int height)
-        {
-            if (autosize)
-            {
-                return "\"width\": \"100%\", \"height\": \"100%\",";
-            }
-            else
-            {
-                return "\"width\": \"" + width + "px\", \"height\": \"" + height + "px\",";
             }
         }
         private string GetTickerString(List<TradingViewTicker> tickers)
@@ -391,7 +386,7 @@ namespace TwEX_API.Controls
                 int index = 1;
                 foreach (TradingViewWatchlistItem item in watchList)
                 {
-                    builder.Append("\"" + item.GetWatchlistString() + "\"");
+                    builder.Append("\"" + item.GetSymbolString() + "\"");
                     if (index != watchList.Count)
                     {
                         builder.Append(",");
@@ -424,24 +419,16 @@ namespace TwEX_API.Controls
             {
                 if (browser != null)
                 {
-                    string symbolString = parameters.exchange.ToString().ToUpper() + ":" + parameters.symbol.ToUpper() + parameters.market.ToUpper();
-
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-                    "<div id=\"container\">" +
-
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>" +
                     "<script type=\"text/javascript\">" +
                     "new TradingView.widget({" +
-                    GetSizeString(parameters.autosize, parameters.width, parameters.height) +
-                    "\"symbol\": \"" + symbolString + "\"," +
+                    GetSizeAutoString(parameters.autosize, parameters.width, parameters.height) +
+                    "\"symbol\": \"" + parameters.GetSymbolString() + "\"," +
                     "\"interval\": \"" + GetInterval(parameters.interval) + "\"," +
                     "\"timezone\": \"America/New_York\"," +
                     "\"theme\": \"" + parameters.theme + "\"," +
                     "\"style\": \"" + parameters.style.GetHashCode() + "\"," +
-                    "\"locale\": \"en\"," +
                     "\"toolbar_bg\": \"" + parameters.toolbarBackgroundColor + "\"," +
                     "\"enable_publishing\": " + GetBoolean(parameters.EnablePublishing) + "," +
                     "\"withdateranges\": " + GetBoolean(parameters.ShowBottomToolbar) + "," +
@@ -455,12 +442,10 @@ namespace TwEX_API.Controls
                     GetStudiesString(parameters.IndicatorList) +
                     GetPopupString(parameters.LaunchInPopupButton, parameters.popupWidth, parameters.popupHeight) +
                     GetReferralString(parameters.ActivateReferralProgram, parameters.referral_id) +
-                    // LAST ENTRY
-                    "\"hideideas\": " + GetBoolean(parameters.ShowIdeasButton) +
+                    "\"hideideas\": " + GetBoolean(parameters.ShowIdeasButton) + "," +
+                    "\"locale\": \"" + parameters.locale + "\"" +
                     "});" +
-                    "</script>" +
-                    "</div>" +
-                    "</body></html>";
+                    "</script>";
                     //LogManager.AddLogMessage(this.Name, "setAdvancedChart", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -481,17 +466,12 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js\">" +
                     "{" +
                         "\"showChart\": " + GetBoolean(parameters.showChart) + "," +
                         "\"locale\": \"en\"," +
-                        GetSizeString(parameters.autosize, parameters.width, parameters.height) +
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
                         "\"plotLineColorGrowing\": \"" + parameters.plotLineColorGrowing + "\"," +
                         "\"plotLineColorFalling\": \"" + parameters.plotLineColorFalling + "\"," +
                         "\"gridLineColor\": \"" + parameters.gridLineColor + "\"," +
@@ -499,10 +479,9 @@ namespace TwEX_API.Controls
                         "\"belowLineFillColorGrowing\": \"" + parameters.belowLineFillColorGrowing + "\"," +
                         "\"belowLineFillColorFalling\": \"" + parameters.belowLineFillColorFalling + "\"," +
                         "\"symbolActiveColor\": \"" + parameters.symbolActiveColor + "\"," +
-                        GetMarketOverviewTabsString(parameters.tabs) +    
+                        GetMarketOverviewTabsString(parameters.tabs) +
                     "}" +
-                    "</script>" +
-                    "</body></html>";           
+                    "</script>";       
                     //LogManager.AddLogMessage(this.Name, "setmarketOverview", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -523,20 +502,14 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js\">" +
                     "{" +
-                        GetSizeString(parameters.autosize, parameters.width, parameters.height) +
-                        "\"locale\": \"en\"," +                      
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
                         GetMarketQuotesTabsString(parameters.tabs) +
+                        "\"locale\": \"" + parameters.locale + "\"" +
                     "}" +
-                    "</script>" +
-                    "</body></html>";
+                    "</script>";
                     //LogManager.AddLogMessage(this.Name, "setmarketOverview", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -557,29 +530,22 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js\">" +
                     "{" +
                         "\"exchange\": \"" + parameters.exchange + "\"," +
                         "\"showChart\": " + GetBoolean(parameters.showChart) + "," +
-                        "\"locale\": \"en\"," +
-                        GetForexSizeString(parameters.autosize, parameters.width, parameters.height) +
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
                         "\"plotLineColorGrowing\": \"" + parameters.plotLineColorGrowing + "\"," +
                         "\"plotLineColorFalling\": \"" + parameters.plotLineColorFalling + "\"," +
                         "\"gridLineColor\": \"" + parameters.gridLineColor + "\"," +
                         "\"scaleFontColor\": \"" + parameters.scaleFontColor + "\"," +
                         "\"belowLineFillColorGrowing\": \"" + parameters.belowLineFillColorGrowing + "\"," +
                         "\"belowLineFillColorFalling\": \"" + parameters.belowLineFillColorFalling + "\"," +
-                        "\"symbolActiveColor\": \"" + parameters.symbolActiveColor + "\"" +
-                        
+                        "\"symbolActiveColor\": \"" + parameters.symbolActiveColor + "\"," +
+                        "\"locale\": \"" + parameters.locale + "\"" +
                     "}" +
-                    "</script>" +
-                    "</body></html>";
+                    "</script>";
                     //LogManager.AddLogMessage(this.Name, "setMarketMovers", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -600,22 +566,16 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-events.js\">" +
                     "{" +
-                        GetForexSizeString(parameters.autosize, parameters.width, parameters.height) +
-                        "\"locale\": \"en\"," +
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
                         GetCurrencyFilter(parameters.currencyFilter) +
-                        "\"importanceFilter\": \"" + parameters.importanceFilter + "\"" +
+                        "\"importanceFilter\": \"" + parameters.importanceFilter + "\"," +
+                        "\"locale\": \"" + parameters.locale + "\"" +
                     "}" +
-                    "</script>" +
-                    "</body></html>";
-                    //LogManager.AddLogMessage(this.Name, "setmarketOverview", html, LogManager.LogMessageType.DEBUG);
+                    "</script>";
+                    //LogManager.AddLogMessage(this.Name, "setEconomicCalendar", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
             }
@@ -635,20 +595,14 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-tickers.js\">" +
                     "{" +
                         GetTickerString(parameters.symbols) +
-                        "\"locale\": \"en\"" +
+                        "\"locale\": \"" + parameters.locale + "\"" +
                     "}" +
-                    "</script>" +
-                    "</body></html>";
-                    //LogManager.AddLogMessage(this.Name, "setmarketOverview", html, LogManager.LogMessageType.DEBUG);
+                    "</script>";
+                    //LogManager.AddLogMessage(this.Name, "setTicker", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
             }
@@ -668,10 +622,6 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     "<div id=\"tv-medium-widget-6caf3\"></div>" +
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>" +
                     "<script type=\"text/javascript\">" +
@@ -684,11 +634,10 @@ namespace TwEX_API.Controls
                         "\"fontColor\": \"" + parameters.fontColor + "\"," +
                         "\"underLineColor\": \"" + parameters.underLineColor + "\"," +
                         "\"trendLineColor\": \"" + parameters.trendLineColor + "\"," +
-                        GetSymbolOverviewSizeString(parameters.autosize, parameters.width, parameters.height) +
-                        "\"locale\": \"en\"" +
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height, true) +
+                        "\"locale\": \"" + parameters.locale + "\"" +
                     "});" +
-                    "</script>" +
-                    "</body></html>";
+                    "</script>";
                     //LogManager.AddLogMessage(this.Name, "setSymbolOverview", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -709,20 +658,14 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script src=\"https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js\">" +
-                    "{" + 
+                    "{" +
                         GetCurrenciesString(parameters.currencies) +
-                        GetForexSizeString(parameters.autosize, parameters.width, parameters.height) +
-                        "\"locale\": \"en\"" +
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
+                        "\"locale\": \"" + parameters.locale + "\"" +
                     "}" +
-                    "</script>" +
-                    "</body></html>";
+                    "</script>";
                     //LogManager.AddLogMessage(this.Name, "setForexCrossRates", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -743,20 +686,14 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script src=\"https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js\">" +
                     "{" +
                         GetCurrenciesString(parameters.currencies) +
-                        GetForexSizeString(parameters.autosize, parameters.width, parameters.height) +
-                        "\"locale\": \"en\"" +
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
+                        "\"locale\": \"" + parameters.locale + "\"" +
                     "}" +
-                    "</script>" +
-                    "</body></html>";
+                    "</script>";
                     //LogManager.AddLogMessage(this.Name, "setForexHeatMap", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -764,6 +701,35 @@ namespace TwEX_API.Controls
         }
 
         // Screener Widget
+        delegate void setStockScreenerCallback(TradingViewStockScreenerParameters parameters);
+        public void setStockScreener(TradingViewStockScreenerParameters parameters)
+        {
+            if (this.InvokeRequired)
+            {
+                setStockScreenerCallback d = new setStockScreenerCallback(setStockScreener);
+                this.Invoke(d, new object[] { parameters });
+            }
+            else
+            {
+                if (browser != null)
+                {
+                    string html =
+                    GetCopyrightString() +
+                    "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-screener.js\">" +
+                    "{" +
+                        GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
+                        "\"defaultColumn\": \"" + parameters.defaultColumn + "\"," +
+                        "\"defaultScreen\": \"" + parameters.defaultScreen + "\"," +
+                        "\"market\": \"" + parameters.exchangeMarket + "\"," +
+                        "\"showToolbar\": \"" + GetBoolean(parameters.showToolbar) + "\"," +
+                        "\"locale\": \"" + parameters.locale + "\"" +
+                    "}" +
+                    "</script>";
+                    //LogManager.AddLogMessage(this.Name, "setmarketOverview", html, LogManager.LogMessageType.DEBUG);
+                    browser.LoadHtml(html, "http://rendering/");
+                }
+            }
+        }
 
         // Cryptocurrency Market Widget
         delegate void setCryptocurrencyMarketCallback(TradingViewCryptocurrencyMarketParameters parameters);
@@ -779,24 +745,16 @@ namespace TwEX_API.Controls
                 if (browser != null)
                 {
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-
                     GetCopyrightString() +
-
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-screener.js\">" +
                     "{" +
-
-                    GetForexSizeString(parameters.autosize, parameters.width, parameters.height) +
+                    GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +
                     "\"defaultColumn\": \"" + parameters.defaultColumn + "\"," +
                     "\"screener_type\": \"crypto_mkt\"," +
                     "\"displayCurrency\": \"" + parameters.displayCurrency + "\"," +
                     "\"locale\": \"en\"" +
-
                     "}" +
-                    "</script>" +
-                    "</body></html>";
+                    "</script>";
                     //LogManager.AddLogMessage(this.Name, "setCryptocurrencyMarket", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
@@ -816,44 +774,28 @@ namespace TwEX_API.Controls
             {
                 if (browser != null)
                 {
-                    string symbolString = parameters.exchange.ToString().ToUpper() + ":" + parameters.symbol.ToUpper() + parameters.market.ToUpper();
-
                     string html =
-                    "<html>" +
-                    "<head></head>" +
-                    "<body>" +
-                    //"<div id=\"container\">" +
                     "<span id=\"tradingview-copyright\">Fundamental data is powered by <a href=\"http://www.tradingview.com\" rel=\"nofollow\" target=\"_blank\" style=\"color: #3BB3E4\">TradingView</a></span>" +
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>" +
                     "<script type=\"text/javascript\">" +
                     "new TradingView.widget({" +
-                    GetSizeString(parameters.autosize, parameters.width, parameters.height) +
-                    "\"symbol\": \"" + symbolString + "\"," +
+                    GetSizeAutoString(parameters.autosize, parameters.width, parameters.height) +
+                    "\"symbol\": \"" + parameters.GetSymbolString() + "\"," +
                     "\"interval\": \"" + GetInterval(parameters.interval) + "\"," +
-                    //"\"timezone\": \"America/New_York\"," +
                     "\"theme\": \"" + parameters.theme + "\"," +
-                    //"\"style\": \"" + parameters.style.GetHashCode() + "\"," +
-                    
                     "\"toolbar_bg\": \"" + parameters.toolbarBackgroundColor + "\"," +
-
                     "\"fundamental\": \"Script$EDGR_DEGREE_OF_COMBINED_LEVERAGE_V2@tv-scripting\"," +
                     "\"percentage\": " + GetBoolean(parameters.percentageScale) + "," +
-
-                    //"\"enable_publishing\": " + GetBoolean(parameters.EnablePublishing) + "," +
-                    //"\"withdateranges\": " + GetBoolean(parameters.ShowBottomToolbar) + "," +
                     "\"hide_top_toolbar\": " + GetBoolean(parameters.ShowTopToolbar) + "," +
                     "\"hide_side_toolbar\": " + GetBoolean(parameters.ShowDrawingToolsBar) + "," +
                     "\"allow_symbol_change\": " + GetBoolean(parameters.AllowSymbolChange) + "," +
                     "\"save_image\": " + GetBoolean(parameters.GetImageButton) + "," +
                     GetPopupString(parameters.LaunchInPopupButton, parameters.popupWidth, parameters.popupHeight) +
                     GetReferralString(parameters.ActivateReferralProgram, parameters.referral_id) +
-                    // LAST ENTRY
-                    "\"locale\": \"en\"" +
+                    "\"locale\": \"" + parameters.locale + "\"" +
                     "});" +
-                    "</script>" +
-                    "</div>" +
-                    "</body></html>";
-                    LogManager.AddLogMessage(this.Name, "setAdvancedChart", html, LogManager.LogMessageType.DEBUG);
+                    "</script>";
+                    //LogManager.AddLogMessage(this.Name, "setFundamentalChart", html, LogManager.LogMessageType.DEBUG);
                     browser.LoadHtml(html, "http://rendering/");
                 }
             }
