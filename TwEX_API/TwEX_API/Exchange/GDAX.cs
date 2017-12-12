@@ -7,16 +7,21 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
 {
     public class GDAX
     {
         #region Properties
-        public static String thisClassName = "GDAX";
-        private static string ApiKey = String.Empty;
-        private static string ApiSecret = String.Empty;
-        private static string ApiPassphrase = String.Empty;
+        // EXCHANGE MANAGER
+        public static string Name { get; } = "GDAX";
+        public static string Url { get; } = "https://www.gdax.com/";
+        public static string USDSymbol { get; } = "USD";
+        // API
+        public static string ApiKey { get; set; } = String.Empty;
+        public static string ApiSecret { get; set; } = String.Empty;
+        public static string ApiPassphrase { get; set; } = String.Empty;
         private static RestClient client = new RestClient("https://api.gdax.com");
         #endregion Properties
 
@@ -38,14 +43,14 @@ namespace TwEX_API.Exchange
                 // GET PRODUCTS
                 var request = new RestRequest("/products", Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getProductList", "Content:" + response.Content, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getProductList", "Content:" + response.Content, LogManager.LogMessageType.DEBUG);
                 //list = new JavaScriptSerializer().Deserialize<GDAXProduct[]>(response.Content).ToList();
                 //var jsonObject = JObject.Parse(response.Content);
                 // TO TEST
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getProductList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getProductList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -72,7 +77,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "GetProductTicker", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "GetProductTicker", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -127,14 +132,14 @@ namespace TwEX_API.Exchange
                     }
                     else
                     {
-                        LogManager.AddLogMessage(thisClassName, "getAccountList", "response.IsSuccess is FALSE : NO DATA : response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                        LogManager.AddLogMessage(Name, "getAccountList", "response.IsSuccess is FALSE : NO DATA : response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                         return null;
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getAccountList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getAccountList", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -167,19 +172,19 @@ namespace TwEX_API.Exchange
                     if (response.IsSuccessStatusCode)
                     {
                         String result = await response.Content.ReadAsStringAsync();
-                        //LogManager.AddLogMessage(thisClassName, "getAccountList", "response.IsSuccess: " + dataString);
+                        //LogManager.AddLogMessage(Name, "getAccountList", "response.IsSuccess: " + dataString);
                         //list = new JavaScriptSerializer().Deserialize<GDAXAccount[]>(result).ToList();
                         // TO TEST
                     }
                     else
                     {
-                        LogManager.AddLogMessage(thisClassName, "getAccountList", "response.IsSuccess is FALSE : NO BALANCES TO PROCESS : response.Content=" + response.Content);
+                        LogManager.AddLogMessage(Name, "getAccountList", "response.IsSuccess is FALSE : NO BALANCES TO PROCESS : response.Content=" + response.Content);
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getAccountList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getAccountList", "EXCEPTION!!! : " + ex.Message);
             }
 
             return list;
@@ -212,26 +217,57 @@ namespace TwEX_API.Exchange
                     if (response.IsSuccessStatusCode)
                     {
                         String result = await response.Content.ReadAsStringAsync();
-                        //LogManager.AddLogMessage(thisClassName, "getAccountHistoryList", "response.IsSuccess: " + dataString);
+                        //LogManager.AddLogMessage(Name, "getAccountHistoryList", "response.IsSuccess: " + dataString);
                         //list = new JavaScriptSerializer().Deserialize<GDAXAccountHistory[]>(result).ToList();
                         // TO TEST
                     }
                     else
                     {
-                        LogManager.AddLogMessage(thisClassName, "getAccountHistoryList", "response.IsSuccess is FALSE : response.Content=" + response.Content);
+                        LogManager.AddLogMessage(Name, "getAccountHistoryList", "response.IsSuccess is FALSE : response.Content=" + response.Content);
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getAccountHistoryList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getAccountHistoryList", "EXCEPTION!!! : " + ex.Message);
             }
 
             return list;
         }
         #endregion
         #endregion API_Private
-        
+
+        #region ExchangeManager
+        public static List<ExchangeTicker> getExchangeTickerList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+            /*
+            List<> tickerList = getTickerList();
+
+            foreach (PoloniexTicker ticker in tickerList)
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+
+                string[] pairs = ticker.pair.Split('_');
+                eTicker.market = pairs[0];
+                eTicker.symbol = pairs[1];
+
+                eTicker.last = ticker.last;
+                eTicker.ask = ticker.lowestAsk;
+                eTicker.bid = ticker.highestBid;
+                eTicker.change = ticker.percentChange;
+                eTicker.volume = ticker.baseVolume;
+                eTicker.high = ticker.high24hr;
+                eTicker.low = ticker.low24hr;
+
+                list.Add(eTicker);
+            }
+            */
+            return list;
+        }
+        #endregion ExchangeManager
+
         #region DataModels
         #region DATAMODELS_Public
         public class GDAXProduct

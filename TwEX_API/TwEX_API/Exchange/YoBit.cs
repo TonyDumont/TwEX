@@ -8,17 +8,22 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
 {
     public class YoBit
     {
         #region Properties
-        public static String thisClassName = "YoBit";
-        public static string ApiKey = String.Empty;
-        public static string ApiSecret = String.Empty;
+        // EXCHANGE MANAGER
+        public static string Name { get; } = "YoBit";
+        public static string Url { get; } = "https://yobit.net/";
+        public static string USDSymbol { get; } = "USD";
+        // API
+        public static string ApiKey { get; set; } = String.Empty;
+        public static string ApiSecret { get; set; } = String.Empty;
         private static RestClient client = new RestClient("https://yobit.net/api");
-        public static string Api_privateUrl = "https://yobit.net/tapi/";
+        private static string Api_privateUrl = "https://yobit.net/tapi/";
         #endregion Properties
 
         #region API_Public
@@ -35,13 +40,13 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/3/info", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getInfoList", "Response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getInfoList", "Response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 var pairsObject = JObject.Parse(jsonObject["pairs"].ToString());
 
                 foreach (var item in pairsObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getInfo", item.Key + " | " + item.Value);
+                    //LogManager.AddLogMessage(Name, "getInfo", item.Key + " | " + item.Value);
                     YoBitInfo info = pairsObject[item.Key].ToObject<YoBitInfo>();
                     info.pair = item.Key;
                     string[] pairs = info.pair.Split('_');
@@ -52,7 +57,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getInfoList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getInfoList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -69,11 +74,11 @@ namespace TwEX_API.Exchange
                 string pairs = string.Join("-", pairsArray);
                 var request = new RestRequest("/3/depth/" + pairs + "?limit=" + limit, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getOrderBook", "Response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrderBook", "Response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getOrderBook", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                    //LogManager.AddLogMessage(Name, "getOrderBook", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                     YoBitOrderBook orderBook = jsonObject[item.Key].ToObject<YoBitOrderBook>();
                     orderBook.pair = item.Key;
                     string[] pairSplit = orderBook.pair.Split('_');
@@ -84,7 +89,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBook", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderBook", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -100,7 +105,7 @@ namespace TwEX_API.Exchange
                 string pair = symbol.ToLower() + "_" + market.ToLower();
                 var request = new RestRequest("/3/ticker/" + pair, Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 YoBitTicker ticker = jsonObject[pair].ToObject<YoBitTicker>();
                 ticker.pair = pair;
@@ -110,7 +115,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -125,15 +130,15 @@ namespace TwEX_API.Exchange
             try
             {
                 string pairs = string.Join("-", pairsArray);
-                //LogManager.AddLogMessage(thisClassName, "getTickerList", pairs ,LogManager.LogMessageType.DEBUG); 
+                //LogManager.AddLogMessage(Name, "getTickerList", pairs ,LogManager.LogMessageType.DEBUG); 
                 var request = new RestRequest("/3/ticker/" + pairs, Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getTicker", item.Key + " | " + item.Value);
+                    //LogManager.AddLogMessage(Name, "getTicker", item.Key + " | " + item.Value);
                     YoBitTicker ticker = jsonObject[item.Key].ToObject<YoBitTicker>();
                     ticker.pair = item.Key;
                     string[] pairSplit = ticker.pair.Split('_');
@@ -144,7 +149,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "returnTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "returnTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }       
             return list;
         }
@@ -161,12 +166,12 @@ namespace TwEX_API.Exchange
                 string pairs = string.Join("-", pairsArray);
                 var request = new RestRequest("/3/trades/" + pairs + "?limit=" + limit, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getTradeList", "Response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTradeList", "Response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
 
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getTradeList", item.Key + " | " + item.Value);
+                    //LogManager.AddLogMessage(Name, "getTradeList", item.Key + " | " + item.Value);
                     List<YoBitTrade> trades = jsonObject[item.Key].ToObject<List<YoBitTrade>>();
                     foreach (YoBitTrade trade in trades)
                     {
@@ -180,7 +185,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradeList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTradeList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -223,7 +228,7 @@ namespace TwEX_API.Exchange
                 string req = "method=getInfo&nonce=" + ExchangeManager.GetNonce();
                 string result = await SendPrivateApiRequestAsync(req);
                 result = result.Replace("return", "results");
-                //LogManager.AddLogMessage(thisClassName, "getInfo", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getInfo", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var balancejsonData = JObject.Parse(result);
                 int isSuccess = Convert.ToInt32(balancejsonData["success"]);
 
@@ -262,14 +267,14 @@ namespace TwEX_API.Exchange
                         }
                         else
                         {
-                            LogManager.AddLogMessage(thisClassName, "GetBalances", "NOT IN BList already (WHY???) : " + f.Key + " | " + f.Value, LogManager.LogMessageType.DEBUG);
+                            LogManager.AddLogMessage(Name, "GetBalances", "NOT IN BList already (WHY???) : " + f.Key + " | " + f.Value, LogManager.LogMessageType.DEBUG);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -286,7 +291,7 @@ namespace TwEX_API.Exchange
                 string req = "method=ActiveOrders&nonce=" + ExchangeManager.GetNonce() + "&pair=btg_btc";
                 string result = await SendPrivateApiRequestAsync(req);
                 result = result.Replace("return", "results");
-                //LogManager.AddLogMessage(thisClassName, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
                 int isSuccess = Convert.ToInt32(jsonObject["success"]);
 
@@ -295,7 +300,7 @@ namespace TwEX_API.Exchange
                     var results = JObject.Parse(jsonObject["results"].ToString());
                     foreach (var item in results)
                     {
-                        //LogManager.AddLogMessage(thisClassName, "getOpenOrdersList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                        //LogManager.AddLogMessage(Name, "getOpenOrdersList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                         YoBitOrder order = results[item.Key].ToObject<YoBitOrder>();       
                         order.orderId = item.Key;
                         string[] pairs = order.pair.Split('_');
@@ -307,7 +312,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOpenOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -324,7 +329,7 @@ namespace TwEX_API.Exchange
                 string req = "method=OrderInfo&nonce=" + ExchangeManager.GetNonce() + "&orderId=" + orderId;
                 string result = await SendPrivateApiRequestAsync(req);
                 result = result.Replace("return", "results");
-                //LogManager.AddLogMessage(thisClassName, "getOrderInfoList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrderInfoList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
                 int isSuccess = Convert.ToInt32(jsonObject["success"]);
 
@@ -333,7 +338,7 @@ namespace TwEX_API.Exchange
                     var results = JObject.Parse(jsonObject["results"].ToString());
                     foreach (var item in results)
                     {
-                        //LogManager.AddLogMessage(thisClassName, "getOrderInfoList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                        //LogManager.AddLogMessage(Name, "getOrderInfoList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                         YoBitOrder order = results[item.Key].ToObject<YoBitOrder>();
                         order.orderId = item.Key;
                         string[] pairs = order.pair.Split('_');
@@ -345,7 +350,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderInfoList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderInfoList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -370,7 +375,7 @@ namespace TwEX_API.Exchange
                 string req = "method=TradeHistory&nonce=" + ExchangeManager.GetNonce() + "&pair=" + pair;
                 string result = await SendPrivateApiRequestAsync(req);
                 result = result.Replace("return", "results");
-                LogManager.AddLogMessage(thisClassName, "getTradeHistoryList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getTradeHistoryList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
                 
                 int isSuccess = Convert.ToInt32(jsonObject["success"]);
@@ -380,7 +385,7 @@ namespace TwEX_API.Exchange
                     var results = JObject.Parse(jsonObject["results"].ToString());
                     foreach (var item in results)
                     {
-                        //LogManager.AddLogMessage(thisClassName, "getTradeHistoryList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                        //LogManager.AddLogMessage(Name, "getTradeHistoryList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                         YoBitOrder order = results[item.Key].ToObject<YoBitOrder>();
                         order.orderId = item.Key;
                         string[] pairs = order.pair.Split('_');
@@ -392,7 +397,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradeHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTradeHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -406,6 +411,36 @@ namespace TwEX_API.Exchange
         // RedeemYobicode
         #endregion
         #endregion API_Private
+
+        #region ExchangeManager
+        public static List<ExchangeTicker> getExchangeTickerList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+
+            //List<YoBitTicker> tickerList = getTickerList();
+            /*
+            foreach (YoBitTicker ticker in tickerList)
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+
+                string[] pairs = ticker.pair.Split('_');
+                eTicker.market = pairs[1];
+                eTicker.symbol = pairs[0];
+
+                eTicker.last = ticker.last;
+                eTicker.ask = ticker.buy;
+                eTicker.bid = ticker.sell;
+                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                eTicker.volume = ticker.vol;
+                eTicker.high = ticker.high;
+                eTicker.low = ticker.low;
+                list.Add(eTicker);
+            }
+            */
+            return list;
+        }
+        #endregion ExchangeManager
 
         #region DataModels
         #region DATAMODELS_Enums

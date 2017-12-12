@@ -9,15 +9,20 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
 {
     public class Poloniex
     {
         #region Properties
-        public static string thisClassName = "Poloniex";
-        public static string ApiKey = String.Empty;
-        public static string ApiSecret = String.Empty;
+        // EXCHANGE MANAGER
+        public static string Name { get; } = "Poloniex";
+        public static string Url { get; } = "https://poloniex.com/";
+        public static string USDSymbol { get; } = "USDT";
+        // API
+        public static string ApiKey { get; set; } = String.Empty;
+        public static string ApiSecret { get; set; } = String.Empty;
         private static RestClient client = new RestClient("https://poloniex.com");
         #endregion Properties
 
@@ -35,7 +40,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public?command=return24hVolume", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "get24VolumeList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "get24VolumeList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
 
                 var jsonObject = JObject.Parse(response.Content);
 
@@ -43,7 +48,7 @@ namespace TwEX_API.Exchange
                 {
                     if (!entry.Key.Contains("total"))
                     {
-                        //LogManager.AddLogMessage(thisClassName, "get24VolumeList", "Key=" + entry.Key + " | Value=" + entry.Value, LogManager.LogMessageType.DEBUG);
+                        //LogManager.AddLogMessage(Name, "get24VolumeList", "Key=" + entry.Key + " | Value=" + entry.Value, LogManager.LogMessageType.DEBUG);
                         Poloniex24hVolume item = new Poloniex24hVolume();
                         item.pair = entry.Key; // MKT_SYM
                         string[] stringSplit = item.pair.Split('_');
@@ -69,7 +74,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "get24VolumeList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "get24VolumeList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -93,14 +98,14 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getChartData", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getChartData", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 PoloniexChartData[] array = jsonVal.ToObject<PoloniexChartData[]>();
                 return array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getChartData", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getChartData", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -118,12 +123,12 @@ namespace TwEX_API.Exchange
                 string url = "/public?command=returnCurrencies";
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getCurrencies", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getCurrencies", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
 
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getCurrencies", "Key=" + item.Key + " | Value=" + item.Value, LogManager.LogMessageType.DEBUG);         
+                    //LogManager.AddLogMessage(Name, "getCurrencies", "Key=" + item.Key + " | Value=" + item.Value, LogManager.LogMessageType.DEBUG);         
                     PoloniexCurrency currency = jsonObject[item.Key].ToObject<PoloniexCurrency>();
                     currency.symbol = item.Key;
                     list.Add(currency);
@@ -131,7 +136,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCurrencies", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCurrencies", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -149,7 +154,7 @@ namespace TwEX_API.Exchange
                 string url = "/public?command=returnLoanOrders&currency=" + currency;
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getLoanOrdersList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getLoanOrdersList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 
                 List<PoloniexLoanOrder> offers = jsonObject["offers"].ToObject<List<PoloniexLoanOrder>>();
@@ -169,7 +174,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getLoanOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getLoanOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -192,7 +197,7 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getOrderBook", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(Name, "getOrderBook", "response.Content=" + response.Content);
                 var jsonObject = JObject.Parse(response.Content);
 
                 PoloniexOrderBookItem item = jsonObject.ToObject<PoloniexOrderBookItem>();
@@ -203,7 +208,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBook", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderBook", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -226,7 +231,7 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getOrderBookList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrderBookList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 
                 foreach (var item in jsonObject)
@@ -241,7 +246,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -259,7 +264,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public?command=returnTicker", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
 
                 foreach (var entry in jsonObject)
@@ -271,7 +276,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -295,14 +300,14 @@ namespace TwEX_API.Exchange
                 }
                 var request = new RestRequest(url, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getTradeHistory", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTradeHistory", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 PoloniexTradeHistory[] array = jsonVal.ToObject<PoloniexTradeHistory[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradeHistory", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTradeHistory", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -347,13 +352,13 @@ namespace TwEX_API.Exchange
                 string url = "https://poloniex.com/tradingApi";
                 string myParam = "command=returnBalances&nonce=" + ExchangeManager.GetNonce();
                 string result = await getPrivateApiRequestAsync(url, myParam);
-                //LogManager.AddLogMessage(thisClassName, "getBalances", "result=" + result);
+                //LogManager.AddLogMessage(Name, "getBalances", "result=" + result);
 
                 var jsonObject = JObject.Parse(result);
 
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getBalances", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                    //LogManager.AddLogMessage(Name, "getBalances", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                     PoloniexBalance balance = new PoloniexBalance();
                     balance.symbol = item.Key;
                     balance.available = Convert.ToDecimal(item.Value);
@@ -362,7 +367,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -380,7 +385,7 @@ namespace TwEX_API.Exchange
                 string url = "https://poloniex.com/tradingApi";
                 string myParam = "command=returnCompleteBalances&nonce=" + ExchangeManager.GetNonce();
                 string result = await getPrivateApiRequestAsync(url, myParam);
-                //LogManager.AddLogMessage(thisClassName, "getCompleteBalances", "result=" + result);
+                //LogManager.AddLogMessage(Name, "getCompleteBalances", "result=" + result);
                 var jsonObject = JObject.Parse(result);
 
                 foreach (var item in jsonObject)
@@ -392,7 +397,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCompleteBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCompleteBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -423,7 +428,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getDepositAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getDepositAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -442,7 +447,7 @@ namespace TwEX_API.Exchange
                 string url = "https://poloniex.com/tradingApi";
                 string parameters = "command=returnDepositsWithdrawals&start=" + start + "&end=" + end + "&nonce=" + ExchangeManager.GetNonce();
                 string result = await getPrivateApiRequestAsync(url, parameters);
-                //LogManager.AddLogMessage(thisClassName, "getDepositsWithdrawals", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getDepositsWithdrawals", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
                 List<PoloniexTransaction> deposits = jsonObject["deposits"].ToObject<List<PoloniexTransaction>>();
                 List<PoloniexTransaction> withdrawals = jsonObject["withdrawals"].ToObject<List<PoloniexTransaction>>();
@@ -460,7 +465,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getDepositAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getDepositAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -492,7 +497,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getNewAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getNewAddresses", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return string.Empty;
             }     
         }
@@ -517,7 +522,7 @@ namespace TwEX_API.Exchange
                 }
 
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddLogMessage(thisClassName, "getOpenOrders", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOpenOrders", "result=" + result, LogManager.LogMessageType.DEBUG);
 
                 if (isAll)
                 {
@@ -525,10 +530,10 @@ namespace TwEX_API.Exchange
 
                     foreach (var item in jsonObject)
                     {
-                        //LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", item.Key + " | " + item.Value);
+                        //LogManager.AddDebugMessage(Name, "returnOpenOrders", item.Key + " | " + item.Value);
 
                         PoloniexOpenOrder[] orders = jsonObject[item.Key].ToObject<PoloniexOpenOrder[]>();
-                        //LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", "count=" + orders.Count());
+                        //LogManager.AddDebugMessage(Name, "returnOpenOrders", "count=" + orders.Count());
                         if (orders.Count() > 0)
                         {
                             foreach (PoloniexOpenOrder order in orders)
@@ -558,7 +563,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOpenOrders", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOpenOrders", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -576,7 +581,7 @@ namespace TwEX_API.Exchange
                 string url = "https://poloniex.com/tradingApi";
                 string param = "command=returnOrderTrades&orderNumber=" + orderNumber + "&nonce=" + ExchangeManager.GetNonce();
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddLogMessage(thisClassName, "getOrderTradesList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrderTradesList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(result) as JArray;
                 list = jsonVal.ToObject<List<PoloniexTradeHistory>>();
 
@@ -590,7 +595,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -635,10 +640,10 @@ namespace TwEX_API.Exchange
                 {
                     param += "&limit=" + limit;
                 }
-                //LogManager.AddDebugMessage(thisClassName, "returnTradeHistory", "param=" + param);
+                //LogManager.AddDebugMessage(Name, "returnTradeHistory", "param=" + param);
 
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddDebugMessage(thisClassName, "returnTradeHistory", "result=" + result);
+                //LogManager.AddDebugMessage(Name, "returnTradeHistory", "result=" + result);
 
                 if (isAll)
                 {
@@ -648,7 +653,7 @@ namespace TwEX_API.Exchange
 
                     foreach (var item in jsonObject)
                     {
-                        //LogManager.AddDebugMessage(thisClassName, "returnOpenOrders", item.Key + " | " + item.Value);
+                        //LogManager.AddDebugMessage(Name, "returnOpenOrders", item.Key + " | " + item.Value);
                         PoloniexTradeHistory[] trades = jsonObject[item.Key].ToObject<PoloniexTradeHistory[]>();
                         if (trades.Count() > 0)
                         {
@@ -680,7 +685,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;  
         }
@@ -706,13 +711,13 @@ namespace TwEX_API.Exchange
                     param += "&" + option + "=1";
                 }
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddLogMessage(thisClassName, "setBuy", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "setBuy", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
                 return jsonObject.ToObject<PoloniexNewOrderResult>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setBuy", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "setBuy", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -728,7 +733,7 @@ namespace TwEX_API.Exchange
 
             string myParam = "command=cancelOrder&orderNumber=" + orderNumber + "&nonce=" + ExchangeManager.GetNonce();
             string result = await getPrivateApiRequestAsync(url, myParam);
-            //LogManager.AddDebugMessage(thisClassName, "cancelOrder", "result=" + result);
+            //LogManager.AddDebugMessage(Name, "cancelOrder", "result=" + result);
             var jsonObject = JObject.Parse(result);
             PoloniexCancelResult cancelResult = jsonObject.ToObject<PoloniexCancelResult>();
             if (cancelResult.success == 1)
@@ -759,15 +764,15 @@ namespace TwEX_API.Exchange
                 {
                     param += "&" + option + "=1";
                 }
-                //LogManager.AddDebugMessage(thisClassName, "setSell", "option=" + option + " | " + param);
+                //LogManager.AddDebugMessage(Name, "setSell", "option=" + option + " | " + param);
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddDebugMessage(thisClassName, "setSell", "result=" + result);
+                //LogManager.AddDebugMessage(Name, "setSell", "result=" + result);
                 //return new JavaScriptSerializer().Deserialize<PoloniexNewOrderResult>(result);
                 return null;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setSell", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "setSell", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -794,6 +799,37 @@ namespace TwEX_API.Exchange
         // toggleAutoRenew
         #endregion
         #endregion API_Private
+
+        #region ExchangeManager
+        public static List<ExchangeTicker> getExchangeTickerList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+
+            List<PoloniexTicker> tickerList = getTickerList();
+
+            foreach(PoloniexTicker ticker in tickerList)
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+
+                string[] pairs = ticker.pair.Split('_');
+                eTicker.market = pairs[0];
+                eTicker.symbol = pairs[1];
+
+                eTicker.last = ticker.last;
+                eTicker.ask = ticker.lowestAsk;
+                eTicker.bid = ticker.highestBid;
+                eTicker.change = ticker.percentChange;
+                eTicker.volume = ticker.baseVolume;
+                eTicker.high = ticker.high24hr;
+                eTicker.low = ticker.low24hr;
+
+                list.Add(eTicker);
+            }
+
+            return list;
+        }
+        #endregion ExchangeManager
 
         #region DataModels
         #region DATAMODELS_Enumerables  

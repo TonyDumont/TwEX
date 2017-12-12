@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using TwEX_API.Exchange;
-using static TwEX_API.Exchange.Bittrex;
-using static TwEX_API.Exchange.Poloniex;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_Console
 {
@@ -12,20 +9,16 @@ namespace TwEX_Console
         {
             Console.WriteLine("Welcome to TwEX Console");
 
-            List<BittrexMarketSummary> list = Bittrex.getMarketSummariesList();
-
-            foreach (BittrexMarketSummary item in list)
+            if (InitializeExchangeList())
             {
-                Console.WriteLine("BITTREX : " + item.MarketName + " | " + item.Last);
+                Console.WriteLine("Initialized Exchange List : " + exchangeList.Count + " Exchanges");
+
+                foreach (Exchange exchange in exchangeList)
+                {
+                    Console.WriteLine(exchange.SiteName + " | " + exchange.Url + " | " + exchange.USDSymbol);
+                }
             }
-
-            List<PoloniexTicker> list2 = Poloniex.getTickerList();
-
-            foreach (PoloniexTicker ticker in list2)
-            {
-                Console.WriteLine("POLONIEX : " + ticker.pair + " | " + ticker.last);
-            }
-
+            
             Console.ReadLine();
         }
     }

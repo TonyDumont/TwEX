@@ -6,15 +6,20 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
 {
     public class Bittrex
     {
         #region Properties
-        public static String thisClassName = "Bittrex";
-        private static string ApiKey = String.Empty;
-        private static string ApiSecret = String.Empty;
+        // EXCHANGE MANAGER
+        public static string Name { get; } = "Bittrex";
+        public static string Url { get; } = "https://bittrex.com/";
+        public static string USDSymbol { get; } = "USDT";
+        // API
+        public static string ApiKey { get; set; } = String.Empty;
+        public static string ApiSecret { get; set; } = String.Empty;
         private static RestClient client = new RestClient("https://bittrex.com/api/v1.1");
         #endregion Properties
 
@@ -32,7 +37,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public/getcurrencies", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getCurrencyList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getCurrencyList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -43,7 +48,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCurrencyList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getCurrencyList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -60,7 +65,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public/getmarkets", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getMarketsList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getMarketsList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -71,7 +76,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getMarketsList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getMarketsList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -88,7 +93,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public/getmarkethistory?market=" + market + "-" + symbol, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getMarketHistory", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(Name, "getMarketHistory", "response.Content=" + response.Content);
                 var jsonObject = JObject.Parse(response.Content);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -98,12 +103,12 @@ namespace TwEX_API.Exchange
                 }
                 else
                 {
-                    LogManager.AddLogMessage(thisClassName, "getMarketHistory", "ERROR LOADING : SUCCESS false on market : " + market + " | " + symbol, LogManager.LogMessageType.DEBUG);
+                    LogManager.AddLogMessage(Name, "getMarketHistory", "ERROR LOADING : SUCCESS false on market : " + market + " | " + symbol, LogManager.LogMessageType.DEBUG);
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getMarketHistory", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getMarketHistory", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -119,7 +124,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public/getmarketsummary?market=" + market + "-" + symbol, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getMarketSummary", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getMarketSummary", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -137,13 +142,13 @@ namespace TwEX_API.Exchange
                 }
                 else
                 {
-                    LogManager.AddLogMessage(thisClassName, "getMarketSummary", "ERROR LOADING : SUCCESS false on market : " + market, LogManager.LogMessageType.DEBUG);
+                    LogManager.AddLogMessage(Name, "getMarketSummary", "ERROR LOADING : SUCCESS false on market : " + market, LogManager.LogMessageType.DEBUG);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getMarketSummary", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getMarketSummary", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -160,7 +165,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public/getmarketsummaries", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getMarketSummaries", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getMarketSummaries", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -171,7 +176,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "returnTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "returnTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -189,7 +194,7 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("/public/getorderbook?market=" + market + "-" + symbol + "&type=" + type.ToString(), Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getOrderBookList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrderBookList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -225,7 +230,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -242,7 +247,7 @@ namespace TwEX_API.Exchange
                 var request = new RestRequest("/public/getticker?market=" + market + "-" + symbol, Method.GET);
                 var response = client.Execute(request);
 
-                //LogManager.AddLogMessage(thisClassName, "getTicker", "response.Content=" + response.Content);
+                //LogManager.AddLogMessage(Name, "getTicker", "response.Content=" + response.Content);
                 var jsonObject = JObject.Parse(response.Content);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -253,13 +258,13 @@ namespace TwEX_API.Exchange
                 }
                 else
                 {
-                    LogManager.AddLogMessage(thisClassName, "getTicker", "ERROR LOADING : SUCCESS false on market : " + market, LogManager.LogMessageType.DEBUG);
+                    LogManager.AddLogMessage(Name, "getTicker", "ERROR LOADING : SUCCESS false on market : " + market, LogManager.LogMessageType.DEBUG);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -296,7 +301,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "getBalanceList", result);
+                //LogManager.AddLogMessage(Name, "getBalanceList", result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -306,13 +311,13 @@ namespace TwEX_API.Exchange
                 }
                 else
                 {
-                    LogManager.AddLogMessage(thisClassName, "getBalance", "success false : message=" + jsonObject["message"]);
+                    LogManager.AddLogMessage(Name, "getBalance", "success false : message=" + jsonObject["message"]);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getBalance", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getBalance", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -336,7 +341,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "getBalanceList", result);
+                //LogManager.AddLogMessage(Name, "getBalanceList", result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -347,7 +352,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getBalanceList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getBalanceList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -370,13 +375,13 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "getDepositAddress", result);
+                //LogManager.AddLogMessage(Name, "getDepositAddress", result);
                 var jsonObject = JObject.Parse(result);
                 return jsonObject.ToObject<BittrexDepositMessage>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getDepositAddress", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getDepositAddress", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -411,7 +416,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "getDepositHistoryList", "result=" + result);
+                //LogManager.AddLogMessage(Name, "getDepositHistoryList", "result=" + result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -422,7 +427,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getDepositHistoryList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getDepositHistoryList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -445,7 +450,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "getOrder", result);
+                //LogManager.AddLogMessage(Name, "getOrder", result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -455,13 +460,13 @@ namespace TwEX_API.Exchange
                 }
                 else
                 {
-                    LogManager.AddLogMessage(thisClassName, "getOrder", "success false : message=" + jsonObject["message"]);
+                    LogManager.AddLogMessage(Name, "getOrder", "success false : message=" + jsonObject["message"]);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrder", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOrder", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -495,7 +500,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "returnOrderHistory", "result=" + result);
+                //LogManager.AddLogMessage(Name, "returnOrderHistory", "result=" + result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -506,7 +511,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderHistory", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOrderHistory", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -540,7 +545,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -551,7 +556,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOpenOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -585,7 +590,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "getWithdrawalHistoryList", "result=" + result);
+                //LogManager.AddLogMessage(Name, "getWithdrawalHistoryList", "result=" + result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -596,7 +601,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getWithdrawalHistoryList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getWithdrawalHistoryList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -623,13 +628,13 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "setBuy", result);
+                //LogManager.AddLogMessage(Name, "setBuy", result);
                 var jsonObject = JObject.Parse(result);
                 return jsonObject.ToObject<BittrexBuySellMessage>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setBuy", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "setBuy", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -654,13 +659,13 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "setCancel", result);
+                //LogManager.AddLogMessage(Name, "setCancel", result);
                 var jsonObject = JObject.Parse(result);
                 return jsonObject.ToObject<BittrexBuySellMessage>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setCancel", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "setCancel", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -685,13 +690,13 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(thisClassName, "setSell", result);
+                //LogManager.AddLogMessage(Name, "setSell", result);
                 var jsonObject = JObject.Parse(result);
                 return jsonObject.ToObject<BittrexBuySellMessage>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setSell", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "setSell", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -701,6 +706,39 @@ namespace TwEX_API.Exchange
         // Withdraw
         #endregion
         #endregion API_Private
+
+        #region ExchangeManager
+        public static List<ExchangeTicker> getExchangeTickerList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+
+            List<BittrexMarketSummary> tickerList = getMarketSummariesList();
+
+            foreach (BittrexMarketSummary ticker in tickerList)
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+
+                string[] pairs = ticker.MarketName.Split('-');
+                eTicker.market = pairs[0];
+                eTicker.symbol = pairs[1];
+
+                eTicker.last = ticker.Last;
+                eTicker.ask = ticker.Ask;
+                eTicker.bid = ticker.Bid;
+                eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                eTicker.volume = ticker.BaseVolume;
+                eTicker.high = ticker.High;
+                eTicker.low = ticker.Low;
+                //LogManager.AddDebugMessage(thisClassName, "returnTicker", "pair=" + ticker.pair + " | last=" + ticker.last);
+                //list.Add(ticker);
+                //ExchangeManager.ProcessTicker(eTicker);
+                list.Add(eTicker);
+            }
+            
+            return list;
+        }
+        #endregion ExchangeManager
 
         #region DataModels
         #region DATAMODELS_Enums

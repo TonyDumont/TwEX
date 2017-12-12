@@ -8,18 +8,23 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
 {
     public class HitBTC
     {
         #region Properties
-        public static String thisClassName = "HitBTC";
-        private static string ApiKey = String.Empty;
-        private static string ApiSecret = String.Empty;
+        // EXCHANGE MANAGER
+        public static string Name { get; } = "HitBTC";
+        public static string Url { get; } = "https://hitbtc.com/";
+        public static string USDSymbol { get; } = "USDT";
+        // API
+        public static string ApiKey { get; set; } = String.Empty;
+        public static string ApiSecret { get; set; } = String.Empty;
         private static RestClient client = new RestClient("https://api.hitbtc.com");
-        public static string Api_publicUrl = "/api/2/public/";
-        public static string Api_privateUrl = "https://api.hitbtc.com/api/2/";
+        private static string Api_publicUrl = "/api/2/public/";
+        private static string Api_privateUrl = "https://api.hitbtc.com/api/2/";
         #endregion Properties
 
         #region API_Public
@@ -41,14 +46,14 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getCandleList", response.Content, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getCandleList", response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 HitBTCCandleData[] array = jsonVal.ToObject<HitBTCCandleData[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCandleList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCandleList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -65,13 +70,13 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_publicUrl + "currency/" + currency.ToUpper();
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getCurrency", response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getCurrency", response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<HitBTCCurrency>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCurrency", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCurrency", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -89,14 +94,14 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_publicUrl + "currency";
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getCurrency", response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getCurrency", response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 HitBTCCurrency[] array = jsonVal.ToObject<HitBTCCurrency[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCurrency", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCurrency", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -113,13 +118,13 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_publicUrl + "symbol/" + symbol.ToUpper() + market.ToUpper();
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getCurrencySymbolList", response.Content);
+                //LogManager.AddLogMessage(Name, "getCurrencySymbolList", response.Content);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<HitBTCCurrencySymbol>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCurrencySymbolList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCurrencySymbolList", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -137,14 +142,14 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_publicUrl + "symbol";
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getCurrencySymbolList", response.Content);
+                //LogManager.AddLogMessage(Name, "getCurrencySymbolList", response.Content);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 HitBTCCurrencySymbol[] array = jsonVal.ToObject<HitBTCCurrencySymbol[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCurrencySymbolList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getCurrencySymbolList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -162,7 +167,7 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_publicUrl + "orderbook/" + symbol.ToUpper() + market.ToUpper();
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getOrderBookList", response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrderBookList", response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
 
                 List<HitBTCOrderBookData> buys = jsonObject["ask"].ToObject<List<HitBTCOrderBookData>>();
@@ -182,7 +187,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderBookList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -204,7 +209,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTicker", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getTicker", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -228,7 +233,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTickers", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getTickers", "EXCEPTION!!! : " + ex.Message);
             }
 
             return list;
@@ -262,7 +267,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradesList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getTradesList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -306,14 +311,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "account/balance";
                 string response = GetApiPrivateRequest(requestUrl);
-                //LogManager.AddLogMessage(thisClassName, "getAccountBalanceList", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getAccountBalanceList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCBalance[] array = jsonVal.ToObject<HitBTCBalance[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getAccountBalanceList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getAccountBalanceList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -334,13 +339,13 @@ namespace TwEX_API.Exchange
                     request = new RestRequest(requestUrl, Method.POST);
                 }
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getDepositAddress", response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getDepositAddress", response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<HitBTCDepositAddress>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getDepositAddress", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getDepositAddress", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -356,13 +361,13 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "order/" + clientOrderId;
                 string response = GetApiPrivateRequest(requestUrl);
-                //LogManager.AddLogMessage(thisClassName, "getOrder", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrder", response, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response);
                 return jsonObject.ToObject<HitBTCOrder>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -379,14 +384,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "order";
                 string response = GetApiPrivateRequest(requestUrl);
-                //LogManager.AddLogMessage(thisClassName, "getOrdersList", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrdersList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCOrder[] array = jsonVal.ToObject<HitBTCOrder[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -403,14 +408,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "trading/balance";
                 string response = GetApiPrivateRequest(requestUrl);
-                LogManager.AddLogMessage(thisClassName, "getTradingBalanceList", response, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getTradingBalanceList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCBalance[] array = jsonVal.ToObject<HitBTCBalance[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -426,13 +431,13 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "trading/fee/" + symbol.ToUpper() + market.ToUpper();
                 string response = GetApiPrivateRequest(requestUrl);
-                LogManager.AddLogMessage(thisClassName, "getTradingCommission", response, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getTradingCommission", response, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response);
                 return jsonObject.ToObject<HitBTCCommission>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradingCommission", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTradingCommission", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -449,14 +454,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "history/order";
                 string response = GetApiPrivateRequest(requestUrl);
-                //LogManager.AddLogMessage(thisClassName, "getOrdersHistoryList", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrdersHistoryList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCOrder[] array = jsonVal.ToObject<HitBTCOrder[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrdersHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrdersHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -479,14 +484,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "history/trades";
                 string response = GetApiPrivateRequest(requestUrl);
-                LogManager.AddLogMessage(thisClassName, "getOrdersHistoryList", response, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getOrdersHistoryList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCOrder[] array = jsonVal.ToObject<HitBTCOrder[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrdersHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrdersHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -503,14 +508,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "history/order/" + orderId + "/trades";
                 string response = GetApiPrivateRequest(requestUrl);
-                LogManager.AddLogMessage(thisClassName, "getTradeHistoryListByOrder", response, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCOrder[] array = jsonVal.ToObject<HitBTCOrder[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradeHistoryListByOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -533,14 +538,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "account/transactions";
                 string response = GetApiPrivateRequest(requestUrl);
-                //LogManager.AddLogMessage(thisClassName, "getTradeHistoryListByOrder", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCTransactionHistory[] array = jsonVal.ToObject<HitBTCTransactionHistory[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradeHistoryListByOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -561,14 +566,14 @@ namespace TwEX_API.Exchange
                     clientOrderId = clientOrderId
                 };
                 string response = GetApiPrivateRequest(requestUrl, postData);
-                //LogManager.AddLogMessage(thisClassName, "getOrder", response);
+                //LogManager.AddLogMessage(Name, "getOrder", response);
                 var jsonObject = JObject.Parse(response);
                 HitBTCNewOrderMessage message = jsonObject.ToObject<HitBTCNewOrderMessage>();
                 return message;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrder", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOrder", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
         }
@@ -613,14 +618,14 @@ namespace TwEX_API.Exchange
                     strictValidate = parameters.strictValidate
                 };
                 string response = GetApiPrivateRequest(requestUrl, postData);
-                //LogManager.AddLogMessage(thisClassName, "getOrder", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOrder", response, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response);
                 HitBTCNewOrderMessage message = jsonObject.ToObject<HitBTCNewOrderMessage>();
                 return message;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -642,14 +647,14 @@ namespace TwEX_API.Exchange
 
                 };
                 string response = GetApiPrivateRequest(requestUrl, postData);
-                //LogManager.AddLogMessage(thisClassName, "setTransfer", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "setTransfer", response, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response);
                 HitBTCTransactionMessage message = jsonObject.ToObject<HitBTCTransactionMessage>();
                 return message;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setTransfer", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "setTransfer", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -676,14 +681,14 @@ namespace TwEX_API.Exchange
 
                 };
                 string response = GetApiPrivateRequest(requestUrl, postData);
-                //LogManager.AddLogMessage(thisClassName, "setWithdraw", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "setWithdraw", response, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response);
                 HitBTCTransactionMessage message = jsonObject.ToObject<HitBTCTransactionMessage>();
                 return message;
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setWithdraw", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "setWithdraw", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -706,7 +711,7 @@ namespace TwEX_API.Exchange
                 };
                 /*
                 string response = GetApiPrivateRequest(requestUrl, postData);
-                //LogManager.AddLogMessage(thisClassName, "setWithdraw", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "setWithdraw", response, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response);
                 HitBTCTransactionMessage message = jsonObject.ToObject<HitBTCTransactionMessage>();
                 */
@@ -714,12 +719,40 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "setWithdraw", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "setWithdraw", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
         #endregion
         #endregion API_Private
+
+        #region ExchangeManager
+        public static List<ExchangeTicker> getExchangeTickerList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+            
+            List<HitBTCTicker> tickerList = getTickerList();
+
+            foreach (HitBTCTicker ticker in tickerList)
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+                string pair = ticker.symbol;
+                eTicker.market = pair.Substring(pair.Length - 3);
+                eTicker.symbol = pair.Substring(0, pair.Length - 3);
+
+                eTicker.last = ticker.last;
+                eTicker.ask = ticker.ask;
+                eTicker.bid = ticker.bid;
+                eTicker.volume = ticker.volume;
+                eTicker.high = ticker.high;
+                eTicker.low = ticker.low;
+                list.Add(eTicker);
+            }
+            
+            return list;
+        }
+        #endregion ExchangeManager
 
         #region DataModels
         #region DATAMODELS_Enumerables

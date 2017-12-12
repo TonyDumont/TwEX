@@ -9,18 +9,23 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
 {
     public class LiveCoin
     {
         #region Properties
-        public static string thisClassName = "LiveCoin";
-        private static string ApiKey = String.Empty;
-        private static string ApiSecret = String.Empty;
+        // EXCHANGE MANAGER
+        public static string Name { get; } = "LiveCoin";
+        public static string Url { get; } = "https://www.livecoin.net";
+        public static string USDSymbol { get; } = "USDT";
+        // API
+        public static string ApiKey { get; set; } = String.Empty;
+        public static string ApiSecret { get; set; } = String.Empty;
         private static RestClient client = new RestClient("https://api.livecoin.net");
-        public static string Api_publicUrl = "https://api.livecoin.net";
-        public static string Api_privateUrl = "https://api.livecoin.net/";
+        private static string Api_publicUrl = "https://api.livecoin.net";
+        private static string Api_privateUrl = "https://api.livecoin.net/";
         #endregion Properties
 
         #region Api_Public
@@ -36,13 +41,13 @@ namespace TwEX_API.Exchange
             {
                 var request = new RestRequest("info/coinInfo", Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getCoinInfo", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getCoinInfo", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<LiveCoinCoinInfoMessage>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCoinInfo", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCoinInfo", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -66,14 +71,14 @@ namespace TwEX_API.Exchange
 
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getLastTradesList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getLastTradesList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 LiveCoinPublicTrade[] array = jsonVal.ToObject<LiveCoinPublicTrade[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getLastTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getLastTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -95,13 +100,13 @@ namespace TwEX_API.Exchange
                 }
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getMaxMinList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getMaxMinList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 list = jsonObject["currencyPairs"].ToObject<List<LiveCoinMaxMinData>>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getMaxMinList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getMaxMinList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -119,13 +124,13 @@ namespace TwEX_API.Exchange
                 string requestUrl = "/exchange/order_book?currencyPair=" + symbol.ToUpper() + "/" + market.ToUpper() + "&groupByPrice=" + groupByPrice + "&depth=" + depth;
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getLastTradesList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getLastTradesList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<LiveCoinOrderBookResult>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getLastTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getLastTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -144,12 +149,12 @@ namespace TwEX_API.Exchange
                 string requestUrl = "exchange/all/order_book?groupByPrice=" + groupByPrice + "&depth=" + depth;
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getLastTradesList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getLastTradesList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
 
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getOrderBooksList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                    //LogManager.AddLogMessage(Name, "getOrderBooksList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                     LiveCoinOrderBookResult orderBook = jsonObject[item.Key].ToObject<LiveCoinOrderBookResult>();
                     string[] pairSplit = item.Key.ToString().Split('/');
                     orderBook.symbol = pairSplit[0];
@@ -159,7 +164,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrderBooksList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getOrderBooksList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -176,13 +181,13 @@ namespace TwEX_API.Exchange
                 string requestUrl = "exchange/restrictions";
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getRestrictions", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getRestrictions", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<LiveCoinRestrictionMessage>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getRestrictions", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getRestrictions", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -199,13 +204,13 @@ namespace TwEX_API.Exchange
                 string requestUrl = "?currencyPair=" + symbol.ToUpper() + "/" + market.ToUpper();
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<LiveCoinTicker>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -223,14 +228,14 @@ namespace TwEX_API.Exchange
                 string requestUrl = "/exchange/ticker";
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
-                //LogManager.AddLogMessage(thisClassName, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 LiveCoinTicker[] array = jsonVal.ToObject<LiveCoinTicker[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -248,7 +253,7 @@ namespace TwEX_API.Exchange
 
             //string Sign = getHashHMAC(ApiSecret, parameterString).ToUpper();
             string Sign = getHashHMAC(ApiSecret, parameters).ToUpper();
-            LogManager.AddLogMessage(thisClassName, "getApiPrivateRequest", requestUrl + parameters);
+            LogManager.AddLogMessage(Name, "getApiPrivateRequest", requestUrl + parameters);
             HttpStatusCode StatusCode;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUrl + parameters);
             request.Method = "GET";
@@ -338,7 +343,7 @@ namespace TwEX_API.Exchange
             foreach (PropertyInfo property in propertyInfoArray)
             {
                 object propValue = property.GetValue(parameters, null);
-                //LogManager.AddLogMessage(thisClassName, "getOrdersByCurrencyPairList", prop_info.Name + " | " + propValue);
+                //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", prop_info.Name + " | " + propValue);
                 string propertyName = property.Name;
                 string propertyValue = propValue.ToString();
 
@@ -347,7 +352,7 @@ namespace TwEX_API.Exchange
                 //string category = parameterData.category;
                 //string defaultValue = parameterData.defaultValue;
                 //Boolean notDefault = (propertyValue == defaultValue);
-                //LogManager.AddLogMessage(thisClassName, "getOrdersByCurrencyPairList", propertyName + " | " + propertyValue + " | " + parameterData.category + " | " + parameterData.defaultValue);
+                //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", propertyName + " | " + propertyValue + " | " + parameterData.category + " | " + parameterData.defaultValue);
 
                 if (parameterData.category == "required")
                 {
@@ -377,7 +382,7 @@ namespace TwEX_API.Exchange
                 }
 
             }
-            //LogManager.AddLogMessage(thisClassName, "getOrdersByCurrencyPairList", "parameterString=" + parameterString);
+            //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", "parameterString=" + parameterString);
             // END PARAMETERS
             return parameterString;
         }
@@ -442,7 +447,7 @@ namespace TwEX_API.Exchange
                 //List<LiveCoinBalance> masterList = new JavaScriptSerializer().Deserialize<LiveCoinBalance[]>(ResponseFromServer).ToList();
                 //var jsonObject = JObject.Parse(ResponseFromServer);
                 List<LiveCoinBalance> masterList = new List<LiveCoinBalance>();
-                LogManager.AddLogMessage(thisClassName, "GetBalances", ResponseFromServer, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "GetBalances", ResponseFromServer, LogManager.LogMessageType.DEBUG);
 
                 foreach (LiveCoinBalance b in masterList)
                 {
@@ -469,7 +474,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
 
             return list;
@@ -493,10 +498,10 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_privateUrl + "exchange/client_orders&currencyPair=XMR/BTC";
                 //requestUrl += "&openClosed=" + LiveCoinOrderOpenClosedType.CLOSED;
                 //string parameterString = getParameterString(parameters);
-                //LogManager.AddLogMessage(thisClassName, "getOrdersByCurrencyPairList", parameterString);
+                //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", parameterString);
                 //string response = getApiPrivateRequest(requestUrl, "");
                 string response = getApiPrivateRequest(requestUrl, "");
-                LogManager.AddLogMessage(thisClassName, "getOrdersByCurrencyPairList", response);
+                LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", response);
                 //JArray jsonVal = JArray.Parse(response) as JArray;
                 //LiveCoinTradeOrder[] array = jsonVal.ToObject<LiveCoinTradeOrder[]>();
                 //list = array.ToList();
@@ -505,7 +510,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getOrdersByCurrencyPairList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", "EXCEPTION!!! : " + ex.Message);
             }
             return list;
         }
@@ -524,14 +529,14 @@ namespace TwEX_API.Exchange
                 string parameters = "";
 
                 string response = getApiPrivateRequest(requestUrl, parameters);
-                LogManager.AddLogMessage(thisClassName, "getPaymentBalanceList", response, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getPaymentBalanceList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 LiveCoinBalance[] array = jsonVal.ToObject<LiveCoinBalance[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getPaymentBalanceList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getPaymentBalanceList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -558,20 +563,50 @@ namespace TwEX_API.Exchange
 
                 string parameters = "";
                 string response = getApiPrivateRequest(requestUrl, parameters);
-                //LogManager.AddLogMessage(thisClassName, "getTradesList", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTradesList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 LiveCoinTradeOrder[] array = jsonVal.ToObject<LiveCoinTradeOrder[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTradesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
         #endregion
         #endregion Api_Private
-        
+
+        #region ExchangeManager
+        public static List<ExchangeTicker> getExchangeTickerList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+            
+            List<LiveCoinTicker> tickerList = getTickerList();
+
+            foreach (LiveCoinTicker ticker in tickerList)
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+
+                string[] pairs = ticker.symbol.Split('/');
+                eTicker.market = pairs[1];
+                eTicker.symbol = pairs[0];
+
+                eTicker.last = ticker.last;
+                eTicker.ask = ticker.best_ask;
+                eTicker.bid = ticker.best_bid;
+                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                eTicker.volume = ticker.volume;
+                eTicker.high = ticker.high;
+                eTicker.low = ticker.low;
+                list.Add(eTicker);
+            }
+            
+            return list;
+        }
+        #endregion ExchangeManager
+
         #region DataModels
         #region DATAMODELS_Enumerables
         public enum LiveCoinOrderOpenClosedType
