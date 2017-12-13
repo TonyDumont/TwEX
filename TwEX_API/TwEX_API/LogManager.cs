@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
@@ -8,6 +10,7 @@ namespace TwEX_API
     public class LogManager
     {
         // PROPERTIES
+        public static Boolean ConsoleLogging = false;
         public static BindingList<LogMessage> LogMessageList = new BindingList<LogMessage>();
         // FUNCTIONS
         public static void AddLogMessage(String source, String functionCall, String message, LogMessageType type = LogMessageType.LOG)
@@ -19,6 +22,11 @@ namespace TwEX_API
             logMessage.Message = message;
             logMessage.type = type;
             LogMessageList.Insert(0, logMessage);
+
+            if (ConsoleLogging)
+            {
+                Console.WriteLine(logMessage.TimeStamp + " | source=" + logMessage.Source + " | function=" + logMessage.FunctionCall + " | " + logMessage.type + " | " + logMessage.Message);
+            }
         }
         // ENUMS
         public enum LogMessageType
@@ -145,6 +153,40 @@ namespace TwEX_API
             var propertyInfo = obj.GetType().GetProperty(propertyName);
             if (propertyInfo == null) return;
             propertyInfo.SetValue(obj, value);
+        }
+    }
+
+    class DecimalConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return (objectType == typeof(decimal) || objectType == typeof(decimal?));
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            JToken token = JToken.Load(reader);
+            if (token.Type == JTokenType.Float || token.Type == JTokenType.Integer)
+            {
+                return token.ToObject<decimal>();
+            }
+            if (token.Type == JTokenType.String)
+            {
+                // customize this to suit your needs
+                return Decimal.Parse(token.ToString(),
+                       System.Globalization.CultureInfo.GetCultureInfo("es-ES"));
+            }
+            if (token.Type == JTokenType.Null && objectType == typeof(decimal?))
+            {
+                return null;
+            }
+            throw new JsonSerializationException("Unexpected token type: " +
+                                                  token.Type.ToString());
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

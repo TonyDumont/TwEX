@@ -54,7 +54,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getCandleList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getCandleList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -161,12 +161,13 @@ namespace TwEX_API.Exchange
 
                 if (success == "true")
                 {
+                    //LogManager.AddLogMessage(Name, "getMarketSummaries", "success=true");
                     list = jsonObject["result"].ToObject<List<BleuTradeMarketSummary>>();
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getMarketSummaries", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getMarketSummaries", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -790,27 +791,35 @@ namespace TwEX_API.Exchange
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
 
-            List<BleuTradeMarketSummary> tickerList = getMarketSummariesList();
-
-            foreach (BleuTradeMarketSummary ticker in tickerList)
+            try
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
+                
+                List<BleuTradeMarketSummary> tickerList = getMarketSummariesList();
 
-                string[] pairs = ticker.MarketName.Split('_');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
+                foreach (BleuTradeMarketSummary ticker in tickerList)
+                {
+                    ExchangeTicker eTicker = new ExchangeTicker();
+                    eTicker.exchange = Name.ToUpper();
 
-                eTicker.last = ticker.Last;
-                eTicker.ask = ticker.Ask;
-                eTicker.bid = ticker.Bid;
-                eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
-                eTicker.volume = ticker.BaseVolume;
-                eTicker.high = ticker.High;
-                eTicker.low = ticker.Low;
-                list.Add(eTicker);
+                    string[] pairs = ticker.MarketName.Split('_');
+                    eTicker.market = pairs[1];
+                    eTicker.symbol = pairs[0];
+
+                    eTicker.last = ticker.Last;
+                    eTicker.ask = ticker.Ask;
+                    eTicker.bid = ticker.Bid;
+                    //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                    eTicker.volume = ticker.BaseVolume;
+                    eTicker.high = ticker.High;
+                    eTicker.low = ticker.Low;
+                    list.Add(eTicker);
+                }
+                
             }
-            
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getCandleList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
             return list;
         }
         #endregion ExchangeManager

@@ -24,7 +24,7 @@ namespace TwEX_API.Exchange
         public static string ApiKey { get; set; } = String.Empty;
         public static string ApiSecret { get; set; } = String.Empty;
         private static RestClient client = new RestClient("https://api.livecoin.net");
-        private static string Api_publicUrl = "https://api.livecoin.net";
+        //private static string Api_publicUrl = "https://api.livecoin.net";
         private static string Api_privateUrl = "https://api.livecoin.net/";
         #endregion Properties
 

@@ -2,6 +2,7 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -43,14 +44,13 @@ namespace TwEX_API.Exchange
                 // GET PRODUCTS
                 var request = new RestRequest("/products", Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(Name, "getProductList", "Content:" + response.Content, LogManager.LogMessageType.DEBUG);
-                //list = new JavaScriptSerializer().Deserialize<GDAXProduct[]>(response.Content).ToList();
-                //var jsonObject = JObject.Parse(response.Content);
-                // TO TEST
+                //LogManager.AddLogMessage(Name, "getProductList", "Content:" + response.Content, LogManager.LogMessageType.DEBUG);
+                JArray jsonVal = JArray.Parse(response.Content) as JArray;
+                list = jsonVal.ToObject<GDAXProduct[]>().ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getProductList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getProductList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -67,19 +67,51 @@ namespace TwEX_API.Exchange
                 var request = new RestRequest("/products/" + productID + "/ticker", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage("GDAXControl", "GetProductTicker", "TICKER:" + tickresponse.Content);
+                var jsonObject = JObject.Parse(response.Content);
+                GDAXProductTicker ticker = jsonObject.ToObject<GDAXProductTicker>();
+                ticker.id = productID;
+                string[] split = ticker.id.Split('-');
+                ticker.symbol = split[0];
+                ticker.market = split[1];
+                return ticker;
                 /*
                 GDAXProductTicker ticker = new JavaScriptSerializer().Deserialize<GDAXProductTicker>(response.Content);
                 ticker.id = productID;
                 return ticker;
                 */
                 // TO TEST
-                return null;
+                //return null;
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "GetProductTicker", "EXCEPTION!!! : " + ex.Message);
                 return null;
             }
+        }
+
+        /// <summary>Ticker List
+        /// <para>Get a list of all available currency pair tickers</para>
+        /// </summary>
+        public static List<GDAXProductTicker> getProductTickerList()
+        {
+            List<GDAXProductTicker> list = new List<GDAXProductTicker>();
+            try
+            {
+                // GET PRODUCTS
+                List<GDAXProduct> products = getProductList();
+
+                foreach (GDAXProduct product in products)
+                {
+                    //LogManager.AddLogMessage(Name, "getProductTickerList", product.id, LogManager.LogMessageType.DEBUG);
+                    GDAXProductTicker ticker = GetProductTicker(product.id);
+                    list.Add(ticker);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getProductTickerList", "EXCEPTION!!! : " + ex.Message);
+            }
+            return list;
         }
         #endregion
         #endregion API_Public
@@ -241,29 +273,29 @@ namespace TwEX_API.Exchange
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-            /*
-            List<> tickerList = getTickerList();
-
-            foreach (PoloniexTicker ticker in tickerList)
+            
+            List<GDAXProductTicker> tickerList = getProductTickerList();
+            
+            foreach (GDAXProductTicker ticker in tickerList)
             {
                 ExchangeTicker eTicker = new ExchangeTicker();
                 eTicker.exchange = Name.ToUpper();
 
-                string[] pairs = ticker.pair.Split('_');
-                eTicker.market = pairs[0];
-                eTicker.symbol = pairs[1];
+                //string[] pairs = ticker.pair.Split('_');
+                eTicker.market = ticker.market;
+                eTicker.symbol = ticker.symbol;
 
-                eTicker.last = ticker.last;
-                eTicker.ask = ticker.lowestAsk;
-                eTicker.bid = ticker.highestBid;
-                eTicker.change = ticker.percentChange;
-                eTicker.volume = ticker.baseVolume;
-                eTicker.high = ticker.high24hr;
-                eTicker.low = ticker.low24hr;
+                eTicker.last = ticker.price;
+                eTicker.ask = ticker.ask;
+                eTicker.bid = ticker.bid;
+                //eTicker.change = ticker.percentChange;
+                eTicker.volume = ticker.volume;
+                //eTicker.high = ticker.high24hr;
+                //eTicker.low = ticker.low24hr;
 
                 list.Add(eTicker);
             }
-            */
+            
             return list;
         }
         #endregion ExchangeManager
@@ -284,6 +316,8 @@ namespace TwEX_API.Exchange
         public class GDAXProductTicker
         {
             public string id { get; set; }
+            public string symbol { get; set; }
+            public string market { get; set; }
             // ROOT
             public int trade_id { get; set; }
             public Decimal price { get; set; }

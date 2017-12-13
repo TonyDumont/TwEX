@@ -10,6 +10,7 @@ namespace TwEX_API
     public class ExchangeManager
     {
         #region Properties
+        private static string Name {get;} = "ExchangeManager";
         public static List<Exchange> exchangeList = new List<Exchange>();
         #endregion Properties
 
@@ -83,37 +84,46 @@ namespace TwEX_API
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
 
-            if (exchangeName.Length > 0)
+            try
             {
-                Type type = getExchangeType(exchangeName);
-                if (type != null)
+                if (exchangeName.Length > 0)
                 {
-                    list = (List<ExchangeTicker>)type.InvokeMember("getExchangeTickerList",
-                        BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, 
-                        null, 
-                        type, 
-                        null);
-                }
-            }
-            else
-            {
-                foreach (Exchange exchange in exchangeList)
-                {
-                    Console.WriteLine(exchange.SiteName + " | " + exchange.USDSymbol);
-                    Type type = getExchangeType(exchange.SiteName);
-
-                    List<ExchangeTicker> itemlist = (List<ExchangeTicker>)type.InvokeMember("getExchangeTickerList",
-                        BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, 
-                        null, 
-                        type, 
-                        null);
-
-                    foreach (ExchangeTicker ticker in itemlist)
+                    Type type = getExchangeType(exchangeName);
+                    if (type != null)
                     {
-                        list.Add(ticker);
+                        list = (List<ExchangeTicker>)type.InvokeMember("getExchangeTickerList",
+                            BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                            null,
+                            type,
+                            null);
+                    }
+                }
+                else
+                {
+                    foreach (Exchange exchange in exchangeList)
+                    {
+                        //Console.WriteLine(exchange.SiteName + " | " + exchange.USDSymbol);
+                        Type type = getExchangeType(exchange.SiteName);
+
+                        List<ExchangeTicker> itemlist = (List<ExchangeTicker>)type.InvokeMember("getExchangeTickerList",
+                            BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                            null,
+                            type,
+                            null);
+
+                        foreach (ExchangeTicker ticker in itemlist)
+                        {
+                            list.Add(ticker);
+                        }
+                        Console.WriteLine(exchange.SiteName + " | " + exchange.USDSymbol + " | " + itemlist.Count + " Tickers");
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getCurrencyList", "EXCEPTION!!! : " + ex.Message);
+            }
+ 
             return list;
         }
         #endregion Getters

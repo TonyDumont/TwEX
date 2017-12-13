@@ -48,7 +48,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getCurrencyList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getCurrencyList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }

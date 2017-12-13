@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -227,13 +228,25 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_publicUrl + "ticker";
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
+                //LogManager.AddLogMessage(Name, "getTickers", "response : " + response.Content, LogManager.LogMessageType.EXCEPTION);
+                /*
+                JsonSerializerSettings settings = new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore,
+                    Formatting = Formatting.None,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    Converters = new List<JsonConverter> { new DecimalConverter() }
+                };
+                */
                 JArray jsonVal = JArray.Parse(response.Content) as JArray;
                 HitBTCTicker[] array = jsonVal.ToObject<HitBTCTicker[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getTickers", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getTickers", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
+                //LogManager.AddLogMessage(Name, "getTickers", "EXCEPTION!!! : " + response.Content, LogManager.LogMessageType.EXCEPTION);
             }
 
             return list;
@@ -730,24 +743,33 @@ namespace TwEX_API.Exchange
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-            
-            List<HitBTCTicker> tickerList = getTickerList();
 
-            foreach (HitBTCTicker ticker in tickerList)
+            try
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-                string pair = ticker.symbol;
-                eTicker.market = pair.Substring(pair.Length - 3);
-                eTicker.symbol = pair.Substring(0, pair.Length - 3);
+                
+                List<HitBTCTicker> tickerList = getTickerList();
 
-                eTicker.last = ticker.last;
-                eTicker.ask = ticker.ask;
-                eTicker.bid = ticker.bid;
-                eTicker.volume = ticker.volume;
-                eTicker.high = ticker.high;
-                eTicker.low = ticker.low;
-                list.Add(eTicker);
+                foreach (HitBTCTicker ticker in tickerList)
+                {
+                    ExchangeTicker eTicker = new ExchangeTicker();
+                    eTicker.exchange = Name.ToUpper();
+                    string pair = ticker.symbol;
+                    eTicker.market = pair.Substring(pair.Length - 3);
+                    eTicker.symbol = pair.Substring(0, pair.Length - 3);
+
+                    eTicker.last = ticker.last;
+                    eTicker.ask = ticker.ask;
+                    eTicker.bid = ticker.bid;
+                    eTicker.volume = ticker.volume;
+                    eTicker.high = ticker.high;
+                    eTicker.low = ticker.low;
+                    list.Add(eTicker);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getExchangeTickerList", "EXCEPTION!!! : " + ex.Message);
             }
             
             return list;
@@ -937,7 +959,9 @@ namespace TwEX_API.Exchange
         }
         public class HitBTCTicker
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal ask { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal bid { get; set; }
             public Decimal last { get; set; }
             public Decimal open { get; set; }
