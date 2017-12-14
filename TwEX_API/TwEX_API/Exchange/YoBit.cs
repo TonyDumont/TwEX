@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
@@ -124,16 +125,17 @@ namespace TwEX_API.Exchange
         /// <para>Required : pairs - ARRAY of STRING (sym_mkt)</para>
         /// <para>Optional : none</para>
         /// </summary>
-        public static List<YoBitTicker> getTickerList(string[] pairsArray)
+        public static List<YoBitTicker> getTickerList(List<YoBitInfo> pairs)
         {
             List<YoBitTicker> list = new List<YoBitTicker>();   
             try
             {
-                string pairs = string.Join("-", pairsArray);
+                //string pairs = string.Join("-", pairsArray);
+                string reqString = getPairsString(pairs);
                 //LogManager.AddLogMessage(Name, "getTickerList", pairs ,LogManager.LogMessageType.DEBUG); 
-                var request = new RestRequest("/3/ticker/" + pairs, Method.GET);
+                var request = new RestRequest("/3/ticker/" + reqString, Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(Name, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 
                 foreach (var item in jsonObject)
@@ -188,6 +190,20 @@ namespace TwEX_API.Exchange
                 LogManager.AddLogMessage(Name, "getTradeList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
+        }
+
+        private static string getPairsString(List<YoBitInfo> list)
+        {
+            List<string> pairsList = new List<string>();
+
+            foreach (YoBitInfo marketPair in list)
+            {
+                //LogManager.AddLogMessage(Name, "getExchangeTickerList", index + " | " + marketPair.pair, LogManager.LogMessageType.DEBUG);
+                pairsList.Add(marketPair.pair);
+            }
+            string pairs = string.Join("-", pairsList.ToArray());
+
+            return pairs;
         }
         #endregion API_Public
 
@@ -416,28 +432,69 @@ namespace TwEX_API.Exchange
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-
-            //List<YoBitTicker> tickerList = getTickerList();
-            /*
-            foreach (YoBitTicker ticker in tickerList)
+            // GET ALL THE PAIRS
+            List<YoBitInfo> infoList = getInfoList();
+            var marketList = infoList.Select(p => p.market).Distinct();
+            // SEPERATE INTO MARKETS TO BUILD REQUEST STRING
+            foreach (string market in marketList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
+                //LogManager.AddLogMessage(Name, "getExchangeTickerList", market.ToString(), LogManager.LogMessageType.DEBUG);
+                List<YoBitInfo> marketPairs = infoList.FindAll(mp => mp.market == market.ToString());
+                LogManager.AddLogMessage(Name, "getExchangeTickerList", market.ToString() + " has " + marketPairs.Count + " pairs", LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getExchangeTickerList", getPairsString(marketPairs), LogManager.LogMessageType.DEBUG);
+                // ADD TO EXCHANGE LIST
 
-                string[] pairs = ticker.pair.Split('_');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
+                //List<YoBitTicker> tickers = getTickerList(marketPairs);
+                /*
+                int groupCount = 25;
+                int index = 0;
+                List<YoBitInfo> requestPairs = new List<YoBitInfo>();
 
-                eTicker.last = ticker.last;
-                eTicker.ask = ticker.buy;
-                eTicker.bid = ticker.sell;
-                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
-                eTicker.volume = ticker.vol;
-                eTicker.high = ticker.high;
-                eTicker.low = ticker.low;
-                list.Add(eTicker);
+                foreach (YoBitInfo pair in marketPairs)
+                {
+                    if (index < groupCount)
+                    {
+                        requestPairs.Add(pair);
+                        index++;
+                    }
+                    else
+                    {
+                        // LOAD AND RESET
+                        
+                        Console.WriteLine("Loading 25 tickers");
+                        List<YoBitTicker> tickers = getTickerList(requestPairs);
+                        foreach (YoBitTicker ticker in tickers)
+                        {
+                            //list.Add(ticker);
+                            ExchangeTicker eTicker = new ExchangeTicker();
+                            eTicker.exchange = Name;
+                            //string[] pairs = ticker.pair.Split('_');
+                            eTicker.market = ticker.market;
+                            eTicker.symbol = ticker.symbol;
+
+                            eTicker.last = ticker.last;
+                            eTicker.ask = ticker.buy;
+                            eTicker.bid = ticker.sell;
+                            //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                            eTicker.volume = ticker.vol;
+                            eTicker.high = ticker.high;
+                            eTicker.low = ticker.low;
+                            //LogManager.AddDebugMessage(thisClassName, "returnTicker", "pair=" + ticker.pair + " | last=" + ticker.last);
+                            list.Add(eTicker);
+                        }
+
+                        index = 0;
+                        //Console.WriteLine("SLEEPING");
+                        //Thread.Sleep(2000);
+                        
+                    }
+                }
+                */
             }
-            */
+
+            LogManager.AddLogMessage(Name, "getExchangeTickerList", marketList.Count() + " markets found for " + Name, LogManager.LogMessageType.DEBUG);
+
+
             return list;
         }
         #endregion ExchangeManager

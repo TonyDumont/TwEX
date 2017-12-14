@@ -11,8 +11,6 @@ namespace TwEX_Console
         {
             Console.WriteLine("Welcome to TwEX Console");
             LogManager.ConsoleLogging = true;
-            //Console.SetWindowSize(1200, 800);
-            
 
             if (InitializeExchangeList())
             {
