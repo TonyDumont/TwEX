@@ -21,10 +21,8 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://www.livecoin.net";
         public static string USDSymbol { get; } = "USDT";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.livecoin.net");
-        //private static string Api_publicUrl = "https://api.livecoin.net";
         private static string Api_privateUrl = "https://api.livecoin.net/";
         #endregion Properties
 
@@ -252,14 +250,14 @@ namespace TwEX_API.Exchange
             //string uri = requestUrl + parameterString;
 
             //string Sign = getHashHMAC(ApiSecret, parameterString).ToUpper();
-            string Sign = getHashHMAC(ApiSecret, parameters).ToUpper();
+            string Sign = getHashHMAC(Api.secret, parameters).ToUpper();
             LogManager.AddLogMessage(Name, "getApiPrivateRequest", requestUrl + parameters);
             HttpStatusCode StatusCode;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUrl + parameters);
             request.Method = "GET";
             request.ContentType = "application/x-www-form-urlencoded";
 
-            request.Headers["Api-Key"] = ApiKey;
+            request.Headers["Api-Key"] = Api.key;
             request.Headers["Sign"] = Sign;
 
             Stream dataStream;
@@ -402,14 +400,14 @@ namespace TwEX_API.Exchange
                 string param = "";
                 string uri = "https://api.livecoin.net/payment/balances";
                 string ResponseFromServer = "";
-                string Sign = getHashHMAC(ApiSecret, param).ToUpper();
+                string Sign = getHashHMAC(Api.secret, param).ToUpper();
 
                 HttpStatusCode StatusCode;
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri + param);
                 request.Method = "GET";
                 request.ContentType = "application/x-www-form-urlencoded";
 
-                request.Headers["Api-Key"] = ApiKey;
+                request.Headers["Api-Key"] = Api.key;
                 request.Headers["Sign"] = Sign;
 
                 Stream dataStream;
@@ -446,8 +444,11 @@ namespace TwEX_API.Exchange
 
                 //List<LiveCoinBalance> masterList = new JavaScriptSerializer().Deserialize<LiveCoinBalance[]>(ResponseFromServer).ToList();
                 //var jsonObject = JObject.Parse(ResponseFromServer);
-                List<LiveCoinBalance> masterList = new List<LiveCoinBalance>();
-                LogManager.AddLogMessage(Name, "GetBalances", ResponseFromServer, LogManager.LogMessageType.DEBUG);
+                JArray jArray = JArray.Parse(ResponseFromServer) as JArray;
+                LiveCoinBalance[] array = jArray.ToObject<LiveCoinBalance[]>();
+                List<LiveCoinBalance> masterList = array.ToList();
+                //List<LiveCoinBalance> masterList = new List<LiveCoinBalance>();
+                //LogManager.AddLogMessage(Name, "GetBalances", ResponseFromServer, LogManager.LogMessageType.DEBUG);
 
                 foreach (LiveCoinBalance b in masterList)
                 {
@@ -581,29 +582,30 @@ namespace TwEX_API.Exchange
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-            
             List<LiveCoinTicker> tickerList = getTickerList();
-
             foreach (LiveCoinTicker ticker in tickerList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-
-                string[] pairs = ticker.symbol.Split('/');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
-
-                eTicker.last = ticker.last;
-                eTicker.ask = ticker.best_ask;
-                eTicker.bid = ticker.best_bid;
-                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
-                eTicker.volume = ticker.volume;
-                eTicker.high = ticker.high;
-                eTicker.low = ticker.low;
-                list.Add(eTicker);
+                list.Add(ticker.GetExchangeTicker());
             }
-            
             return list;
+        }
+        // UPDATERS
+        public static void updateExchangeBalanceList()
+        {
+            List<LiveCoinBalanceTotals> list = getBalances();
+            foreach (LiveCoinBalanceTotals balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }        
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<LiveCoinTicker> list = getTickerList();
+
+            foreach (LiveCoinTicker ticker in list)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -734,6 +736,23 @@ namespace TwEX_API.Exchange
             public decimal min_ask { get; set; }
             public decimal best_bid { get; set; }
             public decimal best_ask { get; set; }
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name;
+                string[] pairs = symbol.Split('/');
+                eTicker.market = pairs[1];
+                eTicker.symbol = pairs[0];
+
+                eTicker.last = last;
+                eTicker.ask = best_ask;
+                eTicker.bid = best_bid;
+                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                eTicker.volume = volume;
+                eTicker.high = high;
+                eTicker.low = low;
+                return eTicker;
+            }
         }
         public class LiveCoinPublicTrade
         {
@@ -763,6 +782,21 @@ namespace TwEX_API.Exchange
             public Decimal totalBTC { get; set; }
             public Decimal totalCoins { get; set; }
             public Decimal totalUSD { get; set; }
+
+            // ADDON DATA
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Symbol = currency;
+                eBalance.Exchange = Name;
+                eBalance.Balance = total;
+                eBalance.OnOrders = total - available;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class LiveCoinTradeOrder
         {

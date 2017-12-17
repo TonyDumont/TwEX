@@ -21,8 +21,7 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://poloniex.com/";
         public static string USDSymbol { get; } = "USDT";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://poloniex.com");
         #endregion Properties
 
@@ -319,7 +318,7 @@ namespace TwEX_API.Exchange
         // -------------------------------------------------------------
         private static string getHMAC(string message)
         {
-            var hmac = new HMACSHA512(Encoding.ASCII.GetBytes(ApiSecret));
+            var hmac = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
             var messagebyte = Encoding.ASCII.GetBytes(message);
             var hashmessage = hmac.ComputeHash(messagebyte);
             var sign = BitConverter.ToString(hashmessage).Replace("-", "").ToLower();
@@ -332,7 +331,7 @@ namespace TwEX_API.Exchange
                 client.BaseAddress = new Uri(privUrl);
                 StringContent myContent = new StringContent(myParam);
                 myContent.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                client.DefaultRequestHeaders.Add("Key", ApiKey);
+                client.DefaultRequestHeaders.Add("Key", Api.key);
                 client.DefaultRequestHeaders.Add("Sign", getHMAC(myParam));
                 var result = await client.PostAsync(privUrl, myContent);
                 return await result.Content.ReadAsStringAsync();
@@ -804,30 +803,32 @@ namespace TwEX_API.Exchange
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-
             List<PoloniexTicker> tickerList = getTickerList();
 
             foreach(PoloniexTicker ticker in tickerList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-
-                string[] pairs = ticker.pair.Split('_');
-                eTicker.market = pairs[0];
-                eTicker.symbol = pairs[1];
-
-                eTicker.last = ticker.last;
-                eTicker.ask = ticker.lowestAsk;
-                eTicker.bid = ticker.highestBid;
-                eTicker.change = ticker.percentChange;
-                eTicker.volume = ticker.baseVolume;
-                eTicker.high = ticker.high24hr;
-                eTicker.low = ticker.low24hr;
-
-                list.Add(eTicker);
+                list.Add(ticker.GetExchangeTicker());
             }
 
             return list;
+        }
+        // UPDATERS
+        public async static void updateExchangeBalanceList()
+        {
+            List<PoloniexBalance> list = await getCompleteBalanceList();
+            foreach (PoloniexBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<PoloniexTicker> list = getTickerList();
+
+            foreach (PoloniexTicker ticker in list)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -970,6 +971,22 @@ namespace TwEX_API.Exchange
             public int isFrozen { get; set; }
             public Decimal high24hr { get; set; }
             public Decimal low24hr { get; set; }
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+                string[] pairs = pair.Split('_');
+                eTicker.market = pairs[0];
+                eTicker.symbol = pairs[1];
+                eTicker.last = last;
+                eTicker.ask = lowestAsk;
+                eTicker.bid = highestBid;
+                eTicker.change = percentChange;
+                eTicker.volume = baseVolume;
+                eTicker.high = high24hr;
+                eTicker.low = low24hr;
+                return eTicker;
+            }
         }
         public class Poloniex24hVolume
         {
@@ -989,8 +1006,26 @@ namespace TwEX_API.Exchange
             public Decimal onOrders { get; set; }
             public Decimal btcValue { get; set; }
             // ADDON DATA
-            public Decimal totalBTC { get; set; }
-            public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                if (symbol != "STR")
+                {
+                    eBalance.Symbol = symbol;
+                }
+                else
+                {
+                    eBalance.Symbol = "XLM";
+                }
+                eBalance.Exchange = Name;
+                eBalance.Balance = available + onOrders;
+                eBalance.OnOrders = onOrders;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class PoloniexCancelResult
         {

@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -18,9 +19,9 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://bittrex.com/";
         public static string USDSymbol { get; } = "USDT";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bittrex.com/api/v1.1");
+        public static Boolean isAsync { get; set; } = false;
         #endregion Properties
 
         #region API_Public
@@ -292,10 +293,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bittrex.com/api/v1.1/account/getbalance?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getbalance?Api.key=" + Api.key + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -332,22 +333,26 @@ namespace TwEX_API.Exchange
             List<BittrexBalance> list = new List<BittrexBalance>();
             try
             {
-                string requestUrl = "https://bittrex.com/api/v1.1/account/getbalances?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getbalances?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(Name, "getBalanceList", result);
+                //LogManager.AddLogMessage(Name, "getBalanceList", "result=" + result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     list = jsonObject["result"].ToObject<List<BittrexBalance>>();
+                }
+                else
+                {
+                    LogManager.AddLogMessage(Name, "getBalanceList", "success FALSE : " + result);
                 }
             }
             catch (Exception ex)
@@ -366,10 +371,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bittrex.com/api/v1.1/account/getdepositaddress?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getdepositaddress?Api.key=" + Api.key + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -401,16 +406,16 @@ namespace TwEX_API.Exchange
 
                 if (currency.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?Api.key=" + Api.key + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 }
 
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -441,10 +446,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bittrex.com/api/v1.1/account/getorder?apikey=" + ApiKey + "&uuid=" + uuid + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bittrex.com/api/v1.1/account/getorder?Api.key=" + Api.key + "&uuid=" + uuid + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -485,16 +490,16 @@ namespace TwEX_API.Exchange
 
                 if (market.Length > 0 && symbol.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?Api.key=" + Api.key + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 }
 
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -530,16 +535,16 @@ namespace TwEX_API.Exchange
 
                 if (market.Length > 0 && symbol.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?Api.key=" + Api.key + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 }
 
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -575,16 +580,16 @@ namespace TwEX_API.Exchange
 
                 if (currency.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?apikey=" + ApiKey + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?Api.key=" + Api.key + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 }
 
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -619,10 +624,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bittrex.com/api/v1.1/market/buylimit?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&quantity=" + quantity + "&rate=" + rate + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bittrex.com/api/v1.1/market/buylimit?Api.key=" + Api.key + "&market=" + market + "-" + symbol + "&quantity=" + quantity + "&rate=" + rate + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -650,10 +655,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bittrex.com/api/v1.1/market/cancel?apikey=" + ApiKey + "&uuid=" + uuid + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bittrex.com/api/v1.1/market/cancel?Api.key=" + Api.key + "&uuid=" + uuid + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -681,10 +686,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bittrex.com/api/v1.1/market/selllimit?apikey=" + ApiKey + "&market=" + market + "-" + symbol + "&quantity=" + quantity + "&rate=" + rate + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bittrex.com/api/v1.1/market/selllimit?Api.key=" + Api.key + "&market=" + market + "-" + symbol + "&quantity=" + quantity + "&rate=" + rate + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = getHMAC(ApiSecret, requestUrl);
+                var signature = getHMAC(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -708,35 +713,45 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // GETTERS
+        public static List<ExchangeBalance> getExchangeBalanceList()
+        {
+            List<ExchangeBalance> list = new List<ExchangeBalance>();
+            List<BittrexBalance> requestList = getBalanceList();
+            
+            foreach (BittrexBalance balance in requestList)
+            {
+                list.Add(balance.GetExchangeBalance());
+            }
+            return list;
+        }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-
             List<BittrexMarketSummary> tickerList = getMarketSummariesList();
 
             foreach (BittrexMarketSummary ticker in tickerList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-
-                string[] pairs = ticker.MarketName.Split('-');
-                eTicker.market = pairs[0];
-                eTicker.symbol = pairs[1];
-
-                eTicker.last = ticker.Last;
-                eTicker.ask = ticker.Ask;
-                eTicker.bid = ticker.Bid;
-                eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
-                eTicker.volume = ticker.BaseVolume;
-                eTicker.high = ticker.High;
-                eTicker.low = ticker.Low;
-                //LogManager.AddDebugMessage(thisClassName, "returnTicker", "pair=" + ticker.pair + " | last=" + ticker.last);
-                //list.Add(ticker);
-                //ExchangeManager.ProcessTicker(eTicker);
-                list.Add(eTicker);
+                list.Add(ticker.GetExchangeTicker());
             }
-            
             return list;
+        }
+        // UPDATERS
+        public static void updateExchangeBalanceList()
+        {
+            List<BittrexBalance> list = getBalanceList();
+            foreach (BittrexBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<BittrexMarketSummary> list = getMarketSummariesList();
+            foreach (BittrexMarketSummary ticker in list)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -800,6 +815,24 @@ namespace TwEX_API.Exchange
             public int OpenSellOrders { get; set; }
             public Decimal PrevDay { get; set; }
             public string Created { get; set; }
+
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name;
+                string[] pairs = MarketName.Split('-');
+                eTicker.market = pairs[0];
+                eTicker.symbol = pairs[1];
+
+                eTicker.last = Last;
+                eTicker.ask = Ask;
+                eTicker.bid = Bid;
+                eTicker.change = (Last - PrevDay) / PrevDay;
+                eTicker.volume = BaseVolume;
+                eTicker.high = High;
+                eTicker.low = Low;
+                return eTicker;
+            }
         }
         public class BittrexOrderBookData
         {
@@ -823,8 +856,19 @@ namespace TwEX_API.Exchange
             public Decimal Pending { get; set; }
             public string CryptoAddress { get; set; }
             // ADDON DATA
-            public Decimal totalBTC { get; set; }
-            public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Exchange = Name;
+                eBalance.Symbol = Currency;
+                eBalance.Balance = Balance;
+                eBalance.OnOrders = Balance - Available;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class BittrexBuySellResult
         {

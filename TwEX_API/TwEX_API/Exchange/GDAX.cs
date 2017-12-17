@@ -20,9 +20,7 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://www.gdax.com/";
         public static string USDSymbol { get; } = "USD";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
-        public static string ApiPassphrase { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.gdax.com");
         #endregion Properties
 
@@ -124,7 +122,7 @@ namespace TwEX_API.Exchange
             string message = string.Concat(nonce, method.ToUpper(), url, body);
             var encoding = new ASCIIEncoding();
             //byte[] keyByte = Convert.FromBase64String(config.API.Secret);
-            byte[] keyByte = Convert.FromBase64String(ApiSecret);
+            byte[] keyByte = Convert.FromBase64String(Api.secret);
             byte[] messageBytes = encoding.GetBytes(message);
             using (var hmacsha256 = new HMACSHA256(keyByte))
             {
@@ -150,10 +148,10 @@ namespace TwEX_API.Exchange
                     acclient.BaseAddress = new Uri("https://api.gdax.com");
                     acclient.DefaultRequestHeaders.Accept.Clear();
                     acclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-KEY", ApiKey);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-KEY", Api.key);
                     acclient.DefaultRequestHeaders.Add("CB-ACCESS-SIGN", sig);
                     acclient.DefaultRequestHeaders.Add("CB-ACCESS-TIMESTAMP", ts);
-                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-PASSPHRASE", ApiPassphrase);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-PASSPHRASE", Api.passphrase);
                     acclient.DefaultRequestHeaders.Add("User-Agent", "Win32");
                     HttpResponseMessage response = acclient.GetAsync(method).Result;
                     if (response.IsSuccessStatusCode)
@@ -186,7 +184,6 @@ namespace TwEX_API.Exchange
             List<GDAXAccount> list = new List<GDAXAccount>();
             try
             {
-                // GET PAYMENT BALANCES
                 string ts = ExchangeManager.GetNonce();
                 string method = "/accounts";
                 string sig = GetSignature(ts, "GET", method, string.Empty);
@@ -195,18 +192,18 @@ namespace TwEX_API.Exchange
                     acclient.BaseAddress = new Uri("https://api.gdax.com");
                     acclient.DefaultRequestHeaders.Accept.Clear();
                     acclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-KEY", ApiKey);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-KEY", Api.key);
                     acclient.DefaultRequestHeaders.Add("CB-ACCESS-SIGN", sig);
                     acclient.DefaultRequestHeaders.Add("CB-ACCESS-TIMESTAMP", ts);
-                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-PASSPHRASE", ApiPassphrase);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-PASSPHRASE", Api.passphrase);
                     acclient.DefaultRequestHeaders.Add("User-Agent", "Win32");
                     HttpResponseMessage response = acclient.GetAsync(method).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         String result = await response.Content.ReadAsStringAsync();
-                        //LogManager.AddLogMessage(Name, "getAccountList", "response.IsSuccess: " + dataString);
-                        //list = new JavaScriptSerializer().Deserialize<GDAXAccount[]>(result).ToList();
-                        // TO TEST
+                        //LogManager.AddLogMessage(Name, "getAccountList", "response.IsSuccess: " + result);
+                        JArray jArray = JArray.Parse(result) as JArray;
+                        list = jArray.ToObject<List<GDAXAccount>>();
                     }
                     else
                     {
@@ -218,7 +215,6 @@ namespace TwEX_API.Exchange
             {
                 LogManager.AddLogMessage(Name, "getAccountList", "EXCEPTION!!! : " + ex.Message);
             }
-
             return list;
         }
 
@@ -240,10 +236,10 @@ namespace TwEX_API.Exchange
                     acclient.BaseAddress = new Uri("https://api.gdax.com");
                     acclient.DefaultRequestHeaders.Accept.Clear();
                     acclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-KEY", ApiKey);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-KEY", Api.key);
                     acclient.DefaultRequestHeaders.Add("CB-ACCESS-SIGN", sig);
                     acclient.DefaultRequestHeaders.Add("CB-ACCESS-TIMESTAMP", ts);
-                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-PASSPHRASE", ApiPassphrase);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-PASSPHRASE", Api.passphrase);
                     acclient.DefaultRequestHeaders.Add("User-Agent", "Win32");
                     HttpResponseMessage response = acclient.GetAsync(method).Result;
                     if (response.IsSuccessStatusCode)
@@ -273,30 +269,31 @@ namespace TwEX_API.Exchange
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-            
             List<GDAXProductTicker> tickerList = getProductTickerList();
             
             foreach (GDAXProductTicker ticker in tickerList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-
-                //string[] pairs = ticker.pair.Split('_');
-                eTicker.market = ticker.market;
-                eTicker.symbol = ticker.symbol;
-
-                eTicker.last = ticker.price;
-                eTicker.ask = ticker.ask;
-                eTicker.bid = ticker.bid;
-                //eTicker.change = ticker.percentChange;
-                eTicker.volume = ticker.volume;
-                //eTicker.high = ticker.high24hr;
-                //eTicker.low = ticker.low24hr;
-
-                list.Add(eTicker);
-            }
-            
+                list.Add(ticker.GetExchangeTicker());
+            }           
             return list;
+        }
+        // UPDATERS
+        public async static void updateExchangeBalanceList()
+        {
+            List<GDAXAccount> list = await getAccountList();
+            foreach (GDAXAccount balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<GDAXProductTicker> tickerList = getProductTickerList();
+
+            foreach (GDAXProductTicker ticker in tickerList)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -326,6 +323,23 @@ namespace TwEX_API.Exchange
             public Decimal ask { get; set; }
             public Decimal volume { get; set; }
             public string time { get; set; }
+
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+                //string[] pairs = ticker.pair.Split('_');
+                eTicker.market = market;
+                eTicker.symbol = symbol;
+                eTicker.last = price;
+                eTicker.ask = ask;
+                eTicker.bid = bid;
+                //eTicker.change = ticker.percentChange;
+                eTicker.volume = volume;
+                //eTicker.high = ticker.high24hr;
+                //eTicker.low = ticker.low24hr;
+                return eTicker;
+            }
         }
         #endregion
         #region DATAMODELS_Private
@@ -338,8 +352,19 @@ namespace TwEX_API.Exchange
             public Decimal hold { get; set; }
             public string profile_id { get; set; }
             // ADDON DATA
-            public Decimal totalBTC { get; set; }
-            public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Symbol = currency;
+                eBalance.Exchange = Name;
+                eBalance.Balance = balance;
+                eBalance.OnOrders = hold;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class GDAXAccountHistory
         {

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -19,11 +20,11 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://c-cex.com/";
         public static string USDSymbol { get; } = "USD";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://c-cex.com/t");
         private static String Api_publicUrl = "/api_pub.html?a=";
         private static String Api_privateUrl = "https://c-cex.com/t/api.html?a=";
+        //public static Boolean isAsync { get; set; } = false;
         #endregion Properties
 
         #region API_Public
@@ -224,7 +225,7 @@ namespace TwEX_API.Exchange
         {
             var url = new Uri(requestUrl);
             var webreq = WebRequest.Create(url);
-            var signature = GetApiSignature(ApiSecret, requestUrl);
+            var signature = GetApiSignature(Api.secret, requestUrl);
             webreq.Headers.Add("apisign", signature);
             var webresp = webreq.GetResponse();
             var stream = webresp.GetResponseStream();
@@ -250,7 +251,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string requestUrl = Api_privateUrl + "getbalance" +
-                    "&apikey=" + ApiKey +
+                    "&apikey=" + Api.key +
                     "&currency=" + currency +
                     "&nonce=" + ExchangeManager.GetNonce();
 
@@ -285,7 +286,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string requestUrl = Api_privateUrl + "getbalances" +
-                    "&apikey=" + ApiKey +
+                    "&apikey=" + Api.key +
                     "&nonce=" + ExchangeManager.GetNonce();
 
                 var jsonObject = JObject.Parse(GetApiRequest(requestUrl));
@@ -318,7 +319,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string requestUrl = Api_privateUrl + "getopenorders" +
-                    "&apikey=" + ApiKey +
+                    "&apikey=" + Api.key +
                     "&nonce=" + ExchangeManager.GetNonce();
 
                 if (market.Length > 0 && symbol.Length > 0)
@@ -355,7 +356,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string requestUrl = Api_privateUrl + "getorder" +
-                    "&apikey=" + ApiKey +
+                    "&apikey=" + Api.key +
                     "&uuid=" + uuid +
                     "&nonce=" + ExchangeManager.GetNonce();
 
@@ -391,7 +392,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string requestUrl = Api_privateUrl + "getorderhistory" +
-                    "&apikey=" + ApiKey +
+                    "&apikey=" + Api.key +
                     "&nonce=" + ExchangeManager.GetNonce();
 
                 if (market.Length > 0 && symbol.Length > 0)
@@ -433,7 +434,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string requestUrl = Api_privateUrl + "mytrades" +
-                    "&apikey=" + ApiKey +
+                    "&apikey=" + Api.key +
                     "&marketid=" + symbol.ToLower() + "-" + market.ToLower() +
                     "&nonce=" + ExchangeManager.GetNonce();
 
@@ -468,7 +469,7 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://c-cex.com/t/api.html?a=buylimit&apikey=" + ApiKey +
+                string requestUrl = "https://c-cex.com/t/api.html?a=buylimit&apikey=" + Api.key +
                     "&market=" + symbol + "-" + market +
                     "&quantity=" + quantity +
                     "&rate=" + rate +
@@ -503,7 +504,7 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://c-cex.com/t/api.html?a=cancel&apikey=" + ApiKey +
+                string requestUrl = "https://c-cex.com/t/api.html?a=cancel&apikey=" + Api.key +
                     "&uuid=" + uuid +
                     "&nonce=" + ExchangeManager.GetNonce();
 
@@ -538,7 +539,7 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://c-cex.com/t/api.html?a=selllimit&apikey=" + ApiKey +
+                string requestUrl = "https://c-cex.com/t/api.html?a=selllimit&apikey=" + Api.key +
                     "&market=" + symbol + "-" + market +
                     "&quantity=" + quantity +
                     "&rate=" + rate +
@@ -567,32 +568,45 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // GETTERS
+        public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
+        {
+            List<ExchangeBalance> list = new List<ExchangeBalance>();
+            List<CCEXBalance> balanceList = getBalanceList();
+            foreach (CCEXBalance balance in balanceList)
+            {
+                list.Add(balance.GetExchangeBalance());
+            }
+            return list;
+        }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-
             List<CCEXMarketSummary> tickerList = getMarketSummariesList();
 
             foreach (CCEXMarketSummary ticker in tickerList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-
-                string[] pairs = ticker.MarketName.Split('-');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
-
-                eTicker.last = ticker.Last;
-                eTicker.ask = ticker.Ask;
-                eTicker.bid = ticker.Bid;
-
-                eTicker.volume = ticker.BaseVolume;
-                eTicker.high = ticker.High;
-                eTicker.low = ticker.Low;
-                list.Add(eTicker);
-            }
-            
+                list.Add(ticker.GetExchangeTicker());
+            }       
             return list;
+        }
+        // UPDATERS
+        public static void updateExchangeBalanceList()
+        {
+            List<CCEXBalance> list = getBalanceList();
+
+            foreach (CCEXBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<CCEXMarketSummary> list = getMarketSummariesList();
+            foreach (CCEXMarketSummary ticker in list)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -643,6 +657,21 @@ namespace TwEX_API.Exchange
             public Decimal PrevDay { get; set; }
             public string Created { get; set; }
             public object DisplayMarketName { get; set; }
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name;
+                string[] pairs = MarketName.Split('-');
+                eTicker.market = pairs[1];
+                eTicker.symbol = pairs[0];
+                eTicker.last = Last;
+                eTicker.ask = Ask;
+                eTicker.bid = Bid;
+                eTicker.volume = BaseVolume;
+                eTicker.high = High;
+                eTicker.low = Low;
+                return eTicker;
+            }
         }
         public class CCEXOrderBookData
         {
@@ -675,8 +704,19 @@ namespace TwEX_API.Exchange
             public Decimal Pending { get; set; }
             public string CryptoAddress { get; set; }
             // ADDON DATA
-            public Decimal totalBTC { get; set; }
-            public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Symbol = Currency;
+                eBalance.Exchange = Name;
+                eBalance.Balance = Balance;
+                eBalance.OnOrders = Balance - Available;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class CCEXBuySellMessage
         {

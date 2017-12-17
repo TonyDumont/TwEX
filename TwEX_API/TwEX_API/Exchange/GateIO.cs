@@ -19,10 +19,8 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://gate.io/";
         public static string USDSymbol { get; } = "USDT";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; } = new ExchangeApi();
         private static RestClient client = new RestClient("http://data.gate.io");
-        private static HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(ApiSecret));
         private const string SecureUrl = "https://api.gate.io/api2/1/private/";
         #endregion Properties
 
@@ -311,7 +309,7 @@ namespace TwEX_API.Exchange
             {
                 string url = "https://api.gate.io/api2/1/private/balances";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -320,7 +318,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -411,7 +409,7 @@ namespace TwEX_API.Exchange
             {
                 string url = "https://api.gate.io/api2/1/private/depositAddress";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -420,7 +418,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -464,7 +462,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + "depositsWithdrawals";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -473,7 +471,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -529,7 +527,7 @@ namespace TwEX_API.Exchange
             {
                 string url = "https://api.gate.io/api2/1/private/newAddress";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -538,7 +536,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -580,7 +578,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + "openOrders";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -589,7 +587,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -631,7 +629,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + "getOrder";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -640,7 +638,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -683,7 +681,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + "tradeHistory";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 string parameters = String.Empty;
 
                 if (request == null)
@@ -702,7 +700,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -746,7 +744,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + type;
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -755,7 +753,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -796,7 +794,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + "cancelOrder";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -805,7 +803,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -847,7 +845,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + "cancelOrder";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -856,7 +854,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -899,7 +897,7 @@ namespace TwEX_API.Exchange
             {
                 string url = SecureUrl + "withdraw";
                 var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
-
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
@@ -908,7 +906,7 @@ namespace TwEX_API.Exchange
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Add("Key", ApiKey);
+                request.Headers.Add("Key", Api.key);
 
                 string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
                 request.Headers.Add("Sign", signature);
@@ -949,33 +947,35 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // GETTERS
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-            
             List<GateIOTicker> tickerList = getTickerList();
 
             foreach (GateIOTicker ticker in tickerList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-
-                string[] pairs = ticker.pair.Split('_');
-                eTicker.market = pairs[0];
-                eTicker.symbol = pairs[1];
-
-                eTicker.last = ticker.last;
-                eTicker.ask = ticker.lowestAsk;
-                eTicker.bid = ticker.highestBid;
-                eTicker.change = ticker.percentChange;
-                eTicker.volume = ticker.baseVolume;
-                eTicker.high = ticker.high24hr;
-                eTicker.low = ticker.low24hr;
-
-                list.Add(eTicker);
+                list.Add(ticker.GetExchangeTicker());
             }
-            
             return list;
+        }
+        // UPDATERS
+        public static void updateExchangeBalanceList()
+        {
+            List<GateIOBalance> list = getBalances();
+            foreach (GateIOBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<GateIOTicker> requestList = getTickerList();
+
+            foreach (GateIOTicker ticker in requestList)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -1006,6 +1006,22 @@ namespace TwEX_API.Exchange
             public Decimal quoteVolume { get; set; }
             public Decimal high24hr { get; set; }
             public Decimal low24hr { get; set; }
+            public ExchangeTicker GetExchangeTicker()
+            {     
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+                string[] pairs = pair.Split('_');
+                eTicker.market = pairs[0];
+                eTicker.symbol = pairs[1];
+                eTicker.last = last;
+                eTicker.ask = lowestAsk;
+                eTicker.bid = highestBid;
+                eTicker.change = percentChange;
+                eTicker.volume = baseVolume;
+                eTicker.high = high24hr;
+                eTicker.low = low24hr;
+                return eTicker;
+            }
         }
         public class GateIOOrderBook
         {
@@ -1042,6 +1058,20 @@ namespace TwEX_API.Exchange
             public Decimal locked { get; set; } // on orders
             public Decimal TotalBTC { get; set; }
             public Decimal TotalUSD { get; set; }
+            // ADDON DATA
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Exchange = Name;
+                eBalance.Symbol = symbol;
+                eBalance.Balance = available + locked;
+                eBalance.OnOrders = locked;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class GateIODepositAddress
         {

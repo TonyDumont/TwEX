@@ -21,10 +21,10 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://www.cryptopia.co.nz/";
         public static string USDSymbol { get; } = "USDT";
         // API
-        private static string ApiKey { get; set; } = String.Empty;
-        private static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://www.cryptopia.co.nz/api");
         public static string Api_privateUrl = "https://www.cryptopia.co.nz/Api/";
+        //public static Boolean isAsync { get; set; } = true;
         #endregion Properties
 
         #region API_Public
@@ -321,10 +321,10 @@ namespace TwEX_API.Exchange
             var nonce = ExchangeManager.GetNonce();
 
             //Creating the raw signature string
-            var signature = Encoding.UTF8.GetBytes(string.Concat(ApiKey, HttpMethod.Post, HttpUtility.UrlEncode(request.RequestUri.AbsoluteUri.ToLower()), nonce, requestContentBase64String));
-            using (var hmac = new HMACSHA256(Convert.FromBase64String(ApiSecret)))
+            var signature = Encoding.UTF8.GetBytes(string.Concat(Api.key, HttpMethod.Post, HttpUtility.UrlEncode(request.RequestUri.AbsoluteUri.ToLower()), nonce, requestContentBase64String));
+            using (var hmac = new HMACSHA256(Convert.FromBase64String(Api.secret)))
             {
-                request.Headers.Authorization = new AuthenticationHeaderValue("amx", string.Format("{0}:{1}:{2}", ApiKey, Convert.ToBase64String(hmac.ComputeHash(signature)), nonce));
+                request.Headers.Authorization = new AuthenticationHeaderValue("amx", string.Format("{0}:{1}:{2}", Api.key, Convert.ToBase64String(hmac.ComputeHash(signature)), nonce));
             }
             // Send Request
             using (var client = new HttpClient())
@@ -359,7 +359,7 @@ namespace TwEX_API.Exchange
                 };
 
                 string result = await GetApiPrivateRequest(requestUrl, postData);
-                LogManager.AddLogMessage(Name, "getBalanceList", result);
+                //LogManager.AddLogMessage(Name, "getBalanceList", result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["Success"].ToString().ToLower();
 
@@ -662,32 +662,46 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // GETTERS
+        public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
+        {
+            List<ExchangeBalance> list = new List<ExchangeBalance>();
+            List<CryptopiaBalance> requestList = await getBalanceList();
+
+            foreach (CryptopiaBalance balance in requestList)
+            {
+                list.Add(balance.GetExchangeBalance());
+            }
+            return list;
+    }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
-            List<ExchangeTicker> list = new List<ExchangeTicker>();
-            
+            List<ExchangeTicker> list = new List<ExchangeTicker>();     
             List<CryptopiaMarket> tickerList = getMarketList();
 
             foreach (CryptopiaMarket ticker in tickerList)
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
-
-                string[] pairs = ticker.Label.Split('/');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
-
-                eTicker.last = ticker.LastPrice;
-                eTicker.ask = ticker.AskPrice;
-                eTicker.bid = ticker.BidPrice;
-                eTicker.change = ticker.Change;
-                eTicker.volume = ticker.BaseVolume;
-                eTicker.high = ticker.High;
-                eTicker.low = ticker.Low;
-                list.Add(eTicker);
+                list.Add(ticker.GetExchangeTicker());
             }
-            
             return list;
+        }
+        // UPDATERS
+        public async static void updateExchangeBalanceList()
+        {
+            List<CryptopiaBalance> list = await getBalanceList();
+
+            foreach (CryptopiaBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<CryptopiaMarket> list = getMarketList();
+            foreach (CryptopiaMarket ticker in list)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -746,6 +760,23 @@ namespace TwEX_API.Exchange
             public Decimal BaseVolume { get; set; }
             public Decimal BuyBaseVolume { get; set; }
             public Decimal SellBaseVolume { get; set; }
+
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name;
+                string[] pairs = Label.Split('/');
+                eTicker.market = pairs[1];
+                eTicker.symbol = pairs[0];
+                eTicker.last = LastPrice;
+                eTicker.ask = AskPrice;
+                eTicker.bid = BidPrice;
+                eTicker.change = Change;
+                eTicker.volume = BaseVolume;
+                eTicker.high = High;
+                eTicker.low = Low;
+                return eTicker;
+            }
         }
         public class CryptopiaMarketOrder
         {
@@ -801,8 +832,19 @@ namespace TwEX_API.Exchange
             public string StatusMessage { get; set; }
             public string BaseAddress { get; set; }
             // ADDON DATA
-            public Decimal totalBTC { get; set; }
-            public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Symbol = Symbol;
+                eBalance.Exchange = Name;
+                eBalance.Balance = Total;
+                eBalance.OnOrders = HeldForTrades;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class CryptopiaCancelMessage
         {

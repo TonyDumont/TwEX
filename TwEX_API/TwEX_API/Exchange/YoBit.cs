@@ -21,8 +21,7 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://yobit.net/";
         public static string USDSymbol { get; } = "USD";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://yobit.net/api");
         private static string Api_privateUrl = "https://yobit.net/tapi/";
         #endregion Properties
@@ -211,7 +210,7 @@ namespace TwEX_API.Exchange
         // ------------------------
         private static string getHMAC(string message)
         {
-            var hmac = new HMACSHA512(Encoding.ASCII.GetBytes(ApiSecret));
+            var hmac = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
             var messagebyte = Encoding.ASCII.GetBytes(message);
             var hashmessage = hmac.ComputeHash(messagebyte);
             var sign = BitConverter.ToString(hashmessage).Replace("-", "").ToLower();
@@ -224,7 +223,7 @@ namespace TwEX_API.Exchange
                 //StringContent c = new StringContent(request);
                 StringContent c = new StringContent(request, Encoding.UTF8, "application/x-www-form-urlencoded");
                 c.Headers.Add("Sign", getHMAC(request));
-                c.Headers.Add("Key", ApiKey);
+                c.Headers.Add("Key", Api.key);
 
                 var respond = await client.PostAsync(Api_privateUrl, c);
                 return Encoding.UTF8.GetString(await respond.Content.ReadAsByteArrayAsync());
@@ -429,6 +428,7 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // GETTERS
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
@@ -496,6 +496,26 @@ namespace TwEX_API.Exchange
 
 
             return list;
+        }
+        // UPDATERS
+        public async static void updateExchangeBalanceList()
+        {
+            List<YoBitBalance> list = await getBalanceList();
+            foreach (YoBitBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }  
+        }
+        public static void updateExchangeTickerList()
+        {
+            LogManager.AddLogMessage(Name, "updateExchangeTickerList", "THIS FUNCTION DISABLED UNTIL A SOLUTION IS FOUND ON PAIR REQUESTS", LogManager.LogMessageType.OTHER);
+            /*
+            List<BittrexMarketSummary> list = getMarketSummariesList();
+            foreach (BittrexMarketSummary ticker in list)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
+            */
         }
         #endregion ExchangeManager
 
@@ -639,6 +659,13 @@ namespace TwEX_API.Exchange
 
             [Description("market for pair")]
             public string market { get; set; }
+
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                
+                return eTicker;
+            }
         }
         public class YoBitTrade
         {
@@ -678,9 +705,19 @@ namespace TwEX_API.Exchange
             public Decimal Pending { get; set; }
             public string CryptoAddress { get; set; }
             // ADDON DATA
-            //public Decimal totalBTC { get; set; }
-            //public Decimal totalCoins { get; set; }
-            //public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Symbol = Currency.ToUpper();
+                eBalance.Exchange = Name;
+                eBalance.Balance = Balance;
+                eBalance.OnOrders = Available;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class YoBitOrder
         {

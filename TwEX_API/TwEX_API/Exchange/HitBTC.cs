@@ -21,8 +21,7 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://hitbtc.com/";
         public static string USDSymbol { get; } = "USDT";
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.hitbtc.com");
         private static string Api_publicUrl = "/api/2/public/";
         private static string Api_privateUrl = "https://api.hitbtc.com/api/2/";
@@ -293,7 +292,7 @@ namespace TwEX_API.Exchange
         private static string GetApiPrivateRequest(string requestUrl, Object postData = null)
         {
             WebRequest myReq = WebRequest.Create(requestUrl);
-            string credentials = ApiKey + ":" + ApiSecret;
+            string credentials = Api.key + ":" + Api.secret;
             CredentialCache mycache = new CredentialCache();
             myReq.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(credentials));
             WebResponse wr = myReq.GetResponse();
@@ -746,24 +745,12 @@ namespace TwEX_API.Exchange
 
             try
             {
-                
                 List<HitBTCTicker> tickerList = getTickerList();
 
                 foreach (HitBTCTicker ticker in tickerList)
                 {
-                    ExchangeTicker eTicker = new ExchangeTicker();
-                    eTicker.exchange = Name.ToUpper();
-                    string pair = ticker.symbol;
-                    eTicker.market = pair.Substring(pair.Length - 3);
-                    eTicker.symbol = pair.Substring(0, pair.Length - 3);
-
-                    eTicker.last = ticker.last;
-                    eTicker.ask = ticker.ask;
-                    eTicker.bid = ticker.bid;
-                    eTicker.volume = ticker.volume;
-                    eTicker.high = ticker.high;
-                    eTicker.low = ticker.low;
-                    list.Add(eTicker);
+                    
+                    list.Add(ticker.GetExchangeTicker());
                 }
                 
             }
@@ -773,6 +760,25 @@ namespace TwEX_API.Exchange
             }
             
             return list;
+        }
+        // UPDATERS
+        public static void updateExchangeBalanceList()
+        {
+            List<HitBTCBalance> list = getAccountBalanceList();
+
+            foreach (HitBTCBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+            
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<HitBTCTicker> list = getTickerList();
+            foreach (HitBTCTicker ticker in list)
+            {
+                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -963,14 +969,39 @@ namespace TwEX_API.Exchange
             public Decimal ask { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal bid { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal last { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal open { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal low { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal high { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal volume { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public Decimal volumeQuote { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public DateTime timestamp { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string symbol { get; set; }
+
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name;
+                string pair = symbol;
+                eTicker.market = pair.Substring(pair.Length - 3);
+                eTicker.symbol = pair.Substring(0, pair.Length - 3);
+
+                eTicker.last = last;
+                eTicker.ask = ask;
+                eTicker.bid = bid;
+                eTicker.volume = volume;
+                eTicker.high = high;
+                eTicker.low = low;
+                return eTicker;
+            }
         }
         public class HitBTCTrades
         {
@@ -994,9 +1025,19 @@ namespace TwEX_API.Exchange
             // PAYMENT BALANCE
             public Decimal balance { get; set; }
             // ADDON DATA
-            public Decimal totalBTC { get; set; }
-            public Decimal totalCoins { get; set; }
-            public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Exchange = Name;
+                eBalance.Symbol = currency;
+                eBalance.Balance = available;
+                eBalance.OnOrders = reserved;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class HitBTCCommission
         {

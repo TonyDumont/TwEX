@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -20,9 +21,9 @@ namespace TwEX_API.Exchange
         public static string Url { get; } = "https://bleutrade.com";
         public static string USDSymbol { get; } = string.Empty;
         // API
-        public static string ApiKey { get; set; } = String.Empty;
-        public static string ApiSecret { get; set; } = String.Empty;
+        public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bleutrade.com/api/v2");
+        public static Boolean isAsync { get; set; } = false;
         #endregion Properties
 
         #region API_Public
@@ -317,10 +318,11 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/account/getbalance?currency=" + currency + "&apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                Console.WriteLine(Api.exchange + " | " + Api.key + " | " + Api.secret);
+                string requestUrl = "https://bleutrade.com/api/v2/account/getbalance?currency=" + currency + "&apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -357,14 +359,13 @@ namespace TwEX_API.Exchange
             List<BleuTradeBalance> list = new List<BleuTradeBalance>();
             try
             {
-                // BALANCES
-                string requestUrl = "https://bleutrade.com/api/v2/account/getbalances?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getbalances?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                //LogManager.AddLogMessage("BittrexControl", "GetBalances", "ApiSecret=" + ApiSecret + " | " + requestUrl);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
-                //LogManager.AddLogMessage("BittrexControl", "GetBalances", "sig=" + signature);
+
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
@@ -375,15 +376,17 @@ namespace TwEX_API.Exchange
 
                 if (success == "true")
                 {
-                    //list = new JavaScriptSerializer().Deserialize<List<BleuTradeBalance>>(jsonObject["result"].ToString());
-                    list = jsonObject.ToObject<List<BleuTradeBalance>>();
+                    list = jsonObject["result"].ToObject<List<BleuTradeBalance>>();
+                }
+                else
+                {
+                    LogManager.AddLogMessage(Name, "getBalanceList", "success FALSE : " + jsonObject["message"]);
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage("BittrexControl", "GetBalances", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getBalanceList", "EXCEPTION!!! : " + ex.Message);
             }
-
             return list;
         }
 
@@ -396,10 +399,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/account/getdepositaddress?currency=" + currency + "&apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getdepositaddress?currency=" + currency + "&apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -437,10 +440,10 @@ namespace TwEX_API.Exchange
             try
             {
                 // BALANCES
-                string requestUrl = "https://bleutrade.com/api/v2/account/getdeposithistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getdeposithistory?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -477,10 +480,10 @@ namespace TwEX_API.Exchange
             try
             {
                 // BALANCES
-                string requestUrl = "https://bleutrade.com/api/v2/market/getopenorders?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/market/getopenorders?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -513,10 +516,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/account/getorder?orderid=" + orderid + "&apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getorder?orderid=" + orderid + "&apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -553,10 +556,10 @@ namespace TwEX_API.Exchange
             List<BleuTradeOrderHistory> list = new List<BleuTradeOrderHistory>();
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/account/getorderhistory?apikey=" + ApiKey + "&orderid=" + orderid + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getorderhistory?apikey=" + Api.key + "&orderid=" + orderid + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -595,11 +598,11 @@ namespace TwEX_API.Exchange
                 {
                     marketString = "ALL";
                 }
-                string requestUrl = "https://bleutrade.com/api/v2/account/getorders?apikey=" + ApiKey + "&market=" + marketString + "&orderstatus=" + orderstatus + "&ordertype=" + ordertype + "&depth=" + depth + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getorders?apikey=" + Api.key + "&market=" + marketString + "&orderstatus=" + orderstatus + "&ordertype=" + ordertype + "&depth=" + depth + "&nonce=" + ExchangeManager.GetNonce();
 
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -632,10 +635,10 @@ namespace TwEX_API.Exchange
             try
             {
                 // BALANCES
-                string requestUrl = "https://bleutrade.com/api/v2/account/getwithdrawhistory?apikey=" + ApiKey + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getwithdrawhistory?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -673,10 +676,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/market/buylimit?apikey=" + ApiKey + "&market=" + symbol + "_" + market + "&rate=" + rate + "&quantity=" + quantity + "&comments=" + comments + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/market/buylimit?apikey=" + Api.key + "&market=" + symbol + "_" + market + "&rate=" + rate + "&quantity=" + quantity + "&comments=" + comments + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -702,10 +705,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/market/cancel?apikey=" + ApiKey + "&orderid=" + orderid + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/market/cancel?apikey=" + Api.key + "&orderid=" + orderid + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -733,10 +736,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/market/selllimit?apikey=" + ApiKey + "&market=" + symbol + "_" + market + "&rate=" + rate + "&quantity=" + quantity + "&comments=" + comments + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/market/selllimit?apikey=" + Api.key + "&market=" + symbol + "_" + market + "&rate=" + rate + "&quantity=" + quantity + "&comments=" + comments + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -764,10 +767,10 @@ namespace TwEX_API.Exchange
         {
             try
             {
-                string requestUrl = "https://bleutrade.com/api/v2/account/withdraw?apikey=" + ApiKey + "&currency=" + currency + "&quantity=" + quantity + "&address=" + address + "&comments=" + comments + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/withdraw?apikey=" + Api.key + "&currency=" + currency + "&quantity=" + quantity + "&address=" + address + "&comments=" + comments + "&nonce=" + ExchangeManager.GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
-                var signature = GetApiSignature(ApiSecret, requestUrl);
+                var signature = GetApiSignature(Api.secret, requestUrl);
                 webreq.Headers.Add("apisign", signature);
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
@@ -787,6 +790,28 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // GETTERS
+        public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
+        {
+            List<ExchangeBalance> list = new List<ExchangeBalance>();
+            List<BleuTradeBalance> requestList = getBalanceList();
+            Console.WriteLine("requestList.count=" + requestList.Count);
+            foreach (BleuTradeBalance balance in requestList)
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Symbol = balance.Currency;
+                eBalance.Exchange = Name;
+                eBalance.Balance = balance.Balance;
+                eBalance.OnOrders = balance.Balance - balance.Available;
+                //cBalance.TotalBTC = balance.totalBTC;
+                //cBalance.TotalUSD = balance.totalUSD;
+                //ExchangeManager.ProcessBalance(cBalance);
+                //Task.Factory.StartNew(() => ExchangeManager.ProcessBalance(cBalance));
+                list.Add(eBalance);
+            }
+
+            return list;
+        }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
@@ -821,6 +846,24 @@ namespace TwEX_API.Exchange
                 LogManager.AddLogMessage(Name, "getCandleList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
+        }
+        // UPDATERS
+        public static void updateExchangeBalanceList()
+        {
+            List<BleuTradeBalance> list = getBalanceList();
+            foreach (BleuTradeBalance balance in list)
+            {
+                ExchangeManager.processBalance(balance.GetExchangeBalance());
+            }
+        }
+        public static void updateExchangeTickerList()
+        {
+            List<BleuTradeMarketSummary> list = getMarketSummariesList();
+            LogManager.AddLogMessage(Name, "updateExchangeTickerList", list.Count + " Tickers in LIST", LogManager.LogMessageType.DEBUG);
+            foreach (BleuTradeMarketSummary item in list)
+            {
+                ExchangeManager.processTicker(item.GetExchangeTicker());
+            }
         }
         #endregion ExchangeManager
 
@@ -958,6 +1001,25 @@ namespace TwEX_API.Exchange
             public Decimal Bid { get; set; }
             public Decimal Ask { get; set; }
             public string IsActive { get; set; }
+
+            public ExchangeTicker GetExchangeTicker()
+            {
+                ExchangeTicker eTicker = new ExchangeTicker();
+                eTicker.exchange = Name.ToUpper();
+
+                string[] pairs = MarketName.Split('_');
+                eTicker.market = pairs[1];
+                eTicker.symbol = pairs[0];
+
+                eTicker.last = Last;
+                eTicker.ask = Ask;
+                eTicker.bid = Bid;
+                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                eTicker.volume = BaseVolume;
+                eTicker.high = High;
+                eTicker.low = Low;
+                return eTicker;
+            }
         }
         public class BleuTradeOrderBookData
         {
@@ -975,6 +1037,8 @@ namespace TwEX_API.Exchange
             public string pair { get; set; }
             public string symbol { get; set; }
             public string market { get; set; }
+
+
         }
         #endregion
         #region DATAMODELS_Private
@@ -989,8 +1053,19 @@ namespace TwEX_API.Exchange
             public string AllowDeposit { get; set; }
             public string AllowWithdraw { get; set; }
             // ADDON DATA
-            public Decimal totalBTC { get; set; }
-            public Decimal totalUSD { get; set; }
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            public ExchangeBalance GetExchangeBalance()
+            {
+                ExchangeBalance eBalance = new ExchangeBalance();
+                eBalance.Symbol = Currency;
+                eBalance.Exchange = Name;
+                eBalance.Balance = Balance;
+                eBalance.OnOrders = Balance - Available;
+                eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInUSD = TotalInUSD;
+                return eBalance;
+            }
         }
         public class BleuTradeDepositAddressMessage
         {
