@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,7 +23,9 @@ namespace TwEX_API.Exchange
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bittrex.com/api/v1.1");
-        public static Boolean isAsync { get; set; } = false;
+        //public static Boolean isAsync { get; set; } = false;
+        // COLLECTIONS
+        public static BlockingCollection<BittrexMarket> Markets = new BlockingCollection<BittrexMarket>();
         #endregion Properties
 
         #region API_Public
@@ -713,6 +717,12 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // INITIALIZE
+        public static void InitializeExchange()
+        {
+            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            updateTickers();
+        }
         // GETTERS
         public static List<ExchangeBalance> getExchangeBalanceList()
         {
@@ -740,9 +750,47 @@ namespace TwEX_API.Exchange
         public static void updateExchangeBalanceList()
         {
             List<BittrexBalance> list = getBalanceList();
+            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+
             foreach (BittrexBalance balance in list)
             {
-                ExchangeManager.processBalance(balance.GetExchangeBalance());
+                if (balance.Balance > 0)
+                {
+                    if (balance.Currency != "BTC" && balance.Currency != USDSymbol)
+                    {
+                        // GET TICKER FOR PAIR IN BTC MARKET
+                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Currency.ToUpper(), "BTC");
+
+                        if (ticker != null)
+                        {
+                            balance.TotalInBTC = balance.Balance * ticker.last;
+                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                        }
+                        else
+                        {
+                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.Currency.ToUpper());
+                        }
+                    }
+                    else
+                    {
+                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+                        if (balance.Currency == "BTC")
+                        {
+                            balance.TotalInBTC = balance.Balance;
+                            balance.TotalInUSD = btcTicker.last * balance.Balance;
+                        }
+                        else if (balance.Currency == USDSymbol)
+                        {
+                            if (btcTicker.last > 0)
+                            {
+                                balance.TotalInBTC = balance.Balance / btcTicker.last;
+                            }
+                            balance.TotalInUSD = balance.Balance;
+                        }
+                    }
+                    //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
+                    ExchangeManager.processBalance(balance.GetExchangeBalance());
+                }
             }
         }
         public static void updateExchangeTickerList()

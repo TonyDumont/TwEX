@@ -662,6 +662,12 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // INITIALIZE
+        public static void InitializeExchange()
+        {
+            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            updateExchangeTickerList();
+        }
         // GETTERS
         public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
         {
@@ -689,10 +695,47 @@ namespace TwEX_API.Exchange
         public async static void updateExchangeBalanceList()
         {
             List<CryptopiaBalance> list = await getBalanceList();
+            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
 
             foreach (CryptopiaBalance balance in list)
             {
-                ExchangeManager.processBalance(balance.GetExchangeBalance());
+                if (balance.Total > 0)
+                {
+                    if (balance.Symbol != "BTC" && balance.Symbol != USDSymbol)
+                    {
+                        // GET TICKER FOR PAIR IN BTC MARKET
+                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Symbol.ToUpper(), "BTC");
+
+                        if (ticker != null)
+                        {
+                            balance.TotalInBTC = balance.Total * ticker.last;
+                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                        }
+                        else
+                        {
+                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.Symbol.ToUpper());
+                        }
+                    }
+                    else
+                    {
+                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+                        if (balance.Symbol == "BTC")
+                        {
+                            balance.TotalInBTC = balance.Total;
+                            balance.TotalInUSD = btcTicker.last * balance.Total;
+                        }
+                        else if (balance.Symbol == USDSymbol)
+                        {
+                            if (btcTicker.last > 0)
+                            {
+                                balance.TotalInBTC = balance.Total / btcTicker.last;
+                            }
+                            balance.TotalInUSD = balance.Total;
+                        }
+                    }
+                    //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
+                    ExchangeManager.processBalance(balance.GetExchangeBalance());
+                }
             }
         }
         public static void updateExchangeTickerList()

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -14,8 +15,11 @@ namespace TwEX_API
     {
         // PROPERTIES
         public static Boolean ConsoleLogging = false;
+        const string _readPrompt = "TwEX Console : ";
         //static byte[] bytes = ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName);
-        public static BindingList<LogMessage> LogMessageList = new BindingList<LogMessage>();
+        //public static BindingList<LogMessage> LogMessageList = new BindingList<LogMessage>();
+        //public static List<LogMessage> LogMessageList = new List<LogMessage>();
+        public static BlockingCollection<LogMessage> MessageList = new BlockingCollection<LogMessage>();
         // FUNCTIONS
         public static void AddLogMessage(String source, String functionCall, String message, LogMessageType type = LogMessageType.LOG)
         {
@@ -25,12 +29,41 @@ namespace TwEX_API
             logMessage.FunctionCall = functionCall;
             logMessage.Message = message;
             logMessage.type = type;
-            LogMessageList.Insert(0, logMessage);
+            //LogMessageList.Insert(0, logMessage);
+            MessageList.Add(logMessage);
 
             if (ConsoleLogging)
             {
-                Console.WriteLine(logMessage.TimeStamp + " | source=" + logMessage.Source + " | function=" + logMessage.FunctionCall + " | " + logMessage.type + " | " + logMessage.Message);
+                //Console.WriteLine(logMessage.TimeStamp + " | source=" + logMessage.Source + " | function=" + logMessage.FunctionCall + " | " + logMessage.Message);
+                //WriteToConsole(logMessage.TimeStamp + " | " + logMessage.Message);
+
             }
+        }
+
+        // COMMAND PROCESSOR
+        public static string Execute(string command)
+        {
+            // We'll make this more interesting shortly:
+            return string.Format("Executed the {0} Command", command);
+
+
+        }
+        // CONSOLE
+        public static void WriteToConsole(string message = "")
+        {
+            if (message.Length > 0)
+            {
+                //Console.SetCursorPosition(0, Console.WindowHeight);
+                Console.SetCursorPosition(0, Console.BufferHeight - 2);
+                Console.WriteLine(message);
+            }
+        }
+        public static string ReadFromConsole(string promptMessage = "")
+        {
+            // Show a prompt, and get input:
+            Console.SetCursorPosition(0, Console.BufferHeight - 1);
+            Console.Write(_readPrompt + promptMessage);
+            return Console.ReadLine();
         }
 
         /// <summary>

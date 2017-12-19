@@ -266,6 +266,12 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // INITIALIZE
+        public static void InitializeExchange()
+        {
+            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            updateExchangeTickerList();
+        }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
@@ -281,9 +287,48 @@ namespace TwEX_API.Exchange
         public async static void updateExchangeBalanceList()
         {
             List<GDAXAccount> list = await getAccountList();
+            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+
             foreach (GDAXAccount balance in list)
             {
-                ExchangeManager.processBalance(balance.GetExchangeBalance());
+                if (balance.balance > 0)
+                {
+                    if (balance.currency != "BTC" && balance.currency != USDSymbol)
+                    {
+                        // GET TICKER FOR PAIR IN BTC MARKET
+                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.currency.ToUpper(), "BTC");
+
+                        if (ticker != null)
+                        {
+                            balance.TotalInBTC = balance.balance * ticker.last;
+                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                        }
+                        else
+                        {
+                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.currency.ToUpper());
+                        }
+                    }
+                    else
+                    {
+                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+                        if (balance.currency == "BTC")
+                        {
+                            balance.TotalInBTC = balance.balance;
+                            balance.TotalInUSD = btcTicker.last * balance.balance;
+                        }
+                        else if (balance.currency == USDSymbol)
+                        {
+                            if (btcTicker.last > 0)
+                            {
+                                balance.TotalInBTC = balance.balance / btcTicker.last;
+                            }
+                            balance.TotalInUSD = balance.balance;
+                        }
+                    }
+                    //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
+                    ExchangeManager.processBalance(balance.GetExchangeBalance());
+                }
+            
             }
         }
         public static void updateExchangeTickerList()
@@ -327,7 +372,7 @@ namespace TwEX_API.Exchange
             public ExchangeTicker GetExchangeTicker()
             {
                 ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
+                eTicker.exchange = Name;
                 //string[] pairs = ticker.pair.Split('_');
                 eTicker.market = market;
                 eTicker.symbol = symbol;

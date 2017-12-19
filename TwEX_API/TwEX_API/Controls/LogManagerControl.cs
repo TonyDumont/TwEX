@@ -16,7 +16,8 @@ namespace TwEX_API.Controls
         }
         private void LogManagerControl_Load(object sender, EventArgs e)
         {
-            listView.DataSource = LogManager.LogMessageList;
+            //listView.DataSource = LogManager.LogMessageList;
+            listView.DataSource = LogManager.MessageList;
         }
         // EVENT HANDLERS
         private void listView_SelectionChanged(object sender, EventArgs e)

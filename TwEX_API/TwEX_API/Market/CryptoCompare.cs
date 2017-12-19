@@ -77,7 +77,7 @@ namespace TwEX_API.Market
 
                 foreach (var item in jsonObject)
                 {
-                    //LogManager.AddLogMessage(thisClassName, "getCoinList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                    //LogManager.AddLogMessage(thisClassName, "getPriceList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                     CryptoComparePrice price = new CryptoComparePrice();
                     price.symbol = fsym;
                     price.market = item.Key;

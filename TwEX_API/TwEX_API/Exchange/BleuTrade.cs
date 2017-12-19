@@ -790,6 +790,12 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // INITIALIZE
+        public static void InitializeExchange()
+        {
+            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            updateExchangeTickerList();
+        }
         // GETTERS
         public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
         {
@@ -824,7 +830,7 @@ namespace TwEX_API.Exchange
                 foreach (BleuTradeMarketSummary ticker in tickerList)
                 {
                     ExchangeTicker eTicker = new ExchangeTicker();
-                    eTicker.exchange = Name.ToUpper();
+                    eTicker.exchange = Name;
 
                     string[] pairs = ticker.MarketName.Split('_');
                     eTicker.market = pairs[1];
@@ -851,15 +857,32 @@ namespace TwEX_API.Exchange
         public static void updateExchangeBalanceList()
         {
             List<BleuTradeBalance> list = getBalanceList();
+            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker("CryptoCompare", "BTC", "USD");
+            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "btclast=" + btcTicker.last, LogManager.LogMessageType.DEBUG);
             foreach (BleuTradeBalance balance in list)
             {
+                if (balance.Currency != "BTC")
+                {
+                    ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Currency.ToUpper(), "BTC");
+                    if (ticker != null)
+                    {
+                        balance.TotalInBTC = balance.Balance * ticker.last;
+                        balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                    }
+                }
+                else
+                {
+                    balance.TotalInBTC = balance.Balance;
+                    balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                }
+
                 ExchangeManager.processBalance(balance.GetExchangeBalance());
             }
         }
         public static void updateExchangeTickerList()
         {
             List<BleuTradeMarketSummary> list = getMarketSummariesList();
-            LogManager.AddLogMessage(Name, "updateExchangeTickerList", list.Count + " Tickers in LIST", LogManager.LogMessageType.DEBUG);
+            //LogManager.AddLogMessage(Name, "updateExchangeTickerList", list.Count + " Tickers in LIST", LogManager.LogMessageType.DEBUG);
             foreach (BleuTradeMarketSummary item in list)
             {
                 ExchangeManager.processTicker(item.GetExchangeTicker());
@@ -1005,7 +1028,7 @@ namespace TwEX_API.Exchange
             public ExchangeTicker GetExchangeTicker()
             {
                 ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
+                eTicker.exchange = Name;
 
                 string[] pairs = MarketName.Split('_');
                 eTicker.market = pairs[1];

@@ -2,16 +2,18 @@
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace TwEX_API.Market
 {
-    class CoinMarketCap
+    public class CoinMarketCap
     {
         #region Properties
         public static String thisClassName = "CoinMarketCap";
         private static RestClient client = new RestClient("https://api.coinmarketcap.com");
+        public static BlockingCollection<CoinMarketCapTicker> Tickers = new BlockingCollection<CoinMarketCapTicker>();
         #endregion Properties
 
         #region API_Public
@@ -95,6 +97,13 @@ namespace TwEX_API.Market
             return list;
         }
         #endregion API_Public
+
+        #region ExchangeManager
+        public static void updateTickers()
+        {
+            Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(getTickerList(1, 5000)));
+        }
+        #endregion ExchangeManager
 
         #region DataModels
         public class CoinMarketCapGlobalData

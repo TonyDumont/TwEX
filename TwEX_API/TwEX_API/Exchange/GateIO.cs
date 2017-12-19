@@ -947,6 +947,12 @@ namespace TwEX_API.Exchange
         #endregion API_Private
 
         #region ExchangeManager
+        // INITIALIZE
+        public static void InitializeExchange()
+        {
+            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            updateExchangeTickerList();
+        }
         // GETTERS
         public static List<ExchangeTicker> getExchangeTickerList()
         {
@@ -963,9 +969,46 @@ namespace TwEX_API.Exchange
         public static void updateExchangeBalanceList()
         {
             List<GateIOBalance> list = getBalances();
+            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+
             foreach (GateIOBalance balance in list)
             {
-                ExchangeManager.processBalance(balance.GetExchangeBalance());
+                if (balance.total > 0)
+                {
+                    if (balance.symbol != "BTC" && balance.symbol != USDSymbol)
+                    {
+                        // GET TICKER FOR PAIR IN BTC MARKET
+                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
+
+                        if (ticker != null)
+                        {
+                            balance.TotalInBTC = balance.total * ticker.last;
+                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                        }
+                        else
+                        {
+                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.symbol.ToUpper());
+                        }
+                    }
+                    else
+                    {
+                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+                        if (balance.symbol == "BTC")
+                        {
+                            balance.TotalInBTC = balance.total;
+                            balance.TotalInUSD = btcTicker.last * balance.total;
+                        }
+                        else if (balance.symbol == USDSymbol)
+                        {
+                            if (btcTicker.last > 0)
+                            {
+                                balance.TotalInBTC = balance.total / btcTicker.last;
+                            }
+                            balance.TotalInUSD = balance.total;
+                        }
+                    }
+                    ExchangeManager.processBalance(balance.GetExchangeBalance());
+                }
             }
         }
         public static void updateExchangeTickerList()
@@ -1009,7 +1052,7 @@ namespace TwEX_API.Exchange
             public ExchangeTicker GetExchangeTicker()
             {     
                 ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
+                eTicker.exchange = Name;
                 string[] pairs = pair.Split('_');
                 eTicker.market = pairs[0];
                 eTicker.symbol = pairs[1];
@@ -1056,9 +1099,8 @@ namespace TwEX_API.Exchange
             public string symbol { get; set; }
             public Decimal available { get; set; } // balance
             public Decimal locked { get; set; } // on orders
-            public Decimal TotalBTC { get; set; }
-            public Decimal TotalUSD { get; set; }
             // ADDON DATA
+            public Decimal total { get { return available + locked; } }
             public Decimal TotalInBTC { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
@@ -1066,7 +1108,7 @@ namespace TwEX_API.Exchange
                 ExchangeBalance eBalance = new ExchangeBalance();
                 eBalance.Exchange = Name;
                 eBalance.Symbol = symbol;
-                eBalance.Balance = available + locked;
+                eBalance.Balance = total;
                 eBalance.OnOrders = locked;
                 eBalance.TotalInBTC = TotalInBTC;
                 eBalance.TotalInUSD = TotalInUSD;

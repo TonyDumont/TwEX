@@ -50,7 +50,7 @@ namespace TwEX_API.Exchange
             foreach (PoloniexTicker ticker in tickerList)
             {
                 ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name.ToUpper();
+                eTicker.exchange = Name;
 
                 string[] pairs = ticker.pair.Split('_');
                 eTicker.market = pairs[0];
