@@ -24,6 +24,10 @@ namespace TwEX_API.Exchange
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.livecoin.net");
         private static string Api_privateUrl = "https://api.livecoin.net/";
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region Api_Public
@@ -221,19 +225,23 @@ namespace TwEX_API.Exchange
         public static List<LiveCoinTicker> getTickerList()
         {
             List<LiveCoinTicker> list = new List<LiveCoinTicker>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = "/exchange/ticker";
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
+                responseString = response.Content;
                 //LogManager.AddLogMessage(Name, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
-                JArray jsonVal = JArray.Parse(response.Content) as JArray;
+                JArray jsonVal = JArray.Parse(responseString) as JArray;
                 LiveCoinTicker[] array = jsonVal.ToObject<LiveCoinTicker[]>();
                 list = array.ToList();
+                UpdateStatus(true, "Updated Tickers");
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTickerList", LogManager.StripHTML(responseString), LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, LogManager.StripHTML(responseString));
             }
             return list;
         }
@@ -393,7 +401,7 @@ namespace TwEX_API.Exchange
         public static List<LiveCoinBalanceTotals> getBalances()
         {
             List<LiveCoinBalanceTotals> list = new List<LiveCoinBalanceTotals>();
-
+            string responseString = string.Empty;
             try
             {
                 // GET BALANCES
@@ -444,7 +452,8 @@ namespace TwEX_API.Exchange
 
                 //List<LiveCoinBalance> masterList = new JavaScriptSerializer().Deserialize<LiveCoinBalance[]>(ResponseFromServer).ToList();
                 //var jsonObject = JObject.Parse(ResponseFromServer);
-                JArray jArray = JArray.Parse(ResponseFromServer) as JArray;
+                responseString = ResponseFromServer;
+                JArray jArray = JArray.Parse(responseString) as JArray;
                 LiveCoinBalance[] array = jArray.ToObject<LiveCoinBalance[]>();
                 List<LiveCoinBalance> masterList = array.ToList();
                 //List<LiveCoinBalance> masterList = new List<LiveCoinBalance>();
@@ -472,10 +481,12 @@ namespace TwEX_API.Exchange
                     }
                 }
                 //LogManager.AddLogMessage("LiveCoinControl", "GetBalances", "ml count:" + masterList.Count + " | bl count:" + balanceList.Count);
+                UpdateStatus(true, "Update Balances");
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
 
             return list;
@@ -650,6 +661,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 

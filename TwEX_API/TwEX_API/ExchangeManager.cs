@@ -58,13 +58,6 @@ namespace TwEX_API
                                 null,
                                 type,
                                 null));
-                        /*
-                        type.InvokeMember("InitializeExchange",
-                                BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
-                                null,
-                                type,
-                                null);
-                                */
                     }
                     catch (Exception ex)
                     {
@@ -81,6 +74,9 @@ namespace TwEX_API
         }
         public static Boolean InitializePreferences()
         {
+            // CLEAR LOGFILE
+            //File.Create("TwEX_Log.txt").Close();
+
             string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
             string targetPath = System.IO.Path.GetDirectoryName(path);
             WorkDirectory = new Uri(targetPath).LocalPath;
@@ -89,12 +85,10 @@ namespace TwEX_API
             //LogManager.AddLogMessage(Name, "Initialize", "Checking for Preferences.ini @ " + iniPath);
             if (File.Exists(iniPath))
             {
-                //LogManager.AddLogMessage(Name, "Initialize", "There is an ini - reading it", LogManager.LogMessageType.DEBUG);
                 string text = File.ReadAllText(iniPath);
                 string json = LogManager.Decrypt(text);
                 preferences = JsonConvert.DeserializeObject<ExchangeManagerPreferences>(json);
-                //LogManager.AddLogMessage(Name, "Initialize", "There is an ini - read it : " + preferences.apiList.Count + " APIS", LogManager.LogMessageType.DEBUG);
-                
+                LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.apiList.Count + " APIS", LogManager.LogMessageType.DEBUG);
             }
             else
             {
@@ -106,11 +100,9 @@ namespace TwEX_API
         // TIMER
         public static void InitializeTimer()
         {
-            //clockControl = control;
             timer.Interval = 60000;
             timer.Elapsed += new ElapsedEventHandler(OnTimer_tick);
-            LogManager.AddLogMessage(Name, "InitializeTimer", "Starting Exchange Manager Clock", LogManager.LogMessageType.EXCHANGE);
-            //clockControl.UpdateClock();
+            LogManager.AddLogMessage(Name, "InitializeTimer", "Exchange Timer Initialized", LogManager.LogMessageType.EXCHANGE);
             timer.Start();
         }
         private static void OnTimer_tick(object sender, EventArgs e)
@@ -133,7 +125,7 @@ namespace TwEX_API
                         LogManager.AddDebugMessage(thisClassName, "OnTimer_clockTick", "Hour is 0 : SHOULD BE MIDNIGHT - ANYTHING TO RESET?");
                     }
                     */
-                    updateBalances();
+                    //updateBalances();
                     break;
 
                 case 5:
@@ -147,7 +139,7 @@ namespace TwEX_API
                 case 45:
                 case 50:
                 case 55:
-                    updateBalances();
+                    //updateBalances();
                     /*
                     if (AutoUpdate)
                     {
@@ -197,9 +189,9 @@ namespace TwEX_API
                     {
                         
                         //Boolean isAsync =
-                        Boolean isAsync = Convert.ToBoolean(type.GetProperty("isAsync", BindingFlags.Public | BindingFlags.Static).GetValue(null));
+                        //Boolean isAsync = Convert.ToBoolean(type.GetProperty("isAsync", BindingFlags.Public | BindingFlags.Static).GetValue(null));
                         //string isAsync = type.GetProperty("isAsync", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();
-                        LogManager.AddLogMessage(Name, "getCurrencyList", "type is : " + type.Name + " | " + isAsync, LogManager.LogMessageType.DEBUG);
+                        //LogManager.AddLogMessage(Name, "getCurrencyList", "type is : " + type.Name + " | " + isAsync, LogManager.LogMessageType.DEBUG);
                         //Console.WriteLine("isAsync = " + isAsync);
                         list = (List<ExchangeBalance>)type.InvokeMember("getExchangeBalanceList",
                                 BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
@@ -316,8 +308,10 @@ namespace TwEX_API
         public static ExchangeTicker getExchangeTicker(string exchange, string symbol, string market)
         {
             ExchangeTicker ticker = Tickers.FirstOrDefault(t => t.exchange == exchange && t.symbol == symbol && t.market == market);
+
             if (exchange != "CryptoCompare" && ticker != null )
             {
+                //LogManager.AddLogMessage(Name, "getExchangeTicker", "ticker !null & Not CC : " + ticker.exchange + " | " + ticker.symbol + " | " + ticker.market + " | " + ticker.last);
                 return ticker;
             }
             else
@@ -328,11 +322,13 @@ namespace TwEX_API
                 if (priceList.Count > 0)
                 {
                     //CryptoComparePrice price = priceList[0];
-                    ccTicker.exchange = exchange;
+                    ccTicker.exchange = "CryptoCompare";
+                    //ccTicker.exchange = exchange;
                     ccTicker.symbol = symbol;
                     ccTicker.market = market;
                     ccTicker.last = priceList[0].value;
                 }
+                //LogManager.AddLogMessage(Name, "getExchangeTicker", "ticker NULL or CC : " + ccTicker.exchange + " | " + ccTicker.symbol + " | " + ccTicker.market + " | " + ccTicker.last);
                 return ccTicker;
             }
         }
@@ -492,11 +488,11 @@ namespace TwEX_API
 
                         if (api != null)
                         {
-                            type.InvokeMember("updateExchangeBalanceList",
+                            Task.Factory.StartNew(() => type.InvokeMember("updateExchangeBalanceList",
                                 BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
                                 null,
                                 type,
-                                null);
+                                null));
                         }
                         else
                         {
@@ -520,11 +516,11 @@ namespace TwEX_API
 
                             if (api != null)
                             {
-                                type.InvokeMember("updateExchangeBalanceList",
-                                    BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
-                                    null,
-                                    type,
-                                    null);
+                                Task.Factory.StartNew(() => type.InvokeMember("updateExchangeBalanceList",
+                                                            BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                                            null,
+                                                            type,
+                                                            null));
                             }
                             else
                             {
@@ -557,12 +553,11 @@ namespace TwEX_API
                     if (type != null)
                     {
                         //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "type is : " + type.Name);
-
-                        type.InvokeMember("updateExchangeTickerList",
+                        Task.Factory.StartNew(() => type.InvokeMember("updateExchangeTickerList",
                                 BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
                                 null,
                                 type,
-                                null);
+                                null));
                     }
                     else
                     {
@@ -570,27 +565,24 @@ namespace TwEX_API
                     }
                 }
                 else
-                {
-                    
+                {                
                     foreach (Exchange exchange in exchangeList)
                     {
                         Type type = getExchangeType(exchange.Name);
                         if (type != null)
                         {
                             //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "type is : " + type.Name);
-
-                            type.InvokeMember("updateExchangeTickerList",
-                                    BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
-                                    null,
-                                    type,
-                                    null);
+                            Task.Factory.StartNew(() => type.InvokeMember("updateExchangeTickerList",
+                                BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                null,
+                                type,
+                                null));
                         }
                         else
                         {
                             LogManager.AddLogMessage(Name, "updateExchangeTickerList", "type is NULL : " + exchangeName, LogManager.LogMessageType.DEBUG);
                         }
-                    }
-                    
+                    }          
                 }
             }
             catch (Exception ex)
@@ -598,7 +590,6 @@ namespace TwEX_API
                 LogManager.AddLogMessage(Name, "updateExchangeTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
         }
-        
         #endregion Updaters
 
         #region Preferences
@@ -709,9 +700,14 @@ namespace TwEX_API
             public string Name { get; set; }
             public string Url { get; set; }
             public string USDSymbol { get; set; }
+            public Type type { get { return getExchangeType(Name); } }
             // COLLECTIONS
             public List<ExchangeBalance> BalanceList { get { return ExchangeManager.balanceList.FindAll(balance => balance.Exchange == Name); } }
             public List<ExchangeTicker> TickerList { get { return ExchangeManager.Tickers.Where(ticker => ticker.exchange == Name).ToList(); } }
+            // STATUS
+            public int ErrorCount { get { return Convert.ToInt32(type.GetProperty("ErrorCount", BindingFlags.Public | BindingFlags.Static).GetValue(null)); }}
+            public DateTime LastUpdate { get { return Convert.ToDateTime(type.GetProperty("LastUpdate", BindingFlags.Public | BindingFlags.Static).GetValue(null)); } }
+            public string LastMessage { get { return type.GetProperty("LastMessage", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString(); } }
         }
         public class ExchangeApi
         {

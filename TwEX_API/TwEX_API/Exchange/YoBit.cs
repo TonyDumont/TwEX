@@ -29,6 +29,10 @@ namespace TwEX_API.Exchange
         public static BlockingCollection<YoBitBalance> Balances = new BlockingCollection<YoBitBalance>();
         public static BlockingCollection<YoBitInfo> Pairs = new BlockingCollection<YoBitInfo>();
         public static BlockingCollection<YoBitTicker> Tickers = new BlockingCollection<YoBitTicker>();
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
@@ -41,12 +45,14 @@ namespace TwEX_API.Exchange
         public static List<YoBitInfo> getInfoList()
         {
             List<YoBitInfo> list = new List<YoBitInfo>();
+            string responseString = string.Empty;
             try
             {
                 var request = new RestRequest("/3/info", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getInfoList", "Response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
                 var pairsObject = JObject.Parse(jsonObject["pairs"].ToString());
 
                 foreach (var item in pairsObject)
@@ -59,10 +65,12 @@ namespace TwEX_API.Exchange
                     info.market = pairs[1];
                     list.Add(info);
                 }
+                UpdateStatus(true, "Loaded " + list.Count + " Pairs");
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getInfoList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getInfoList", responseString, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -131,17 +139,19 @@ namespace TwEX_API.Exchange
         /// </summary>
         public static List<YoBitTicker> getTickerList(List<YoBitInfo> pairs)
         {
-            List<YoBitTicker> list = new List<YoBitTicker>();   
+            List<YoBitTicker> list = new List<YoBitTicker>();
+            string responseString = String.Empty;
             try
             {
                 string reqString = getPairsString(pairs);
                 //LogManager.AddLogMessage(Name, "getTickerList", pairs ,LogManager.LogMessageType.DEBUG); 
-                //LogManager.AddLogMessage(Name, "getTickerList", reqString, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTickerList", "reqString=" + reqString, LogManager.LogMessageType.DEBUG);
                 var request = new RestRequest("/3/ticker/" + reqString, Method.GET);
                 
                 var response = client.Execute(request);
+                responseString = response.Content;
                 //LogManager.AddLogMessage(Name, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
-                var jsonObject = JObject.Parse(response.Content);
+                var jsonObject = JObject.Parse(responseString);
                 
                 foreach (var item in jsonObject)
                 {
@@ -153,14 +163,16 @@ namespace TwEX_API.Exchange
                     ticker.market = pairSplit[1];
                     list.Add(ticker);
                 }
-                
+                UpdateStatus(true, "Updated Tickers");
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTickerList EX", LogManager.StripHTML(responseString), LogManager.LogMessageType.LOG);
+                UpdateStatus(false, LogManager.StripHTML(responseString));
             }       
             return list;
         }
+        
         /// <summary>trades
         /// <para>Method returns information about the last transactions of selected pairs.</para>
         /// <para>Required : pairs - ARRAY of STRING (sym_mkt)</para>
@@ -293,13 +305,14 @@ namespace TwEX_API.Exchange
         public static async Task<List<YoBitBalance>> getBalanceList()
         {
             List<YoBitBalance> list = new List<YoBitBalance>();
+            string responseString = string.Empty;
             try
             {
                 string req = "method=getInfo&nonce=" + ExchangeManager.GetNonce();
-                string result = await SendPrivateApiRequestAsync(req);
-                result = result.Replace("return", "results");
+                responseString = await SendPrivateApiRequestAsync(req);
+                responseString = responseString.Replace("return", "results");
                 //LogManager.AddLogMessage(Name, "getInfo", "result=" + result, LogManager.LogMessageType.DEBUG);
-                var balancejsonData = JObject.Parse(result);
+                var balancejsonData = JObject.Parse(responseString);
                 int isSuccess = Convert.ToInt32(balancejsonData["success"]);
 
                 if (isSuccess > 0)
@@ -340,11 +353,18 @@ namespace TwEX_API.Exchange
                             LogManager.AddLogMessage(Name, "GetBalances", "NOT IN BList already (WHY???) : " + f.Key + " | " + f.Value, LogManager.LogMessageType.DEBUG);
                         }
                     }
+                    UpdateStatus(true, "Updated Balances");
+                }
+                else
+                {
+                    // SUCCESS FALSE
+                    UpdateStatus(true, responseString);
                 }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -486,8 +506,9 @@ namespace TwEX_API.Exchange
         // INITIALIZE
         public async static void InitializeExchange()
         {
-            Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
+            //Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
             Pairs = new BlockingCollection<YoBitInfo>(new ConcurrentQueue<YoBitInfo>(getInfoList()));
+            Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
         }
         // GETTERS
@@ -612,11 +633,26 @@ namespace TwEX_API.Exchange
         public static void updateExchangeTickerList()
         {
             //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "THIS FUNCTION DISABLED UNTIL A SOLUTION IS FOUND ON PAIR REQUESTS", LogManager.LogMessageType.OTHER);
+            
             Tickers = new BlockingCollection<YoBitTicker>(new ConcurrentQueue<YoBitTicker>(getTickerList(getWatchlistPairs())));
             foreach (YoBitTicker ticker in Tickers)
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+            
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 

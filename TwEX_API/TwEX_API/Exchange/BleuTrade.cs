@@ -23,7 +23,11 @@ namespace TwEX_API.Exchange
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bleutrade.com/api/v2");
-        public static Boolean isAsync { get; set; } = false;
+        //public static Boolean isAsync { get; set; } = false;
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
@@ -152,23 +156,32 @@ namespace TwEX_API.Exchange
         public static List<BleuTradeMarketSummary> getMarketSummariesList()
         {
             List<BleuTradeMarketSummary> list = new List<BleuTradeMarketSummary>();
+            string responseString = String.Empty;
             try
             {
                 var request = new RestRequest("/public/getmarketsummaries", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getMarketSummaries", "response.Content=" + response.Content);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     //LogManager.AddLogMessage(Name, "getMarketSummaries", "success=true");
                     list = jsonObject["result"].ToObject<List<BleuTradeMarketSummary>>();
+                    UpdateStatus(true, "Updated Tickers");
+                }
+                else
+                {
+                    UpdateStatus(true, jsonObject["message"].ToString());
                 }
             }
             catch (Exception ex)
-            {
-                LogManager.AddLogMessage(Name, "getMarketSummaries", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
+            {              
+                //UpdateStatus(false, LogManager.StripHTML(responseString));
+                UpdateStatus(false, "TIMEOUT");
+                LogManager.AddLogMessage(Name, "getMarketSummaries", LogManager.StripHTML(responseString), LogManager.LogMessageType.LOG);
             }
             return list;
         }
@@ -357,6 +370,7 @@ namespace TwEX_API.Exchange
         public static List<BleuTradeBalance> getBalanceList()
         {
             List<BleuTradeBalance> list = new List<BleuTradeBalance>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = "https://bleutrade.com/api/v2/account/getbalances?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
@@ -369,23 +383,26 @@ namespace TwEX_API.Exchange
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
-                String response = strRead.ReadToEnd();
+                responseString = strRead.ReadToEnd();
 
-                var jsonObject = JObject.Parse(response);
+                var jsonObject = JObject.Parse(responseString);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     list = jsonObject["result"].ToObject<List<BleuTradeBalance>>();
+                    UpdateStatus(true, "Updated Balances");
                 }
                 else
                 {
                     LogManager.AddLogMessage(Name, "getBalanceList", "success FALSE : " + jsonObject["message"]);
+                    UpdateStatus(true, jsonObject["message"].ToString());
                 }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getBalanceList", "EXCEPTION!!! : " + ex.Message);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -797,7 +814,7 @@ namespace TwEX_API.Exchange
             updateExchangeTickerList();
         }
         // GETTERS
-        public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
+        public static List<ExchangeBalance> getExchangeBalanceList()
         {
             List<ExchangeBalance> list = new List<ExchangeBalance>();
             List<BleuTradeBalance> requestList = getBalanceList();
@@ -849,7 +866,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getCandleList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getExchangeTickerList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -887,6 +904,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(item.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 

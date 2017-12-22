@@ -24,7 +24,10 @@ namespace TwEX_API.Exchange
         private static RestClient client = new RestClient("https://c-cex.com/t");
         private static String Api_publicUrl = "/api_pub.html?a=";
         private static String Api_privateUrl = "https://c-cex.com/t/api.html?a=";
-        //public static Boolean isAsync { get; set; } = false;
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
@@ -110,26 +113,31 @@ namespace TwEX_API.Exchange
         public static List<CCEXMarketSummary> getMarketSummariesList()
         {
             List<CCEXMarketSummary> list = new List<CCEXMarketSummary>();
+            string responseString = String.Empty;
             try
             {
                 var request = new RestRequest(Api_publicUrl + "getmarketsummaries", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getMarketSummariesList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     list = jsonObject["result"].ToObject<List<CCEXMarketSummary>>();
+                    UpdateStatus(true, "Updated Tickers");
                 }
                 else
                 {
-                    LogManager.AddLogMessage(Name, "getMarketSummariesList", "success IS FALSE : message=" + jsonObject["message"], LogManager.LogMessageType.DEBUG);
+                    LogManager.AddLogMessage(Name, "getMarketSummariesList", "Failed : " + jsonObject["message"], LogManager.LogMessageType.EXCHANGE);
+                    UpdateStatus(true, jsonObject["message"].ToString());
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getMarketSummariesList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getMarketSummariesList", LogManager.StripHTML(responseString), LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, LogManager.StripHTML(responseString));
             }
             return list;
         }
@@ -283,27 +291,31 @@ namespace TwEX_API.Exchange
         public static List<CCEXBalance> getBalanceList()
         {
             List<CCEXBalance> list = new List<CCEXBalance>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = Api_privateUrl + "getbalances" +
                     "&apikey=" + Api.key +
                     "&nonce=" + ExchangeManager.GetNonce();
-
-                var jsonObject = JObject.Parse(GetApiRequest(requestUrl));
+                responseString = GetApiRequest(requestUrl);
+                var jsonObject = JObject.Parse(responseString);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     list = jsonObject["result"].ToObject<List<CCEXBalance>>();
+                    UpdateStatus(true, "Updated Balances");
                 }
                 else
                 {
                     LogManager.AddLogMessage(Name, "getBalanceList", "sucess IS FALSE : message=" + jsonObject["message"], LogManager.LogMessageType.DEBUG);
+                    UpdateStatus(true, jsonObject["message"].ToString());
                 }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -575,7 +587,7 @@ namespace TwEX_API.Exchange
             updateExchangeTickerList();
         }
         // GETTERS
-        public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
+        public static List<ExchangeBalance> getExchangeBalanceList()
         {
             List<ExchangeBalance> list = new List<ExchangeBalance>();
             List<CCEXBalance> balanceList = getBalanceList();
@@ -650,6 +662,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 

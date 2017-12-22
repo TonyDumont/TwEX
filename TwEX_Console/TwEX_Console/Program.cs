@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Threading.Tasks;
 using TwEX_API;
 using TwEX_API.Market;
-using static TwEX_API.Market.CryptoCompare;
 
 namespace TwEX_Console
 {
     public class Program
     {
-        // COLORS
-        private static ConsoleColor delimiterColor = ConsoleColor.DarkYellow;
-        // WINDOW
+        #region Properties
+        static ConsoleColor delimiterColor = ConsoleColor.DarkGray;
+        static int row = 1;
+        #endregion Properties
+
+        #region DLL_IMPORTS
         private const int MF_BYCOMMAND = 0x00000000;
         public const int SC_CLOSE = 0xF060;
         public const int SC_MINIMIZE = 0xF020;
@@ -28,181 +29,122 @@ namespace TwEX_Console
 
         [DllImport("kernel32.dll", ExactSpelling = true)]
         private static extern IntPtr GetConsoleWindow();
+        #endregion DLL_IMPORTS
 
-        // THREAD
+        #region Thread
         static void Main(string[] args)
         {
-            //Console.Title = typeof(Program).Name;
-            Console.Title = "TwEX Console";
-            LogManager.ConsoleLogging = true;
-            Console.BufferWidth = Console.WindowWidth = 150;
-            Console.BufferHeight = Console.WindowHeight = 45;
-            Console.CursorVisible = false;
-
-            IntPtr handle = GetConsoleWindow();
-            IntPtr sysMenu = GetSystemMenu(handle, false);
-
-            if (handle != IntPtr.Zero)
+            if (LogManager.InitializeLogManager())
             {
-                //DeleteMenu(sysMenu, SC_CLOSE, MF_BYCOMMAND);
-                DeleteMenu(sysMenu, SC_MINIMIZE, MF_BYCOMMAND);
-                DeleteMenu(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND);
-                DeleteMenu(sysMenu, SC_SIZE, MF_BYCOMMAND);
-            }
+                Console.Title = "TwEX Console";
+                LogManager.ConsoleLogging = true;
+                Console.BufferWidth = Console.WindowWidth = 150;
+                Console.BufferHeight = Console.WindowHeight = 50;
+                Console.CursorVisible = false;
+                /*
+                IntPtr handle = GetConsoleWindow();
+                IntPtr sysMenu = GetSystemMenu(handle, false);
 
-            //List<CryptoComparePrice> priceTicker = CryptoCompare.getPriceList("BTC", new string[] { "USD" });
-            //LogManager.AddLogMessage("Program", "Main", "count=" + priceTicker.Count + " | " + priceTicker[0].value);
+                if (handle != IntPtr.Zero)
+                {
+                    //DeleteMenu(sysMenu, SC_CLOSE, MF_BYCOMMAND);
+                    DeleteMenu(sysMenu, SC_MINIMIZE, MF_BYCOMMAND);
+                    DeleteMenu(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND);
+                    DeleteMenu(sysMenu, SC_SIZE, MF_BYCOMMAND);
+                }
+                */
+            }
 
             if (ExchangeManager.InitializePreferences())
             {
-                //Console.WriteLine("Preferences Initialized : " + ExchangeManager.preferences.apiList.Count + " APIs in list");
-                LogManager.AddLogMessage("Program", "Main", "Preferences Initialized : " + ExchangeManager.preferences.apiList.Count + " APIs in list");
-
                 if (ExchangeManager.InitializeExchangeList())
                 {
                     ExchangeManager.InitializeTimer();
-                    
                     Run();
                 }
             }
         }
-        // LOOP
         static void Run()
         {
-            //int data = 1;
-            //System.Diagnostics.Stopwatch clock = new System.Diagnostics.Stopwatch();
-            //clock.Start();
             while (true)
             {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.B:
+                            LogManager.AddLogMessage("Program", "Run", "Updating All Balances", LogManager.LogMessageType.CONSOLE);
+                            Task.Factory.StartNew(() => ExchangeManager.updateBalances());
+                            break;
+
+                        case ConsoleKey.T:
+                            LogManager.AddLogMessage("Program", "Run", "Updating All Tickers", LogManager.LogMessageType.CONSOLE);
+                            Task.Factory.StartNew(() => ExchangeManager.updateTickers());
+                            break;
+
+                        case ConsoleKey.L:
+                            LogManager.messageFlags ^= LogManager.LogMessageType.LOG;
+                            break;
+
+                        case ConsoleKey.C:
+                            //int types = (int)LogManager.messageFlags;
+                            LogManager.messageFlags ^= LogManager.LogMessageType.CONSOLE;
+                            break;
+
+                        case ConsoleKey.D:
+                            //int types = (int)LogManager.messageFlags;
+                            LogManager.messageFlags ^= LogManager.LogMessageType.DEBUG;
+                            break;
+
+                        case ConsoleKey.E:
+                            //int types = (int)LogManager.messageFlags;
+                            LogManager.messageFlags ^= LogManager.LogMessageType.EXCHANGE;
+                            break;
+
+                        case ConsoleKey.O:
+                            //int types = (int)LogManager.messageFlags;
+                            LogManager.messageFlags ^= LogManager.LogMessageType.OTHER;
+                            break;
+
+                        case ConsoleKey.X:
+                            //int types = (int)LogManager.messageFlags;
+                            LogManager.messageFlags ^= LogManager.LogMessageType.EXCEPTION;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
                 ReDraw();
-                /*
-                data++;
-                Console.Clear();
-                Console.SetCursorPosition(1, 2);
-                Console.Write("Current Value: " + data.ToString());
-                Console.SetCursorPosition(1, 3);
-                Console.Write("Running Time: " + clock.Elapsed.TotalSeconds.ToString());
-                Console.SetCursorPosition(1, 4);
-                Console.Write("Balances: " + ExchangeManager.balanceList.Count);
-                
-                var consoleInput = LogManager.ReadFromConsole();
-                if (string.IsNullOrWhiteSpace(consoleInput)) continue;
-
-                try
-                {
-                    // Execute the command:
-                    string result = LogManager.Execute(consoleInput);
-                    // Write out the result:
-                    //Console.SetCursorPosition(0, Console.BufferHeight - 1);
-                    LogManager.WriteToConsole(result);
-                }
-                catch (Exception ex)
-                {
-                    // OOPS! Something went wrong - Write out the problem:
-                    LogManager.WriteToConsole(ex.Message);
-                }
-                */
-                
-
             }
         }
-        // DRAW
-        public static void ClearCurrentConsoleLine()
-        {
-            int currentLineCursor = Console.CursorTop;
-            Console.SetCursorPosition(0, Console.CursorTop);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, currentLineCursor);
-        }
+        #endregion Thread
+
+        #region Draw
         static void ReDraw()
         {
-            //int row = 0;
-
-            // HEADER
-            //Console.Clear();
-            Console.ResetColor();
-            Console.SetCursorPosition(0, 0);
-            ColoredConsoleWrite(ConsoleColor.Cyan, DateTime.Now.ToString());
-            ColumnBreak();
-            //Console.WriteLine(ExchangeManager.exchangeList.Count + " Exchanges | " + ExchangeManager.Tickers.Count + " Tickers | " + CoinMarketCap.Tickers.Count + " Market Caps");
-            Console.Write(ExchangeManager.exchangeList.Count + " Exchanges");
-            ColumnBreak();
-            Console.Write(ExchangeManager.Tickers.Count + " Tickers");
-            ColumnBreak();
-            Console.Write(CoinMarketCap.Tickers.Count + " Market Caps");
-            ColumnBreak();
-            ColoredConsoleWrite(ConsoleColor.DarkCyan, ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8"));
-            //Console.Write(ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8") + " BTC");
-            ColumnBreak();
-            //Console.Write(ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C") + " USD");
-            ColoredConsoleWrite(ConsoleColor.DarkGreen, ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C") + " USD\r\n");
-
-            //RowBreak();
-
-            // EXCHANGE HEADER
-            
-            Console.SetCursorPosition(0, 1);
-            Console.ForegroundColor = delimiterColor;
-            Console.WriteLine(new String('#', Console.WindowWidth-1));
-            
-            Console.SetCursorPosition(0, 2);
-            Console.ResetColor();
-            Console.WriteLine(String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10}", "Exchange", "Tkrs", "Coins", "Total BTC", "Total USD"));
-
-            Console.SetCursorPosition(0, 3);
-            Console.ForegroundColor = delimiterColor;
-            Console.WriteLine(new String('-', Console.WindowWidth));
-            
-            // EXCHANGE LIST
-            int row = 4;
-            Console.ForegroundColor = ConsoleColor.White;
-            foreach (ExchangeManager.Exchange exchange in ExchangeManager.exchangeList.OrderByDescending(item => item.BalanceList.Sum(balance => balance.TotalInBTC)))
-            {
-                Console.SetCursorPosition(0, row);
-                //ClearCurrentConsoleLine();
-                Console.WriteLine(String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10}", 
-                    exchange.Name, 
-                    exchange.TickerList.Count,
-                    exchange.BalanceList.FindAll(e => e.Balance > 0).Count,
-                    exchange.BalanceList.Sum(balance => balance.TotalInBTC).ToString("N8"),
-                    exchange.BalanceList.Sum(balance => balance.TotalInUSD).ToString("C")
-                    ));
-                row++;
-            }
-
-            Console.SetCursorPosition(0, row++);
-            Console.ForegroundColor = delimiterColor;
-            Console.WriteLine(new String('-', Console.WindowWidth));
-            
-            Console.ForegroundColor = ConsoleColor.Gray;
-            int spread = (Console.WindowHeight - 3) - row;
-            var messages = LogManager.MessageList.Skip(Math.Max(0, LogManager.MessageList.Count() - spread));
             //Console.ResetColor();
-
-            foreach (var message in messages)
-            {
-                Console.SetCursorPosition(0, row);
-                //ClearCurrentConsoleLine();
-                Console.WriteLine(String.Format("{0,-10} | {1,-10} | {2,-10} | {3,-10} | {4,-10}",
-                    message.TimeStamp,
-                    message.Source,
-                    message.FunctionCall,
-                    message.Message,
-                    new string(' ', 1)
-                    ));
-                row++;
-            }
-            /*
-            Console.SetCursorPosition(0, Console.WindowHeight - 3);
-            Console.WriteLine(new String('#', Console.WindowWidth));
-            */
+            Console.CursorVisible = false;
+            row = 1;
+            DrawHeader();
+            RowBreak(row++, '#', delimiterColor);
+            DrawExchangeList();
+            RowBreak(row++, '#', delimiterColor);
+            DrawMenu();
+            RowBreak(row++, '-', delimiterColor);
+            DrawConsole();
+            DrawFooter();
+            
         }
-        public static void ColoredConsoleWrite(ConsoleColor color, string text)
+        public static void ConsoleWrite(ConsoleColor color, string text)
         {
-            ConsoleColor originalColor = Console.ForegroundColor;
+            //ConsoleColor originalColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
             Console.Write(text);
-            Console.ForegroundColor = originalColor;
+            Console.ResetColor();
+            //Console.ForegroundColor = originalColor;
         }
         public static void ColumnBreak()
         {
@@ -211,129 +153,194 @@ namespace TwEX_Console
             Console.Write(" | ");
             Console.ForegroundColor = originalColor;
         }
-        public static void RowBreak()
+        static void DrawFooter()
         {
-            //Console.Write("\r\n");
-            //Console.SetCursorPosition(0, row);
-            Console.ForegroundColor = delimiterColor;
-            Console.WriteLine(new String('-', Console.WindowWidth));
+            // FOOTER
+            //Console.SetCursorPosition(0, Console.WindowHeight - 2);
+            //Console.SetCursorPosition(0, Console.WindowHeight -2);
+            //Console.ForegroundColor = delimiterColor;
+
+            RowBreak(Console.WindowHeight - 3, '#', delimiterColor);
+            //Console.WriteLine(new String('#', Console.WindowWidth));
+
+            Console.SetCursorPosition(0, Console.WindowHeight - 2);
+            ConsoleWrite(delimiterColor, "UPDATE");
+            ColumnBreak();
+            ConsoleWrite(ConsoleColor.White, "[B]alances");
+            ColumnBreak();
+            ConsoleWrite(ConsoleColor.White, "[T]ickers");
+            //Console.SetCursorPosition(0, 0);
+        }
+        static void DrawHeader()
+        {
+            Console.SetCursorPosition(0, 0);
+            ConsoleWrite(ConsoleColor.Cyan, DateTime.Now.ToString());
+            ColumnBreak();
+            Console.Write(ExchangeManager.exchangeList.Count + " Exchanges");
+            ColumnBreak();
+            Console.Write(ExchangeManager.Tickers.Count + " Tickers");
+            ColumnBreak();
+            Console.Write(CoinMarketCap.Tickers.Count + " Market Caps");
+            ColumnBreak();
+            ConsoleWrite(ConsoleColor.DarkCyan, ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8"));
+            ColumnBreak();
+            ConsoleWrite(ConsoleColor.DarkGreen, ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C") + " USD");
+            
+        }
+        static void DrawConsole()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            int spread = (Console.WindowHeight - 2) - row;
+            var messages = LogManager.MessageList.Where(m => m.type != LogManager.LogMessageType.LOG).Skip(Math.Max(0, LogManager.MessageList.Count() - spread));
+
+            foreach (var message in messages)
+            {
+                Console.SetCursorPosition(0, row);
+                Console.ForegroundColor = getMessageTypeColor(message.type);
+
+                string msg = String.Format("{0,-1}-> {1,-1}-> {2,-1}-> {3,-1}",
+                    message.TimeStamp,
+                    message.Source,
+                    message.FunctionCall,
+                    message.Message
+                    );
+
+                if (msg.Length > Console.WindowWidth)
+                {
+                    // TRUNCATE
+                    msg = msg.Substring(0, Console.WindowWidth);
+                }
+                else
+                {
+                    // PAD
+                    int padWidth = Console.WindowWidth - msg.Length;
+                    msg += new String(' ', padWidth);
+                }
+
+                Console.WriteLine(msg);
+                row++;
+            }
+            // CLEAR LINES THAT MIGHT HAVE GARBAGE
+
+        }
+        static void DrawExchangeList()
+        {
+            // EXCHANGE HEADER
+            Console.SetCursorPosition(0, row++);
+            Console.ResetColor();
+            Console.WriteLine(String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,5} | {7,5}", "Exchange", "Tkrs", "Coins", "Total BTC", "Total USD", "Errors", "Last Update", " Last Message"));
+            RowBreak(row++, '-', delimiterColor);
+            // EXCHANGE LIST
+            Console.ForegroundColor = ConsoleColor.White;
+            foreach (ExchangeManager.Exchange exchange in ExchangeManager.exchangeList.OrderByDescending(item => item.BalanceList.Sum(balance => balance.TotalInBTC)))
+            {
+                Console.SetCursorPosition(0, row);
+                string exchangeLine = String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,5} | {7,5}",
+                    exchange.Name,
+                    exchange.TickerList.Count,
+                    exchange.BalanceList.FindAll(e => e.Balance > 0).Count,
+                    exchange.BalanceList.Sum(balance => balance.TotalInBTC).ToString("N8"),
+                    exchange.BalanceList.Sum(balance => balance.TotalInUSD).ToString("C"),
+                    exchange.ErrorCount,
+                    exchange.LastUpdate,
+                    exchange.LastMessage
+                    );
+
+                if (exchangeLine.Length > Console.WindowWidth)
+                {
+                    // TRUNCATE
+                    exchangeLine = exchangeLine.Substring(0, Console.WindowWidth);
+                }
+                else
+                {
+                    // PAD
+                    int padWidth = Console.WindowWidth - exchangeLine.Length;
+                    exchangeLine += new String(' ', padWidth);
+                    Console.WriteLine(exchangeLine);
+                }
+
+                row++;
+            }
+        }
+        static void DrawMenu()
+        {
+            Console.SetCursorPosition(0, row++);
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.CONSOLE);
+            Console.Write("[C]ONSOLE");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.DEBUG);
+            Console.Write("[D]EBUG");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.EXCHANGE);
+            Console.Write("[E]XCHANGE");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.OTHER);
+            Console.Write("[O]THER");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.EXCEPTION);
+            Console.Write("E[X]CEPTION");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.LOG);
+            Console.Write("[L]OG");
+
+            int menuPadding = Console.WindowWidth - Console.CursorLeft;
+            //Console.ForegroundColor = delimiterColor;
+            Console.WriteLine(new String(' ', menuPadding));
+
+        }
+        public static void RowBreak(int row, char character, ConsoleColor color)
+        {
+            Console.SetCursorPosition(0, row);
+            Console.ForegroundColor = color;
+            Console.WriteLine(new String(character, Console.WindowWidth));
             Console.ResetColor();
         }
+        #endregion Draw
+
+        #region Getters
+        private static ConsoleColor getMessageTypeColor(LogManager.LogMessageType type)
+        {
+            switch (type)
+            {
+                case LogManager.LogMessageType.LOG:
+                    return ConsoleColor.DarkGreen;
+
+                case LogManager.LogMessageType.CONSOLE:
+                    return ConsoleColor.Gray;
+
+                case LogManager.LogMessageType.DEBUG:
+                    return ConsoleColor.DarkYellow;
+
+                case LogManager.LogMessageType.OTHER:
+                    return ConsoleColor.DarkMagenta;
+
+                case LogManager.LogMessageType.EXCEPTION:
+                    return ConsoleColor.Red;
+
+                case LogManager.LogMessageType.EXCHANGE:
+                    return ConsoleColor.DarkCyan;
+
+                default: return ConsoleColor.DarkGray;
+            }
+        }
+        private static ConsoleColor getMessageTypeActiveColor(LogManager.LogMessageType type)
+        {
+            bool hasType = (LogManager.messageFlags & type) != LogManager.LogMessageType.NONE;
+
+            if (hasType)
+            {
+                return getMessageTypeColor(type);
+            }
+            else
+            {
+                return ConsoleColor.DarkGray;
+            }
+        }
+        #endregion Getters
     }
 }
-
-//Console.Write("--------------------------------");
-//Console.WriteLine("Exchange | USD/T  |   Url");
-//Console.WriteLine("--------------------------------");
-
-/*
-            //LogManager.ConsoleLogging = true;
-            if(ExchangeManager.InitializePreferences())
-            {
-                //Console.WriteLine("Preferences Initialized : " + ExchangeManager.preferences.apiList.Count + " APIs in list");
-                if (ExchangeManager.InitializeExchangeList())
-                {
-                    ExchangeManager.InitializeTimer();
-                    //Console.WriteLine("Exchange List Initialized : " + ExchangeManager.exchangeList.Count);
-                    //ExchangeManager.updateExchangeTickerList();
-                    //ExchangeManager.updateBalanceList();
-                    Console.SetCursorPosition(0, 0);
-                    //Console.Write("--------------------------------");
-                    //Console.WriteLine("Exchange | USD/T  |   Url");
-                    Console.WriteLine("--------------------------------");
-                    Console.WriteLine(String.Format("{0,-10} | {1,-10} | {2,-10}", "Exchange", "USD/T", "Url"));
-                    Console.WriteLine("--------------------------------");
-
-                    Console.SetCursorPosition(0, ExchangeManager.exchangeList.Count + 1);
-                    Console.Write("--------------------------------");
-
-                    int data = 1;
-                    System.Diagnostics.Stopwatch clock = new System.Diagnostics.Stopwatch();
-                    clock.Start();
-                    while (true)
-                    {
-                        data++;
-                        
-                        Console.SetCursorPosition(1, 2);
-                        Console.Write("Current Value: " + data.ToString());
-                        Console.SetCursorPosition(1, 3);
-                        Console.Write("Running Time: " + clock.Elapsed.TotalSeconds.ToString());
-                        Console.SetCursorPosition(1, 4);
-                        Console.Write("Balances: " + ExchangeManager.balanceList.Count);
-                        
-                        Thread.Sleep(1000);
-                    }
-                    //Console.ReadKey();
-                }
-            }
-            //Console.ReadLine();
-            */
-
-
-/*
-        int origWidth, width;
-        int origHeight, height;
-        string m1 = "The current window width is {0}, and the " +
-                    "current window height is {1}.";
-        string m2 = "The new window width is {0}, and the new " +
-                    "window height is {1}.";
-        string m4 = "  (Press any key to continue...)";
-        //
-        // Step 1: Get the current window dimensions.
-        //
-        origWidth = Console.WindowWidth;
-        origHeight = Console.WindowHeight;
-        Console.WriteLine(m1, Console.WindowWidth,
-                              Console.WindowHeight);
-        Console.WriteLine(m4);
-        Console.ReadKey(true);
-        //
-        // Step 2: Cut the window to 1/4 its original size.
-        //
-        width = origWidth / 2;
-        height = origHeight / 2;
-        Console.SetWindowSize(width, height);
-        Console.WriteLine(m2, Console.WindowWidth,
-                              Console.WindowHeight);
-        Console.WriteLine(m4);
-        Console.ReadKey(true);
-        //
-        // Step 3: Restore the window to its original size.
-        //
-        Console.SetWindowSize(origWidth, origHeight);
-        Console.WriteLine(m1, Console.WindowWidth,
-                              Console.WindowHeight);
-                              */
-
-//int index = 0;
-/*
-for (int i = 0; i < spread; i++)
-{
-    Console.SetCursorPosition(0, row);
-    LogManager.LogMessage message = LogManager.LogMessageList.ElementAt(i);
-    if (message != null)
-    {
-        Console.WriteLine(String.Format("{0,-10} | {1,-10} | {2,-10} | {3,-10}",
-            message.TimeStamp,
-            message.Source,
-            message.FunctionCall,
-            message.Message
-            ));
-        row++;
-    }
-}*/
-//int index = 0;
-/*
-            Console.ForegroundColor = delimiterColor;
-            Console.WriteLine(new String('-', Console.WindowWidth));
-            Console.ResetColor();
-            */
-
-
-/*
-Console.SetCursorPosition(0, row++);
-Console.WriteLine(DateTime.Now);
-Console.SetCursorPosition(0, row++);
-Console.WriteLine(new String('-', Console.WindowWidth));
-//Console.SetCursorPosition(0, row++);
-*/

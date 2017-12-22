@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -22,10 +23,17 @@ namespace TwEX_API.Exchange
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.gdax.com");
+        // COLLECTIONS
+        public static BlockingCollection<GDAXProduct> Products = new BlockingCollection<GDAXProduct>();
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
         #region API_PUBLIC_Getters
+        
         /// <summary>/products
         /// <para>Get a list of available currency pairs for trading.</para>
         /// <para>The base_min_size and base_max_size fields define the min and max order size. The quote_increment field specifies the min order price as well as the price increment.</para>
@@ -37,22 +45,29 @@ namespace TwEX_API.Exchange
         public static List<GDAXProduct> getProductList()
         {
             List<GDAXProduct> list = new List<GDAXProduct>();
+            string responseString = String.Empty;
+
             try
             {
-                // GET PRODUCTS
                 var request = new RestRequest("/products", Method.GET);
                 var response = client.Execute(request);
+                responseString = response.Content;
                 //LogManager.AddLogMessage(Name, "getProductList", "Content:" + response.Content, LogManager.LogMessageType.DEBUG);
-                JArray jsonVal = JArray.Parse(response.Content) as JArray;
+                JArray jsonVal = JArray.Parse(responseString) as JArray;
                 list = jsonVal.ToObject<GDAXProduct[]>().ToList();
+                UpdateStatus(true, "Updated Products");
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getProductList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
+                //LogManager.AddLogMessage(Name, "getProductList", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
+                var jsonObject = JObject.Parse(responseString);
+                GDAXErrorMessage error = jsonObject.ToObject<GDAXErrorMessage>();
+                LogManager.AddLogMessage(Name, "getProductList", ex.Message + " | " + error.message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, error.message);
             }
             return list;
         }
-
+        
         /// <summary>/products/<product-id>/ticker
         /// <para>Snapshot information about the last trade (tick), best bid/ask and 24h volume.</para>
         /// <para>Required : product-id</para>
@@ -60,17 +75,21 @@ namespace TwEX_API.Exchange
         /// </summary>
         public static GDAXProductTicker GetProductTicker(string productID)
         {
+            string responseString = string.Empty;
             try
             {
                 var request = new RestRequest("/products/" + productID + "/ticker", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage("GDAXControl", "GetProductTicker", "TICKER:" + tickresponse.Content);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
                 GDAXProductTicker ticker = jsonObject.ToObject<GDAXProductTicker>();
                 ticker.id = productID;
                 string[] split = ticker.id.Split('-');
                 ticker.symbol = split[0];
                 ticker.market = split[1];
+                //LogManager.AddLogMessage(Name, "GetProductTicker", ticker.id + " | " + ticker.price);
+                UpdateStatus(true, "Updated Tickers");
                 return ticker;
                 /*
                 GDAXProductTicker ticker = new JavaScriptSerializer().Deserialize<GDAXProductTicker>(response.Content);
@@ -83,6 +102,7 @@ namespace TwEX_API.Exchange
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "GetProductTicker", "EXCEPTION!!! : " + ex.Message);
+                UpdateStatus(false, responseString);
                 return null;
             }
         }
@@ -93,22 +113,29 @@ namespace TwEX_API.Exchange
         public static List<GDAXProductTicker> getProductTickerList()
         {
             List<GDAXProductTicker> list = new List<GDAXProductTicker>();
-            try
-            {
-                // GET PRODUCTS
-                List<GDAXProduct> products = getProductList();
 
-                foreach (GDAXProduct product in products)
+            if (Products.Count > 0)
+            {
+                foreach (GDAXProduct product in Products)
                 {
-                    //LogManager.AddLogMessage(Name, "getProductTickerList", product.id, LogManager.LogMessageType.DEBUG);
                     GDAXProductTicker ticker = GetProductTicker(product.id);
+                    //LogManager.AddLogMessage(Name, "getProductTickerList", product.id, LogManager.LogMessageType.DEBUG);
                     list.Add(ticker);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                LogManager.AddLogMessage(Name, "getProductTickerList", "EXCEPTION!!! : " + ex.Message);
+                if (updateProductList())
+                {
+                    foreach (GDAXProduct product in Products)
+                    {
+                        GDAXProductTicker ticker = GetProductTicker(product.id);
+                        //LogManager.AddLogMessage(Name, "getProductTickerList", product.id, LogManager.LogMessageType.DEBUG);
+                        list.Add(ticker);
+                    }
+                }
             }
+
             return list;
         }
         #endregion
@@ -182,6 +209,7 @@ namespace TwEX_API.Exchange
         public async static Task<List<GDAXAccount>> getAccountList()
         {
             List<GDAXAccount> list = new List<GDAXAccount>();
+            string responseString = string.Empty;
             try
             {
                 string ts = ExchangeManager.GetNonce();
@@ -200,20 +228,23 @@ namespace TwEX_API.Exchange
                     HttpResponseMessage response = acclient.GetAsync(method).Result;
                     if (response.IsSuccessStatusCode)
                     {
-                        String result = await response.Content.ReadAsStringAsync();
+                        responseString = await response.Content.ReadAsStringAsync();
                         //LogManager.AddLogMessage(Name, "getAccountList", "response.IsSuccess: " + result);
-                        JArray jArray = JArray.Parse(result) as JArray;
+                        JArray jArray = JArray.Parse(responseString) as JArray;
                         list = jArray.ToObject<List<GDAXAccount>>();
+                        UpdateStatus(true, "Updated Balances");
                     }
                     else
                     {
                         LogManager.AddLogMessage(Name, "getAccountList", "response.IsSuccess is FALSE : NO BALANCES TO PROCESS : response.Content=" + response.Content);
+                        UpdateStatus(true, response.Content.ToString());
                     }
                 }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getAccountList", "EXCEPTION!!! : " + ex.Message);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -270,8 +301,12 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
+            // GET PRODUCTS
+            Products = new BlockingCollection<GDAXProduct>(new ConcurrentQueue<GDAXProduct>(getProductList()));
+            //updateExchangeTickerList();
         }
+        /*
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
@@ -283,12 +318,13 @@ namespace TwEX_API.Exchange
             }           
             return list;
         }
+        */
         // UPDATERS
         public async static void updateExchangeBalanceList()
         {
             List<GDAXAccount> list = await getAccountList();
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
-
+            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker("CryptoCompare", "BTC", USDSymbol);
+            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", list.Count + " | " + btcTicker.last + " | " + btcTicker.exchange, LogManager.LogMessageType.EXCHANGE);
             foreach (GDAXAccount balance in list)
             {
                 if (balance.balance > 0)
@@ -296,7 +332,7 @@ namespace TwEX_API.Exchange
                     if (balance.currency != "BTC" && balance.currency != USDSymbol)
                     {
                         // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.currency.ToUpper(), "BTC");
+                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker("CryptoCompare", balance.currency.ToUpper(), "BTC");
 
                         if (ticker != null)
                         {
@@ -305,7 +341,7 @@ namespace TwEX_API.Exchange
                         }
                         else
                         {
-                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.currency.ToUpper());
+                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.currency.ToUpper(), LogManager.LogMessageType.EXCHANGE);
                         }
                     }
                     else
@@ -337,13 +373,57 @@ namespace TwEX_API.Exchange
 
             foreach (GDAXProductTicker ticker in tickerList)
             {
+                //LogManager.AddLogMessage(Name, "updateExchangeTickerList", ticker.id + " | " + ticker.price + " | " + ticker.ask, LogManager.LogMessageType.DEBUG);
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
         }
+        
+        public static Boolean updateProductList()
+        {
+            List<GDAXProduct> list = getProductList();
+            //string responseString = String.Empty;
+            foreach(GDAXProduct product in list)
+            {
+                GDAXProduct listItem = Products.FirstOrDefault(item => item.id == product.id);
+
+                if (listItem != null)
+                {
+                    listItem.base_min_size = product.base_min_size;
+                    listItem.base_max_size = product.base_max_size;
+                    listItem.quote_increment = product.quote_increment;
+                    listItem.status = product.status;
+                    listItem.status_message = product.status_message;
+                }
+                else
+                {
+                    Products.Add(product);
+                }
+            }
+            return true;
+        }
+        
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
+        }
+        
         #endregion ExchangeManager
 
         #region DataModels
         #region DATAMODELS_Public
+        public class GDAXErrorMessage
+        {
+            public string message { get; set; }
+        }
         public class GDAXProduct
         {
             public string id { get; set; }
@@ -354,6 +434,8 @@ namespace TwEX_API.Exchange
             public Decimal quote_increment { get; set; }
             public string display_name { get; set; }
             public bool margin_enabled { get; set; }
+            public string status { get; set; }
+            public object status_message { get; set; }
         }
         public class GDAXProductTicker
         {

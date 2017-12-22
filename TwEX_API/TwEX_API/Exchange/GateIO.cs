@@ -22,6 +22,10 @@ namespace TwEX_API.Exchange
         public static ExchangeApi Api { get; set; } = new ExchangeApi();
         private static RestClient client = new RestClient("http://data.gate.io");
         private const string SecureUrl = "https://api.gate.io/api2/1/private/";
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public  
@@ -195,12 +199,14 @@ namespace TwEX_API.Exchange
         public static List<GateIOTicker> getTickerList()
         {
             List<GateIOTicker> list = new List<GateIOTicker>();
+            string responseString = string.Empty;
             try
             {
                 var request = new RestRequest("/api2/1/tickers", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getTickersList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
                 
                 foreach (var item in jsonObject)
                 {
@@ -212,10 +218,12 @@ namespace TwEX_API.Exchange
                     ticker.market = pairSplit[1];
                     list.Add(ticker);
                 }
+                UpdateStatus(true, "Updated Tickers");
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getTickersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTickersList", LogManager.StripHTML(responseString), LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, LogManager.StripHTML(responseString));
             }
             return list;
         }
@@ -305,6 +313,7 @@ namespace TwEX_API.Exchange
         public static List<GateIOBalance> getBalances()
         {
             List<GateIOBalance> list = new List<GateIOBalance>();
+            string responseString = string.Empty;
             try
             {
                 string url = "https://api.gate.io/api2/1/private/balances";
@@ -328,9 +337,9 @@ namespace TwEX_API.Exchange
                 reqStream.Write(data, 0, data.Length);
                 reqStream.Close();
 
-                var response = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
+                responseString = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
                 //LogManager.AddLogMessage(Name, "getBalances", "response.Content=" + response, LogManager.LogMessageType.DEBUG);
-                var jsonObject = JObject.Parse(response);
+                var jsonObject = JObject.Parse(responseString);
                 string result = jsonObject["result"].ToString().ToLower();
                 
                 if (result == "true")
@@ -389,11 +398,17 @@ namespace TwEX_API.Exchange
                             }
                         }
                     }
+                    UpdateStatus(true, "Updated Balances");
+                }
+                else
+                {
+                    UpdateStatus(true, responseString);
                 }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -1019,6 +1034,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 

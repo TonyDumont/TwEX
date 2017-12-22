@@ -23,9 +23,10 @@ namespace TwEX_API.Exchange
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bittrex.com/api/v1.1");
-        //public static Boolean isAsync { get; set; } = false;
-        // COLLECTIONS
-        public static BlockingCollection<BittrexMarket> Markets = new BlockingCollection<BittrexMarket>();
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
@@ -166,22 +167,30 @@ namespace TwEX_API.Exchange
         public static List<BittrexMarketSummary> getMarketSummariesList()
         {
             List<BittrexMarketSummary> list = new List<BittrexMarketSummary>();
+            string responseString = string.Empty;
             try
             {
                 var request = new RestRequest("/public/getmarketsummaries", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getMarketSummaries", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     list = jsonObject["result"].ToObject<List<BittrexMarketSummary>>();
+                    UpdateStatus(true, "Updated Tickers");
+                }
+                else
+                {
+                    UpdateStatus(true, jsonObject["message"].ToString());
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "returnTicker", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "returnTicker", ex.Message + " | " + responseString, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -335,6 +344,7 @@ namespace TwEX_API.Exchange
         public static List<BittrexBalance> getBalanceList()
         {
             List<BittrexBalance> list = new List<BittrexBalance>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = "https://bittrex.com/api/v1.1/account/getbalances?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
@@ -345,23 +355,27 @@ namespace TwEX_API.Exchange
                 var webresp = webreq.GetResponse();
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
-                String result = strRead.ReadToEnd();
+                //String result = strRead.ReadToEnd();
+                responseString = strRead.ReadToEnd();
                 //LogManager.AddLogMessage(Name, "getBalanceList", "result=" + result);
-                var jsonObject = JObject.Parse(result);
+                var jsonObject = JObject.Parse(responseString);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     list = jsonObject["result"].ToObject<List<BittrexBalance>>();
+                    UpdateStatus(true, "Updated Balances");
                 }
                 else
                 {
-                    LogManager.AddLogMessage(Name, "getBalanceList", "success FALSE : " + result);
+                    LogManager.AddLogMessage(Name, "getBalanceList", "success FALSE : " + jsonObject["message"], LogManager.LogMessageType.EXCHANGE);
+                    UpdateStatus(true, jsonObject["message"].ToString());
                 }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getBalanceList", "EXCEPTION!!! : " + ex.Message);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -721,7 +735,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateTickers();
+            updateExchangeTickerList();
         }
         // GETTERS
         public static List<ExchangeBalance> getExchangeBalanceList()
@@ -800,6 +814,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 

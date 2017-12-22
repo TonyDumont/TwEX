@@ -25,6 +25,10 @@ namespace TwEX_API.Exchange
         private static RestClient client = new RestClient("https://api.hitbtc.com");
         private static string Api_publicUrl = "/api/2/public/";
         private static string Api_privateUrl = "https://api.hitbtc.com/api/2/";
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
@@ -222,30 +226,24 @@ namespace TwEX_API.Exchange
         public static List<HitBTCTicker> getTickerList()
         {
             List<HitBTCTicker> list = new List<HitBTCTicker>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = Api_publicUrl + "ticker";
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
+                responseString = response.Content;
                 //LogManager.AddLogMessage(Name, "getTickers", "response : " + response.Content, LogManager.LogMessageType.EXCEPTION);
-                /*
-                JsonSerializerSettings settings = new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    MissingMemberHandling = MissingMemberHandling.Ignore,
-                    Formatting = Formatting.None,
-                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                    Converters = new List<JsonConverter> { new DecimalConverter() }
-                };
-                */
-                JArray jsonVal = JArray.Parse(response.Content) as JArray;
+                JArray jsonVal = JArray.Parse(responseString) as JArray;
                 HitBTCTicker[] array = jsonVal.ToObject<HitBTCTicker[]>();
                 list = array.ToList();
+                UpdateStatus(true, "Updated Tickers");
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getTickers", "EXCEPTION!!! : " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 //LogManager.AddLogMessage(Name, "getTickers", "EXCEPTION!!! : " + response.Content, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
 
             return list;
@@ -319,19 +317,44 @@ namespace TwEX_API.Exchange
         public static List<HitBTCBalance> getAccountBalanceList()
         {
             List<HitBTCBalance> list = new List<HitBTCBalance>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = Api_privateUrl + "account/balance";
-                string response = GetApiPrivateRequest(requestUrl);
+                responseString = GetApiPrivateRequest(requestUrl);
                 //LogManager.AddLogMessage(Name, "getAccountBalanceList", response, LogManager.LogMessageType.DEBUG);
-                JArray jsonVal = JArray.Parse(response) as JArray;
+                JArray jsonVal = JArray.Parse(responseString) as JArray;
                 HitBTCBalance[] array = jsonVal.ToObject<HitBTCBalance[]>();
                 list = array.ToList();
+                UpdateStatus(true, "Updated Balances");
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getAccountBalanceList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
+            return list;
+        }
+
+        /// <summary>Helper method to group up balance totals from all accounts</summary>
+        public static List<HitBTCBalance> getAllAccountBalances()
+        {
+            List<HitBTCBalance> list = getAccountBalanceList();
+            List<HitBTCBalance> tradingList = getTradingBalanceList();
+
+            foreach (HitBTCBalance balance in tradingList)
+            {
+                HitBTCBalance listItem = list.FirstOrDefault(item => item.currency == balance.currency);
+                if (listItem != null)
+                {
+                    listItem.available += balance.available;
+                }
+                else
+                {
+                    list.Add(balance);
+                }
+            }
+
             return list;
         }
 
@@ -416,18 +439,22 @@ namespace TwEX_API.Exchange
         public static List<HitBTCBalance> getTradingBalanceList()
         {
             List<HitBTCBalance> list = new List<HitBTCBalance>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = Api_privateUrl + "trading/balance";
-                string response = GetApiPrivateRequest(requestUrl);
-                LogManager.AddLogMessage(Name, "getTradingBalanceList", response, LogManager.LogMessageType.DEBUG);
-                JArray jsonVal = JArray.Parse(response) as JArray;
+                responseString = GetApiPrivateRequest(requestUrl);
+                //LogManager.AddLogMessage(Name, "getTradingBalanceList", response, LogManager.LogMessageType.DEBUG);
+
+                JArray jsonVal = JArray.Parse(responseString) as JArray;
                 HitBTCBalance[] array = jsonVal.ToObject<HitBTCBalance[]>();
                 list = array.ToList();
+                UpdateStatus(true, "Updated Balances");
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -770,12 +797,13 @@ namespace TwEX_API.Exchange
         // UPDATERS
         public static void updateExchangeBalanceList()
         {
-            List<HitBTCBalance> list = getAccountBalanceList();
+            List<HitBTCBalance> list = getAllAccountBalances();
             ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
-            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "count=" + list.Count + " | " + btcTicker.last);
+            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "count=" + list.Count + " | " + btcTicker.last);
             foreach (HitBTCBalance balance in list)
             {
-                if (balance.balance > 0)
+                //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "balance : " + balance.currency + " | " + balance.balance);
+                if (balance.total > 0)
                 {
                     if (balance.currency != "BTC" && balance.currency != USDSymbol)
                     {
@@ -784,7 +812,7 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
-                            balance.TotalInBTC = balance.balance * ticker.last;
+                            balance.TotalInBTC = balance.total * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
                         else
@@ -797,16 +825,16 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.currency == "BTC")
                         {
-                            balance.TotalInBTC = balance.balance;
-                            balance.TotalInUSD = btcTicker.last * balance.balance;
+                            balance.TotalInBTC = balance.total;
+                            balance.TotalInUSD = btcTicker.last * balance.total;
                         }
                         else if (balance.currency == USDSymbol)
                         {
                             if (btcTicker.last > 0)
                             {
-                                balance.TotalInBTC = balance.balance / btcTicker.last;
+                                balance.TotalInBTC = balance.total / btcTicker.last;
                             }
-                            balance.TotalInUSD = balance.balance;
+                            balance.TotalInUSD = balance.total;
                         }
                     }
                     //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
@@ -822,6 +850,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 
@@ -1059,14 +1100,14 @@ namespace TwEX_API.Exchange
         public class HitBTCBalance
         {
             // TRADING BALANCE V1
-            public string currency_code { get; set; }
-            public Decimal cash { get; set; }
+            //public string currency_code { get; set; }
+            //public Decimal cash { get; set; }
             // TRADING BALANCE V2
             public string currency { get; set; }
             public Decimal reserved { get; set; }
             public Decimal available { get; set; }
             // PAYMENT BALANCE
-            public Decimal balance { get; set; }
+            public Decimal total { get { return available + reserved; } }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
@@ -1075,7 +1116,7 @@ namespace TwEX_API.Exchange
                 ExchangeBalance eBalance = new ExchangeBalance();
                 eBalance.Exchange = Name;
                 eBalance.Symbol = currency;
-                eBalance.Balance = available;
+                eBalance.Balance = total;
                 eBalance.OnOrders = reserved;
                 eBalance.TotalInBTC = TotalInBTC;
                 eBalance.TotalInUSD = TotalInUSD;

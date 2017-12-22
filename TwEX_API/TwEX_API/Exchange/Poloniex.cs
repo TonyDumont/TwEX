@@ -23,6 +23,10 @@ namespace TwEX_API.Exchange
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://poloniex.com");
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
@@ -258,13 +262,14 @@ namespace TwEX_API.Exchange
         public static List<PoloniexTicker> getTickerList()
         {
             List<PoloniexTicker> list = new List<PoloniexTicker>();
-            
+            string responseString = string.Empty;
             try
             {
                 var request = new RestRequest("/public?command=returnTicker", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getTickerList", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
 
                 foreach (var entry in jsonObject)
                 {
@@ -272,10 +277,12 @@ namespace TwEX_API.Exchange
                     ticker.pair = entry.Key;
                     list.Add(ticker);
                 }
+                UpdateStatus(true, "Updated Tickers");
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -379,13 +386,14 @@ namespace TwEX_API.Exchange
         public static async Task<List<PoloniexBalance>> getCompleteBalanceList()
         {
             List<PoloniexBalance> list = new List<PoloniexBalance>();
+            string responseString = string.Empty;
             try
             {
                 string url = "https://poloniex.com/tradingApi";
                 string myParam = "command=returnCompleteBalances&nonce=" + ExchangeManager.GetNonce();
-                string result = await getPrivateApiRequestAsync(url, myParam);
+                responseString = await getPrivateApiRequestAsync(url, myParam);
                 //LogManager.AddLogMessage(Name, "getCompleteBalances", "result=" + result);
-                var jsonObject = JObject.Parse(result);
+                var jsonObject = JObject.Parse(responseString);
 
                 foreach (var item in jsonObject)
                 {
@@ -393,10 +401,12 @@ namespace TwEX_API.Exchange
                     balance.symbol = item.Key;
                     list.Add(balance);
                 }
+                UpdateStatus(true, "Updated Balances");
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "getCompleteBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -873,6 +883,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 

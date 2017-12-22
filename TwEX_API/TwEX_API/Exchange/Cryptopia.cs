@@ -25,6 +25,10 @@ namespace TwEX_API.Exchange
         private static RestClient client = new RestClient("https://www.cryptopia.co.nz/api");
         public static string Api_privateUrl = "https://www.cryptopia.co.nz/Api/";
         //public static Boolean isAsync { get; set; } = true;
+        // STATUS
+        public static int ErrorCount { get; set; } = 0;
+        public static DateTime LastUpdate { get; set; } = DateTime.Now;
+        public static string LastMessage { get; set; } = String.Empty;
         #endregion Properties
 
         #region API_Public
@@ -104,6 +108,7 @@ namespace TwEX_API.Exchange
         public static List<CryptopiaMarket> getMarketList(string baseMarket = "All", int hours = 24)
         {
             List<CryptopiaMarket> list = new List<CryptopiaMarket>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = "/GetMarkets/";
@@ -116,21 +121,25 @@ namespace TwEX_API.Exchange
                 var request = new RestRequest(requestUrl, Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getMarketLists", "response.Content=" + response.Content);
-                var jsonObject = JObject.Parse(response.Content);
+                responseString = response.Content;
+                var jsonObject = JObject.Parse(responseString);
                 string success = jsonObject["Success"].ToString().ToLower();
 
                 if (success == "true")
                 {
                     list = jsonObject["Data"].ToObject<List<CryptopiaMarket>>();
+                    UpdateStatus(true, "Updated Tickers");
                 }
                 else
                 {
                     LogManager.AddLogMessage(Name, "getMarketLists", "Success IS FALSE : message=" + jsonObject["Message"]);
+                    UpdateStatus(true, jsonObject["Message"].ToString());
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getMarketLists", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getMarketLists", LogManager.StripHTML(responseString), LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, LogManager.StripHTML(responseString));
             }
             return list;
         }
@@ -350,6 +359,7 @@ namespace TwEX_API.Exchange
         public async static Task<List<CryptopiaBalance>> getBalanceList()
         {
             List<CryptopiaBalance> list = new List<CryptopiaBalance>();
+            string responseString = string.Empty;
             try
             {
                 string requestUrl = Api_privateUrl + "GetBalance";
@@ -366,11 +376,17 @@ namespace TwEX_API.Exchange
                 if (success == "true")
                 {
                     list = jsonObject["Data"].ToObject<List<CryptopiaBalance>>();
+                    UpdateStatus(true, "Update Balances");
+                }
+                else
+                {
+                    UpdateStatus(true, jsonObject["Message"].ToString());
                 }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "GetBalance", "EXCEPTION!!! : " + ex.Message);
+                UpdateStatus(false, responseString);
             }
             return list;
         }
@@ -745,6 +761,19 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        private static void UpdateStatus(Boolean success, string message = "")
+        {
+            if (success)
+            {
+                ErrorCount = 0;
+            }
+            else
+            {
+                ErrorCount++;
+            }
+            LastUpdate = DateTime.Now;
+            LastMessage = message;
         }
         #endregion ExchangeManager
 
