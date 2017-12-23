@@ -88,9 +88,9 @@ namespace TwEX_API
             if (File.Exists(iniPath))
             {
                 string text = File.ReadAllText(iniPath);
-                LogManager.AddLogMessage(Name, "InitializePreferences", "text : " + text, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "InitializePreferences", "text : " + text, LogManager.LogMessageType.DEBUG);
                 string json = LogManager.Decrypt(text);
-                LogManager.AddLogMessage(Name, "InitializePreferences", "json : " + json, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "InitializePreferences", "json : " + json, LogManager.LogMessageType.DEBUG);
                 preferences = JsonConvert.DeserializeObject<ExchangeManagerPreferences>(json);
 
                 LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.apiList.Count + " APIS", LogManager.LogMessageType.DEBUG);
@@ -639,6 +639,42 @@ namespace TwEX_API
             {
                 LogManager.AddLogMessage(Name, "SetExchangeApi", "PROBLEM : type is NULL : " + api.exchange, LogManager.LogMessageType.DEBUG);
             }
+        }
+        public static void ExportPreferences()
+        {
+            string iniPath = WorkDirectory + "\\Preferences_export.ini";
+            //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
+            string json = JsonConvert.SerializeObject(preferences);
+            //string text = LogManager.Encrypt(json);
+            File.WriteAllText(@iniPath, json);
+        }
+        public static Boolean ImportPreferences()
+        {
+            // CLEAR LOGFILE
+            //File.Create("TwEX_Log.txt").Close();
+
+            string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            string targetPath = System.IO.Path.GetDirectoryName(path);
+            WorkDirectory = new Uri(targetPath).LocalPath;
+
+            string iniPath = WorkDirectory + "\\Preferences_import.ini";
+            //LogManager.AddLogMessage(Name, "Initialize", "Checking for Preferences.ini @ " + iniPath);
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                //LogManager.AddLogMessage(Name, "InitializePreferences", "text : " + text, LogManager.LogMessageType.DEBUG);
+                //string json = LogManager.Decrypt(text);
+                //LogManager.AddLogMessage(Name, "InitializePreferences", "json : " + json, LogManager.LogMessageType.DEBUG);
+                preferences = JsonConvert.DeserializeObject<ExchangeManagerPreferences>(text);
+
+                LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES IMPORTED : " + preferences.apiList.Count + " APIS", LogManager.LogMessageType.CONSOLE);
+            }
+            else
+            {
+                LogManager.AddLogMessage(Name, "InitializePreferences", "Preferences.ini doese not exist - Creating It");
+                UpdatePreferencesFile();
+            }
+            return true;
         }
         public static void UpdatePreferencesFile()
         {

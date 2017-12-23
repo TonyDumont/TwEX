@@ -103,8 +103,16 @@ namespace TwEX_Console
                             LogManager.messageFlags ^= LogManager.LogMessageType.EXCEPTION;
                             break;
 
-                        case ConsoleKey.Z:
+                        case ConsoleKey.I:
                             //ExchangeManager.UpdatePreferencesTestFile();
+                            // IMPORT PREFERENCE
+                            ExchangeManager.ImportPreferences();
+                            break;
+
+                        case ConsoleKey.P:
+                            //ExchangeManager.UpdatePreferencesTestFile();
+                            // EXPORT PREFERENCE
+                            ExchangeManager.ExportPreferences();
                             break;
 
                         default:
