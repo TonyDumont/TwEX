@@ -17,7 +17,7 @@ namespace TwEX_API
         public static Boolean ConsoleLogging = false;
         const string _readPrompt = "TwEX Console : ";
         public static StreamWriter logFile;
-        public static LogMessageType messageFlags = LogMessageType.CONSOLE | LogMessageType.DEBUG | LogMessageType.EXCHANGE | LogMessageType.OTHER | LogMessageType.LOG | LogMessageType.EXCEPTION;
+        //public static LogMessageType messageFlags = LogMessageType.CONSOLE | LogMessageType.DEBUG | LogMessageType.EXCHANGE | LogMessageType.OTHER | LogMessageType.LOG | LogMessageType.EXCEPTION;
         // COLLECTIONS
         public static BlockingCollection<LogMessage> MessageList = new BlockingCollection<LogMessage>();
 
@@ -255,7 +255,12 @@ namespace TwEX_API
                 //goto A;
             }
         }
-        
+        public static void ToggleMessageFlag(LogMessageType type)
+        {
+            ExchangeManager.preferences.MessageFlags ^= type;
+            ExchangeManager.UpdatePreferencesFile();
+        }
+
         // COMMAND PROCESSOR
         public static string Execute(string command)
         {

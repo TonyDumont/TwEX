@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using TwEX_API.Exchange;
 using TwEX_API.Market;
+using static TwEX_API.LogManager;
 using static TwEX_API.Market.CryptoCompare;
 
 namespace TwEX_API
@@ -22,7 +23,6 @@ namespace TwEX_API
         private static string WorkDirectory = string.Empty;
         public static ExchangeManagerPreferences preferences = new ExchangeManagerPreferences();
         public static System.Timers.Timer timer = new System.Timers.Timer();
-        public static ExchangeTimerType ExchangeTimers = ExchangeTimerType.TICKERS;
         // COLLECTIONS
         public static BlockingCollection<Exchange> Exchanges = new BlockingCollection<Exchange>();
         public static BlockingCollection<ExchangeBalance> Balances = new BlockingCollection<ExchangeBalance>();
@@ -138,7 +138,7 @@ namespace TwEX_API
                 case 45:
                 case 50:
                 case 55:
-                    bool hasBalanceType = (ExchangeTimers & ExchangeTimerType.BALANCES) != ExchangeTimerType.NONE;
+                    bool hasBalanceType = (preferences.ExchangeTimers & ExchangeTimerType.BALANCES) != ExchangeTimerType.NONE;
                     if (hasBalanceType)
                     {
                         LogManager.AddLogMessage(Name, "TimerTick", "Updating All Exchange Balances", LogManager.LogMessageType.DEBUG);
@@ -148,7 +148,7 @@ namespace TwEX_API
 
                 default:
                     // DO THIS EVERY OTHER MINUTE NOT ON 5 INTERVAL
-                    bool hasTickerType = (ExchangeTimers & ExchangeTimerType.TICKERS) != ExchangeTimerType.NONE;
+                    bool hasTickerType = (preferences.ExchangeTimers & ExchangeTimerType.TICKERS) != ExchangeTimerType.NONE;
                     if (hasTickerType)
                     {
                         LogManager.AddLogMessage(Name, "TimerTick", "Updating All Exchange Tickers", LogManager.LogMessageType.DEBUG);
@@ -640,39 +640,36 @@ namespace TwEX_API
                 LogManager.AddLogMessage(Name, "SetExchangeApi", "PROBLEM : type is NULL : " + api.exchange, LogManager.LogMessageType.DEBUG);
             }
         }
+        public static void toggleTimerPreference(ExchangeTimerType type)
+        {
+            ExchangeManager.preferences.ExchangeTimers ^= type;
+            UpdatePreferencesFile();
+        }
         public static void ExportPreferences()
         {
             string iniPath = WorkDirectory + "\\Preferences_export.ini";
-            //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
+            //LogManager.AddLogMessage(Name, "ExportPreferences", "Exporting to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
             string json = JsonConvert.SerializeObject(preferences);
-            //string text = LogManager.Encrypt(json);
             File.WriteAllText(@iniPath, json);
         }
         public static Boolean ImportPreferences()
         {
-            // CLEAR LOGFILE
-            //File.Create("TwEX_Log.txt").Close();
-
             string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
             string targetPath = System.IO.Path.GetDirectoryName(path);
             WorkDirectory = new Uri(targetPath).LocalPath;
 
             string iniPath = WorkDirectory + "\\Preferences_import.ini";
-            //LogManager.AddLogMessage(Name, "Initialize", "Checking for Preferences.ini @ " + iniPath);
+
             if (File.Exists(iniPath))
             {
                 string text = File.ReadAllText(iniPath);
-                //LogManager.AddLogMessage(Name, "InitializePreferences", "text : " + text, LogManager.LogMessageType.DEBUG);
-                //string json = LogManager.Decrypt(text);
-                //LogManager.AddLogMessage(Name, "InitializePreferences", "json : " + json, LogManager.LogMessageType.DEBUG);
                 preferences = JsonConvert.DeserializeObject<ExchangeManagerPreferences>(text);
-
-                LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES IMPORTED : " + preferences.apiList.Count + " APIS", LogManager.LogMessageType.CONSOLE);
+                LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES IMPORTED : " + preferences.apiList.Count + " APIS", LogManager.LogMessageType.OTHER);
+                UpdatePreferencesFile();
             }
             else
             {
-                LogManager.AddLogMessage(Name, "InitializePreferences", "Preferences.ini doese not exist - Creating It");
-                UpdatePreferencesFile();
+                LogManager.AddLogMessage(Name, "InitializePreferences", "Preferences_import.ini doese not exist in the application directory", LogManager.LogMessageType.LOG);
             }
             return true;
         }
@@ -684,18 +681,6 @@ namespace TwEX_API
             string text = LogManager.Encrypt(json);
             File.WriteAllText(@iniPath, text);
         }
-        /*
-        public static void UpdatePreferencesTestFile()
-        {
-            string iniPath = WorkDirectory + "\\Preferences_test.ini";
-            //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
-            
-            string json = JsonConvert.SerializeObject(preferences);
-            string text = LogManager.Encrypt(json);
-            File.WriteAllText(@iniPath, text);
-            
-        }
-        */
         #endregion Preferences
 
         #region DataModels
@@ -707,9 +692,6 @@ namespace TwEX_API
             public Type type { get { return getExchangeType(Name); } }
             // COLLECTIONS
             public List<ExchangeBalance> BalanceList { get { return ExchangeManager.Balances.Where(balance => balance.Exchange == Name).ToList(); } }
-
-            //public List<ExchangeBalance> BalanceList { get { return new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(ExchangeManager.Balances.Where(balance => balance.Exchange == Name))); } }
-            //new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(jobs));
             public List<ExchangeTicker> TickerList { get { return ExchangeManager.Tickers.Where(ticker => ticker.exchange == Name).ToList(); } }
             // STATUS
             public int ErrorCount { get { return Convert.ToInt32(type.GetProperty("ErrorCount", BindingFlags.Public | BindingFlags.Static).GetValue(null)); }}
@@ -721,7 +703,7 @@ namespace TwEX_API
             public string exchange { get; set; }
             public string key { get; set; }
             public string secret { get; set; }
-            // GDAX
+            // only for GDAX
             public string passphrase { get; set; }
         }
         public class ExchangeBalance
@@ -738,7 +720,10 @@ namespace TwEX_API
         }
         public class ExchangeManagerPreferences
         {
+            public ExchangeTimerType ExchangeTimers = ExchangeTimerType.TICKERS;
+            public LogMessageType MessageFlags = LogMessageType.CONSOLE | LogMessageType.DEBUG | LogMessageType.EXCHANGE | LogMessageType.OTHER | LogMessageType.LOG | LogMessageType.EXCEPTION;
             public List<ExchangeApi> apiList { get; set; } = new List<ExchangeApi>();
+
         }
         public class ExchangeTicker
         {
@@ -770,11 +755,3 @@ namespace TwEX_API
         #endregion Enums
     }
 }
-
-/*
-        /// <summary>Updates MARKET CAPS COLLECTION from coinmarketcap.com</summary>
-        public static void updateMarketCaps()
-        {
-
-        }
-        */

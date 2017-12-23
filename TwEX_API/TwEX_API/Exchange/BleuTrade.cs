@@ -179,9 +179,8 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {              
-                //UpdateStatus(false, LogManager.StripHTML(responseString));
                 UpdateStatus(false, "TIMEOUT");
-                LogManager.AddLogMessage(Name, "getMarketSummaries", LogManager.StripHTML(responseString), LogManager.LogMessageType.LOG);
+                LogManager.AddLogMessage(Name, "getMarketSummaries", LogManager.StripHTML(responseString) + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }

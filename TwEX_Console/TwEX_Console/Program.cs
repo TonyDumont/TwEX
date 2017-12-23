@@ -59,59 +59,55 @@ namespace TwEX_Console
                         case ConsoleKey.B:
                             //LogManager.AddLogMessage("Program", "Run", "Updating All Balances", LogManager.LogMessageType.CONSOLE);
                             Task.Factory.StartNew(() => ExchangeManager.updateBalances());
-                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.BALANCES;
+                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.BALANCES);
                             break;
 
                         case ConsoleKey.T:
                             //LogManager.AddLogMessage("Program", "Run", "Updating All Tickers", LogManager.LogMessageType.CONSOLE);
                             Task.Factory.StartNew(() => ExchangeManager.updateTickers());
-                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.TICKERS;
+                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.TICKERS);
                             break;
 
                         case ConsoleKey.O:
-                            //Task.Factory.StartNew(() => ExchangeManager.updateTickers());
-                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.ORDERS;
+                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.ORDERS);
                             break;
 
                         case ConsoleKey.H:
-                            //Task.Factory.StartNew(() => ExchangeManager.updateTickers());
-                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.HISTORY;
+                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.HISTORY);
                             break;
 
                         // MESSAGE FLAGES
                         case ConsoleKey.L:
-                            LogManager.messageFlags ^= LogManager.LogMessageType.LOG;
+                            LogManager.ToggleMessageFlag(LogManager.LogMessageType.LOG);
+
                             break;
 
                         case ConsoleKey.C:
-                            LogManager.messageFlags ^= LogManager.LogMessageType.CONSOLE;
+                            LogManager.ToggleMessageFlag(LogManager.LogMessageType.CONSOLE);
                             break;
 
                         case ConsoleKey.D:
-                            LogManager.messageFlags ^= LogManager.LogMessageType.DEBUG;
+                            LogManager.ToggleMessageFlag(LogManager.LogMessageType.DEBUG);
                             break;
 
                         case ConsoleKey.E:
-                            LogManager.messageFlags ^= LogManager.LogMessageType.EXCHANGE;
+                            LogManager.ToggleMessageFlag(LogManager.LogMessageType.EXCHANGE);
                             break;
 
                         case ConsoleKey.R:
-                            LogManager.messageFlags ^= LogManager.LogMessageType.OTHER;
+                            LogManager.ToggleMessageFlag(LogManager.LogMessageType.OTHER);
                             break;
 
                         case ConsoleKey.X:
-                            LogManager.messageFlags ^= LogManager.LogMessageType.EXCEPTION;
+                            LogManager.ToggleMessageFlag(LogManager.LogMessageType.EXCEPTION);
                             break;
 
+                        // IMPORT/EXPORT
                         case ConsoleKey.I:
-                            //ExchangeManager.UpdatePreferencesTestFile();
-                            // IMPORT PREFERENCE
                             ExchangeManager.ImportPreferences();
                             break;
 
                         case ConsoleKey.P:
-                            //ExchangeManager.UpdatePreferencesTestFile();
-                            // EXPORT PREFERENCE
                             ExchangeManager.ExportPreferences();
                             break;
 
@@ -219,7 +215,7 @@ namespace TwEX_Console
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.SetCursorPosition(0, row);
             int consoleHeight = (Console.WindowHeight - 3) - row;
-            var messages = (from m in LogManager.MessageList where (m.type & LogManager.messageFlags) > 0 select m).Skip(Math.Max(0, LogManager.MessageList.Count() - consoleHeight));
+            var messages = (from m in LogManager.MessageList where (m.type & ExchangeManager.preferences.MessageFlags) > 0 select m).Skip(Math.Max(0, LogManager.MessageList.Count() - consoleHeight));
             int emptyLines = 0;
 
             if (messages.Count() < consoleHeight)
@@ -327,7 +323,7 @@ namespace TwEX_Console
         #region Getters
         static ConsoleColor getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType type)
         {
-            bool hasType = (ExchangeManager.ExchangeTimers & type) != ExchangeManager.ExchangeTimerType.NONE;
+            bool hasType = (ExchangeManager.preferences.ExchangeTimers & type) != ExchangeManager.ExchangeTimerType.NONE;
 
             if (hasType)
             {
@@ -365,7 +361,7 @@ namespace TwEX_Console
         }
         static ConsoleColor getMessageTypeActiveColor(LogManager.LogMessageType type)
         {
-            bool hasType = (LogManager.messageFlags & type) != LogManager.LogMessageType.NONE;
+            bool hasType = (ExchangeManager.preferences.MessageFlags & type) != LogManager.LogMessageType.NONE;
 
             if (hasType)
             {
@@ -379,35 +375,6 @@ namespace TwEX_Console
         #endregion Getters
     }
 }
-
-/*
-            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.CONSOLE);
-            Console.Write("[C]ONSOLE");
-            ColumnBreak();
-
-            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.DEBUG);
-            Console.Write("[D]EBUG");
-            ColumnBreak();
-
-            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.EXCHANGE);
-            Console.Write("[E]XCHANGE");
-            ColumnBreak();
-
-            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.OTHER);
-            Console.Write("[O]THER");
-            ColumnBreak();
-
-            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.EXCEPTION);
-            Console.Write("E[X]CEPTION");
-            ColumnBreak();
-
-            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.LOG);
-            Console.Write("[L]OG");
-
-            int menuPadding = Console.WindowWidth - Console.CursorLeft;
-            //Console.ForegroundColor = delimiterColor;
-            Console.WriteLine(new String(' ', menuPadding));
-            */
 
 /*
     #region DLL_IMPORTS
