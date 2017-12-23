@@ -17,7 +17,7 @@ namespace TwEX_API
         public static Boolean ConsoleLogging = false;
         const string _readPrompt = "TwEX Console : ";
         public static StreamWriter logFile;
-        public static LogMessageType messageFlags = LogMessageType.CONSOLE | LogMessageType.DEBUG | LogMessageType.EXCHANGE | LogMessageType.OTHER;
+        public static LogMessageType messageFlags = LogMessageType.CONSOLE | LogMessageType.DEBUG | LogMessageType.EXCHANGE | LogMessageType.OTHER | LogMessageType.LOG | LogMessageType.EXCEPTION;
         // COLLECTIONS
         public static BlockingCollection<LogMessage> MessageList = new BlockingCollection<LogMessage>();
 
@@ -43,39 +43,9 @@ namespace TwEX_API
 
             if (ConsoleLogging == true && source != "LogManager")
             {
-                //Console.WriteLine(logMessage.TimeStamp + " | source=" + logMessage.Source + " | function=" + logMessage.FunctionCall + " | " + logMessage.Message);
-                //WriteToConsole(logMessage.TimeStamp + " | " + logMessage.Message);
                 WriteToLog(logMessage.ToString());
             }
-
-            switch (type)
-            {
-                case LogManager.LogMessageType.LOG:
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    break;
-
-                case LogManager.LogMessageType.CONSOLE:
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    break;
-
-                case LogManager.LogMessageType.DEBUG:
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
-
-                case LogManager.LogMessageType.OTHER:
-                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                    break;
-
-                case LogManager.LogMessageType.EXCEPTION:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-
-                case LogManager.LogMessageType.EXCHANGE:
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    break;
-
-            }
-
+            
         }
         public static string StripHTML(string source)
         {
@@ -325,15 +295,12 @@ namespace TwEX_API
             { 
                 if (String.IsNullOrEmpty(originalString))
                 {
-                    //throw new ArgumentNullException("The string which needs to be encrypted can not be null.");
                     AddLogMessage("Encryptor", "Encrypt", "NULL string provided", LogMessageType.EXCEPTION);
-                    //return "NULL string provided";
                 }
                 
                 DESCryptoServiceProvider cryptoProvider = new DESCryptoServiceProvider();
                 MemoryStream memoryStream = new MemoryStream();
-                //CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(bytes, bytes), CryptoStreamMode.Write);
-                CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName), ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName)), CryptoStreamMode.Write);
+                CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(ASCIIEncoding.ASCII.GetBytes("TwEX_API"), ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName)), CryptoStreamMode.Write);
                 StreamWriter writer = new StreamWriter(cryptoStream);
                 writer.Write(originalString);
                 writer.Flush();
@@ -368,7 +335,8 @@ namespace TwEX_API
                 DESCryptoServiceProvider cryptoProvider = new DESCryptoServiceProvider();
                 MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(cryptedString));
                 //CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(bytes, bytes), CryptoStreamMode.Read);
-                CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName), ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName)), CryptoStreamMode.Read);
+                //CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName), ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName)), CryptoStreamMode.Read);
+                CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(ASCIIEncoding.ASCII.GetBytes("TwEX_API"), ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName)), CryptoStreamMode.Read);
                 //ASCIIEncoding.ASCII.GetBytes(System.Environment.MachineName)
                 StreamReader reader = new StreamReader(cryptoStream);
 
@@ -840,3 +808,32 @@ public class SimpleHashTest
     }
 }
 */
+/*
+            switch (type)
+            {
+                case LogManager.LogMessageType.LOG:
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    break;
+
+                case LogManager.LogMessageType.CONSOLE:
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+
+                case LogManager.LogMessageType.DEBUG:
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    break;
+
+                case LogManager.LogMessageType.OTHER:
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    break;
+
+                case LogManager.LogMessageType.EXCEPTION:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+
+                case LogManager.LogMessageType.EXCHANGE:
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    break;
+
+            }
+            */

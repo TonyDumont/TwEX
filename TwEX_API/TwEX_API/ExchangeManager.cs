@@ -22,9 +22,10 @@ namespace TwEX_API
         private static string WorkDirectory = string.Empty;
         public static ExchangeManagerPreferences preferences = new ExchangeManagerPreferences();
         public static System.Timers.Timer timer = new System.Timers.Timer();
+        public static ExchangeTimerType ExchangeTimers = ExchangeTimerType.TICKERS;
         // COLLECTIONS
-        public static List<Exchange> exchangeList = new List<Exchange>();
-        public static List<ExchangeBalance> balanceList = new List<ExchangeBalance>();
+        public static BlockingCollection<Exchange> Exchanges = new BlockingCollection<Exchange>();
+        public static BlockingCollection<ExchangeBalance> Balances = new BlockingCollection<ExchangeBalance>();
         public static BlockingCollection<ExchangeTicker> Tickers = new BlockingCollection<ExchangeTicker>();
         public static BlockingCollection<string> Watchlist = new BlockingCollection<string>() { "BTC", "BCH", "ETH", "DASH", "XMR", "LTC", "ETC", "XRP" };
         #endregion Properties
@@ -33,7 +34,8 @@ namespace TwEX_API
         public static Boolean InitializeExchangeList()
         {
             List<string> list = getExchangeList();
-            exchangeList.Clear();
+            CoinMarketCap.updateTickers();
+            //Exchanges. .Clear();
 
             foreach (string name in list)
             {
@@ -68,7 +70,7 @@ namespace TwEX_API
                 {
                     LogManager.AddLogMessage(Name, "InitializeExchangeList", "PROBLEM : type is NULL : " + exchange.Name, LogManager.LogMessageType.DEBUG);
                 }
-                exchangeList.Add(exchange);
+                Exchanges.Add(exchange);
             }
             return true;
         }
@@ -86,8 +88,11 @@ namespace TwEX_API
             if (File.Exists(iniPath))
             {
                 string text = File.ReadAllText(iniPath);
+                LogManager.AddLogMessage(Name, "InitializePreferences", "text : " + text, LogManager.LogMessageType.DEBUG);
                 string json = LogManager.Decrypt(text);
+                LogManager.AddLogMessage(Name, "InitializePreferences", "json : " + json, LogManager.LogMessageType.DEBUG);
                 preferences = JsonConvert.DeserializeObject<ExchangeManagerPreferences>(json);
+
                 LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.apiList.Count + " APIS", LogManager.LogMessageType.DEBUG);
             }
             else
@@ -101,31 +106,25 @@ namespace TwEX_API
         public static void InitializeTimer()
         {
             timer.Interval = 60000;
-            timer.Elapsed += new ElapsedEventHandler(OnTimer_tick);
+            timer.Elapsed += new ElapsedEventHandler(TimerTick);
             LogManager.AddLogMessage(Name, "InitializeTimer", "Exchange Timer Initialized", LogManager.LogMessageType.EXCHANGE);
             timer.Start();
         }
-        private static void OnTimer_tick(object sender, EventArgs e)
+        private static void TimerTick(object sender, EventArgs e)
         {
             //LogManager.AddDebugMessage(thisClassName, "OnTimer_clockTick", "Tick:" + now.Minute);
-            switch (DateTime.Now.Minute)
+            DateTime now = DateTime.Now;
+
+            switch (now.Minute)
             {
                 case 0:
-                    /*
-                    LogManager.AddDebugMessage(thisClassName, "OnTimer_clockTick", "Hourly Check : Hour:" + now.Hour);
-                    if (AutoUpdate)
-                    {
-                        Task.Factory.StartNew(() => ExchangeManager.UpdateAllExchangeBalances());
-                        //Task.Factory.StartNew(() => FaucetManager.UpdateEarnGGMachines());
-                        //Task.Factory.StartNew(() => ExchangeManager.UpdateMarketCaps());
-                    }
+                    
+                    LogManager.AddLogMessage(thisClassName, "TimerTick", "Hourly Check : " + DateTime.Now, LogManager.LogMessageType.DEBUG);
 
                     if (now.Hour == 0)
                     {
-                        LogManager.AddDebugMessage(thisClassName, "OnTimer_clockTick", "Hour is 0 : SHOULD BE MIDNIGHT - ANYTHING TO RESET?");
+                        LogManager.AddLogMessage(thisClassName, "TimerTick", "ITS MIDNIGHT : " + DateTime.Now, LogManager.LogMessageType.DEBUG);
                     }
-                    */
-                    //updateBalances();
                     break;
 
                 case 5:
@@ -139,38 +138,27 @@ namespace TwEX_API
                 case 45:
                 case 50:
                 case 55:
-                    //updateBalances();
-                    /*
-                    if (AutoUpdate)
+                    bool hasBalanceType = (ExchangeTimers & ExchangeTimerType.BALANCES) != ExchangeTimerType.NONE;
+                    if (hasBalanceType)
                     {
-                        Task.Factory.StartNew(() => UpdateAllExchangeBalances());
-                        //Task.Factory.StartNew(() => FaucetManager.UpdateEarnGGMachines());
-                        //Task.Factory.StartNew(() => ExchangeManager.UpdateMarketCaps());
-
+                        LogManager.AddLogMessage(Name, "TimerTick", "Updating All Exchange Balances", LogManager.LogMessageType.DEBUG);
+                        updateBalances();
                     }
-                    */
                     break;
 
                 default:
-                    //LogManager.AddDebugMessage(thisClassName, "OnTimer_clockTick", "DEFAULT : " + now.Minute);
-                    // DO THIS EVERY OTHER MINUTES
-                    //updateBalanceList();
-                    /*
-                    if (AutoUpdate)
+                    // DO THIS EVERY OTHER MINUTE NOT ON 5 INTERVAL
+                    bool hasTickerType = (ExchangeTimers & ExchangeTimerType.TICKERS) != ExchangeTimerType.NONE;
+                    if (hasTickerType)
                     {
-                        Task.Factory.StartNew(() => UpdateAllExchangeTickers());
+                        LogManager.AddLogMessage(Name, "TimerTick", "Updating All Exchange Tickers", LogManager.LogMessageType.DEBUG);
+                        updateTickers();
                     }
-                    */
                     break;
             }
 
             // EVERY MINUTE
-            //Task.Factory.StartNew(() => ExchangeManager.UpdateMarketCaps());
-            //LogManager.AddLogMessage(Name, "OnTimer_tick", "timer ticker", LogManager.LogMessageType.EXCHANGE);
-            updateTickers();
             CoinMarketCap.updateTickers();
-            //updateBalanceList();
-            //updateBalanceList();
         }
         #endregion Initialize
 
@@ -275,7 +263,7 @@ namespace TwEX_API
         /// <summary>Gets an Exchange by its name</summary>
         public static Exchange getExchange(string name)
         {
-            Exchange exchange = exchangeList.FirstOrDefault(item => item.Name == name);
+            Exchange exchange = Exchanges.FirstOrDefault(item => item.Name == name);
 
             if (exchange != null)
             {
@@ -291,7 +279,7 @@ namespace TwEX_API
         /// <summary>Helper to get class name for exchanges ignoring case</summary>
         public static string getExchangeSiteName(string name)
         {
-            Exchange exchange = exchangeList.FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
+            Exchange exchange = Exchanges.FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
             //LogManager.AddLogMessage(Name, "getExchangeSiteName", name + " | " + exchange.SiteName);
 
             if (exchange != null)
@@ -390,7 +378,7 @@ namespace TwEX_API
                 }
                 else
                 {
-                    foreach (Exchange exchange in exchangeList)
+                    foreach (Exchange exchange in Exchanges)
                     {
                         //Console.WriteLine(exchange.SiteName + " | " + exchange.USDSymbol);
                         Type type = getExchangeType(exchange.Name);
@@ -421,7 +409,8 @@ namespace TwEX_API
         #region Processors
         public static void processBalance(ExchangeBalance balance)
         {
-            ExchangeBalance listItem = balanceList.FirstOrDefault(b => b.Exchange == balance.Exchange && b.Symbol == balance.Symbol);
+            //ExchangeBalance listItem = balanceList.FirstOrDefault(b => b.Exchange == balance.Exchange && b.Symbol == balance.Symbol);
+            ExchangeBalance listItem = Balances.FirstOrDefault(b => b.Exchange == balance.Exchange && b.Symbol == balance.Symbol);
 
             if (listItem != null)
             {
@@ -435,7 +424,7 @@ namespace TwEX_API
             else
             {
                 // ADD
-                balanceList.Add(balance);
+                Balances.Add(balance);
                 //LogManager.AddLogMessage(Name, "processBalance", "Added " + balance.Symbol + " for " + balance.Exchange, LogManager.LogMessageType.DEBUG);
             }
         }
@@ -506,7 +495,7 @@ namespace TwEX_API
                 }
                 else
                 {     
-                    foreach (Exchange exchange in exchangeList)
+                    foreach (Exchange exchange in Exchanges)
                     {
                         Type type = getExchangeType(exchange.Name);
                         if (type != null)
@@ -566,7 +555,7 @@ namespace TwEX_API
                 }
                 else
                 {                
-                    foreach (Exchange exchange in exchangeList)
+                    foreach (Exchange exchange in Exchanges)
                     {
                         Type type = getExchangeType(exchange.Name);
                         if (type != null)
@@ -653,45 +642,24 @@ namespace TwEX_API
         }
         public static void UpdatePreferencesFile()
         {
-            //string targetPath = directory + "\\Preferences.ini";
-            //Console.WriteLine("tpath = " + targetPath);
             string iniPath = WorkDirectory + "\\Preferences.ini";
             //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
-            string json = JsonConvert.SerializeObject(preferences, Formatting.Indented);
-            //Console.WriteLine("json = " + json);
+            string json = JsonConvert.SerializeObject(preferences);
             string text = LogManager.Encrypt(json);
-            //Console.WriteLine("text = " + text);
             File.WriteAllText(@iniPath, text);
-            Console.WriteLine("Preferences Update : " + preferences.apiList.Count);
-            /*
-            var json = File.ReadAllText(targetPath);
-            var customers = JsonConvert.DeserializeObject<ExchangeManagerPreferences>(json);
-            customers.Add(newCustomer);
-            File.WriteAllText(pathToTheFile", JsonConvert.SerializeObject(customers));
-            */
-
-            /*
-            string targetPath = directory + "\\Preferences.ini";
-            File.WriteAllText(targetPath, preferences.ToString());
-            using (StreamWriter file = File.CreateText(targetPath))
-            using (JsonTextWriter writer = new JsonTextWriter(file))
-            {
-                preferences.WriteTo(writer);
-            }
-            */
-
-
-            /*
-            string data = JsonConvert.SerializeObject(preferences);
-
-            string readPath = directory + "\\Preferences.ini";
-            Console.WriteLine(readPath + " | " + data);
-            
-            List<string> iniList = new List<string>();
-            iniList.Add(data);
-            File.WriteAllLines(readPath, iniList.ToArray(), Encoding.UTF8);
-            */
         }
+        /*
+        public static void UpdatePreferencesTestFile()
+        {
+            string iniPath = WorkDirectory + "\\Preferences_test.ini";
+            //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
+            
+            string json = JsonConvert.SerializeObject(preferences);
+            string text = LogManager.Encrypt(json);
+            File.WriteAllText(@iniPath, text);
+            
+        }
+        */
         #endregion Preferences
 
         #region DataModels
@@ -702,7 +670,10 @@ namespace TwEX_API
             public string USDSymbol { get; set; }
             public Type type { get { return getExchangeType(Name); } }
             // COLLECTIONS
-            public List<ExchangeBalance> BalanceList { get { return ExchangeManager.balanceList.FindAll(balance => balance.Exchange == Name); } }
+            public List<ExchangeBalance> BalanceList { get { return ExchangeManager.Balances.Where(balance => balance.Exchange == Name).ToList(); } }
+
+            //public List<ExchangeBalance> BalanceList { get { return new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(ExchangeManager.Balances.Where(balance => balance.Exchange == Name))); } }
+            //new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(jobs));
             public List<ExchangeTicker> TickerList { get { return ExchangeManager.Tickers.Where(ticker => ticker.exchange == Name).ToList(); } }
             // STATUS
             public int ErrorCount { get { return Convert.ToInt32(type.GetProperty("ErrorCount", BindingFlags.Public | BindingFlags.Static).GetValue(null)); }}
@@ -750,6 +721,17 @@ namespace TwEX_API
         }
         #endregion DataModels
 
+        #region Enums
+        [Flags]
+        public enum ExchangeTimerType
+        {
+            NONE = 0,           //0
+            BALANCES = 1 << 0,  //1
+            TICKERS = 1 << 1,   //2
+            ORDERS = 1 << 2,    //4
+            HISTORY = 1 << 3    //8
+        }
+        #endregion Enums
     }
 }
 

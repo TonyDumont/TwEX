@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TwEX_API;
 using TwEX_API.Market;
@@ -13,24 +12,7 @@ namespace TwEX_Console
         static ConsoleColor delimiterColor = ConsoleColor.DarkGray;
         static int row = 1;
         #endregion Properties
-
-        #region DLL_IMPORTS
-        private const int MF_BYCOMMAND = 0x00000000;
-        public const int SC_CLOSE = 0xF060;
-        public const int SC_MINIMIZE = 0xF020;
-        public const int SC_MAXIMIZE = 0xF030;
-        public const int SC_SIZE = 0xF000;
-
-        [DllImport("user32.dll")]
-        public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
-
-        [DllImport("kernel32.dll", ExactSpelling = true)]
-        private static extern IntPtr GetConsoleWindow();
-        #endregion DLL_IMPORTS
-
+        
         #region Thread
         static void Main(string[] args)
         {
@@ -73,50 +55,62 @@ namespace TwEX_Console
                     ConsoleKeyInfo key = Console.ReadKey(true);
                     switch (key.Key)
                     {
+                        // TIMER FLAGS
                         case ConsoleKey.B:
-                            LogManager.AddLogMessage("Program", "Run", "Updating All Balances", LogManager.LogMessageType.CONSOLE);
+                            //LogManager.AddLogMessage("Program", "Run", "Updating All Balances", LogManager.LogMessageType.CONSOLE);
                             Task.Factory.StartNew(() => ExchangeManager.updateBalances());
+                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.BALANCES;
                             break;
 
                         case ConsoleKey.T:
-                            LogManager.AddLogMessage("Program", "Run", "Updating All Tickers", LogManager.LogMessageType.CONSOLE);
+                            //LogManager.AddLogMessage("Program", "Run", "Updating All Tickers", LogManager.LogMessageType.CONSOLE);
                             Task.Factory.StartNew(() => ExchangeManager.updateTickers());
+                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.TICKERS;
                             break;
 
+                        case ConsoleKey.O:
+                            //Task.Factory.StartNew(() => ExchangeManager.updateTickers());
+                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.ORDERS;
+                            break;
+
+                        case ConsoleKey.H:
+                            //Task.Factory.StartNew(() => ExchangeManager.updateTickers());
+                            ExchangeManager.ExchangeTimers ^= ExchangeManager.ExchangeTimerType.HISTORY;
+                            break;
+
+                        // MESSAGE FLAGES
                         case ConsoleKey.L:
                             LogManager.messageFlags ^= LogManager.LogMessageType.LOG;
                             break;
 
                         case ConsoleKey.C:
-                            //int types = (int)LogManager.messageFlags;
                             LogManager.messageFlags ^= LogManager.LogMessageType.CONSOLE;
                             break;
 
                         case ConsoleKey.D:
-                            //int types = (int)LogManager.messageFlags;
                             LogManager.messageFlags ^= LogManager.LogMessageType.DEBUG;
                             break;
 
                         case ConsoleKey.E:
-                            //int types = (int)LogManager.messageFlags;
                             LogManager.messageFlags ^= LogManager.LogMessageType.EXCHANGE;
                             break;
 
-                        case ConsoleKey.O:
-                            //int types = (int)LogManager.messageFlags;
+                        case ConsoleKey.R:
                             LogManager.messageFlags ^= LogManager.LogMessageType.OTHER;
                             break;
 
                         case ConsoleKey.X:
-                            //int types = (int)LogManager.messageFlags;
                             LogManager.messageFlags ^= LogManager.LogMessageType.EXCEPTION;
+                            break;
+
+                        case ConsoleKey.Z:
+                            //ExchangeManager.UpdatePreferencesTestFile();
                             break;
 
                         default:
                             break;
                     }
                 }
-
                 ReDraw();
             }
         }
@@ -125,7 +119,6 @@ namespace TwEX_Console
         #region Draw
         static void ReDraw()
         {
-            //Console.ResetColor();
             Console.CursorVisible = false;
             row = 1;
             DrawHeader();
@@ -135,63 +128,96 @@ namespace TwEX_Console
             DrawMenu();
             RowBreak(row++, '-', delimiterColor);
             DrawConsole();
+            RowBreak(row++, '-', delimiterColor);
             DrawFooter();
-            
         }
-        public static void ConsoleWrite(ConsoleColor color, string text)
-        {
-            //ConsoleColor originalColor = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.Write(text);
-            Console.ResetColor();
-            //Console.ForegroundColor = originalColor;
-        }
-        public static void ColumnBreak()
-        {
-            ConsoleColor originalColor = Console.ForegroundColor;
-            Console.ForegroundColor = delimiterColor;
-            Console.Write(" | ");
-            Console.ForegroundColor = originalColor;
-        }
-        static void DrawFooter()
-        {
-            // FOOTER
-            //Console.SetCursorPosition(0, Console.WindowHeight - 2);
-            //Console.SetCursorPosition(0, Console.WindowHeight -2);
-            //Console.ForegroundColor = delimiterColor;
 
-            RowBreak(Console.WindowHeight - 3, '#', delimiterColor);
-            //Console.WriteLine(new String('#', Console.WindowWidth));
-
-            Console.SetCursorPosition(0, Console.WindowHeight - 2);
-            ConsoleWrite(delimiterColor, "UPDATE");
-            ColumnBreak();
-            ConsoleWrite(ConsoleColor.White, "[B]alances");
-            ColumnBreak();
-            ConsoleWrite(ConsoleColor.White, "[T]ickers");
-            //Console.SetCursorPosition(0, 0);
-        }
         static void DrawHeader()
         {
-            Console.SetCursorPosition(0, 0);
-            ConsoleWrite(ConsoleColor.Cyan, DateTime.Now.ToString());
-            ColumnBreak();
-            Console.Write(ExchangeManager.exchangeList.Count + " Exchanges");
+            Console.SetCursorPosition(1, 0);
+            Console.Write(ExchangeManager.Exchanges.Count + " Exchanges");
             ColumnBreak();
             Console.Write(ExchangeManager.Tickers.Count + " Tickers");
             ColumnBreak();
-            Console.Write(CoinMarketCap.Tickers.Count + " Market Caps");
+            ConsoleWrite(ConsoleColor.DarkYellow, CoinMarketCap.Tickers.Count + " Market Caps @ " + CoinMarketCap.Tickers.Sum(t => t.market_cap_usd).ToString("C"));
+
+            string btcTotal = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8");
+            string usdTotal = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C");
+            int rightPadding = Console.WindowWidth - (btcTotal.Length + 3 + usdTotal.Length + 1);
+            Console.SetCursorPosition(Console.WindowWidth - (btcTotal.Length + 3 + usdTotal.Length + 1), 0);
+            ConsoleWrite(ConsoleColor.DarkCyan, ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8"));
             ColumnBreak();
-            ConsoleWrite(ConsoleColor.DarkCyan, ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8"));
+            ConsoleWrite(ConsoleColor.DarkGreen, ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C"));
+        }
+        static void DrawExchangeList()
+        {
+            // EXCHANGE HEADER
+            Console.SetCursorPosition(0, row++);
+            Console.ResetColor();
+            Console.Write(String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,22} | {7,5}",
+                                            " Exchange", "Tkrs", "Coins", "Total BTC", "Total USD", "Err.", "Last Update", " Last Message"));
+            PadRight(Console.WindowWidth - Console.CursorLeft);
+            RowBreak(row++, '-', delimiterColor);
+            // EXCHANGE LIST
+            Console.ForegroundColor = ConsoleColor.White;
+            foreach (ExchangeManager.Exchange exchange in ExchangeManager.Exchanges.OrderByDescending(item => item.BalanceList.Sum(balance => balance.TotalInBTC)))
+            {
+                Console.SetCursorPosition(1, row);
+                string exchangeString = String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,22} | {7,5}",
+                    exchange.Name,
+                    exchange.TickerList.Count,
+                    exchange.BalanceList.FindAll(e => e.Balance > 0).Count,
+                    exchange.BalanceList.Sum(balance => balance.TotalInBTC).ToString("N8"),
+                    exchange.BalanceList.Sum(balance => balance.TotalInUSD).ToString("C"),
+                    exchange.ErrorCount,
+                    exchange.LastUpdate,
+                    exchange.LastMessage
+                    );
+
+                if (exchangeString.Length > Console.WindowWidth)
+                {
+                    // TRUNCATE
+                    exchangeString = exchangeString.Substring(0, Console.WindowWidth);
+                }
+                else
+                {
+                    // PAD
+                    Console.Write(exchangeString);
+                    PadRight(Console.WindowWidth - exchangeString.Length);
+                }
+                row++;
+            }
+        }
+        static void DrawMenu()
+        {
+            Console.SetCursorPosition(1, row++);
+            ConsoleWrite(delimiterColor, "TOGGLE AUTO UPDATE");
             ColumnBreak();
-            ConsoleWrite(ConsoleColor.DarkGreen, ExchangeManager.exchangeList.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C") + " USD");
-            
+            //Console.ForegroundColor = getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.BALANCES);
+            ConsoleWrite(getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.BALANCES), "[B]alances");
+            ColumnBreak();
+            //Console.ForegroundColor = getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.BALANCES);
+            ConsoleWrite(getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.TICKERS), "[T]ickers");
+            ColumnBreak();
+            //Console.ForegroundColor = getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.ORDERS);
+            ConsoleWrite(getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.ORDERS), "[O]rders");
+            ColumnBreak();
+            //Console.ForegroundColor = getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.HISTORY);
+            ConsoleWrite(getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType.HISTORY), "[H]istory");
+            Console.Write(new String(' ', Console.WindowWidth - Console.CursorLeft));
         }
         static void DrawConsole()
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            int spread = (Console.WindowHeight - 2) - row;
-            var messages = LogManager.MessageList.Where(m => m.type != LogManager.LogMessageType.LOG).Skip(Math.Max(0, LogManager.MessageList.Count() - spread));
+            Console.SetCursorPosition(0, row);
+            int consoleHeight = (Console.WindowHeight - 3) - row;
+            var messages = (from m in LogManager.MessageList where (m.type & LogManager.messageFlags) > 0 select m).Skip(Math.Max(0, LogManager.MessageList.Count() - consoleHeight));
+            int emptyLines = 0;
+
+            if (messages.Count() < consoleHeight)
+            {
+                emptyLines = consoleHeight - messages.Count();
+            }
 
             foreach (var message in messages)
             {
@@ -217,54 +243,136 @@ namespace TwEX_Console
                     msg += new String(' ', padWidth);
                 }
 
-                Console.WriteLine(msg);
+                Console.Write(msg);
                 row++;
             }
             // CLEAR LINES THAT MIGHT HAVE GARBAGE
-
-        }
-        static void DrawExchangeList()
-        {
-            // EXCHANGE HEADER
-            Console.SetCursorPosition(0, row++);
-            Console.ResetColor();
-            Console.WriteLine(String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,5} | {7,5}", "Exchange", "Tkrs", "Coins", "Total BTC", "Total USD", "Errors", "Last Update", " Last Message"));
-            RowBreak(row++, '-', delimiterColor);
-            // EXCHANGE LIST
-            Console.ForegroundColor = ConsoleColor.White;
-            foreach (ExchangeManager.Exchange exchange in ExchangeManager.exchangeList.OrderByDescending(item => item.BalanceList.Sum(balance => balance.TotalInBTC)))
+            if (emptyLines > 0)
             {
-                Console.SetCursorPosition(0, row);
-                string exchangeLine = String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,5} | {7,5}",
-                    exchange.Name,
-                    exchange.TickerList.Count,
-                    exchange.BalanceList.FindAll(e => e.Balance > 0).Count,
-                    exchange.BalanceList.Sum(balance => balance.TotalInBTC).ToString("N8"),
-                    exchange.BalanceList.Sum(balance => balance.TotalInUSD).ToString("C"),
-                    exchange.ErrorCount,
-                    exchange.LastUpdate,
-                    exchange.LastMessage
-                    );
-
-                if (exchangeLine.Length > Console.WindowWidth)
+                for (int i = 0; i < emptyLines; i++)
                 {
-                    // TRUNCATE
-                    exchangeLine = exchangeLine.Substring(0, Console.WindowWidth);
+                    RowBreak(row++, ' ', ConsoleColor.Black);
                 }
-                else
-                {
-                    // PAD
-                    int padWidth = Console.WindowWidth - exchangeLine.Length;
-                    exchangeLine += new String(' ', padWidth);
-                    Console.WriteLine(exchangeLine);
-                }
-
-                row++;
             }
         }
-        static void DrawMenu()
+        static void DrawFooter()
         {
-            Console.SetCursorPosition(0, row++);
+            Console.SetCursorPosition(1, Console.WindowHeight - 2);
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.CONSOLE);
+            Console.Write("[C]ONSOLE");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.DEBUG);
+            Console.Write("[D]EBUG");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.EXCHANGE);
+            Console.Write("[E]XCHANGE");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.OTHER);
+            Console.Write("OTHE[R]");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.EXCEPTION);
+            Console.Write("E[X]CEPTION");
+            ColumnBreak();
+
+            Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.LOG);
+            Console.Write("[L]OG");
+            Console.Write(new String(' ', Console.WindowWidth - Console.CursorLeft));
+
+            string date = DateTime.Now.ToLongTimeString();
+            Console.SetCursorPosition(Console.WindowWidth - date.Length - 1, Console.WindowHeight - 2);
+            ConsoleWrite(ConsoleColor.Cyan, date);
+        }
+
+        static void ConsoleWrite(ConsoleColor color, string text)
+        {
+            //ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Write(text);
+            Console.ResetColor();
+            //Console.ForegroundColor = originalColor;
+        }
+        static void ColumnBreak()
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = delimiterColor;
+            Console.Write(" | ");
+            Console.ForegroundColor = originalColor;
+        }
+        static void PadRight(int length)
+        {
+            Console.Write(new String(' ', length));
+        }
+        static void RowBreak(int currentRow, char character, ConsoleColor color)
+        {
+            Console.SetCursorPosition(0, currentRow);
+            Console.ForegroundColor = color;
+            Console.Write(new String(character, Console.WindowWidth));
+            Console.ResetColor();
+        }
+        #endregion Draw
+
+        #region Getters
+        static ConsoleColor getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType type)
+        {
+            bool hasType = (ExchangeManager.ExchangeTimers & type) != ExchangeManager.ExchangeTimerType.NONE;
+
+            if (hasType)
+            {
+                return ConsoleColor.White;
+            }
+            else
+            {
+                return ConsoleColor.DarkGray;
+            }
+        }
+        static ConsoleColor getMessageTypeColor(LogManager.LogMessageType type)
+        {
+            switch (type)
+            {
+                case LogManager.LogMessageType.LOG:
+                    return ConsoleColor.DarkGreen;
+
+                case LogManager.LogMessageType.CONSOLE:
+                    return ConsoleColor.Gray;
+
+                case LogManager.LogMessageType.DEBUG:
+                    return ConsoleColor.DarkYellow;
+
+                case LogManager.LogMessageType.OTHER:
+                    return ConsoleColor.DarkMagenta;
+
+                case LogManager.LogMessageType.EXCEPTION:
+                    return ConsoleColor.Red;
+
+                case LogManager.LogMessageType.EXCHANGE:
+                    return ConsoleColor.DarkCyan;
+
+                default: return ConsoleColor.DarkGray;
+            }
+        }
+        static ConsoleColor getMessageTypeActiveColor(LogManager.LogMessageType type)
+        {
+            bool hasType = (LogManager.messageFlags & type) != LogManager.LogMessageType.NONE;
+
+            if (hasType)
+            {
+                return getMessageTypeColor(type);
+            }
+            else
+            {
+                return ConsoleColor.DarkGray;
+            }
+        }
+        #endregion Getters
+    }
+}
+
+/*
             Console.ForegroundColor = getMessageTypeActiveColor(LogManager.LogMessageType.CONSOLE);
             Console.Write("[C]ONSOLE");
             ColumnBreak();
@@ -291,56 +399,23 @@ namespace TwEX_Console
             int menuPadding = Console.WindowWidth - Console.CursorLeft;
             //Console.ForegroundColor = delimiterColor;
             Console.WriteLine(new String(' ', menuPadding));
+            */
 
-        }
-        public static void RowBreak(int row, char character, ConsoleColor color)
-        {
-            Console.SetCursorPosition(0, row);
-            Console.ForegroundColor = color;
-            Console.WriteLine(new String(character, Console.WindowWidth));
-            Console.ResetColor();
-        }
-        #endregion Draw
+/*
+    #region DLL_IMPORTS
+    private const int MF_BYCOMMAND = 0x00000000;
+    public const int SC_CLOSE = 0xF060;
+    public const int SC_MINIMIZE = 0xF020;
+    public const int SC_MAXIMIZE = 0xF030;
+    public const int SC_SIZE = 0xF000;
 
-        #region Getters
-        private static ConsoleColor getMessageTypeColor(LogManager.LogMessageType type)
-        {
-            switch (type)
-            {
-                case LogManager.LogMessageType.LOG:
-                    return ConsoleColor.DarkGreen;
+    [DllImport("user32.dll")]
+    public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
-                case LogManager.LogMessageType.CONSOLE:
-                    return ConsoleColor.Gray;
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
-                case LogManager.LogMessageType.DEBUG:
-                    return ConsoleColor.DarkYellow;
-
-                case LogManager.LogMessageType.OTHER:
-                    return ConsoleColor.DarkMagenta;
-
-                case LogManager.LogMessageType.EXCEPTION:
-                    return ConsoleColor.Red;
-
-                case LogManager.LogMessageType.EXCHANGE:
-                    return ConsoleColor.DarkCyan;
-
-                default: return ConsoleColor.DarkGray;
-            }
-        }
-        private static ConsoleColor getMessageTypeActiveColor(LogManager.LogMessageType type)
-        {
-            bool hasType = (LogManager.messageFlags & type) != LogManager.LogMessageType.NONE;
-
-            if (hasType)
-            {
-                return getMessageTypeColor(type);
-            }
-            else
-            {
-                return ConsoleColor.DarkGray;
-            }
-        }
-        #endregion Getters
-    }
-}
+    [DllImport("kernel32.dll", ExactSpelling = true)]
+    private static extern IntPtr GetConsoleWindow();
+    #endregion DLL_IMPORTS
+    */
