@@ -138,7 +138,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getMarketLists", LogManager.StripHTML(responseString), LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getMarketLists", LogManager.StripHTML(responseString) + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 UpdateStatus(false, LogManager.StripHTML(responseString));
             }
             return list;

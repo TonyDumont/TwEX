@@ -69,7 +69,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getInfoList", responseString, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getInfoList", responseString + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 UpdateStatus(false, responseString);
             }
             return list;
