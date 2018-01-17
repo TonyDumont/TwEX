@@ -1725,20 +1725,20 @@ namespace TwEX_API
         #endregion
 
         #region Initialize
-        public static Boolean InitializePreferences()
+        public static Boolean LoadPreferences()
         {
             string path = Assembly.GetExecutingAssembly().CodeBase;
             string targetPath = Path.GetDirectoryName(path);
             WorkDirectory = new Uri(targetPath).LocalPath;
 
             string iniPath = WorkDirectory + "\\Preferences.ini";
-            
+
             if (File.Exists(iniPath))
             {
                 string text = File.ReadAllText(iniPath);
                 string json = Decrypt(text);
                 preferences = JsonConvert.DeserializeObject<Preferences>(json);
-
+                /*
                 AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.ApiList.Count + " APIS", LogMessageType.LOG);
                 AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Balances.Count + " Balances", LogMessageType.LOG);
                 AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
@@ -1772,7 +1772,7 @@ namespace TwEX_API
                 {
                     EarnGG.Accounts = preferences.EarnGGAccounts;
                 }
-
+                */
                 AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.FormPreferences.Count + " FORMS", LogManager.LogMessageType.LOG);
             }
             else
@@ -1781,6 +1781,60 @@ namespace TwEX_API
                 UpdatePreferencesFile();
             }
             return true;
+        }
+        public static Boolean SetPreferenceSnapshots()
+        {
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.ApiList.Count + " APIS", LogMessageType.LOG);
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Balances.Count + " Balances", LogMessageType.LOG);
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.SymbolWatchList.Count + " Symbols In Watchlist", LogMessageType.LOG);
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Wallets.Count + " Wallets", LogMessageType.LOG);
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.CoinMarketCapTickers.Count + " Market Cap Tickers", LogMessageType.LOG);
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.EarnGGAccounts.Count + " EarnGG APIS", LogMessageType.LOG);
+
+            if (preferences.Balances.Count > 0)
+            {
+                Balances = new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(preferences.Balances));
+            }
+
+            if (preferences.Tickers.Count > 0)
+            {
+                ExchangeManager.Tickers = new BlockingCollection<ExchangeTicker>(new ConcurrentQueue<ExchangeTicker>(preferences.Tickers));
+            }
+
+            if (preferences.CoinMarketCapTickers.Count > 0)
+            {
+                CoinMarketCap.Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(preferences.CoinMarketCapTickers));
+            }
+
+            if (preferences.Wallets.Count > 0)
+            {
+                WalletManager.Wallets = preferences.Wallets;
+            }
+
+            if (preferences.EarnGGAccounts.Count > 0)
+            {
+                EarnGG.Accounts = preferences.EarnGGAccounts;
+            }
+            return true;
+        }
+        public static Boolean InitializePreferences()
+        {
+            if (LoadPreferences())
+            {
+                if (SetPreferenceSnapshots())
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }       
+            }
+            else
+            {
+                return false;
+            }
         }
         #endregion
 
@@ -1887,14 +1941,16 @@ namespace TwEX_API
                             string text = File.ReadAllText(filename);
                             preferences = JsonConvert.DeserializeObject<Preferences>(text.ToString());
                             LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES IMPORTED : " + preferences.ApiList.Count + " APIS", LogManager.LogMessageType.LOG);
-                            UpdatePreferencesFile();
+                            if (SetPreferenceSnapshots())
+                            {
+                                UpdatePreferencesFile();
+                            }                        
                         }
                     }
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    //MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                     LogManager.AddLogMessage(Name, "ImportPreferences", ex.Message, LogManager.LogMessageType.EXCEPTION);
                     return false;
                 }

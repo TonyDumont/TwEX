@@ -24,15 +24,10 @@ namespace TwEX_FormEditor
                 if (InitializePreferences())
                 {
                     Task.Factory.StartNew(() => ExchangeManager.InitializeExchangeList());
-                    /*
-                    if (ExchangeManager.InitializeExchangeList())
-                    {
-                        if(ExchangeManager.InitializeTimer())
-                        {
-                            //ExchangeManager.updateControls();
-                        }
-                    }
-                    */
+                }
+                else
+                {
+                    LogManager.AddLogMessage(Name, "TwEX_FormEditor", "Problem Loading Preferences", LogManager.LogMessageType.DEBUG);
                 }
             }
         }
