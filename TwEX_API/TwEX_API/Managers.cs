@@ -1738,41 +1738,6 @@ namespace TwEX_API
                 string text = File.ReadAllText(iniPath);
                 string json = Decrypt(text);
                 preferences = JsonConvert.DeserializeObject<Preferences>(json);
-                /*
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.ApiList.Count + " APIS", LogMessageType.LOG);
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Balances.Count + " Balances", LogMessageType.LOG);
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.SymbolWatchList.Count + " Symbols In Watchlist", LogMessageType.LOG);
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Wallets.Count + " Wallets", LogMessageType.LOG);
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.CoinMarketCapTickers.Count + " Market Cap Tickers", LogMessageType.LOG);
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.EarnGGAccounts.Count + " EarnGG APIS", LogMessageType.LOG);
-
-                // LOAD SNAPSHOTS
-                if (preferences.Balances.Count > 0)
-                {
-                    Balances = new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(preferences.Balances));
-                }
-                
-                if (preferences.Tickers.Count > 0)
-                {
-                    ExchangeManager.Tickers = new BlockingCollection<ExchangeTicker>(new ConcurrentQueue<ExchangeTicker>(preferences.Tickers));
-                }
-                
-                if (preferences.CoinMarketCapTickers.Count > 0)
-                {
-                    CoinMarketCap.Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(preferences.CoinMarketCapTickers));
-                }
-
-                if (preferences.Wallets.Count > 0)
-                {
-                    WalletManager.Wallets = preferences.Wallets;
-                }
-
-                if (preferences.EarnGGAccounts.Count > 0)
-                {
-                    EarnGG.Accounts = preferences.EarnGGAccounts;
-                }
-                */
                 AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.FormPreferences.Count + " FORMS", LogManager.LogMessageType.LOG);
             }
             else
@@ -1785,33 +1750,33 @@ namespace TwEX_API
         public static Boolean SetPreferenceSnapshots()
         {
             AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.ApiList.Count + " APIS", LogMessageType.LOG);
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Balances.Count + " Balances", LogMessageType.LOG);
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
             AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.SymbolWatchList.Count + " Symbols In Watchlist", LogMessageType.LOG);
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Wallets.Count + " Wallets", LogMessageType.LOG);
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.CoinMarketCapTickers.Count + " Market Cap Tickers", LogMessageType.LOG);
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.EarnGGAccounts.Count + " EarnGG APIS", LogMessageType.LOG);
-
+            
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Balances.Count + " Balances", LogMessageType.LOG);
             if (preferences.Balances.Count > 0)
             {
                 Balances = new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(preferences.Balances));
             }
 
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
             if (preferences.Tickers.Count > 0)
             {
                 ExchangeManager.Tickers = new BlockingCollection<ExchangeTicker>(new ConcurrentQueue<ExchangeTicker>(preferences.Tickers));
             }
 
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.CoinMarketCapTickers.Count + " Market Cap Tickers", LogMessageType.LOG);
             if (preferences.CoinMarketCapTickers.Count > 0)
             {
                 CoinMarketCap.Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(preferences.CoinMarketCapTickers));
             }
 
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Wallets.Count + " Wallets", LogMessageType.LOG);
             if (preferences.Wallets.Count > 0)
             {
                 WalletManager.Wallets = preferences.Wallets;
             }
 
+            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.EarnGGAccounts.Count + " EarnGG APIS", LogMessageType.LOG);
             if (preferences.EarnGGAccounts.Count > 0)
             {
                 EarnGG.Accounts = preferences.EarnGGAccounts;
@@ -1904,18 +1869,21 @@ namespace TwEX_API
         {
             string iniPath = WorkDirectory + "\\Preferences_export.ini";
             //LogManager.AddLogMessage(Name, "ExportPreferences", "Exporting to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
-            string json = JsonConvert.SerializeObject(preferences);
-            //File.WriteAllText(@iniPath, json);
-            SaveFileDialog save = new SaveFileDialog();
-            save.FileName = "TwEXport.txt";
-            save.Filter = "Text File | *.txt";
-
-            if (save.ShowDialog() == DialogResult.OK)
+            if (UpdatePreferenceSnapshots())
             {
-                StreamWriter writer = new StreamWriter(save.OpenFile());
-                writer.WriteLine(json);
-                writer.Dispose();
-                writer.Close();
+                string json = JsonConvert.SerializeObject(preferences);
+                //File.WriteAllText(@iniPath, json);
+                SaveFileDialog save = new SaveFileDialog();
+                save.FileName = "TwEXport.txt";
+                save.Filter = "Text File | *.txt";
+
+                if (save.ShowDialog() == DialogResult.OK)
+                {
+                    StreamWriter writer = new StreamWriter(save.OpenFile());
+                    writer.WriteLine(json);
+                    writer.Dispose();
+                    writer.Close();
+                }
             }
         }
         public static Boolean ImportPreferences()
