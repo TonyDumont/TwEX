@@ -19,7 +19,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "GDAX";
         public static string Url { get; } = "https://www.gdax.com/";
+        public static string IconUrl { get; } = "https://www.gdax.com/favicon.ico";
         public static string USDSymbol { get; } = "USD";
+        public static string TradingView { get; } = "Coinbase";
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.gdax.com");
@@ -336,6 +338,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                            //Decimal orders = balance.Balance - balance.Available;
+                            if (balance.hold > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.hold * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.balance * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -349,6 +357,11 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.currency == "BTC")
                         {
+                            if (balance.hold > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.hold;
+                            }
+
                             balance.TotalInBTC = balance.balance;
                             balance.TotalInUSD = btcTicker.last * balance.balance;
                         }
@@ -356,6 +369,11 @@ namespace TwEX_API.Exchange
                         {
                             if (btcTicker.last > 0)
                             {
+                                if (balance.hold > 0)
+                                {
+                                    balance.TotalInBTCOrders = balance.hold / btcTicker.last;
+                                }
+
                                 balance.TotalInBTC = balance.balance / btcTicker.last;
                             }
                             balance.TotalInUSD = balance.balance;
@@ -369,12 +387,18 @@ namespace TwEX_API.Exchange
         }
         public static void updateExchangeTickerList()
         {
-            List<GDAXProductTicker> tickerList = getProductTickerList();
-
-            foreach (GDAXProductTicker ticker in tickerList)
+            try
             {
-                //LogManager.AddLogMessage(Name, "updateExchangeTickerList", ticker.id + " | " + ticker.price + " | " + ticker.ask, LogManager.LogMessageType.DEBUG);
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                List<GDAXProductTicker> tickerList = getProductTickerList();
+                foreach (GDAXProductTicker ticker in tickerList)
+                {
+                    //LogManager.AddLogMessage(Name, "updateExchangeTickerList", ticker.id + " | " + ticker.price + " | " + ticker.ask, LogManager.LogMessageType.DEBUG);
+                    ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "updateExchangeTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
         }
         
@@ -444,11 +468,11 @@ namespace TwEX_API.Exchange
             public string market { get; set; }
             // ROOT
             public int trade_id { get; set; }
-            public Decimal price { get; set; }
+            public Decimal price { get; set; } = 0;
             public Decimal size { get; set; }
-            public Decimal bid { get; set; }
-            public Decimal ask { get; set; }
-            public Decimal volume { get; set; }
+            public Decimal bid { get; set; } = 0;
+            public Decimal ask { get; set; } = 0;
+            public Decimal volume { get; set; } = 0;
             public string time { get; set; }
 
             public ExchangeTicker GetExchangeTicker()
@@ -480,17 +504,20 @@ namespace TwEX_API.Exchange
             public string profile_id { get; set; }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Symbol = currency;
-                eBalance.Exchange = Name;
-                eBalance.Balance = balance;
-                eBalance.OnOrders = hold;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Symbol = currency,
+                    Exchange = Name,
+                    Balance = balance,
+                    OnOrders = hold,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class GDAXAccountHistory

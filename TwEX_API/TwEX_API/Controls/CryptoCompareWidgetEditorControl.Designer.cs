@@ -32,6 +32,7 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton_widget = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_Chart = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_NewsFeed = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_PricesList = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_PricesTiles = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Tabbed = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,9 +70,21 @@
             this.toolStripMenuItem_DashPayMagazine = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_CoinJoker = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.listView = new BrightIdeasSoftware.FastObjectListView();
+            this.column_SortOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_Name = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_CoinName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_Algorithm = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_ProofType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_TotalCoinSupply = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel = new System.Windows.Forms.Panel();
-            this.toolStripMenuItem_NewsFeed = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+            this.splitContainer.Panel1.SuspendLayout();
+            this.splitContainer.Panel2.SuspendLayout();
+            this.splitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip
@@ -126,6 +139,13 @@
             this.toolStripMenuItem_Chart.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_Chart.Tag = "Chart";
             this.toolStripMenuItem_Chart.Text = "Chart";
+            // 
+            // toolStripMenuItem_NewsFeed
+            // 
+            this.toolStripMenuItem_NewsFeed.Name = "toolStripMenuItem_NewsFeed";
+            this.toolStripMenuItem_NewsFeed.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_NewsFeed.Tag = "NewsFeed";
+            this.toolStripMenuItem_NewsFeed.Text = "News Feed";
             // 
             // toolStripMenuItem_PricesList
             // 
@@ -403,32 +423,134 @@
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
+            // splitContainer
+            // 
+            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer.Name = "splitContainer";
+            // 
+            // splitContainer.Panel1
+            // 
+            this.splitContainer.Panel1.Controls.Add(this.listView);
+            // 
+            // splitContainer.Panel2
+            // 
+            this.splitContainer.Panel2.Controls.Add(this.panel);
+            this.splitContainer.Size = new System.Drawing.Size(955, 418);
+            this.splitContainer.SplitterDistance = 673;
+            this.splitContainer.TabIndex = 3;
+            // 
+            // listView
+            // 
+            this.listView.AllColumns.Add(this.column_SortOrder);
+            this.listView.AllColumns.Add(this.column_Name);
+            this.listView.AllColumns.Add(this.column_CoinName);
+            this.listView.AllColumns.Add(this.column_Algorithm);
+            this.listView.AllColumns.Add(this.column_ProofType);
+            this.listView.AllColumns.Add(this.column_TotalCoinSupply);
+            this.listView.AutoArrange = false;
+            this.listView.CellEditUseWholeCell = false;
+            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.column_SortOrder,
+            this.column_Name,
+            this.column_CoinName,
+            this.column_Algorithm,
+            this.column_ProofType,
+            this.column_TotalCoinSupply});
+            this.listView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listView.FullRowSelect = true;
+            this.listView.GridLines = true;
+            this.listView.HasCollapsibleGroups = false;
+            this.listView.HeaderUsesThemes = true;
+            this.listView.HideSelection = false;
+            this.listView.Location = new System.Drawing.Point(0, 0);
+            this.listView.MultiSelect = false;
+            this.listView.Name = "listView";
+            this.listView.ShowGroups = false;
+            this.listView.Size = new System.Drawing.Size(673, 418);
+            this.listView.TabIndex = 6;
+            this.listView.UseCellFormatEvents = true;
+            this.listView.UseCompatibleStateImageBehavior = false;
+            this.listView.View = System.Windows.Forms.View.Details;
+            this.listView.VirtualMode = true;
+            // 
+            // column_SortOrder
+            // 
+            this.column_SortOrder.AspectName = "SortOrder";
+            this.column_SortOrder.MaximumWidth = 70;
+            this.column_SortOrder.MinimumWidth = 70;
+            this.column_SortOrder.Text = "";
+            this.column_SortOrder.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_SortOrder.Width = 70;
+            // 
+            // column_Name
+            // 
+            this.column_Name.AspectName = "Name";
+            this.column_Name.MaximumWidth = 100;
+            this.column_Name.MinimumWidth = 100;
+            this.column_Name.Text = "Name";
+            this.column_Name.Width = 100;
+            // 
+            // column_CoinName
+            // 
+            this.column_CoinName.AspectName = "CoinName";
+            this.column_CoinName.MaximumWidth = 200;
+            this.column_CoinName.MinimumWidth = 125;
+            this.column_CoinName.Text = "Coin Name";
+            this.column_CoinName.Width = 125;
+            // 
+            // column_Algorithm
+            // 
+            this.column_Algorithm.AspectName = "Algorithm";
+            this.column_Algorithm.MaximumWidth = 90;
+            this.column_Algorithm.MinimumWidth = 90;
+            this.column_Algorithm.Text = "Algo.";
+            this.column_Algorithm.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_Algorithm.Width = 90;
+            // 
+            // column_ProofType
+            // 
+            this.column_ProofType.AspectName = "ProofType";
+            this.column_ProofType.MaximumWidth = 90;
+            this.column_ProofType.MinimumWidth = 90;
+            this.column_ProofType.Text = "PType";
+            this.column_ProofType.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_ProofType.Width = 90;
+            // 
+            // column_TotalCoinSupply
+            // 
+            this.column_TotalCoinSupply.AspectName = "";
+            this.column_TotalCoinSupply.FillsFreeSpace = true;
+            this.column_TotalCoinSupply.Text = "Total Coin Supply";
+            this.column_TotalCoinSupply.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.column_TotalCoinSupply.Width = 140;
+            // 
             // panel
             // 
             this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel.Location = new System.Drawing.Point(0, 25);
+            this.panel.Location = new System.Drawing.Point(0, 0);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(955, 418);
-            this.panel.TabIndex = 2;
-            // 
-            // toolStripMenuItem_NewsFeed
-            // 
-            this.toolStripMenuItem_NewsFeed.Name = "toolStripMenuItem_NewsFeed";
-            this.toolStripMenuItem_NewsFeed.Size = new System.Drawing.Size(159, 22);
-            this.toolStripMenuItem_NewsFeed.Tag = "NewsFeed";
-            this.toolStripMenuItem_NewsFeed.Text = "News Feed";
+            this.panel.Size = new System.Drawing.Size(278, 418);
+            this.panel.TabIndex = 3;
             // 
             // CryptoCompareWidgetEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panel);
+            this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.toolStrip);
             this.Name = "CryptoCompareWidgetEditorControl";
             this.Size = new System.Drawing.Size(955, 443);
             this.Load += new System.EventHandler(this.CryptoCompareWidgetEditorControl_Load);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+            this.splitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -475,7 +597,15 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Converter;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_HeaderV2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_HeaderV3;
-        private System.Windows.Forms.Panel panel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_NewsFeed;
+        private System.Windows.Forms.SplitContainer splitContainer;
+        private System.Windows.Forms.Panel panel;
+        private BrightIdeasSoftware.FastObjectListView listView;
+        private BrightIdeasSoftware.OLVColumn column_SortOrder;
+        private BrightIdeasSoftware.OLVColumn column_Name;
+        private BrightIdeasSoftware.OLVColumn column_CoinName;
+        private BrightIdeasSoftware.OLVColumn column_Algorithm;
+        private BrightIdeasSoftware.OLVColumn column_ProofType;
+        private BrightIdeasSoftware.OLVColumn column_TotalCoinSupply;
     }
 }

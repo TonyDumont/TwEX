@@ -1,14 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -19,7 +16,11 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "Bittrex";
         public static string Url { get; } = "https://bittrex.com/";
+        //public static string IconUrl { get; } = "https://bittrex.com/Content/img/logos/bittrex.ico";
+        //public static string IconUrl { get; } = "https://bittrex.com/favicon.ico";
+        public static string IconUrl { get; } = "http://tradebittrext.com/wp-content/uploads/2017/10/lessons-in-crypto-arbitrage-nav-coin_1.jpg";
         public static string USDSymbol { get; } = "USDT";
+        public static string TradingView { get; } = "Bittrex";
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bittrex.com/api/v1.1");
@@ -735,7 +736,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         // GETTERS
         public static List<ExchangeBalance> getExchangeBalanceList()
@@ -777,6 +778,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                            Decimal orders = balance.Balance - balance.Available;
+                            if (orders > 0)
+                            {
+                                balance.TotalInBTCOrders = orders * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.Balance * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -790,11 +797,23 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.Currency == "BTC")
                         {
+                            Decimal orders = balance.Balance - balance.Available;
+                            if (orders > 0)
+                            {
+                                balance.TotalInBTCOrders = orders;
+                            }
+
                             balance.TotalInBTC = balance.Balance;
                             balance.TotalInUSD = btcTicker.last * balance.Balance;
                         }
                         else if (balance.Currency == USDSymbol)
                         {
+                            Decimal orders = balance.Balance - balance.Available;
+                            if (orders > 0)
+                            {
+                                balance.TotalInBTCOrders = orders / btcTicker.last;
+                            }
+
                             if (btcTicker.last > 0)
                             {
                                 balance.TotalInBTC = balance.Balance / btcTicker.last;
@@ -932,17 +951,20 @@ namespace TwEX_API.Exchange
             public string CryptoAddress { get; set; }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Exchange = Name;
-                eBalance.Symbol = Currency;
-                eBalance.Balance = Balance;
-                eBalance.OnOrders = Balance - Available;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Exchange = Name,
+                    Symbol = Currency,
+                    Balance = Balance,
+                    OnOrders = Balance - Available,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class BittrexBuySellResult

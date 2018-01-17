@@ -44,6 +44,8 @@ namespace TwEX_API.Controls
         #region Updaters
         private void updateUI()
         {
+            listView.SetObjects(CryptoCompare.CoinList);
+
             switch (widgetType)
             {
                 case CryptoCompare.CryptoCompareWidgetType.Chart:

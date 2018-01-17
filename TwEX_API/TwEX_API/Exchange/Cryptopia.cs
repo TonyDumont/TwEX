@@ -19,7 +19,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "Cryptopia";
         public static string Url { get; } = "https://www.cryptopia.co.nz/";
+        public static string IconUrl { get; } = "https://www.cryptopia.co.nz/favicon.ico?v=2";
         public static string USDSymbol { get; } = "USDT";
+        public static string TradingView { get; } = String.Empty;
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://www.cryptopia.co.nz/api");
@@ -682,7 +684,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         // GETTERS
         public async static Task<List<ExchangeBalance>> getExchangeBalanceList()
@@ -724,6 +726,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                            //Decimal orders = balance.Balance - balance.Available;
+                            if (balance.HeldForTrades > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.HeldForTrades * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.Total * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -737,11 +745,21 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.Symbol == "BTC")
                         {
+                            if (balance.HeldForTrades > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.HeldForTrades;
+                            }
+
                             balance.TotalInBTC = balance.Total;
                             balance.TotalInUSD = btcTicker.last * balance.Total;
                         }
                         else if (balance.Symbol == USDSymbol)
                         {
+                            if (balance.HeldForTrades > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.HeldForTrades / btcTicker.last;
+                            }
+
                             if (btcTicker.last > 0)
                             {
                                 balance.TotalInBTC = balance.Total / btcTicker.last;
@@ -905,17 +923,20 @@ namespace TwEX_API.Exchange
             public string BaseAddress { get; set; }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Symbol = Symbol;
-                eBalance.Exchange = Name;
-                eBalance.Balance = Total;
-                eBalance.OnOrders = HeldForTrades;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Symbol = Symbol,
+                    Exchange = Name,
+                    Balance = Total,
+                    OnOrders = HeldForTrades,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class CryptopiaCancelMessage

@@ -17,7 +17,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "GateIO";
         public static string Url { get; } = "https://gate.io/";
+        public static string IconUrl { get; } = "https://gate.io/favicon.ico";
         public static string USDSymbol { get; } = "USDT";
+        public static string TradingView { get; } = String.Empty;
         // API
         public static ExchangeApi Api { get; set; } = new ExchangeApi();
         private static RestClient client = new RestClient("http://data.gate.io");
@@ -966,7 +968,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         // GETTERS
         public static List<ExchangeTicker> getExchangeTickerList()
@@ -997,6 +999,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                            //Decimal orders = balance. .Balance - balance.Available;
+                            if (balance.locked > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.locked * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.total * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -1010,6 +1018,11 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.symbol == "BTC")
                         {
+                            if (balance.locked > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.locked;
+                            }
+
                             balance.TotalInBTC = balance.total;
                             balance.TotalInUSD = btcTicker.last * balance.total;
                         }
@@ -1017,6 +1030,11 @@ namespace TwEX_API.Exchange
                         {
                             if (btcTicker.last > 0)
                             {
+                                if (balance.locked > 0)
+                                {
+                                    balance.TotalInBTCOrders = balance.locked / btcTicker.last;
+                                }
+
                                 balance.TotalInBTC = balance.total / btcTicker.last;
                             }
                             balance.TotalInUSD = balance.total;
@@ -1130,17 +1148,20 @@ namespace TwEX_API.Exchange
             // ADDON DATA
             public Decimal total { get { return available + locked; } }
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Exchange = Name;
-                eBalance.Symbol = symbol;
-                eBalance.Balance = total;
-                eBalance.OnOrders = locked;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Exchange = Name,
+                    Symbol = symbol,
+                    Balance = total,
+                    OnOrders = locked,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class GateIODepositAddress

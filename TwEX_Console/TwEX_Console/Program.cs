@@ -37,7 +37,7 @@ namespace TwEX_Console
                 */
             }
 
-            if (ExchangeManager.InitializePreferences())
+            if (PreferenceManager.InitializePreferences())
             {
                 if (ExchangeManager.InitializeExchangeList())
                 {
@@ -59,21 +59,21 @@ namespace TwEX_Console
                         case ConsoleKey.B:
                             //LogManager.AddLogMessage("Program", "Run", "Updating All Balances", LogManager.LogMessageType.CONSOLE);
                             Task.Factory.StartNew(() => ExchangeManager.updateBalances());
-                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.BALANCES);
+                            PreferenceManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.BALANCES);
                             break;
 
                         case ConsoleKey.T:
                             //LogManager.AddLogMessage("Program", "Run", "Updating All Tickers", LogManager.LogMessageType.CONSOLE);
                             Task.Factory.StartNew(() => ExchangeManager.updateTickers());
-                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.TICKERS);
+                            PreferenceManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.TICKERS);
                             break;
 
                         case ConsoleKey.O:
-                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.ORDERS);
+                            PreferenceManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.ORDERS);
                             break;
 
                         case ConsoleKey.H:
-                            ExchangeManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.HISTORY);
+                            PreferenceManager.toggleTimerPreference(ExchangeManager.ExchangeTimerType.HISTORY);
                             break;
 
                         // MESSAGE FLAGES
@@ -104,11 +104,11 @@ namespace TwEX_Console
 
                         // IMPORT/EXPORT
                         case ConsoleKey.I:
-                            ExchangeManager.ImportPreferences();
+                            PreferenceManager.ImportPreferences();
                             break;
 
                         case ConsoleKey.P:
-                            ExchangeManager.ExportPreferences();
+                            PreferenceManager.ExportPreferences();
                             break;
 
                         default:
@@ -145,21 +145,28 @@ namespace TwEX_Console
             ColumnBreak();
             ConsoleWrite(ConsoleColor.DarkYellow, CoinMarketCap.Tickers.Count + " Market Caps @ " + CoinMarketCap.Tickers.Sum(t => t.market_cap_usd).ToString("C"));
 
+            string btcOrders = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTCOrders)).ToString("N8");
             string btcTotal = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8");
             string usdTotal = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C");
-            int rightPadding = Console.WindowWidth - (btcTotal.Length + 3 + usdTotal.Length + 1);
-            Console.SetCursorPosition(Console.WindowWidth - (btcTotal.Length + 3 + usdTotal.Length + 1), 0);
-            ConsoleWrite(ConsoleColor.DarkCyan, ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8"));
+            //int rightPadding = Console.WindowWidth - (btcOrders.Length + 3 + btcTotal.Length + 3 + usdTotal.Length + 1);
+            int rightPadding = btcOrders.Length + 3 + btcTotal.Length + 3 + usdTotal.Length + 1;
+            //Console.SetCursorPosition(Console.WindowWidth - (btcTotal.Length + 3 + usdTotal.Length + 1), 0);
+            Console.SetCursorPosition(Console.WindowWidth - rightPadding, 0);
+            ConsoleWrite(ConsoleColor.Yellow, btcOrders);
             ColumnBreak();
-            ConsoleWrite(ConsoleColor.DarkGreen, ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C"));
+            //ConsoleWrite(ConsoleColor.DarkCyan, ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8"));
+            ConsoleWrite(ConsoleColor.DarkCyan, btcTotal);
+            ColumnBreak();
+            //ConsoleWrite(ConsoleColor.DarkGreen, ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD)).ToString("C"));
+            ConsoleWrite(ConsoleColor.DarkGreen, usdTotal);
         }
         static void DrawExchangeList()
         {
             // EXCHANGE HEADER
             Console.SetCursorPosition(0, row++);
             Console.ResetColor();
-            Console.Write(String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,22} | {7,5}",
-                                            " Exchange", "Tkrs", "Coins", "Total BTC", "Total USD", "Err.", "Last Update", " Last Message"));
+            Console.Write(String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,10} | {6,5} | {7,22} | {8,5}",
+                                            " Exchange", "Tkrs", "Coins", "Orders", "Total BTC", "Total USD", "Err.", "Last Update", " Last Message"));
             PadRight(Console.WindowWidth - Console.CursorLeft);
             RowBreak(row++, '-', delimiterColor);
             // EXCHANGE LIST
@@ -167,10 +174,11 @@ namespace TwEX_Console
             foreach (ExchangeManager.Exchange exchange in ExchangeManager.Exchanges.OrderByDescending(item => item.BalanceList.Sum(balance => balance.TotalInBTC)))
             {
                 Console.SetCursorPosition(1, row);
-                string exchangeString = String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,5} | {6,22} | {7,5}",
+                string exchangeString = String.Format("{0,-10} | {1,5} | {2,5} | {3,10} | {4,10} | {5,10} | {6,5} | {7,22} | {8,5}",
                     exchange.Name,
                     exchange.TickerList.Count,
                     exchange.BalanceList.FindAll(e => e.Balance > 0).Count,
+                    exchange.BalanceList.Sum(balance => balance.TotalInBTCOrders).ToString("N8"),
                     exchange.BalanceList.Sum(balance => balance.TotalInBTC).ToString("N8"),
                     exchange.BalanceList.Sum(balance => balance.TotalInUSD).ToString("C"),
                     exchange.ErrorCount,
@@ -215,7 +223,7 @@ namespace TwEX_Console
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.SetCursorPosition(0, row);
             int consoleHeight = (Console.WindowHeight - 3) - row;
-            var messages = (from m in LogManager.MessageList where (m.type & ExchangeManager.preferences.MessageFlags) > 0 select m).Skip(Math.Max(0, LogManager.MessageList.Count() - consoleHeight));
+            var messages = (from m in LogManager.MessageList where (m.type & PreferenceManager.preferences.MessageFlags) > 0 select m).Skip(Math.Max(0, LogManager.MessageList.Count() - consoleHeight));
             int emptyLines = 0;
 
             if (messages.Count() < consoleHeight)
@@ -323,7 +331,7 @@ namespace TwEX_Console
         #region Getters
         static ConsoleColor getExchangeTimerTypeActiveColor(ExchangeManager.ExchangeTimerType type)
         {
-            bool hasType = (ExchangeManager.preferences.ExchangeTimers & type) != ExchangeManager.ExchangeTimerType.NONE;
+            bool hasType = (PreferenceManager.preferences.TimerFlags & type) != ExchangeManager.ExchangeTimerType.NONE;
 
             if (hasType)
             {
@@ -345,7 +353,7 @@ namespace TwEX_Console
                     return ConsoleColor.Gray;
 
                 case LogManager.LogMessageType.DEBUG:
-                    return ConsoleColor.DarkYellow;
+                    return ConsoleColor.Yellow;
 
                 case LogManager.LogMessageType.OTHER:
                     return ConsoleColor.DarkMagenta;
@@ -361,7 +369,7 @@ namespace TwEX_Console
         }
         static ConsoleColor getMessageTypeActiveColor(LogManager.LogMessageType type)
         {
-            bool hasType = (ExchangeManager.preferences.MessageFlags & type) != LogManager.LogMessageType.NONE;
+            bool hasType = (PreferenceManager.preferences.MessageFlags & type) != LogManager.LogMessageType.NONE;
 
             if (hasType)
             {

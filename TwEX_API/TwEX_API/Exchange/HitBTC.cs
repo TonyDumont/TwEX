@@ -19,7 +19,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "HitBTC";
         public static string Url { get; } = "https://hitbtc.com/";
-        public static string USDSymbol { get; } = "USDT";
+        public static string IconUrl { get; } = "https://hitbtc.com/favicon.png?v=4";
+        public static string USDSymbol { get; } = "USD";
+        public static string TradingView { get; } = "HitBTC";
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.hitbtc.com");
@@ -770,7 +772,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
@@ -812,6 +814,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                           // Decimal orders = balance.available - balance.reserved;
+                            if (balance.reserved > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.reserved * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.total * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -825,6 +833,12 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.currency == "BTC")
                         {
+                            //Decimal orders = balance.available - balance.reserved;
+                            if (balance.reserved > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.reserved;
+                            }
+
                             balance.TotalInBTC = balance.total;
                             balance.TotalInUSD = btcTicker.last * balance.total;
                         }
@@ -832,6 +846,12 @@ namespace TwEX_API.Exchange
                         {
                             if (btcTicker.last > 0)
                             {
+                                //Decimal orders = balance.available - balance.reserved;
+                                if (balance.reserved > 0)
+                                {
+                                    balance.TotalInBTCOrders = balance.reserved / btcTicker.last;
+                                }
+
                                 balance.TotalInBTC = balance.total / btcTicker.last;
                             }
                             balance.TotalInUSD = balance.total;
@@ -1099,10 +1119,6 @@ namespace TwEX_API.Exchange
         #region DATAMODELS_Private
         public class HitBTCBalance
         {
-            // TRADING BALANCE V1
-            //public string currency_code { get; set; }
-            //public Decimal cash { get; set; }
-            // TRADING BALANCE V2
             public string currency { get; set; }
             public Decimal reserved { get; set; }
             public Decimal available { get; set; }
@@ -1110,17 +1126,20 @@ namespace TwEX_API.Exchange
             public Decimal total { get { return available + reserved; } }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Exchange = Name;
-                eBalance.Symbol = currency;
-                eBalance.Balance = total;
-                eBalance.OnOrders = reserved;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Exchange = Name,
+                    Symbol = currency,
+                    Balance = total,
+                    OnOrders = reserved,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class HitBTCCommission

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp.WinForms;
 using CefSharp;
@@ -101,20 +97,20 @@ namespace TwEX_API.Controls
                 StringBuilder builder = new StringBuilder();
                 builder.Append("\"news\": [");
 
-                if (showHeadlines)
-                {
-                    builder.Append("\"headlines\"");
-                }
-
-                if (showStockTwits && showHeadlines)
-                {
-                    builder.Append(",\"stocktwits\"");
-                }
-                else
+                if (showStockTwits)
                 {
                     builder.Append("\"stocktwits\"");
                 }
 
+                if (showStockTwits && showHeadlines)
+                {
+                    builder.Append(",\"headlines\"");
+                }
+                else
+                {
+                    builder.Append("\"headlines\"");
+                }
+                
                 builder.Append("],");
                 //LogManager.AddLogMessage(this.Name, "GetWatchlist", builder.ToString(), LogManager.LogMessageType.DEBUG);
                 return builder.ToString();
@@ -175,8 +171,51 @@ namespace TwEX_API.Controls
                 }
             }
         }
-        private string GetStudiesString(List<TradingViewIndicator> list)
+        private string GetStudiesString(List<TradingViewIndicator> studies, bool show)
         {
+            //LogManager.AddLogMessage(Name, "GetStudiesString", "count=" + studies.Count, LogManager.LogMessageType.DEBUG);
+            
+            if (studies.Count > 0 && show)
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.Append("\"studies\": [");
+                int index = 1;
+
+                foreach (TradingViewIndicator item in studies)
+                {
+                    //LogManager.AddLogMessage(Name, "GetStudiesString", item.ToString(), LogManager.LogMessageType.DEBUG);
+                    builder.Append("\"" + item + "@tv-basicstudies\"");
+                    if (index != studies.Count)
+                    {
+                        builder.Append(",");
+                    }
+                    index++;
+                }
+                builder.Append("],");
+                //LogManager.AddLogMessage(this.Name, "GetWatchlist", builder.ToString(), LogManager.LogMessageType.DEBUG);
+                return builder.ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
+
+
+
+            /*
+            foreach (var item in EnumUtils.GetFlags(studies))
+            {
+                LogManager.AddLogMessage(Name, "GetStudiesString", item.ToString() + " | " + item.HasFlag(item), LogManager.LogMessageType.OTHER);
+            }
+            */
+
+            /*
+            foreach (var study in studies.)
+            {
+
+            }
+            */
+            /*
             if (list.Count > 0)
             {
                 StringBuilder builder = new StringBuilder();
@@ -201,6 +240,8 @@ namespace TwEX_API.Controls
             {
                 return string.Empty;
             }
+            */
+            //return string.Empty;
         }
         private string GetMarketOverviewTabsString(List<TradingViewMarketOverviewTab> tabs)
         {
@@ -423,27 +464,30 @@ namespace TwEX_API.Controls
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>" +
                     "<script type=\"text/javascript\">" +
                     "new TradingView.widget({" +
+                    
                     GetSizeAutoString(parameters.autosize, parameters.width, parameters.height) +
                     "\"symbol\": \"" + parameters.GetSymbolString() + "\"," +
                     "\"interval\": \"" + GetInterval(parameters.interval) + "\"," +
                     "\"timezone\": \"America/New_York\"," +
                     "\"theme\": \"" + parameters.theme + "\"," +
                     "\"style\": \"" + parameters.style.GetHashCode() + "\"," +
-                    "\"toolbar_bg\": \"" + parameters.toolbarBackgroundColor + "\"," +
-                    "\"enable_publishing\": " + GetBoolean(parameters.EnablePublishing) + "," +
-                    "\"withdateranges\": " + GetBoolean(parameters.ShowBottomToolbar) + "," +
-                    "\"hide_side_toolbar\": " + GetBoolean(parameters.ShowDrawingToolsBar) + "," +
-                    "\"allow_symbol_change\": " + GetBoolean(parameters.AllowSymbolChange) + "," +
+                    "\"toolbar_bg\": \"" + parameters.toolbar_bg + "\"," +
+                    "\"enable_publishing\": " + GetBoolean(parameters.enable_publishing) + "," +
+                    "\"withdateranges\": " + GetBoolean(parameters.withdateranges) + "," +
+                    "\"hide_top_toolbar\": " + GetBoolean(!parameters.hide_top_toolbar) + "," +
+                    "\"hide_side_toolbar\": " + GetBoolean(!parameters.hide_side_toolbar) + "," +
+                    "\"allow_symbol_change\": " + GetBoolean(parameters.allow_symbol_change) + "," +
                     GetWatchlistString(parameters.WatchList) +
-                    "\"details\": " + GetBoolean(parameters.ShowDetails) + "," +
-                    "\"hotlists\": " + GetBoolean(parameters.ShowHotlist) + "," +
-                    "\"calendar\": " + GetBoolean(parameters.ShowCalendar) + "," +
-                    GetNewsString(parameters.ShowHeadlines, parameters.ShowStockTwits) +
-                    GetStudiesString(parameters.IndicatorList) +
-                    GetPopupString(parameters.LaunchInPopupButton, parameters.popupWidth, parameters.popupHeight) +
-                    GetReferralString(parameters.ActivateReferralProgram, parameters.referral_id) +
-                    "\"hideideas\": " + GetBoolean(parameters.ShowIdeasButton) + "," +
+                    "\"details\": " + GetBoolean(parameters.details) + "," +
+                    "\"hotlist\": " + GetBoolean(parameters.hotlist) + "," +
+                    "\"calendar\": " + GetBoolean(parameters.calendar) + "," +
+                    GetNewsString(parameters.headlines, parameters.stocktwits) +
+                    GetStudiesString(parameters.studies, parameters.ShowIndicators) +
+                    GetPopupString(parameters.show_popup_button, parameters.popup_width, parameters.popup_height) +
+                    GetReferralString(parameters.no_referral_id, parameters.referral_id) +
+                    "\"hideideas\": " + GetBoolean(parameters.hideideas) + "," +
                     "\"locale\": \"" + parameters.locale + "\"" +
+
                     "});" +
                     "</script>";
                     //LogManager.AddLogMessage(this.Name, "setAdvancedChart", html, LogManager.LogMessageType.DEBUG);

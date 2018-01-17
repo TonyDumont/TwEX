@@ -14,7 +14,17 @@ namespace TwEX_API.Market
         //public static string ApiSecret = String.Empty;
         //private static RestClient client = new RestClient("https://www.cryptocompare.com");
         private static RestClient client = new RestClient("https://min-api.cryptocompare.com");
+        public static string IconUrl { get; } = "https://www.cryptocompare.com/media/20562/favicon.png?v=2";
+        // COLLECTIONS
+        public static List<CryptoCompareCoin> CoinList = new List<CryptoCompareCoin>();
         #endregion Properties
+
+        #region Initialize
+        public static void Initialize()
+        {
+            CoinList = getCoinList();
+        }
+        #endregion
 
         #region API_Public
         /// <summary>CoinList
@@ -56,7 +66,7 @@ namespace TwEX_API.Market
             }
             return list;
         }
-
+        
         /// <summary>Price
         /// <para>Get the latest price for a list of one or more currencies. Really fast, 20-60 ms. Cached each 10 seconds.</para>
         /// <para>Documentation at https://min-api.cryptocompare.com/</para>
@@ -288,6 +298,8 @@ namespace TwEX_API.Market
 
         // TopPairs
         
+
+
         #region DataModels
         #region DATAMODELS_Enums
         // ENUMS

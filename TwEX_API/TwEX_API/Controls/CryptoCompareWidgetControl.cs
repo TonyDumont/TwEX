@@ -13,7 +13,8 @@ namespace TwEX_API.Controls
         public ChromiumWebBrowser browser;
         private string symbol = string.Empty;
         private string market = string.Empty;
-        private CryptoCompareWidgetType widgetType = CryptoCompareWidgetType.Chart;
+        public bool hideScrollbars = false;
+        public CryptoCompareWidgetType widgetType = CryptoCompareWidgetType.Chart;
         private CryptoCompareChartPeriod period = CryptoCompareChartPeriod.Day_1D;
         private CryptoCompareFeedType feedType = CryptoCompareFeedType.CoinTelegraph;
         #endregion Properties
@@ -40,9 +41,21 @@ namespace TwEX_API.Controls
         public void InitializeBrowser()
         {
             //Cef.Initialize(new CefSettings());
-            browser = new ChromiumWebBrowser(String.Empty);
+            browser = new ChromiumWebBrowser(String.Empty) { Dock = DockStyle.Fill };
+            browser.FrameLoadEnd += OnBrowserFrameLoadEnd;
             panel.Controls.Add(browser);
-            browser.Dock = DockStyle.Fill;
+            //browser.Dock = DockStyle.Fill;
+        }
+        private void OnBrowserFrameLoadEnd(object sender, FrameLoadEndEventArgs args)
+        {
+            if (args.Frame.IsMain && hideScrollbars)
+            {
+                args
+                    .Browser
+                    .MainFrame
+                    .ExecuteJavaScriptAsync(
+                    "document.body.style.overflow = 'hidden'");
+            }
         }
         #endregion Initialize
 

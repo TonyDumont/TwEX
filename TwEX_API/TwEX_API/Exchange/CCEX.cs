@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -18,7 +17,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "CCEX";
         public static string Url { get; } = "https://c-cex.com/";
+        public static string IconUrl { get; } = "https://c-cex.com/favicon.ico";
         public static string USDSymbol { get; } = "USD";
+        public static string TradingView { get; } = String.Empty;
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://c-cex.com/t");
@@ -584,7 +585,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         // GETTERS
         public static List<ExchangeBalance> getExchangeBalanceList()
@@ -625,6 +626,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                            Decimal orders = balance.Balance - balance.Available;
+                            if (orders > 0)
+                            {
+                                balance.TotalInBTCOrders = orders * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.Balance * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -638,11 +645,23 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.Currency == "BTC")
                         {
+                            Decimal orders = balance.Balance - balance.Available;
+                            if (orders > 0)
+                            {
+                                balance.TotalInBTCOrders = orders;
+                            }
+
                             balance.TotalInBTC = balance.Balance;
                             balance.TotalInUSD = btcTicker.last * balance.Balance;
                         }
                         else if (balance.Currency == USDSymbol)
                         {
+                            Decimal orders = balance.Balance - balance.Available;
+                            if (orders > 0)
+                            {
+                                balance.TotalInBTCOrders = orders / btcTicker.last;
+                            }
+
                             if (btcTicker.last > 0)
                             {
                                 balance.TotalInBTC = balance.Balance / btcTicker.last;
@@ -773,17 +792,20 @@ namespace TwEX_API.Exchange
             public string CryptoAddress { get; set; }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Symbol = Currency;
-                eBalance.Exchange = Name;
-                eBalance.Balance = Balance;
-                eBalance.OnOrders = Balance - Available;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Symbol = Currency,
+                    Exchange = Name,
+                    Balance = Balance,
+                    OnOrders = Balance - Available,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class CCEXBuySellMessage

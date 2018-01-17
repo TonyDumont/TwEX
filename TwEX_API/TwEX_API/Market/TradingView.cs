@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace TwEX_API.Market
 {
@@ -8,7 +9,88 @@ namespace TwEX_API.Market
     {
         #region Properties
         public static String thisClassName = "TradingView";
+        public static string IconUrl { get; } = "https://www.tradingview.com/favicon.ico";
+        /*
+        public static List<ExchangeManager.ExchangeTicker> WatchList { get; set; } = new List<ExchangeManager.ExchangeTicker>()
+        {
+            new ExchangeManager.ExchangeTicker() { symbol="BTC", market="USDT", exchange="POLONIEX" },
+            new ExchangeManager.ExchangeTicker() { symbol="BCH", market="USDT", exchange="POLONIEX" },
+            new ExchangeManager.ExchangeTicker() { symbol="DASH", market="USDT", exchange="POLONIEX" },
+            new ExchangeManager.ExchangeTicker() { symbol="ETH", market="USDT", exchange="POLONIEX" },
+            new ExchangeManager.ExchangeTicker() { symbol="ZEC", market="USDT", exchange="POLONIEX" },
+            new ExchangeManager.ExchangeTicker() { symbol="XMR", market="USDT", exchange="POLONIEX" },
+            new ExchangeManager.ExchangeTicker() { symbol="LTC", market="USDT", exchange="POLONIEX" },
+            new ExchangeManager.ExchangeTicker() { symbol="ETC", market="USDT", exchange="POLONIEX" }
+        };
+        */
         #endregion Properties
+
+        #region Getters
+        public static List<TradingViewWatchlistItem> GetWatchListBySymbol(string symbol)
+        {
+            List<TradingViewWatchlistItem> list = new List<TradingViewWatchlistItem>();
+            
+            //StringBuilder builder = new StringBuilder();
+            //builder.Append("\"watchlist\": [");
+
+            List<ExchangeManager.Exchange> exchangeList = ExchangeManager.Exchanges.Where(item => item.TradingView.Length > 0).ToList();
+
+            //int listCount = 0;
+            // loop
+            if (symbol != "BTC")
+            {
+                // BTC
+                foreach (ExchangeManager.Exchange exchange in exchangeList)
+                {
+                    TradingViewWatchlistItem newItem = new TradingViewWatchlistItem()
+                    {
+                        exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), exchange.TradingView, true),
+                        symbol = symbol,
+                        market = "BTC"
+                    };
+                    list.Add(newItem);
+                    //listCount++;
+                }
+
+                //listCount = 0;
+                // USD
+                foreach (ExchangeManager.Exchange exchange in exchangeList)
+                {
+                    TradingViewWatchlistItem newItem = new TradingViewWatchlistItem()
+                    {
+                        exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), exchange.TradingView, true),
+                        symbol = symbol,
+                        market = exchange.USDSymbol
+                    };
+                    list.Add(newItem);
+                    //listCount++;
+                }
+
+            }
+            else
+            {
+                // JUST USD
+                foreach (ExchangeManager.Exchange exchange in exchangeList)
+                {
+                    TradingViewWatchlistItem newItem = new TradingViewWatchlistItem()
+                    {
+                        exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), exchange.TradingView, true),
+                        symbol = symbol,
+                        market = exchange.USDSymbol
+                    };
+                    list.Add(newItem);
+                    //listCount++;
+                }
+            }
+
+            //builder.Append("],");
+            //LogManager.AddDebugMessage(this.Name, "GetWatchlist", builder.ToString());
+            //return builder.ToString();
+            
+
+            return list;
+        }
+        #endregion
 
         #region DataModels
         #region DATAMODELS_Enums
@@ -69,6 +151,7 @@ namespace TwEX_API.Market
         }
         public enum TradingViewCryptoExchange // removed '_' and '.' from names 
         {
+            none,
             Bitfinex,
             bitFlyer,
             BitMEX,
@@ -140,6 +223,7 @@ namespace TwEX_API.Market
             RUB,
             ILS
         }
+
         public enum TradingViewIndicator
         {
             [Description("Accumulation/Distribution")]
@@ -325,6 +409,7 @@ namespace TwEX_API.Market
             [Description("Zig Zag")]
             ZigZag
         }
+
         public enum TradingViewExchange
         {
             [Description("USA (US Exchanges)")]
@@ -589,9 +674,9 @@ namespace TwEX_API.Market
         #region DATAMODELS_Parameters
         public class TradingViewAdvancedChartParameters
         {
-            public TradingViewCryptoExchange exchange { get; set; }
-            public string symbol { get; set; }
-            public string market { get; set; }
+            public TradingViewCryptoExchange exchange { get; set; } = TradingViewCryptoExchange.none;
+            public string symbol { get; set; } = String.Empty;
+            public string market { get; set; } = String.Empty;
 
             public TradingViewChartInterval interval { get; set; } = TradingViewChartInterval.Minute_15;
             public string timezone { get; set; } = "America/New_York";
@@ -602,35 +687,59 @@ namespace TwEX_API.Market
 
             public TradingViewColorTheme theme { get; set; } = TradingViewColorTheme.Light;
             public TradingViewChartStyle style { get; set; } = TradingViewChartStyle.Candles;
+
             public string locale { get; set; } = "en"; // ONLY ENGLISH FOR NOW
 
-            public string toolbarBackgroundColor { get; set; } = "#f1f3f6";
-            public Boolean ShowTopToolbar { get; set; } = true;
-            public Boolean ShowBottomToolbar { get; set; } = false;
-            public Boolean AllowSymbolChange { get; set; } = true;
-            public Boolean GetImageButton { get; set; } = true;
-            public Boolean ShowDrawingToolsBar { get; set; } = false;
-            public Boolean ShowIdeasOnChart { get; set; } = false;
-            public Boolean ShowIdeasButton { get; set; } = false;
+            // PROPERTIES
+            public string toolbar_bg { get; set; } = "#f1f3f6";
 
-            public Boolean LaunchInPopupButton { get; set; } = false;
-            public int popupWidth { get; set; } = 1000;
-            public int popupHeight { get; set; } = 650;
 
-            public Boolean EnablePublishing { get; set; } = false;
-            public Boolean ActivateReferralProgram { get; set; } = false;
+            // Top Tool Bar
+            public Boolean hide_top_toolbar { get; set; } = true;
+
+            // Bottom Tool Bar
+            public Boolean withdateranges { get; set; } = false;
+
+            public Boolean allow_symbol_change { get; set; } = true;
+
+            // Get Image Button
+            public Boolean save_image { get; set; } = true;
+
+            // ShowDrawingToolsBar
+            public Boolean hide_side_toolbar { get; set; } = false;
+
+            // hideideas
+            public Boolean hideideas { get; set; } = false;
+
+            // Show ideas button
+            public Boolean hideideasbutton { get; set; } = false;
+
+            public Boolean show_popup_button { get; set; } = false;
+            public int popup_width { get; set; } = 1000;
+            public int popup_height { get; set; } = 650;
+
+            public Boolean enable_publishing { get; set; } = false;
+
+            // Active Referral Program
+            public Boolean no_referral_id { get; set; } = true;
             public string referral_id { get; set; } = string.Empty;
 
+            // Watchlist
             public Boolean ShowWatchlist { get; set; } = false;
-            public Boolean ShowDetails { get; set; } = false;
-            public Boolean ShowStockTwits { get; set; } = false;
-            public Boolean ShowHeadlines { get; set; } = false;
-            public Boolean ShowHotlist { get; set; } = false;
-            public Boolean ShowCalendar { get; set; } = false;
             public Boolean ShowIndicators { get; set; } = false;
 
+            // EXTRAS
+            public Boolean details { get; set; } = false;
+            public Boolean stocktwits { get; set; } = false;
+            public Boolean headlines { get; set; } = false;
+            public Boolean hotlist { get; set; } = false;
+            public Boolean calendar { get; set; } = false;
+            
             public List<TradingViewWatchlistItem> WatchList { get; set; } = new List<TradingViewWatchlistItem>();
-            public List<TradingViewIndicator> IndicatorList { get; set; } = new List<TradingViewIndicator>();
+            //public List<TradingViewIndicator> IndicatorList { get; set; } = new List<TradingViewIndicator>();
+            //public TradingViewIndicator studies { get; set; }
+            //public List<TradingViewIndicator> studies { get; set; } = new List<TradingViewIndicator>() { TradingViewIndicator.MACD, TradingViewIndicator.BB, TradingViewIndicator.PSAR };
+            public List<TradingViewIndicator> studies { get; set; } = new List<TradingViewIndicator>();
 
             public string GetSymbolString()
             {

@@ -19,7 +19,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "LiveCoin";
         public static string Url { get; } = "https://www.livecoin.net";
+        public static string IconUrl { get; } = "https://www.livecoin.net/favicon.ico?v=1.2";
         public static string USDSymbol { get; } = "USDT";
+        public static string TradingView { get; } = String.Empty;
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://api.livecoin.net");
@@ -594,7 +596,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
@@ -623,6 +625,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                            //Decimal orders = balance.Balance - balance.Available;
+                            if (balance.trade > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.trade * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.total * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -636,6 +644,11 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.currency == "BTC")
                         {
+                            if (balance.trade > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.trade;
+                            }
+
                             balance.TotalInBTC = balance.total;
                             balance.TotalInUSD = btcTicker.last * balance.total;
                         }
@@ -643,6 +656,11 @@ namespace TwEX_API.Exchange
                         {
                             if (btcTicker.last > 0)
                             {
+                                if (balance.trade > 0)
+                                {
+                                    balance.TotalInBTCOrders = balance.trade / btcTicker.last;
+                                }
+
                                 balance.TotalInBTC = balance.total / btcTicker.last;
                             }
                             balance.TotalInUSD = balance.total;
@@ -853,17 +871,20 @@ namespace TwEX_API.Exchange
 
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Symbol = currency;
-                eBalance.Exchange = Name;
-                eBalance.Balance = total;
-                eBalance.OnOrders = total - available;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Symbol = currency,
+                    Exchange = Name,
+                    Balance = total,
+                    OnOrders = trade,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class LiveCoinTradeOrder

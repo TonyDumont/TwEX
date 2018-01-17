@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -19,7 +18,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "BleuTrade";
         public static string Url { get; } = "https://bleutrade.com";
+        public static string IconUrl { get; } = "https://bleutrade.com/imgs/favicon.ico";
         public static string USDSymbol { get; } = string.Empty;
+        public static string TradingView { get; } = String.Empty;
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bleutrade.com/api/v2");
@@ -810,7 +811,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         // GETTERS
         public static List<ExchangeBalance> getExchangeBalanceList()
@@ -882,12 +883,24 @@ namespace TwEX_API.Exchange
                     ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Currency.ToUpper(), "BTC");
                     if (ticker != null)
                     {
+                        Decimal orders = balance.Balance - balance.Available;
+                        if (orders > 0)
+                        {
+                            balance.TotalInBTCOrders = orders * ticker.last;
+                        }
+
                         balance.TotalInBTC = balance.Balance * ticker.last;
                         balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                     }
                 }
                 else
                 {
+                    Decimal orders = balance.Balance - balance.Available;
+                    if (orders > 0)
+                    {
+                        balance.TotalInBTCOrders = orders;
+                    }
+
                     balance.TotalInBTC = balance.Balance;
                     balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                 }
@@ -1106,17 +1119,20 @@ namespace TwEX_API.Exchange
             public string AllowWithdraw { get; set; }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
-                eBalance.Symbol = Currency;
-                eBalance.Exchange = Name;
-                eBalance.Balance = Balance;
-                eBalance.OnOrders = Balance - Available;
-                eBalance.TotalInBTC = TotalInBTC;
-                eBalance.TotalInUSD = TotalInUSD;
-                return eBalance;
+                return new ExchangeBalance()
+                {
+                    Symbol = Currency,
+                    Exchange = Name,
+                    Balance = Balance,
+                    OnOrders = Balance - Available,
+                    TotalInBTC = TotalInBTC,
+                    TotalInBTCOrders = TotalInBTCOrders,
+                    TotalInUSD = TotalInUSD
+                };
             }
         }
         public class BleuTradeDepositAddressMessage

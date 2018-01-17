@@ -19,7 +19,9 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "Poloniex";
         public static string Url { get; } = "https://poloniex.com/";
+        public static string IconUrl { get; } = "https://poloniex.com/favicon.ico?v=102014";
         public static string USDSymbol { get; } = "USDT";
+        public static string TradingView { get; } = "Poloniex";
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://poloniex.com");
@@ -814,7 +816,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
-            updateExchangeTickerList();
+            //updateExchangeTickerList();
         }
         public static List<ExchangeTicker> getExchangeTickerList()
         {
@@ -845,6 +847,12 @@ namespace TwEX_API.Exchange
 
                         if (ticker != null)
                         {
+                            //Decimal orders = balance.Balance - balance.Available;
+                            if (balance.onOrders > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.onOrders * ticker.last;
+                            }
+
                             balance.TotalInBTC = balance.total * ticker.last;
                             balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                         }
@@ -858,6 +866,11 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
                         if (balance.symbol == "BTC")
                         {
+                            if (balance.onOrders > 0)
+                            {
+                                balance.TotalInBTCOrders = balance.onOrders;
+                            }
+
                             balance.TotalInBTC = balance.total;
                             balance.TotalInUSD = btcTicker.last * balance.total;
                         }
@@ -865,6 +878,11 @@ namespace TwEX_API.Exchange
                         {
                             if (btcTicker.last > 0)
                             {
+                                if (balance.onOrders > 0)
+                                {
+                                    balance.TotalInBTCOrders = balance.onOrders / btcTicker.last;
+                                }
+
                                 balance.TotalInBTC = balance.total / btcTicker.last;
                             }
                             balance.TotalInUSD = balance.total;
@@ -1075,6 +1093,7 @@ namespace TwEX_API.Exchange
             public Decimal total { get { return available + onOrders; } }
             // ADDON DATA
             public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
@@ -1091,6 +1110,7 @@ namespace TwEX_API.Exchange
                 eBalance.Balance = available + onOrders;
                 eBalance.OnOrders = onOrders;
                 eBalance.TotalInBTC = TotalInBTC;
+                eBalance.TotalInBTCOrders = TotalInBTCOrders;
                 eBalance.TotalInUSD = TotalInUSD;
                 return eBalance;
             }
