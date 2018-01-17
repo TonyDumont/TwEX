@@ -174,6 +174,11 @@ namespace TwEX_API.Controls
                 return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_ACTIVE, rowheight, rowheight);
             }
         }
+        private object aspect_TickerCount(object rowObject)
+        {
+            ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
+            return exchange.TickerList.Count;
+        }
         public object aspect_TotalInBTCOrders(object rowObject)
         {
             ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
@@ -189,89 +194,9 @@ namespace TwEX_API.Controls
             ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
             return exchange.TotalInUSD.ToString("C");
         }
-        private object aspect_TickerCount(object rowObject)
-        {
-            ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
-            return exchange.TickerList.Count;
-        }
-        /*
-        private Image getTimerActiveIcon(bool active)
-        {
-            if (active)
-            {
-                return Properties.Resources.ConnectionStatus_ACTIVE;
-            }
-            else
-            {
-                return Properties.Resources.ConnectionStatus_ERROR;
-            }
-        }
-        */
         #endregion
 
         #region Event_Handlers
-        private void toolStripButton_API_Click(object sender, EventArgs e)
-        {
-            if (listView.SelectedObject != null)
-            {
-                ExchangeManager.Exchange exchange = listView.SelectedObject as ExchangeManager.Exchange;
-                Form form = new Form();
-                form.Size = new Size(500, 250);
-                form.Text = exchange.Name;
-                Bitmap bitmap = new Bitmap(exchange.Icon);
-                form.Icon = Icon.FromHandle(bitmap.GetHicon());
-                APIEditorControl control = new APIEditorControl();
-                control.SetApi(ExchangeManager.getExchangeApi(exchange.Name));
-                form.Controls.Add(control);
-                control.Dock = DockStyle.Fill;
-                form.Show();
-
-            }
-        }
-        private void toolStripButton_BTCTotal_Click(object sender, EventArgs e)
-        {
-            ExchangeManager.updateBalances();
-        }
-        /*
-        private void toolStripButton_Font_Click(object sender, EventArgs e)
-        {
-            fontDialog.Font = ParentForm.Font;
-            DialogResult result = fontDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                ParentForm.Font = fontDialog.Font;
-            }
-            UpdateUI(true);
-        }
-        private void toolStripButton_FontDown_Click(object sender, EventArgs e)
-        {
-            //ExchangeManager.UpdateFont(new Font(ExchangeManager.preferences.defaultFont.FontFamily, ExchangeManager.preferences.defaultFont.Size - 1));
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
-        private void toolStripButton_FontUp_Click(object sender, EventArgs e)
-        {
-            //ExchangeManager.UpdateFont(new Font(ExchangeManager.preferences.defaultFont.FontFamily, ExchangeManager.preferences.defaultFont.Size + 1));
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
-        */
-        private void toolStripButton_Refresh_Click(object sender, EventArgs e)
-        {
-            ExchangeManager.updateBalances();
-        }
-        private void toolStripButton_TickerTotals_Click(object sender, EventArgs e)
-        {
-            ExchangeManager.updateTickers();
-        }
-        private void toolStripButton_TimerItem_Click(object sender, EventArgs e)
-        {
-            ToolStripButton button = sender as ToolStripButton;
-            ExchangeManager.ExchangeTimerType type = ExchangeManager.getExchangeTimerType(button.Tag.ToString());
-            PreferenceManager.toggleTimerPreference(type);
-            UpdateUI();
-        }
-
         private void listView_SelectionChanged(object sender, EventArgs e)
         {
             //ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)sender as ExchangeManager.Exchange;
@@ -295,8 +220,43 @@ namespace TwEX_API.Controls
                 toolStripButton_API.Image = Properties.Resources.ConnectionStatus_DISABLED;
             }
         }
-        #endregion
+        private void toolStripButton_API_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedObject != null)
+            {
+                ExchangeManager.Exchange exchange = listView.SelectedObject as ExchangeManager.Exchange;
+                Form form = new Form();
+                form.Size = new Size(500, 250);
+                form.Text = exchange.Name;
+                Bitmap bitmap = new Bitmap(exchange.Icon);
+                form.Icon = Icon.FromHandle(bitmap.GetHicon());
+                APIEditorControl control = new APIEditorControl();
+                control.SetApi(ExchangeManager.getExchangeApi(exchange.Name));
+                form.Controls.Add(control);
+                control.Dock = DockStyle.Fill;
+                form.Show();
 
+            }
+        }
+        private void toolStripButton_BTCTotal_Click(object sender, EventArgs e)
+        {
+            ExchangeManager.updateBalances();
+        }      
+        private void toolStripButton_Refresh_Click(object sender, EventArgs e)
+        {
+            ExchangeManager.updateBalances();
+        }
+        private void toolStripButton_TickerTotals_Click(object sender, EventArgs e)
+        {
+            ExchangeManager.updateTickers();
+        }
+        private void toolStripButton_TimerItem_Click(object sender, EventArgs e)
+        {
+            ToolStripButton button = sender as ToolStripButton;
+            ExchangeManager.ExchangeTimerType type = ExchangeManager.getExchangeTimerType(button.Tag.ToString());
+            PreferenceManager.toggleTimerPreference(type);
+            UpdateUI();
+        }
         private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
@@ -330,63 +290,7 @@ namespace TwEX_API.Controls
                         break;
                 }
             }
-        }
+        }      
+        #endregion
     }
 }
-
-/*
-        #region Resize
-        private void ResizeUI()
-        {
-            // MEASURE
-
-            
-            toolStrip_header.Font = ParentForm.Font;
-            toolStrip_header2.Font = ParentForm.Font;
-            listView.Font = ParentForm.Font;
-            toolStrip_footer.Font = ParentForm.Font;
-            
-            int rowHeight = listView.RowHeightEffective;
-            
-            int nameWidth = column_Name.Width;
-            int btcWidth = column_TotalInBTC.Width;
-
-            int listWidth = 0;
-
-            column_Icon.Width = rowHeight;
-            column_Status.Width = rowHeight;
-
-            // RESIZE
-            //LogManager.AddLogMessage(Name, "ResizeUI", "fontSize = " + fontSize + " | rowHeight = " + rowHeight + " | btcWidth = " + btcWidth);
-            column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            column_TotalInBTC.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            nameWidth = column_Name.Width + 15;
-            btcWidth = column_TotalInBTC.Width + 15;
-            //LogManager.AddLogMessage(Name, "ResizeUI", "btc post: " + btcWidth + " | " + column_TotalInBTC.CellPadding);
-            //LogManager.AddLogMessage(Name, "ResizeUI", "pfontSize = " + fontSize + " | rowHeight = " + rowHeight + " | btcWidth = " + btcWidth);
-
-            column_Name.Width = nameWidth;
-            column_Orders.Width = btcWidth;
-            column_TotalInBTC.Width = btcWidth;
-            column_TotalInUSD.Width = btcWidth;
-
-            foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
-            {
-                listWidth += col.Width;
-            }
-
-            if (this.Parent.GetType() == typeof(Form))
-            {
-                Form form = this.Parent as Form;
-                form.Width = listWidth + 50;
-
-                Rectangle screenRectangle = RectangleToScreen(form.ClientRectangle);
-                int titleHeight = screenRectangle.Top - form.Top;
-                int formHeight = titleHeight + toolStrip_header.Height + toolStrip_header2.Height + toolStrip_footer.Height;
-                formHeight += (ExchangeManager.Exchanges.Count + 4) * rowHeight;
-                form.Height = formHeight;
-            }
-            
-        }
-        #endregion
-    */

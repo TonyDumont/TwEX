@@ -9,10 +9,7 @@ namespace TwEX_API.Controls
 {
     public partial class LogManagerControl : UserControl
     {
-        //public Font defaultFont = new Font("Times New Roman", 12, FontStyle.Regular, GraphicsUnit.Pixel);
-        //private ToolStripSpringTextBox messageTextBox = new ToolStripSpringTextBox();
-
-        // INITIALIZE
+        #region Initialize
         public LogManagerControl()
         {
             InitializeComponent();
@@ -50,8 +47,9 @@ namespace TwEX_API.Controls
             //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
             UpdateUI(true);
         }
+        #endregion
 
-        // DELEGATES
+        #region Delegates
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
@@ -105,6 +103,7 @@ namespace TwEX_API.Controls
                 }
             }
         }
+        #endregion
 
         #region EventHandler    
         private void listView_FormatCell(object sender, FormatCellEventArgs e)

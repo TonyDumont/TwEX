@@ -38,18 +38,18 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton_Calculator = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripMenuItem_export = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_import = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator_1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_LogManager = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator_2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_ArbitrageManager = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_CoinMarketCap = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_CryptoCompare = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EarnGG = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_CoinMarketCap = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_TradingView = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator_3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_import = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_export = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -154,26 +154,6 @@
             this.toolStripDropDownButton_menu.Text = "MENU";
             this.toolStripDropDownButton_menu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_menu_DropDownItemClicked);
             // 
-            // toolStripMenuItem_export
-            // 
-            this.toolStripMenuItem_export.Name = "toolStripMenuItem_export";
-            this.toolStripMenuItem_export.Size = new System.Drawing.Size(184, 22);
-            this.toolStripMenuItem_export.Tag = "ExportPreferences";
-            this.toolStripMenuItem_export.Text = "Export Preferences";
-            // 
-            // toolStripMenuItem_import
-            // 
-            this.toolStripMenuItem_import.Name = "toolStripMenuItem_import";
-            this.toolStripMenuItem_import.Size = new System.Drawing.Size(184, 22);
-            this.toolStripMenuItem_import.Tag = "ImportPreferences";
-            this.toolStripMenuItem_import.Text = "Import Preferences";
-            // 
-            // toolStripSeparator7
-            // 
-            this.toolStripSeparator7.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 39);
-            // 
             // toolStripSeparator_1
             // 
             this.toolStripSeparator_1.Name = "toolStripSeparator_1";
@@ -198,6 +178,13 @@
             this.toolStripMenuItem_ArbitrageManager.Tag = "ArbitrageManager";
             this.toolStripMenuItem_ArbitrageManager.Text = "Arbitrage Manager";
             // 
+            // toolStripMenuItem_CoinMarketCap
+            // 
+            this.toolStripMenuItem_CoinMarketCap.Name = "toolStripMenuItem_CoinMarketCap";
+            this.toolStripMenuItem_CoinMarketCap.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_CoinMarketCap.Tag = "CoinMarketCap";
+            this.toolStripMenuItem_CoinMarketCap.Text = "Coin Market Caps";
+            // 
             // toolStripMenuItem_CryptoCompare
             // 
             this.toolStripMenuItem_CryptoCompare.Name = "toolStripMenuItem_CryptoCompare";
@@ -212,13 +199,6 @@
             this.toolStripMenuItem_EarnGG.Tag = "EarnGGManager";
             this.toolStripMenuItem_EarnGG.Text = "EarnGG Manager";
             // 
-            // toolStripMenuItem_CoinMarketCap
-            // 
-            this.toolStripMenuItem_CoinMarketCap.Name = "toolStripMenuItem_CoinMarketCap";
-            this.toolStripMenuItem_CoinMarketCap.Size = new System.Drawing.Size(184, 22);
-            this.toolStripMenuItem_CoinMarketCap.Tag = "CoinMarketCap";
-            this.toolStripMenuItem_CoinMarketCap.Text = "Coin Market Caps";
-            // 
             // toolStripMenuItem_TradingView
             // 
             this.toolStripMenuItem_TradingView.Name = "toolStripMenuItem_TradingView";
@@ -231,12 +211,33 @@
             this.toolStripSeparator_3.Name = "toolStripSeparator_3";
             this.toolStripSeparator_3.Size = new System.Drawing.Size(181, 6);
             // 
+            // toolStripMenuItem_import
+            // 
+            this.toolStripMenuItem_import.Name = "toolStripMenuItem_import";
+            this.toolStripMenuItem_import.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_import.Tag = "ImportPreferences";
+            this.toolStripMenuItem_import.Text = "Import Preferences";
+            // 
+            // toolStripMenuItem_export
+            // 
+            this.toolStripMenuItem_export.Name = "toolStripMenuItem_export";
+            this.toolStripMenuItem_export.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_export.Tag = "ExportPreferences";
+            this.toolStripMenuItem_export.Text = "Export Preferences";
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 39);
+            // 
             // TwEX_FormEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 40);
             this.Controls.Add(this.toolStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TwEX_FormEditor";
             this.Text = "TwEX Form Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TwEX_FormEditor_FormClosing);

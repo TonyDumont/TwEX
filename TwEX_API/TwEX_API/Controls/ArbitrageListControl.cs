@@ -40,7 +40,6 @@ namespace TwEX_API.Controls
             }
             else
             {
-                //grouper.GroupTitle = title;
                 market = newMarket;
                 symbol = newSymbol;
             }
@@ -59,12 +58,10 @@ namespace TwEX_API.Controls
                 try
                 {
                     List<ExchangeManager.ExchangeTicker> list = ExchangeManager.GetPriceWatchlist(market, symbol);
-                    LogManager.AddLogMessage(Name, "UpdateData", "count=" + list.Count, LogManager.LogMessageType.DEBUG);
+                    //LogManager.AddLogMessage(Name, "UpdateUI", "count=" + list.Count, LogManager.LogMessageType.DEBUG);
 
-                    
                     if (list.Count > 0)
                     {
-                        //List<ExchangePrice> filList = list.FindAll(item => item.price > 0);
                         Decimal high = 0;
                         Decimal low = 0;
 
@@ -77,26 +74,20 @@ namespace TwEX_API.Controls
 
                         if (market.Contains("USD"))
                         {
-                            //grouper.GroupTitle = ":" + symbol + " : " + spread.ToString("C");
                             toolStripLabel_usd.Text = spread.ToString("C");
                             toolStripLabel_btc.Text = CoinMarketCap.GetMarketCapBTCAmount("BTC", spread).ToString("N8");
                         }
                         else
                         {
-                            //grouper.GroupTitle = ":" + symbol + " : " + spread.ToString("N8");
                             toolStripLabel_usd.Text = CoinMarketCap.GetMarketCapUSDAmount("BTC", spread).ToString("C");
                             toolStripLabel_btc.Text = spread.ToString("N8");
                         }
-
-                        //toolStripLabel_symbol.Text = symbol;
-                        //toolStripButton_symbol.Image = ExchangeManager.GetSymbolIcon(symbol);
                     }
                     
                     if (resize)
                     {
                         ResizeUI();
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -114,70 +105,24 @@ namespace TwEX_API.Controls
                 this.Invoke(d, new object[] { });
             }
             else
-            {
-
-                
+            {          
                 textSize = TextRenderer.MeasureText("0.00000000", ParentForm.Font);
                 rowHeight = listView.RowHeightEffective;
                 int padding = rowHeight / 2;
-                //listView.RowHeight = rowHeight;
-                //toolStrip.Font = ParentForm.Font;
                 iconSize = rowHeight - 2;
 
                 column_icon.Width = iconSize + 2;
                 column_price.Width = textSize.Width + padding;
 
-                //listView.Size = new Size(column_icon.Width + column_price.Width, listView.RowHeight * ExchangeManager.Exchanges.Count);
-                //listView.Height = listView.RowHeight * ExchangeManager.Exchanges.Count;
-                //listView.Height = listView.PreferredSize.Height;
-                //listView.Width = listView.PreferredSize.Width;
-
-                //var last = listView.Items(listView.Items.Count - 1);
                 if (listView.Items.Count > 0)
                 {
                     var last = listView.Items[listView.Items.Count - 1];
                     listView.Size = new Size(column_icon.Width + column_price.Width + padding, listView.Top + last.Bounds.Bottom + padding);
                 }
 
-                //ClientSize = new Size(ClientSize.Width, listView.Top + last.Bounds.Bottom + 4);
-                
-
-                //listView.Size = new Size(column_icon.Width + column_price.Width, rowHeight * ExchangeManager.Exchanges.Count + 1);
                 toolStrip_btc.Font = ParentForm.Font;
                 toolStrip_usd.Font = ParentForm.Font;
                 ClientSize = new Size(listView.Width, listView.Height + toolStripLabel_btc.Height + toolStripLabel_usd.Height + 4);
-                //Size = PreferredSize;
-                //toolStripLabel_btc.Font = ParentForm.Font;
-                //toolStripLabel_usd.Font = ParentForm.Font;
-                //int rowHeight = listView.RowHeightEffective + 5;
-                //int newHeight = (rowHeight * ExchangeManager.Exchanges.Count) + toolStrip_usd.Height + toolStrip_btc.Height;
-
-                //int newHeight = listView.PreferredSize;
-                //int itemHeight = listView.GetItemRect(ExchangeManager.Exchanges.Count-1).Height + toolStrip_usd.Height + toolStrip_btc.Height;
-                //int itemHeight = listView.PreferredSize.Height + (toolStrip_usd.Height * 3);
-
-
-
-
-
-
-                //column_price.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-
-                //int newWidth = column_icon.Width + column_price.Width + 5;
-
-
-                //Refresh();
-                //Size = new Size(newWidth, itemHeight);
-                //listView.Size = listView.PreferredSize;
-                //Size = PreferredSize;
-                /*
-                foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
-                {
-                    col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                    col.Width = col.Width + (rowHeight / 2);
-                }
-                */
             }
         }
         #endregion

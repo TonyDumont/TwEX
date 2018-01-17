@@ -735,7 +735,7 @@ namespace TwEX_API
 
         public static List<ExchangeTicker> GetPriceWatchlist(string market, string symbol)
         {
-            LogManager.AddLogMessage(Name, "GetPriceWatchlist", "market=" + market + " | " + symbol, LogMessageType.DEBUG);
+            //LogManager.AddLogMessage(Name, "GetPriceWatchlist", "market=" + market + " | " + symbol, LogMessageType.DEBUG);
             List<ExchangeTicker> list = new List<ExchangeTicker>();
 
             try
@@ -748,12 +748,7 @@ namespace TwEX_API
                     newItem.symbol = symbol;
                     //newItem.price = GetExchangeUSDValueBySymbol(exchange.SiteName, symbol);
                     newItem.last = GetPriceOfSymbol(exchange.Name, market, symbol);
-                    /*
-                    if (newItem.last > 0)
-                    {
-                        list.Add(newItem);
-                    }
-                    */
+
                     list.Add(newItem);
                 }
             }
@@ -761,7 +756,6 @@ namespace TwEX_API
             {
                 LogManager.AddLogMessage(Name, "GetPriceWatchlist", ex.Message, LogMessageType.EXCEPTION);
             }
-            //list = list.OrderBy(item => item.price).ToList();
             return list.OrderByDescending(item => item.last).ToList();
         }
 

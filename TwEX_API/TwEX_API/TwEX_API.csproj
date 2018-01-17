@@ -317,6 +317,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\TwEX_RoundIcon.ico" />
     <Content Include="Resources\UI\ConnectionStatus_ACTIVE.png" />
     <Content Include="Resources\UI\ConnectionStatus_DISABLED.png" />
     <Content Include="Resources\UI\ConnectionStatus_ERROR.png" />
