@@ -14,14 +14,30 @@ namespace TwEX_API.Controls
         }
         private void ArbitrageManagerControl_Load(object sender, EventArgs e)
         {
-            toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
+
+            toolStripMenuItem_font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconIncrease);
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconDecrease);
+            //toolStripMenuItem_add.Image = ContentManager.GetIconByUrl(ContentManager.AddWalletIconUrl);
+            toolStripMenuItem_update.Image = ContentManager.GetIconByUrl(ContentManager.RefreshIcon);
+
             if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
             {
-                toolStripButton_charts.Text = "Hide Charts";
+                //toolStripButton_charts.Text = "Hide Charts";
+                //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ACTIVE;
+
+                toolStripMenuItem_chart.Text = "Hide Charts";
+                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ACTIVE;
             }
             else
             {
-                toolStripButton_charts.Text = "Show Charts";
+                //toolStripButton_charts.Text = "Show Charts";
+                //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ERROR;
+
+                toolStripMenuItem_chart.Text = "Show Charts";
+                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ERROR;
             }
             SetWatchlist();
         }
@@ -119,6 +135,33 @@ namespace TwEX_API.Controls
         #endregion
 
         #region EventHandlers
+        private void ToggleCharts()
+        {
+            if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
+            {
+                // Remove Charts
+                PreferenceManager.preferences.ArbitragePreferences.ShowCharts = false;
+                PreferenceManager.UpdatePreferencesFile();
+                //toolStripButton_charts.Text = "Show Charts";
+                //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ERROR;
+                //controlSize = new Size(150, 150);
+                toolStripMenuItem_chart.Text = "Show Charts";
+                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ERROR;
+            }
+            else
+            {
+                // Add Charts
+                PreferenceManager.preferences.ArbitragePreferences.ShowCharts = true;
+                PreferenceManager.UpdatePreferencesFile();
+                //toolStripButton_charts.Text = "Hide Charts";
+                //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ACTIVE;
+                //controlSize = new Size(150, 300);
+                toolStripMenuItem_chart.Text = "Hide Charts";
+                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ACTIVE;
+            }
+            //UpdateUI();
+            SetWatchlist();
+        }
         private void toolStripButton_addSymbol_Click(object sender, EventArgs e)
         {
             //LogManager.AddDebugMessage(Name, "toolStripTextBox_addSymbol_Enter", "ENTER KEY : text=" + toolStripTextBox_addSymbol.Text);
@@ -128,13 +171,17 @@ namespace TwEX_API.Controls
         }
         private void toolStripButton_charts_Click(object sender, EventArgs e)
         {
+            /*
             if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
             {
                 // Remove Charts
                 PreferenceManager.preferences.ArbitragePreferences.ShowCharts = false;
                 PreferenceManager.UpdatePreferencesFile();
                 toolStripButton_charts.Text = "Show Charts";
+                toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ERROR;
                 //controlSize = new Size(150, 150);
+                toolStripMenuItem_chart.Text = "Show Charts";
+                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ERROR;
             }
             else
             {
@@ -142,11 +189,65 @@ namespace TwEX_API.Controls
                 PreferenceManager.preferences.ArbitragePreferences.ShowCharts = true;
                 PreferenceManager.UpdatePreferencesFile();
                 toolStripButton_charts.Text = "Hide Charts";
+                toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ACTIVE;
                 //controlSize = new Size(150, 300);
+                toolStripMenuItem_chart.Text = "Hide Charts";
+                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ACTIVE;
             }
             //UpdateUI();
             SetWatchlist();
+            */
+            ToggleCharts();
         }
+        private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
+            {
+                ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+                //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+                switch (menuItem.Tag.ToString())
+                {
+                    case "Font":
+                        FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                        //fontDialog.Font = ParentForm.Font;
+                        DialogResult result = dialog.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {
+                            ParentForm.Font = dialog.Font;
+                        }
+                        UpdateUI(true);
+                        break;
+
+                    case "FontIncrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "FontDecrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "Charts":
+                        ToggleCharts();
+                        break;
+
+                    case "Update":
+                        UpdateUI();
+                        break;
+
+                    default:
+                        // NOTHING
+                        break;
+                }
+
+            }
+        }
+        #endregion
+    }
+}
+
+/*
         private void toolStripButton_FontDown_Click(object sender, EventArgs e)
         {
             ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
@@ -167,6 +268,4 @@ namespace TwEX_API.Controls
             }
             UpdateUI(true);
         }
-        #endregion
-    }
-}
+        */

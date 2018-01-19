@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using TwEX_API.Market;
@@ -26,6 +27,9 @@ namespace TwEX_API.Controls
         {
             column_icon.ImageGetter = new ImageGetterDelegate(aspect_icon);
             column_price.AspectGetter = new AspectGetterDelegate(aspect_price);
+            toolStripLabel_btc.Image = ExchangeManager.GetSymbolIcon("BTC");
+            toolStripLabel_usd.Image = ExchangeManager.GetSymbolIcon("USDT");
+            toolStripLabel_symbol.Image = ExchangeManager.GetSymbolIcon(symbol);
         }
         #endregion
 
@@ -42,6 +46,8 @@ namespace TwEX_API.Controls
             {
                 market = newMarket;
                 symbol = newSymbol;
+                toolStripLabel_symbol.Image = ExchangeManager.GetSymbolIcon(symbol);
+                UpdateUI(true);
             }
         }
 
@@ -62,28 +68,65 @@ namespace TwEX_API.Controls
 
                     if (list.Count > 0)
                     {
+
+                        //listView.Enabled = true;
+                        // SOME EXCHANGE HAS A PRICE
                         Decimal high = 0;
                         Decimal low = 0;
 
                         high = list[0].last;
-                        low = list[list.Count - 1].last;
 
+                        foreach (ExchangeManager.ExchangeTicker ticker in list)
+                        {
+                            if (ticker.last > 0)
+                            {
+                                low = ticker.last;
+                            }
+                        }
+                        //low = list[list.Count - 1].last;
                         Decimal spread = high - low;
 
                         listView.SetObjects(list);
+                        //toolStripLabel_symbol.Text = spread.ToString("N8");
+                        toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
 
                         if (market.Contains("USD"))
                         {
+                            //toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
                             toolStripLabel_usd.Text = spread.ToString("C");
-                            toolStripLabel_btc.Text = CoinMarketCap.GetMarketCapBTCAmount("BTC", spread).ToString("N8");
+                            toolStripLabel_btc.Text = CoinMarketCap.GetMarketCapBTCAmount("USDT", spread).ToString("N8");
                         }
                         else
                         {
                             toolStripLabel_usd.Text = CoinMarketCap.GetMarketCapUSDAmount("BTC", spread).ToString("C");
+                            //toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
                             toolStripLabel_btc.Text = spread.ToString("N8");
                         }
+
+                        if (list.Sum(item => item.last) > 0)
+                        {
+                            listView.Enabled = true;
+                            
+                            toolStrip_btc.Visible = true;
+                            toolStrip_usd.Visible = true;
+                            toolStrip_symbol.Visible = true;
+                        }
+                        else
+                        {
+                            listView.Enabled = false;
+                            toolStrip_btc.Visible = false;
+                            toolStrip_usd.Visible = false;
+                            toolStrip_symbol.Visible = false;
+                        }
                     }
-                    
+                    /*
+                    else
+                    {
+                        //listView.EmptyListMsgFont = ParentForm.Font;
+                        //listView.EmptyListMsg = "No Exchanges";
+                        //listView.Enabled = false;
+                    }
+                    */
                     if (resize)
                     {
                         ResizeUI();
@@ -105,7 +148,11 @@ namespace TwEX_API.Controls
                 this.Invoke(d, new object[] { });
             }
             else
-            {          
+            {
+                toolStrip_btc.Font = ParentForm.Font;
+                toolStrip_usd.Font = ParentForm.Font;
+                toolStripLabel_symbol.Font = ParentForm.Font;
+
                 textSize = TextRenderer.MeasureText("0.00000000", ParentForm.Font);
                 rowHeight = listView.RowHeightEffective;
                 int padding = rowHeight / 2;
@@ -114,15 +161,17 @@ namespace TwEX_API.Controls
                 column_icon.Width = iconSize + 2;
                 column_price.Width = textSize.Width + padding;
 
+                int listHeight = 0;
+                int listWidth = 0;
+
                 if (listView.Items.Count > 0)
                 {
                     var last = listView.Items[listView.Items.Count - 1];
-                    listView.Size = new Size(column_icon.Width + column_price.Width + padding, listView.Top + last.Bounds.Bottom + padding);
+                    listHeight = listView.Top + last.Bounds.Bottom + (padding * 2);
+                    listWidth = column_icon.Width + column_price.Width + (padding * 2);
                 }
-
-                toolStrip_btc.Font = ParentForm.Font;
-                toolStrip_usd.Font = ParentForm.Font;
-                ClientSize = new Size(listView.Width, listView.Height + toolStripLabel_btc.Height + toolStripLabel_usd.Height + 4);
+                
+                ClientSize = new Size(listWidth, listHeight + toolStripLabel_symbol.Height + toolStripLabel_btc.Height + toolStripLabel_usd.Height);
             }
         }
         #endregion
@@ -133,9 +182,16 @@ namespace TwEX_API.Controls
             ExchangeManager.ExchangeTicker ticker = (ExchangeManager.ExchangeTicker)rowObject;
             int size = listView.RowHeightEffective - 4;
 
-            if (ticker != null)
+            if (ticker.last > 0)
             {
-                return ContentManager.ResizeImage(ExchangeManager.getExchangeIcon(ticker.exchange), iconSize, iconSize);
+                if (ticker != null)
+                {
+                    return ContentManager.ResizeImage(ExchangeManager.getExchangeIcon(ticker.exchange), iconSize, iconSize);
+                }
+                else
+                {
+                    return Properties.Resources.ConnectionStatus_DISABLED;
+                }
             }
             else
             {
@@ -144,14 +200,21 @@ namespace TwEX_API.Controls
         }
         public object aspect_price(object rowObject)
         {
-            ExchangeManager.ExchangeTicker e = (ExchangeManager.ExchangeTicker)rowObject;
-            if (e.market.Contains("USD"))
+            ExchangeManager.ExchangeTicker ticker = (ExchangeManager.ExchangeTicker)rowObject;
+            if (ticker.last > 0)
             {
-                return e.last.ToString("C");
+                if (ticker.market.Contains("USD"))
+                {
+                    return ticker.last.ToString("C");
+                }
+                else
+                {
+                    return ticker.last.ToString("N8");
+                }
             }
             else
             {
-                return String.Format("{0:#,#.00000000}", e.last);
+                return string.Empty;
             }
         }
         #endregion

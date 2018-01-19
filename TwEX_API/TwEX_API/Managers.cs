@@ -29,6 +29,7 @@ using static TwEX_API.PreferenceManager;
 
 namespace TwEX_API
 {
+    // -------------------------------
     public class ContentManager
     {
         #region Properties
@@ -166,7 +167,7 @@ namespace TwEX_API
         }
         #endregion
     }
-
+    // -------------------------------
     public class ExchangeManager
     {
         #region Properties
@@ -656,9 +657,7 @@ namespace TwEX_API
                 catch (Exception ex)
                 {
                     LogManager.AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
-                    // MAKE GENERIC ICON
-                    //Properties.Resources.ConnectionStatus_DISABLED.t.Save(WorkDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
-
+                    // USE GENERIC ICON
                     return image;
                 }
             }
@@ -1044,15 +1043,16 @@ namespace TwEX_API
         }
         #endregion Enums
     }
-
+    // -------------------------------
     public class FormManager
     {
         #region Properties
         private static string Name = "FormManager";
         public static Form mainForm;
+        public static FormToolStripControl mainToolStrip;
         public static ArbitrageManagerControl arbitrageManagerControl;
         public static ExchangeEditorControl exchangeEditorControl;
-        public static ToolStrip toolStrip;
+        //public static ToolStrip toolStrip;
         #endregion
 
         #region Validators
@@ -1225,14 +1225,38 @@ namespace TwEX_API
             }
             else
             {
+                /*
                 if (targetForm.WindowState == FormWindowState.Minimized)
                 {
                     targetForm.WindowState = FormWindowState.Normal;
                 }
+
+                if (targetForm.InvokeRequired)
+                {
+                    StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate();
+                    targetForm.Invoke(d, new object[] { });
+                }
+                else
+                {
+                    //this.textBox1.Text = text;
+                    targetForm.Activate();
+                }
                 targetForm.Activate();
+                */
             }
             //UpdateUI();
             UpdateToolStrip();
+        }
+        public static void RestoreForms()
+        {
+            foreach (FormPreference pref in preferences.FormPreferences)
+            {
+                //LogManager.AddLogMessage(Name, "InitializePreferences", pref.Name + " | " + pref.Open, LogMessageType.DEBUG);
+                if (pref.Open)
+                {
+                    FormManager.OpenForm(pref.Name, pref.Name);
+                }
+            }
         }
         #endregion
 
@@ -1258,20 +1282,6 @@ namespace TwEX_API
             }
 
         }
-        public static void UpdateToolStrip()
-        {
-            if (toolStrip != null)
-            {
-                foreach (ToolStripItem item in toolStrip.Items)
-                {
-                    if (item.GetType() == typeof(ToolStripButton))
-                    {
-                        ToolStripButton button = item as ToolStripButton;
-                        button.Checked = FormManager.IsFormOpen(button.Tag.ToString());
-                    }
-                }
-            }
-        }
         public static void UpdateArbitrageManager()
         {
             if (arbitrageManagerControl != null)
@@ -1280,9 +1290,18 @@ namespace TwEX_API
             }
             UpdatePreferencesFile();
         }
+        public static void UpdateToolStrip()
+        {
+            if (mainToolStrip != null)
+            {
+                mainToolStrip.UpdateUI();
+            }
+        }
+
+       // delegate void StringArgReturningVoidDelegate(string text);
         #endregion
     }
-
+    // -------------------------------
     public class LogManager
     {
         #region Properties
@@ -1697,7 +1716,7 @@ namespace TwEX_API
         }
         #endregion
     }
-
+    // -------------------------------
     public class PreferenceManager
     {
         #region Properties
@@ -2098,7 +2117,7 @@ namespace TwEX_API
         }
         #endregion
     }
-
+    // -------------------------------
     public class WalletManager
     {
         #region Properties
@@ -2236,4 +2255,5 @@ namespace TwEX_API
         }
         #endregion
     }
+    // -------------------------------
 }

@@ -120,13 +120,14 @@ namespace TwEX_API.Market
                 }
                 else
                 {
-                    LogManager.AddLogMessage(Name, "GetMarketCapBTCAmount", "IS NULL : symbol=" + symbol + " |amount=" + amount + " |tCount=" + Tickers.Count, LogManager.LogMessageType.DEBUG);
+                    //LogManager.AddLogMessage(Name, "GetMarketCapBTCAmount", "IS NULL : symbol=" + symbol + " |amount=" + amount + " |tCount=" + Tickers.Count, LogManager.LogMessageType.DEBUG);
                 }
                 //LogManager.AddLogMessage(Name, "GetMarketCapBTCAmount", "symbol=" + symbol + " |amount=" + amount + " |value=" + value, LogManager.LogMessageType.DEBUG);
                 return value;
             }
             else
             {
+
                 return amount;
             }
         }

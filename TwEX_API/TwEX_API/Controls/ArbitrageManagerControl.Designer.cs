@@ -32,30 +32,28 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_addSymbol = new System.Windows.Forms.ToolStripButton();
             this.toolStripTextBox_symbol = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripButton_charts = new System.Windows.Forms.ToolStripButton();
-            this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.toolStripButton_Font = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton_FontDown = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_FontUp = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.fontDialog = new System.Windows.Forms.FontDialog();
+            this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
+            this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.toolStripMenuItem_chart = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton_addSymbol,
-            this.toolStripTextBox_symbol,
-            this.toolStripButton_Font,
-            this.toolStripSeparator1,
-            this.toolStripButton_FontDown,
-            this.toolStripSeparator3,
-            this.toolStripButton_FontUp,
+            this.toolStripDropDownButton_menu,
             this.toolStripSeparator2,
-            this.toolStripButton_charts});
+            this.toolStripTextBox_symbol,
+            this.toolStripButton_addSymbol,
+            this.toolStripSeparator3});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(550, 25);
@@ -64,7 +62,6 @@
             // 
             // toolStripButton_addSymbol
             // 
-            this.toolStripButton_addSymbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripButton_addSymbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButton_addSymbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_addSymbol.Image")));
             this.toolStripButton_addSymbol.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -75,19 +72,65 @@
             // 
             // toolStripTextBox_symbol
             // 
-            this.toolStripTextBox_symbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripTextBox_symbol.Name = "toolStripTextBox_symbol";
             this.toolStripTextBox_symbol.Size = new System.Drawing.Size(100, 25);
+            this.toolStripTextBox_symbol.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // toolStripButton_charts
+            // toolStripSeparator2
             // 
-            this.toolStripButton_charts.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_charts.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_charts.Image")));
-            this.toolStripButton_charts.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_charts.Name = "toolStripButton_charts";
-            this.toolStripButton_charts.Size = new System.Drawing.Size(73, 22);
-            this.toolStripButton_charts.Text = "Hide Charts";
-            this.toolStripButton_charts.Click += new System.EventHandler(this.toolStripButton_charts_Click);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripDropDownButton_menu
+            // 
+            this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_font,
+            this.toolStripMenuItem_fontIncrease,
+            this.toolStripMenuItem_fontDecrease,
+            this.toolStripSeparator5,
+            this.toolStripMenuItem_chart,
+            this.toolStripSeparator1,
+            this.toolStripMenuItem_update});
+            this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
+            this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
+            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(29, 22);
+            this.toolStripDropDownButton_menu.Text = "OPTIONS";
+            this.toolStripDropDownButton_menu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_menu_DropDownItemClicked);
+            // 
+            // toolStripMenuItem_font
+            // 
+            this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_font.Tag = "Font";
+            this.toolStripMenuItem_font.Text = "Font";
+            // 
+            // toolStripMenuItem_fontIncrease
+            // 
+            this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
+            this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
+            // 
+            // toolStripMenuItem_fontDecrease
+            // 
+            this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
+            this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            // 
+            // toolStripMenuItem_update
+            // 
+            this.toolStripMenuItem_update.Name = "toolStripMenuItem_update";
+            this.toolStripMenuItem_update.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_update.Tag = "Update";
+            this.toolStripMenuItem_update.Text = "Refresh All";
             // 
             // flowLayoutPanel
             // 
@@ -97,54 +140,22 @@
             this.flowLayoutPanel.Size = new System.Drawing.Size(550, 325);
             this.flowLayoutPanel.TabIndex = 1;
             // 
-            // toolStripButton_Font
+            // toolStripMenuItem_chart
             // 
-            this.toolStripButton_Font.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_Font.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Font.Image")));
-            this.toolStripButton_Font.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_Font.Name = "toolStripButton_Font";
-            this.toolStripButton_Font.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_Font.Text = "FONT";
-            this.toolStripButton_Font.Click += new System.EventHandler(this.toolStripButton_Font_Click);
+            this.toolStripMenuItem_chart.Name = "toolStripMenuItem_chart";
+            this.toolStripMenuItem_chart.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_chart.Tag = "Charts";
+            this.toolStripMenuItem_chart.Text = "Hide Charts";
             // 
-            // toolStripButton_FontDown
+            // toolStripSeparator1
             // 
-            this.toolStripButton_FontDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_FontDown.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.toolStripButton_FontDown.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_FontDown.Image")));
-            this.toolStripButton_FontDown.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_FontDown.Name = "toolStripButton_FontDown";
-            this.toolStripButton_FontDown.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_FontDown.Text = "-";
-            this.toolStripButton_FontDown.ToolTipText = "Decrease Font Size";
-            this.toolStripButton_FontDown.Click += new System.EventHandler(this.toolStripButton_FontDown_Click);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButton_FontUp
-            // 
-            this.toolStripButton_FontUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_FontUp.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.toolStripButton_FontUp.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_FontUp.Image")));
-            this.toolStripButton_FontUp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_FontUp.Name = "toolStripButton_FontUp";
-            this.toolStripButton_FontUp.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_FontUp.Text = "+";
-            this.toolStripButton_FontUp.ToolTipText = "Increase Font Size";
-            this.toolStripButton_FontUp.Click += new System.EventHandler(this.toolStripButton_FontUp_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // ArbitrageManagerControl
             // 
@@ -168,13 +179,15 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
         private System.Windows.Forms.ToolStripButton toolStripButton_addSymbol;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBox_symbol;
-        private System.Windows.Forms.ToolStripButton toolStripButton_charts;
-        private System.Windows.Forms.ToolStripButton toolStripButton_Font;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolStripButton_FontDown;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton toolStripButton_FontUp;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.FontDialog fontDialog;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_menu;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_update;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_chart;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

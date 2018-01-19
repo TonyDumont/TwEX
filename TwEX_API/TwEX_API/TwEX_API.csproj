@@ -181,6 +181,12 @@
     <Compile Include="Controls\ExchangeEditorControl.Designer.cs">
       <DependentUpon>ExchangeEditorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FormToolStripControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FormToolStripControl.Designer.cs">
+      <DependentUpon>FormToolStripControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LogManagerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -292,6 +298,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExchangeEditorControl.resx">
       <DependentUpon>ExchangeEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FormToolStripControl.resx">
+      <DependentUpon>FormToolStripControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogManagerControl.resx">
       <DependentUpon>LogManagerControl.cs</DependentUpon>

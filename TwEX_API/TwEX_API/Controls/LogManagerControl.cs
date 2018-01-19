@@ -75,7 +75,7 @@ namespace TwEX_API.Controls
                 }
             }
         }
-
+        
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
@@ -103,6 +103,7 @@ namespace TwEX_API.Controls
                 }
             }
         }
+        
         #endregion
 
         #region EventHandler    

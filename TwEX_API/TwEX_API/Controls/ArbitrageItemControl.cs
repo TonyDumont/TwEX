@@ -10,7 +10,7 @@ namespace TwEX_API.Controls
         #region Properties
         public string market { get; set; } = String.Empty;
         public string symbol { get; set; } = String.Empty;
-        private Timer timer = new Timer() { Interval = 60000 };
+        //private Timer timer = new Timer() { Interval = 60000 };
 
         private CryptoCompareWidgetControl chart = new CryptoCompareWidgetControl()
         {
@@ -29,8 +29,8 @@ namespace TwEX_API.Controls
         {
             panel.Controls.Add(chart);
             UpdateUI(true);
-            timer.Tick += new EventHandler(timer_Tick);
-            timer.Start();
+            //timer.Tick += new EventHandler(timer_Tick);
+            //timer.Start();
         }
         private void timer_Tick(object sender, EventArgs e)
         {
@@ -92,10 +92,8 @@ namespace TwEX_API.Controls
             else
             {
                 Size textSize = TextRenderer.MeasureText("0.00000000", ParentForm.Font);
-                int padding = textSize.Height / 4;
-                int rowPadding = textSize.Height / 5;
-                int rowHeight = textSize.Height + rowPadding;
-
+                int padding = textSize.Width / 10;
+                int rowHeight = textSize.Height;
                 int iconSize = rowHeight;
 
                 int newWidth = 0;
@@ -105,8 +103,7 @@ namespace TwEX_API.Controls
                     newWidth += control.Width;
                 }
 
-                //Width = (iconSize + textSize.Width + padding) * 2 + (padding * 2);
-                Width = newWidth + (padding * 5);
+                Width = newWidth + (padding * 2);
 
                 if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
                 {
@@ -114,18 +111,14 @@ namespace TwEX_API.Controls
                     panel.Visible = true;
                     panel.Width = Width;
                     panel.Height = Width - (Width / 5);
-
-                    //Height = (rowHeight * (ExchangeManager.Exchanges.Count + 3)) + panel.Height + (rowPadding * 4);
-                    //var last = listView.Items[listView.Items.Count - 1];
-                    Size = new Size(Width, arbitrageListControl_usd.ClientSize.Height + panel.Height + (rowPadding * 4));
+                    Size = new Size(Width, arbitrageListControl_usd.ClientSize.Height + panel.Height + padding);
                 }
                 else
                 {
                     toolStrip.Visible = true;
                     panel.Visible = false;
                     panel.Height = 0;
-                    Size = new Size(Width, arbitrageListControl_usd.ClientSize.Height + toolStrip.Height + (rowPadding * 4));
-                    //Height = (rowHeight * (ExchangeManager.Exchanges.Count + 3)) + toolStrip.Height + (rowPadding * 4);
+                    Size = new Size(Width, arbitrageListControl_usd.ClientSize.Height + toolStrip.Height + padding);
                 }
                 UpdateUI();
             }
