@@ -37,11 +37,11 @@
             this.toolStripMenuItem_down = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_remove = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_refresh = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.arbitrageListControl_usd = new TwEX_API.Controls.ArbitrageListControl();
             this.arbitrageListControl_btc = new TwEX_API.Controls.ArbitrageListControl();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem_refresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
             this.flowLayoutPanel.SuspendLayout();
@@ -81,39 +81,51 @@
             this.toolStripSeparator2,
             this.toolStripMenuItem_refresh});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(153, 126);
+            this.contextMenuStrip.Size = new System.Drawing.Size(145, 104);
             this.contextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip_ItemClicked);
             // 
             // toolStripMenuItem_up
             // 
             this.toolStripMenuItem_up.Name = "toolStripMenuItem_up";
-            this.toolStripMenuItem_up.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_up.Size = new System.Drawing.Size(144, 22);
             this.toolStripMenuItem_up.Tag = "up";
             this.toolStripMenuItem_up.Text = "Move UP";
             // 
             // toolStripMenuItem_down
             // 
             this.toolStripMenuItem_down.Name = "toolStripMenuItem_down";
-            this.toolStripMenuItem_down.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_down.Size = new System.Drawing.Size(144, 22);
             this.toolStripMenuItem_down.Tag = "down";
             this.toolStripMenuItem_down.Text = "Move DOWN";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
             // 
             // toolStripMenuItem_remove
             // 
             this.toolStripMenuItem_remove.Name = "toolStripMenuItem_remove";
-            this.toolStripMenuItem_remove.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_remove.Size = new System.Drawing.Size(144, 22);
             this.toolStripMenuItem_remove.Tag = "remove";
             this.toolStripMenuItem_remove.Text = "REMOVE";
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(141, 6);
+            // 
+            // toolStripMenuItem_refresh
+            // 
+            this.toolStripMenuItem_refresh.Name = "toolStripMenuItem_refresh";
+            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(144, 22);
+            this.toolStripMenuItem_refresh.Tag = "refresh";
+            this.toolStripMenuItem_refresh.Text = "REFRESH";
+            // 
             // flowLayoutPanel
             // 
-            this.flowLayoutPanel.Controls.Add(this.arbitrageListControl_usd);
             this.flowLayoutPanel.Controls.Add(this.arbitrageListControl_btc);
+            this.flowLayoutPanel.Controls.Add(this.arbitrageListControl_usd);
             this.flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel.Location = new System.Drawing.Point(0, 188);
             this.flowLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -124,29 +136,19 @@
             // 
             // arbitrageListControl_usd
             // 
-            this.arbitrageListControl_usd.Location = new System.Drawing.Point(3, 3);
+            this.arbitrageListControl_usd.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.arbitrageListControl_usd.Location = new System.Drawing.Point(153, 3);
             this.arbitrageListControl_usd.Name = "arbitrageListControl_usd";
             this.arbitrageListControl_usd.Size = new System.Drawing.Size(144, 353);
             this.arbitrageListControl_usd.TabIndex = 0;
             // 
             // arbitrageListControl_btc
             // 
-            this.arbitrageListControl_btc.Location = new System.Drawing.Point(153, 3);
+            this.arbitrageListControl_btc.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.arbitrageListControl_btc.Location = new System.Drawing.Point(3, 3);
             this.arbitrageListControl_btc.Name = "arbitrageListControl_btc";
             this.arbitrageListControl_btc.Size = new System.Drawing.Size(144, 353);
             this.arbitrageListControl_btc.TabIndex = 1;
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
-            // 
-            // toolStripMenuItem_refresh
-            // 
-            this.toolStripMenuItem_refresh.Name = "toolStripMenuItem_refresh";
-            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem_refresh.Tag = "refresh";
-            this.toolStripMenuItem_refresh.Text = "REFRESH";
             // 
             // ArbitrageItemControl
             // 

@@ -743,9 +743,16 @@ namespace TwEX_API
                 {
                     ExchangeTicker newItem = new ExchangeTicker();
                     newItem.exchange = exchange.Name;
+
+                    if (market.Contains("USD"))
+                    {
+                        market = exchange.USDSymbol;
+                    }
+
                     newItem.market = market;
                     newItem.symbol = symbol;
                     //newItem.price = GetExchangeUSDValueBySymbol(exchange.SiteName, symbol);
+                    LogManager.AddLogMessage(Name, "GetPriceWatchlist", exchange.Name + " | " + market + " | " + symbol, LogMessageType.DEBUG);
                     newItem.last = GetPriceOfSymbol(exchange.Name, market, symbol);
 
                     list.Add(newItem);
@@ -1147,7 +1154,7 @@ namespace TwEX_API
                     }
                     else
                     {
-                        AddLogMessage(Name, "toolStripButton_Form_Click", "NOT FOUND ADDING : " + form.Name + " | " + form.Location);
+                        AddLogMessage(Name, "toolStripButton_Form_Click", "PREFERENCE NOT FOUND ADDING : " + form.Name + " | " + form.Location, LogMessageType.DEBUG);
                         UpdateFormPreferences(form, true);
                     }
 
@@ -1160,7 +1167,11 @@ namespace TwEX_API
                     switch (name)
                     {
                         case "ArbitrageManager":
-                            form.Controls.Add(new ArbitrageManagerControl() { Dock = DockStyle.Fill });
+                             ArbitrageManagerControl control = new ArbitrageManagerControl() { Dock = DockStyle.Fill };
+                            //form.Controls.Add(new ArbitrageManagerControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { control.DisposeTimer(); };
+                            form.Controls.Add(control);
+                            
                             break;
 
                         case "BalanceManager":
@@ -1230,21 +1241,9 @@ namespace TwEX_API
                 {
                     targetForm.WindowState = FormWindowState.Normal;
                 }
-
-                if (targetForm.InvokeRequired)
-                {
-                    StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate();
-                    targetForm.Invoke(d, new object[] { });
-                }
-                else
-                {
-                    //this.textBox1.Text = text;
-                    targetForm.Activate();
-                }
                 targetForm.Activate();
                 */
             }
-            //UpdateUI();
             UpdateToolStrip();
         }
         public static void RestoreForms()

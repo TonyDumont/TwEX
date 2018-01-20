@@ -19,7 +19,7 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "HitBTC";
         public static string Url { get; } = "https://hitbtc.com/";
-        public static string IconUrl { get; } = "https://hitbtc.com/favicon.png?v=4";
+        public static string IconUrl { get; } = "https://hitbtc.com/195x195image.png";
         public static string USDSymbol { get; } = "USD";
         public static string TradingView { get; } = "HitBTC";
         // API

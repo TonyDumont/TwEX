@@ -138,14 +138,10 @@ namespace TwEX_API.Controls
                 symbol = newSymbol;
                 market = newMarket;
 
-                arbitrageListControl_btc.SetProperties("USD", symbol);
-                arbitrageListControl_usd.SetProperties("BTC", symbol);
+                arbitrageListControl_btc.SetProperties("BTC", symbol);
+                arbitrageListControl_usd.SetProperties("USD", symbol);
 
                 chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
-                //arbitrageTableControl_btc.SetProperties("BTC", symbol);
-                //arbitrageTableControl_usd.SetProperties("USD", symbol);
-                //arbitrageSpreadControl_btc.SetProperties("BTC", symbol);
-                //arbitrageSpreadControl_usd.SetProperties("USD", symbol);
                 UpdateUI();
             }
         }

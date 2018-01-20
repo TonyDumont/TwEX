@@ -131,6 +131,31 @@ namespace TwEX_API.Market
                 return amount;
             }
         }
+        public static Decimal GetMarketCapCoinAmount(string symbol, string market, Decimal amount)
+        {
+            Decimal value = 0;
+
+            CoinMarketCapTicker listItem = Tickers.FirstOrDefault(item => item.symbol.ToLower() == symbol.ToLower());
+
+            if (listItem != null)
+            {
+                //LogManager.AddLogMessage(Name, "GetMarketCapUSDAmount", "PRICE_USD=" + listItem.price_usd + " | " + symbol, LogManager.LogMessageType.DEBUG);
+                if (market.Contains("USD"))
+                {
+                    // GET AMOUNT FROM USD
+                    value = amount / listItem.price_usd;
+                }
+                else
+                {
+                    // GET AMOUNT FROM BTC
+                    value = amount / listItem.price_btc;
+                }
+
+                //value = amount * listItem.price_usd;
+            }
+            //LogManager.AddLogMessage(Name, "GetMarketCapUSDAmount", "symbol=" + symbol + " |amount=" + amount + " |value=" + value, LogManager.LogMessageType.DEBUG);
+            return value;
+        }
         public static Decimal GetMarketCapUSDAmount(string symbol, Decimal amount)
         {
             Decimal value = 0;

@@ -6,6 +6,8 @@ namespace TwEX_API.Controls
 {
     public partial class ArbitrageManagerControl : UserControl
     {
+        public static Timer timer = new Timer() { Interval = 60000 };
+        
         #region Initialize
         public ArbitrageManagerControl()
         {
@@ -14,7 +16,6 @@ namespace TwEX_API.Controls
         }
         private void ArbitrageManagerControl_Load(object sender, EventArgs e)
         {
-            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
             toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
 
             toolStripMenuItem_font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
@@ -25,25 +26,47 @@ namespace TwEX_API.Controls
 
             if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
             {
-                //toolStripButton_charts.Text = "Hide Charts";
-                //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ACTIVE;
-
                 toolStripMenuItem_chart.Text = "Hide Charts";
                 toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ACTIVE;
             }
             else
             {
-                //toolStripButton_charts.Text = "Show Charts";
-                //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ERROR;
-
                 toolStripMenuItem_chart.Text = "Show Charts";
                 toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ERROR;
             }
+
+            //Timer timer = new Timer();
+            //timer.Interval = (60 * 1000);
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Start();
+
             SetWatchlist();
+        }
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            LogManager.AddLogMessage(Name, "timer_Tick", "Ticked", LogManager.LogMessageType.DEBUG);
+            UpdateUI();
         }
         #endregion
 
         #region Delegates
+        delegate void DisposeTimerCallback();
+        public void DisposeTimer()
+        {
+            if (this.InvokeRequired)
+            {
+                DisposeTimerCallback d = new DisposeTimerCallback(DisposeTimer);
+                this.Invoke(d, new object[] { });
+            }
+            else
+            {
+                //toolStrip.Font = ParentForm.Font;
+                timer.Stop();
+                timer.Tick -= timer_Tick;
+                timer.Dispose();
+            }
+        }
+
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
@@ -120,13 +143,14 @@ namespace TwEX_API.Controls
                 int controlHeight = chartHeight + (rowHeight * ExchangeManager.Exchanges.Count) + (statusHeight * barCount) + padding;
 
                 // USD
-                foreach (ExchangeManager.ExchangeTicker item in PreferenceManager.preferences.ArbitragePreferences.ArbitrageWatchList)
+                foreach (ExchangeManager.ExchangeTicker ticker in PreferenceManager.preferences.ArbitragePreferences.ArbitrageWatchList)
                 {
                     ArbitrageItemControl control = new ArbitrageItemControl();
+                    //LogManager.AddLogMessage(Name, "SetWatchlist", "ticker=" + ticker.symbol + " | " + ticker.market + " | " + ticker.last, LogManager.LogMessageType.DEBUG);
                     control.Height = controlHeight;
 
                     flowLayoutPanel.Controls.Add(control);
-                    control.SetData(item.symbol, "USD");
+                    control.SetData(ticker.symbol, "USD");
                 }
                 
                 UpdateUI(true);
@@ -171,32 +195,6 @@ namespace TwEX_API.Controls
         }
         private void toolStripButton_charts_Click(object sender, EventArgs e)
         {
-            /*
-            if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
-            {
-                // Remove Charts
-                PreferenceManager.preferences.ArbitragePreferences.ShowCharts = false;
-                PreferenceManager.UpdatePreferencesFile();
-                toolStripButton_charts.Text = "Show Charts";
-                toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ERROR;
-                //controlSize = new Size(150, 150);
-                toolStripMenuItem_chart.Text = "Show Charts";
-                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ERROR;
-            }
-            else
-            {
-                // Add Charts
-                PreferenceManager.preferences.ArbitragePreferences.ShowCharts = true;
-                PreferenceManager.UpdatePreferencesFile();
-                toolStripButton_charts.Text = "Hide Charts";
-                toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ACTIVE;
-                //controlSize = new Size(150, 300);
-                toolStripMenuItem_chart.Text = "Hide Charts";
-                toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ACTIVE;
-            }
-            //UpdateUI();
-            SetWatchlist();
-            */
             ToggleCharts();
         }
         private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -209,7 +207,6 @@ namespace TwEX_API.Controls
                 {
                     case "Font":
                         FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
-                        //fontDialog.Font = ParentForm.Font;
                         DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
                         {
@@ -246,26 +243,3 @@ namespace TwEX_API.Controls
         #endregion
     }
 }
-
-/*
-        private void toolStripButton_FontDown_Click(object sender, EventArgs e)
-        {
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
-        private void toolStripButton_FontUp_Click(object sender, EventArgs e)
-        {
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
-        private void toolStripButton_Font_Click(object sender, EventArgs e)
-        {
-            fontDialog.Font = ParentForm.Font;
-            DialogResult result = fontDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                ParentForm.Font = fontDialog.Font;
-            }
-            UpdateUI(true);
-        }
-        */

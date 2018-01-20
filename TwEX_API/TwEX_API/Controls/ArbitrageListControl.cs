@@ -64,13 +64,13 @@ namespace TwEX_API.Controls
                 try
                 {
                     List<ExchangeManager.ExchangeTicker> list = ExchangeManager.GetPriceWatchlist(market, symbol);
-                    //LogManager.AddLogMessage(Name, "UpdateUI", "count=" + list.Count, LogManager.LogMessageType.DEBUG);
 
                     if (list.Count > 0)
-                    {
+                    {              
+                        toolStrip_btc.Visible = true;
+                        toolStrip_usd.Visible = true;
+                        toolStrip_symbol.Visible = true;
 
-                        //listView.Enabled = true;
-                        // SOME EXCHANGE HAS A PRICE
                         Decimal high = 0;
                         Decimal low = 0;
 
@@ -83,50 +83,39 @@ namespace TwEX_API.Controls
                                 low = ticker.last;
                             }
                         }
-                        //low = list[list.Count - 1].last;
+                            
                         Decimal spread = high - low;
-
-                        listView.SetObjects(list);
-                        //toolStripLabel_symbol.Text = spread.ToString("N8");
+                        listView.SetObjects(list);   
                         toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
+                        //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
 
                         if (market.Contains("USD"))
                         {
-                            //toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
+                            // SPREAD IS IN USD
+                            LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN USD - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
                             toolStripLabel_usd.Text = spread.ToString("C");
                             toolStripLabel_btc.Text = CoinMarketCap.GetMarketCapBTCAmount("USDT", spread).ToString("N8");
+                            toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "USDT", spread).ToString("N8");
                         }
                         else
                         {
+                            // SPREAD IS IN BTC
+                            LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN BTC - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
                             toolStripLabel_usd.Text = CoinMarketCap.GetMarketCapUSDAmount("BTC", spread).ToString("C");
-                            //toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
                             toolStripLabel_btc.Text = spread.ToString("N8");
-                        }
-
-                        if (list.Sum(item => item.last) > 0)
-                        {
-                            listView.Enabled = true;
-                            
-                            toolStrip_btc.Visible = true;
-                            toolStrip_usd.Visible = true;
-                            toolStrip_symbol.Visible = true;
-                        }
-                        else
-                        {
-                            listView.Enabled = false;
-                            toolStrip_btc.Visible = false;
-                            toolStrip_usd.Visible = false;
-                            toolStrip_symbol.Visible = false;
-                        }
+                            toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "BTC", spread).ToString("N8");
+                        }               
                     }
-                    /*
+
+                    if (list.Sum(item => item.last) > 0)
+                    {
+                        Enabled = true;
+                    }
                     else
                     {
-                        //listView.EmptyListMsgFont = ParentForm.Font;
-                        //listView.EmptyListMsg = "No Exchanges";
-                        //listView.Enabled = false;
+                        Enabled = false;
                     }
-                    */
+
                     if (resize)
                     {
                         ResizeUI();
