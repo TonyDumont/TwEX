@@ -9,7 +9,7 @@ namespace TwEX_API.Wallet
         #region Properties
         public static string Name { get; } = "BlockIO";
         public static string Url { get; } = "https://block.io/";
-        public static string IconUrl { get; } = "https://block.io/favicon.ico";
+        //public static string IconUrl { get; } = "https://block.io/favicon.ico";
         public static BlockIOApi Api { get; set; } = new BlockIOApi();
         private static RestClient client = new RestClient("https://block.io/api/v2");
         #endregion Properties

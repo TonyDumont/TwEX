@@ -25,10 +25,15 @@ namespace TwEX_API.Controls
         }
         private void BalanceManagerControl_Load(object sender, EventArgs e)
         {
-            toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripRadioButton_balance.Image = ContentManager.GetIconByUrl(ContentManager.BalanceIconUrl);
-            toolStripRadioButton_exchange.Image = ContentManager.GetIconByUrl(ExchangeManager.IconUrl);
-            toolStripRadioButton_symbol.Image = ContentManager.GetIconByUrl(ContentManager.SymbolIconUrl);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            //toolStripButton_Font.Image = ContentManager.GetIcon("Font");
+            toolStripRadioButton_balance.Image = ContentManager.GetIcon("BalanceManager");
+            toolStripRadioButton_exchange.Image = ContentManager.GetIcon("ExchangeEditor");
+            toolStripRadioButton_symbol.Image = ContentManager.GetIcon("Symbol");
+            toolStripButton_collapse.Image = ContentManager.GetIcon("UpDown");
             toolStripRadioButton_balance.Checked = true;
 
             UpdateUI(true);
@@ -125,6 +130,7 @@ namespace TwEX_API.Controls
                 }
             }
         }
+
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
@@ -135,11 +141,14 @@ namespace TwEX_API.Controls
             }
             else
             {
-                toolStrip_header.Font = ParentForm.Font;
-                toolStrip_footer.Font = ParentForm.Font;
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                toolStrip.Font = ParentForm.Font;
+                //toolStrip_footer.Font = ParentForm.Font;
+
+                toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
 
                 int rowHeight = listView.RowHeightEffective;
-                int formWidth = 0;
+                //int formWidth = 0;
 
                 if (column_SymbolIcon.IsVisible)
                 {
@@ -163,7 +172,7 @@ namespace TwEX_API.Controls
 
                 column_TotalInUSD.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 column_TotalInUSD.Width = column_TotalInUSD.Width + listView.RowHeightEffective;
-                
+                /*
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     //col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -172,20 +181,25 @@ namespace TwEX_API.Controls
                 }
                 
 
-                ParentForm.Width = formWidth + 50;
-                PreferenceManager.UpdateFormPreferences(ParentForm, true);
-                
+                //ParentForm.Width = formWidth + 50;
+                //PreferenceManager.UpdateFormPreferences(ParentForm, true);
+                */
                 if (view != "balance")
                 {
                     collapsed = false;
                     toggleCollapsed();
+                    toolStripButton_collapse.Enabled = true;
+                }
+                else
+                {
+                    toolStripButton_collapse.Enabled = false;
                 }
 
             }
         }
         #endregion
 
-        #region AspectGetters
+        #region Getters
         private void aboutToCreateGroups(object sender, CreateGroupsEventArgs e)
         {
             //LogManager.AddLogMessage(Name, "aboutToCreateGroups", "view=" + view + "params=" + e.Parameters + " | group.count=" + e.Groups.Count, LogManager.LogMessageType.OTHER);
@@ -197,7 +211,7 @@ namespace TwEX_API.Controls
                     //LogManager.AddLogMessage(Name, "aboutToCreateGroups", "Group Count=" + e.Groups.Count + " | view=" + view + " | params=" + e.Parameters + " | " + e.Groups, LogManager.LogMessageType.OTHER);
                     //ImageList imageList = ExchangeManager.symbolIconList;
                     //imageList. .Images.AddRange(WalletManager.WalletIconList.Images);
-                    listView.GroupImageList = ExchangeManager.symbolIconList;
+                    listView.GroupImageList = ContentManager.SymbolIconList;
                     //listView.GroupImageList. .Images.AddRange(WalletManager.WalletIconList.Images);
 
 
@@ -211,7 +225,7 @@ namespace TwEX_API.Controls
                         decimal btcTotal = symbalances.Sum(b => b.TotalInBTC);
                         decimal coinTotal = symbalances.Sum(b => b.Balance);
 
-                        CryptoCompareCoin coin = CryptoCompare.CoinList.FirstOrDefault(item => item.Symbol == group.Key.ToString());
+                        CryptoCompareCoin coin = PreferenceManager.CryptoComparePreferences.CoinList.FirstOrDefault(item => item.Symbol == group.Key.ToString());
                         //LogManager.AddLogMessage(Name, "aboutToCreateGroups", "HEADER=" + group.Header + " | id=" + group.Id + " | Key=" + group.Key + " | name=" + group.Name + " | itemcount=" + group.Items.Count, LogManager.LogMessageType.OTHER);
 
                         if (coin != null)
@@ -242,7 +256,7 @@ namespace TwEX_API.Controls
 
                     //listView.HasCollapsibleGroups = true;
                     //LogManager.AddLogMessage(Name, "aboutToCreateGroups", "groups.count=" + e.Groups.Count, LogManager.LogMessageType.OTHER);
-                    listView.GroupImageList = ExchangeManager.exchangeIconList;
+                    listView.GroupImageList = ContentManager.ExchangeIconList;
 
                     foreach (OLVGroup group in e.Groups)
                     {
@@ -287,7 +301,7 @@ namespace TwEX_API.Controls
                 if (balance != null)
                 {
                     //return DataManager.ResizeImage(ExchangeManager.GetExchangeImage(e.exchange), 24, 24);
-                    return ContentManager.ResizeImage(ExchangeManager.GetSymbolIcon(balance.Symbol), listView.RowHeightEffective, listView.RowHeightEffective);
+                    return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(balance.Symbol), listView.RowHeightEffective, listView.RowHeightEffective);
                 }
                 else
                 {
@@ -303,18 +317,19 @@ namespace TwEX_API.Controls
         public object aspect_exchangeIcon(object rowObject)
         {
             try
-            {
-                
+            {                
                 ExchangeManager.ExchangeBalance balance = (ExchangeManager.ExchangeBalance)rowObject;
 
                 if (balance != null)
                 {
                     //return ContentManager.ResizeImage(ExchangeManager.getExchange(balance.Exchange).Icon, listView.RowHeightEffective, listView.RowHeightEffective);
-                    return ContentManager.ResizeImage(ExchangeManager.getExchangeIcon(balance.Exchange), listView.RowHeightEffective, listView.RowHeightEffective);
+                    return ContentManager.ResizeImage(ContentManager.GetExchangeIcon(balance.Exchange), listView.RowHeightEffective, listView.RowHeightEffective);
+                    //return ContentManager.GetExchangeIcon(balance.Exchange);
                 }
                 else
                 {
-                    return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, listView.RowHeightEffective, listView.RowHeightEffective);
+                    return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, listView.RowHeightEffective / 2, listView.RowHeightEffective / 2);
+                    //return Properties.Resources.ConnectionStatus_DISABLED;
                 }
                 
                 //return ContentManager.ResizeImage(ExchangeManager.getExchangeIcon( , listView.RowHeightEffective, listView.RowHeightEffective);
@@ -322,12 +337,13 @@ namespace TwEX_API.Controls
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "aspect_exchangeIcon", ex.Message, LogManager.LogMessageType.EXCEPTION);
-                return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, listView.RowHeightEffective, listView.RowHeightEffective);
+                return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, listView.RowHeightEffective / 2, listView.RowHeightEffective / 2);
             }        
         }
         #endregion
 
         #region EventHandlers
+        /*
         private void toolStripButton_FontUp_Click(object sender, EventArgs e)
         {
             ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
@@ -347,6 +363,42 @@ namespace TwEX_API.Controls
         {
             ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
             UpdateUI(true);
+        }
+        */
+        private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
+            {
+                ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+                toolStripDropDownButton_menu.HideDropDown();
+                //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+                switch (menuItem.Tag.ToString())
+                {
+                    case "Font":
+                        FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                        DialogResult result = dialog.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {
+                            ParentForm.Font = dialog.Font;
+                        }
+                        UpdateUI(true);
+                        break;
+
+                    case "FontIncrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "FontDecrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    default:
+                        // NOTHING
+                        break;
+                }
+            }
         }
         private void toolStripRadioButton_view_Click(object sender, EventArgs e)
         {

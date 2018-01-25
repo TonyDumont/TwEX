@@ -12,19 +12,20 @@ namespace TwEX_API.Controls
         public WalletManagerControl()
         {
             InitializeComponent();
-            WalletManager.walletManagerControl = this;
+            //WalletManager.walletManagerControl = this;
+            FormManager.walletManagerControl = this;
             InitializeColumns();
         }
         private void WalletManagerControl_Load(object sender, EventArgs e)
         {
             //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
 
-            toolStripMenuItem_font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconIncrease);
-            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconDecrease);
-            toolStripMenuItem_add.Image = ContentManager.GetIconByUrl(ContentManager.AddWalletIconUrl);
-            toolStripMenuItem_update.Image = ContentManager.GetIconByUrl(ContentManager.RefreshIcon);
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            toolStripMenuItem_add.Image = ContentManager.GetIcon("AddWallet");
+            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
             //listView.SetObjects(WalletManager.Wallets.Where(item => item.Balance > 0));
             UpdateUI(true);
         }
@@ -46,11 +47,11 @@ namespace TwEX_API.Controls
             }
             else
             {
-                listView.SetObjects(WalletManager.Wallets);
+                listView.SetObjects(PreferenceManager.WalletPreferences.Wallets);
                 listView.Sort(column_TotalInBTC, SortOrder.Descending);
 
-                toolStripLabel_title.Text = WalletManager.Wallets.Count + " Wallets";
-                toolStripLabel_totals.Text = "Totals : (" + WalletManager.Wallets.Sum(b => b.TotalInUSD).ToString("C") + ") " + WalletManager.Wallets.Sum(b => b.TotalInBTC).ToString("N8");
+                toolStripLabel_title.Text = PreferenceManager.WalletPreferences.Wallets.Count + " Wallets";
+                toolStripLabel_totals.Text = "Totals : (" + PreferenceManager.WalletPreferences.Wallets.Sum(b => b.TotalInUSD).ToString("C") + ") " + PreferenceManager.WalletPreferences.Wallets.Sum(b => b.TotalInBTC).ToString("N8");
 
                 toolStripButton_timer.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeManager.ExchangeTimerType.WALLETS) != ExchangeManager.ExchangeTimerType.NONE;
                 //toolStripButton_Tickers.Text = "TICKERS (" + ExchangeManager.Tickers.Count + ")";
@@ -70,10 +71,11 @@ namespace TwEX_API.Controls
             if (this.InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 toolStrip.Font = ParentForm.Font;
                 //toolStrip_footer.Font = ParentForm.Font;
                 listView.Font = ParentForm.Font;
@@ -104,14 +106,14 @@ namespace TwEX_API.Controls
                 }
 
                 
-
+                /*
                 Rectangle screenRectangle = RectangleToScreen(ParentForm.ClientRectangle);
                 int titleHeight = screenRectangle.Top - ParentForm.Top;
                 int formHeight = titleHeight + listHeight;
                 int totalHeight = titleHeight + listHeight + toolStrip.Height + padding;
                 //LogManager.AddLogMessage(Name, "ResizeUI", "titleHeight=" + titleHeight + " | listHeight=" + listHeight + " | " + toolStrip_header.Height + " | " + toolStrip_header2.Height);
                 ParentForm.ClientSize = new Size(listWidth + (padding * 2), totalHeight);
-
+                */
                 //UpdateUI();
             }
         }
@@ -122,13 +124,14 @@ namespace TwEX_API.Controls
         {
             WalletManager.WalletBalance balance = (WalletManager.WalletBalance)rowObject;
             int rowheight = listView.RowHeightEffective - 3;
-            return ContentManager.ResizeImage(WalletManager.GetWalletIcon(balance.WalletName), rowheight, rowheight);
+            return ContentManager.ResizeImage(ContentManager.GetWalletIcon(balance.WalletName), rowheight, rowheight);
+            //return ContentManager.GetWalletIcon(balance.WalletName);
         }
         private object aspect_Symbol(object rowObject)
         {
             WalletManager.WalletBalance balance = (WalletManager.WalletBalance)rowObject;
             int rowheight = listView.RowHeightEffective - 3;
-            return ContentManager.ResizeImage(ExchangeManager.GetSymbolIcon(balance.Symbol), rowheight, rowheight);
+            return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(balance.Symbol), rowheight, rowheight);
         }
         #endregion
 

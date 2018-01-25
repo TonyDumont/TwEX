@@ -47,8 +47,8 @@
             this.ClientSize = new System.Drawing.Size(334, 41);
             this.Controls.Add(this.formToolStripControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(4000, 80);
-            this.MinimumSize = new System.Drawing.Size(350, 80);
+            this.MaximumSize = new System.Drawing.Size(4000, 4000);
+            this.MinimumSize = new System.Drawing.Size(350, 20);
             this.Name = "TwEX_FormEditor";
             this.Text = "TwEX Form Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TwEX_FormEditor_FormClosing);

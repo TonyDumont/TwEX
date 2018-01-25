@@ -9,7 +9,7 @@ namespace TwEX_API.Wallet
         #region Properties
         public static string Name { get; } = "BlockCypher";
         public static string Url { get; } = "https://www.blockcypher.com/";
-        public static string IconUrl { get; } = "https://www.blockcypher.com/images/favicon-192x192.png";
+        //public static string IconUrl { get; } = "https://www.blockcypher.com/images/favicon-192x192.png";
         //public static BlockIOApi Api { get; set; } = new BlockIOApi();
         private static RestClient client = new RestClient("https://api.blockcypher.com/v1");
         #endregion Properties

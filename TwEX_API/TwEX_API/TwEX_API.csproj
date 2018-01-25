@@ -97,6 +97,12 @@
     <Compile Include="Controls\APIEditorControl.Designer.cs">
       <DependentUpon>APIEditorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ApplicationPreferenceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ApplicationPreferenceControl.Designer.cs">
+      <DependentUpon>ApplicationPreferenceControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ArbitrageItemControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -157,11 +163,11 @@
     <Compile Include="Controls\CryptoCompareWidgetControl.Designer.cs">
       <DependentUpon>CryptoCompareWidgetControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CryptoCompareWidgetEditorControl.cs">
+    <Compile Include="Controls\CryptoCompareControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\CryptoCompareWidgetEditorControl.Designer.cs">
-      <DependentUpon>CryptoCompareWidgetEditorControl.cs</DependentUpon>
+    <Compile Include="Controls\CryptoCompareControl.Designer.cs">
+      <DependentUpon>CryptoCompareControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\EarnGGAccountEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -175,11 +181,23 @@
     <Compile Include="Controls\EarnGGManagerControl.Designer.cs">
       <DependentUpon>EarnGGManagerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ExchangeEditorControl.cs">
+    <Compile Include="Controls\ExchangeManagerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ExchangeEditorControl.Designer.cs">
-      <DependentUpon>ExchangeEditorControl.cs</DependentUpon>
+    <Compile Include="Controls\ExchangeManagerControl.Designer.cs">
+      <DependentUpon>ExchangeManagerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ExchangePreferenceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExchangePreferenceControl.Designer.cs">
+      <DependentUpon>ExchangePreferenceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FormPreferenceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FormPreferenceControl.Designer.cs">
+      <DependentUpon>FormPreferenceControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\FormToolStripControl.cs">
       <SubType>UserControl</SubType>
@@ -192,6 +210,18 @@
     </Compile>
     <Compile Include="Controls\LogManagerControl.Designer.cs">
       <DependentUpon>LogManagerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PreferenceEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreferenceEditorControl.Designer.cs">
+      <DependentUpon>PreferenceEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PreferenceManagerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreferenceManagerControl.Designer.cs">
+      <DependentUpon>PreferenceManagerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\TradingViewManagerControl.cs">
       <SubType>UserControl</SubType>
@@ -257,6 +287,9 @@
     <EmbeddedResource Include="Controls\APIEditorControl.resx">
       <DependentUpon>APIEditorControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ApplicationPreferenceControl.resx">
+      <DependentUpon>ApplicationPreferenceControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ArbitrageItemControl.resx">
       <DependentUpon>ArbitrageItemControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -287,8 +320,8 @@
     <EmbeddedResource Include="Controls\CryptoCompareWidgetControl.resx">
       <DependentUpon>CryptoCompareWidgetControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CryptoCompareWidgetEditorControl.resx">
-      <DependentUpon>CryptoCompareWidgetEditorControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\CryptoCompareControl.resx">
+      <DependentUpon>CryptoCompareControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\EarnGGAccountEditorControl.resx">
       <DependentUpon>EarnGGAccountEditorControl.cs</DependentUpon>
@@ -296,14 +329,26 @@
     <EmbeddedResource Include="Controls\EarnGGManagerControl.resx">
       <DependentUpon>EarnGGManagerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ExchangeEditorControl.resx">
-      <DependentUpon>ExchangeEditorControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\ExchangeManagerControl.resx">
+      <DependentUpon>ExchangeManagerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExchangePreferenceControl.resx">
+      <DependentUpon>ExchangePreferenceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FormPreferenceControl.resx">
+      <DependentUpon>FormPreferenceControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FormToolStripControl.resx">
       <DependentUpon>FormToolStripControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogManagerControl.resx">
       <DependentUpon>LogManagerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PreferenceEditorControl.resx">
+      <DependentUpon>PreferenceEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PreferenceManagerControl.resx">
+      <DependentUpon>PreferenceManagerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\TradingViewManagerControl.resx">
       <DependentUpon>TradingViewManagerControl.cs</DependentUpon>
@@ -327,6 +372,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\TwEX_RoundIcon.ico" />
+    <None Include="Resources\TwEX_Trader.png" />
+    <None Include="Resources\TwEX_Header.png" />
     <Content Include="Resources\UI\ConnectionStatus_ACTIVE.png" />
     <Content Include="Resources\UI\ConnectionStatus_DISABLED.png" />
     <Content Include="Resources\UI\ConnectionStatus_ERROR.png" />

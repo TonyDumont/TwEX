@@ -27,9 +27,9 @@ namespace TwEX_API.Controls
         {
             column_icon.ImageGetter = new ImageGetterDelegate(aspect_icon);
             column_price.AspectGetter = new AspectGetterDelegate(aspect_price);
-            toolStripLabel_btc.Image = ExchangeManager.GetSymbolIcon("BTC");
-            toolStripLabel_usd.Image = ExchangeManager.GetSymbolIcon("USDT");
-            toolStripLabel_symbol.Image = ExchangeManager.GetSymbolIcon(symbol);
+            toolStripLabel_btc.Image = ContentManager.GetSymbolIcon("BTC");
+            toolStripLabel_usd.Image = ContentManager.GetSymbolIcon("USDT");
+            toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace TwEX_API.Controls
             {
                 market = newMarket;
                 symbol = newSymbol;
-                toolStripLabel_symbol.Image = ExchangeManager.GetSymbolIcon(symbol);
+                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
                 UpdateUI(true);
             }
         }
@@ -92,7 +92,7 @@ namespace TwEX_API.Controls
                         if (market.Contains("USD"))
                         {
                             // SPREAD IS IN USD
-                            LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN USD - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
+                            //LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN USD - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
                             toolStripLabel_usd.Text = spread.ToString("C");
                             toolStripLabel_btc.Text = CoinMarketCap.GetMarketCapBTCAmount("USDT", spread).ToString("N8");
                             toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "USDT", spread).ToString("N8");
@@ -100,7 +100,7 @@ namespace TwEX_API.Controls
                         else
                         {
                             // SPREAD IS IN BTC
-                            LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN BTC - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
+                            //LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN BTC - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
                             toolStripLabel_usd.Text = CoinMarketCap.GetMarketCapUSDAmount("BTC", spread).ToString("C");
                             toolStripLabel_btc.Text = spread.ToString("N8");
                             toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "BTC", spread).ToString("N8");
@@ -175,7 +175,8 @@ namespace TwEX_API.Controls
             {
                 if (ticker != null)
                 {
-                    return ContentManager.ResizeImage(ExchangeManager.getExchangeIcon(ticker.exchange), iconSize, iconSize);
+                    //return ContentManager.ResizeImage(ExchangeManager.getExchangeIcon(ticker.exchange), iconSize, iconSize);
+                    return ContentManager.GetExchangeIcon(ticker.exchange);
                 }
                 else
                 {

@@ -277,19 +277,21 @@ namespace TwEX_API
             ((NumericUpDown)control).ValueChanged -= new EventHandler(OnValueChanged);
         }
 
-        public event EventHandler ValueChanged;
-
         public Control NumericUpDownControl
         {
             get { return Control as NumericUpDown; }
         }
 
+        public event EventHandler ValueChanged;
         public void OnValueChanged(object sender, EventArgs e)
         {
+            /*
             if (ValueChanged != null)
             {
                 ValueChanged(this, e);
             }
+            */
+            ValueChanged?.Invoke(this, e);
         }
         
     }

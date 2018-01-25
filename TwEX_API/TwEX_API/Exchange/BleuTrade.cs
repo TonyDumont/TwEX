@@ -24,7 +24,6 @@ namespace TwEX_API.Exchange
         // API
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://bleutrade.com/api/v2");
-        //public static Boolean isAsync { get; set; } = false;
         // STATUS
         public static int ErrorCount { get; set; } = 0;
         public static DateTime LastUpdate { get; set; } = DateTime.Now;

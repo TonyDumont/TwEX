@@ -39,10 +39,10 @@ namespace TwEX_API.Controls
                 }
             }
 
-            toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
-            toolStripMenuItem_font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconIncrease);
-            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconDecrease);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
             //toolStrip_footer.Items.Add(messageTextBox);
             //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
             UpdateUI(true);
@@ -50,32 +50,6 @@ namespace TwEX_API.Controls
         #endregion
 
         #region Delegates
-        delegate void ResizeUICallback();
-        public void ResizeUI()
-        {
-            if (this.InvokeRequired)
-            {
-                ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] {  });
-            }
-            else
-            {
-                toolStrip.Font = ParentForm.Font;
-
-                int rowHeight = listView.RowHeightEffective;
-                int iconSize = rowHeight - 2;
-                int padding = rowHeight / 2;
-
-                toolStrip.ImageScalingSize = new Size(iconSize, iconSize);
-
-                foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
-                {
-                    col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                    col.Width = col.Width + (padding);
-                }
-            }
-        }
-        
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
@@ -103,7 +77,33 @@ namespace TwEX_API.Controls
                 }
             }
         }
-        
+
+        delegate void ResizeUICallback();
+        public void ResizeUI()
+        {
+            if (this.InvokeRequired)
+            {
+                ResizeUICallback d = new ResizeUICallback(ResizeUI);
+                this.Invoke(d, new object[] { });
+            }
+            else
+            {
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                toolStrip.Font = ParentForm.Font;
+
+                int rowHeight = listView.RowHeightEffective;
+                int iconSize = rowHeight - 2;
+                int padding = rowHeight / 2;
+
+                toolStrip.ImageScalingSize = new Size(iconSize, iconSize);
+
+                foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
+                {
+                    col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                    col.Width = col.Width + (padding);
+                }
+            }
+        }
         #endregion
 
         #region EventHandler    
@@ -153,8 +153,9 @@ namespace TwEX_API.Controls
                         break;
 
                     case "FontDecrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        //ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
+                        //UpdateUI(true);
+                        ContentManager.SaveIcons();
                         break;
 
                     default:
@@ -163,7 +164,13 @@ namespace TwEX_API.Controls
                 }
 
             }
-        }   
+        }
         #endregion
+        /*
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            ContentManager.SaveIcons();
+        }
+        */
     }
 }

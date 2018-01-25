@@ -1,28 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using TwEX_API.Market;
+using static TwEX_API.PreferenceManager;
 
 namespace TwEX_API.Controls
 {
-    public partial class ExchangeEditorControl : UserControl
+    public partial class ExchangeManagerControl : UserControl
     {
         #region Initialize
-        public ExchangeEditorControl()
+        public ExchangeManagerControl()
         {
             InitializeComponent();
-            FormManager.exchangeEditorControl = this;
+            FormManager.exchangeManagerControl = this;
             InitializeColumns();
         }
         private void ExchangeEditorControl_Load(object sender, EventArgs e)
         {
             //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
-            toolStripMenuItem_font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconIncrease);
-            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconDecrease);
+            
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            
             UpdateUI(true);
         }
         private void InitializeColumns()
@@ -47,20 +51,21 @@ namespace TwEX_API.Controls
             }
             else
             {
+                List<ExchangeManager.Exchange> list = ExchangeManager.Exchanges.Where(item => item.Active).ToList();
                 // HEADER
-                toolStripLabel_Exchanges.Text = ExchangeManager.Exchanges.Count + " Exchanges";
-                
-                Decimal orderBTC = ExchangeManager.Balances.Sum(balance => balance.TotalInBTCOrders);
+                toolStripLabel_Exchanges.Text = list.Count + " Exchanges";
+
+                Decimal orderBTC = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTCOrders));
                 Decimal orderUSD = CoinMarketCap.getUSDValue("BTC", orderBTC);
                 string orderString = "Orders : (" + orderUSD.ToString("C") + ") " + orderBTC.ToString("N8");
                 toolStripLabel_Orders.Text = orderString;
-                
-                Decimal totalBTC = ExchangeManager.Balances.Sum(balance => balance.TotalInBTC);
-                Decimal totalUSD = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD));
+
+                Decimal totalBTC = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC));
+                Decimal totalUSD = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD));
                 toolStripButton_Totals.Text = "Totals : (" + totalUSD.ToString("C") + ") " + totalBTC.ToString("N8");
 
                 // LIST
-                listView.SetObjects(ExchangeManager.Exchanges);
+                listView.SetObjects(list);
                 listView.Sort(column_TotalInBTC, SortOrder.Descending);
 
                 // TIMERS
@@ -96,6 +101,8 @@ namespace TwEX_API.Controls
             }
             else
             {
+                ParentForm.Font = GetFormFont(ParentForm);
+
                 toolStrip_header.Font = ParentForm.Font;
                 toolStrip_header2.Font = ParentForm.Font;
                 listView.Font = ParentForm.Font;
@@ -156,8 +163,9 @@ namespace TwEX_API.Controls
         {
             //Machine m = (Machine)rowObject;
             ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
-            int rowheight = listView.RowHeightEffective - 3;
-            return ContentManager.ResizeImage(exchange.Icon, rowheight, rowheight);
+            int rowheight = listView.RowHeightEffective - 2;
+            return ContentManager.ResizeImage(ContentManager.GetExchangeIcon(exchange.Name), rowheight, rowheight);
+            //return ContentManager.GetExchangeIcon(exchange.Name);
         }
         private object aspect_Status(object rowObject)
         {
@@ -225,10 +233,13 @@ namespace TwEX_API.Controls
             if (listView.SelectedObject != null)
             {
                 ExchangeManager.Exchange exchange = listView.SelectedObject as ExchangeManager.Exchange;
-                Form form = new Form();
-                form.Size = new Size(500, 250);
-                form.Text = exchange.Name;
-                Bitmap bitmap = new Bitmap(exchange.Icon);
+                Form form = new Form()
+                {
+                    Size = new Size(500, 250),
+                    Text = exchange.Name
+                };
+                //Bitmap bitmap = new Bitmap(exchange.Icon);
+                Bitmap bitmap = new Bitmap(ContentManager.GetExchangeIcon(exchange.Name));
                 form.Icon = Icon.FromHandle(bitmap.GetHicon());
                 APIEditorControl control = new APIEditorControl();
                 control.SetApi(ExchangeManager.getExchangeApi(exchange.Name));
@@ -240,7 +251,8 @@ namespace TwEX_API.Controls
         }
         private void toolStripButton_BTCTotal_Click(object sender, EventArgs e)
         {
-            ExchangeManager.updateBalances();
+            //ExchangeManager.updateBalances();
+            UpdateUI(true);
         }      
         private void toolStripButton_Refresh_Click(object sender, EventArgs e)
         {
@@ -262,6 +274,7 @@ namespace TwEX_API.Controls
             if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
             {
                 ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+                toolStripDropDownButton_menu.HideDropDown();
                 //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
                 switch (menuItem.Tag.ToString())
                 {

@@ -16,8 +16,6 @@ namespace TwEX_API.Exchange
         // EXCHANGE MANAGER
         public static string Name { get; } = "Bittrex";
         public static string Url { get; } = "https://bittrex.com/";
-        //public static string IconUrl { get; } = "https://bittrex.com/Content/img/logos/bittrex.ico";
-        //public static string IconUrl { get; } = "https://bittrex.com/favicon.ico";
         public static string IconUrl { get; } = "http://tradebittrext.com/wp-content/uploads/2017/10/lessons-in-crypto-arbitrage-nav-coin_1.jpg";
         public static string USDSymbol { get; } = "USDT";
         public static string TradingView { get; } = "Bittrex";

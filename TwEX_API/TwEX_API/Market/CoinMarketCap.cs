@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,9 +12,8 @@ namespace TwEX_API.Market
         #region Properties
         public static String Name = "CoinMarketCap";
         private static RestClient client = new RestClient("https://api.coinmarketcap.com");
-        public static BlockingCollection<CoinMarketCapTicker> Tickers = new BlockingCollection<CoinMarketCapTicker>();
-        //public static string IconUrl { get; } = "https://coinmarketcap.com/favicon.ico";
-        public static string IconUrl { get; } = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png";
+        //public static BlockingCollection<CoinMarketCapTicker> Tickers = new BlockingCollection<CoinMarketCapTicker>();
+        //public static string IconUrl { get; } = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png";
         #endregion Properties
 
         #region API_Public
@@ -111,7 +109,7 @@ namespace TwEX_API.Market
             {
                 Decimal value = 0;
 
-                CoinMarketCapTicker listItem = Tickers.FirstOrDefault(item => item.symbol.ToLower() == symbol.ToLower());
+                CoinMarketCapTicker listItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol.ToLower() == symbol.ToLower());
 
                 if (listItem != null)
                 {
@@ -135,7 +133,7 @@ namespace TwEX_API.Market
         {
             Decimal value = 0;
 
-            CoinMarketCapTicker listItem = Tickers.FirstOrDefault(item => item.symbol.ToLower() == symbol.ToLower());
+            CoinMarketCapTicker listItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol.ToLower() == symbol.ToLower());
 
             if (listItem != null)
             {
@@ -160,7 +158,7 @@ namespace TwEX_API.Market
         {
             Decimal value = 0;
 
-            CoinMarketCapTicker listItem = Tickers.FirstOrDefault(item => item.symbol.ToLower() == symbol.ToLower());
+            CoinMarketCapTicker listItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol.ToLower() == symbol.ToLower());
 
             if (listItem != null)
             {
@@ -174,7 +172,7 @@ namespace TwEX_API.Market
         #region ExchangeManager
         public static Decimal getUSDValue(string symbol, Decimal value = 0)
         {
-            CoinMarketCapTicker ticker = Tickers.FirstOrDefault(item => item.symbol == symbol);
+            CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == symbol);
             /*
             foreach(CoinMarketCapTicker t in Tickers)
             {
@@ -207,10 +205,11 @@ namespace TwEX_API.Market
             List<CoinMarketCapTicker> tickers = getTickerList(0, 5000);
             if (tickers.Count > 0)
             {
-                Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(getTickerList(0, 5000)));
+                //PreferenceManager.CoinMarketCapPreferences.Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(getTickerList(0, 5000)));
+                PreferenceManager.CoinMarketCapPreferences.Tickers = getTickerList(0, 5000);
                 //PreferenceManager.preferences.CoinMarketCapTickers = tickers;
                 //PreferenceManager.UpdatePreferencesFile();
-                
+
             }
         }
         

@@ -72,21 +72,21 @@
             // toolStripMenuItem_font
             // 
             this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
-            this.toolStripMenuItem_font.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_font.Tag = "Font";
             this.toolStripMenuItem_font.Text = "Font";
             // 
             // toolStripMenuItem_fontIncrease
             // 
             this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
-            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
             this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
             // 
             // toolStripMenuItem_fontDecrease
             // 
             this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
-            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
             this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
             // 

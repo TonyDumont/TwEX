@@ -9,20 +9,16 @@ namespace TwEX_API.Market
     public class CryptoCompare
     {
         #region Properties
-        public static String thisClassName = "CryptoCompare";
-        //public static string ApiKey = String.Empty;
-        //public static string ApiSecret = String.Empty;
-        //private static RestClient client = new RestClient("https://www.cryptocompare.com");
+        public static String Name = "CryptoCompare";
         private static RestClient client = new RestClient("https://min-api.cryptocompare.com");
-        public static string IconUrl { get; } = "https://www.cryptocompare.com/media/20562/favicon.png?v=2";
         // COLLECTIONS
-        public static List<CryptoCompareCoin> CoinList = new List<CryptoCompareCoin>();
+        //public static List<CryptoCompareCoin> CoinList = new List<CryptoCompareCoin>();
         #endregion Properties
 
         #region Initialize
         public static void Initialize()
         {
-            CoinList = getCoinList();
+            PreferenceManager.CryptoComparePreferences.CoinList = getCoinList();
         }
         #endregion
 
@@ -57,12 +53,12 @@ namespace TwEX_API.Market
                 }
                 else
                 {
-                    LogManager.AddLogMessage(thisClassName, "getCoinList", "success IS FALSE : message=" + result.Message + " | Type=" + result.Type, LogManager.LogMessageType.DEBUG);
+                    LogManager.AddLogMessage(Name, "getCoinList", "success IS FALSE : message=" + result.Message + " | Type=" + result.Type, LogManager.LogMessageType.DEBUG);
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCoinList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCoinList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -88,16 +84,18 @@ namespace TwEX_API.Market
                 foreach (var item in jsonObject)
                 {
                     //LogManager.AddLogMessage(thisClassName, "getPriceList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
-                    CryptoComparePrice price = new CryptoComparePrice();
-                    price.symbol = fsym;
-                    price.market = item.Key;
-                    price.value = Convert.ToDecimal(item.Value);
+                    CryptoComparePrice price = new CryptoComparePrice()
+                    {
+                        symbol = fsym,
+                        market = item.Key,
+                        value = Convert.ToDecimal(item.Value)
+                    };
                     list.Add(price);
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getCoinList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getCoinList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -128,17 +126,19 @@ namespace TwEX_API.Market
                     foreach (var child in dataObject)
                     {
                         //LogManager.AddLogMessage(thisClassName, "getPriceMultiList", child.Key + " | " + child.Value, LogManager.LogMessageType.DEBUG);
-                        CryptoComparePrice price = new CryptoComparePrice();
-                        price.symbol = item.Key;
-                        price.market = child.Key;
-                        price.value = Convert.ToDecimal(child.Value);
+                        CryptoComparePrice price = new CryptoComparePrice()
+                        {
+                            symbol = item.Key,
+                            market = child.Key,
+                            value = Convert.ToDecimal(child.Value)
+                        };
                         list.Add(price);
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getPriceMultiList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getPriceMultiList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -178,7 +178,7 @@ namespace TwEX_API.Market
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getPriceMultiFullList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getPriceMultiFullList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -205,13 +205,13 @@ namespace TwEX_API.Market
                     "&UTCHourDiff=" + UTCHourDiff
                     , Method.GET);
                 var response = client.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getDayAverage", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getDayAverage", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return Convert.ToDecimal(jsonObject[tsym.ToUpper()]);
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getDayAverage", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getDayAverage", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return 0;
             }
         }
@@ -241,16 +241,18 @@ namespace TwEX_API.Market
                 foreach (var item in dataObject)
                 {
                     //LogManager.AddLogMessage(thisClassName, "getPriceHistoricalList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
-                    CryptoComparePrice price = new CryptoComparePrice();
-                    price.symbol = symbol;
-                    price.market = item.Key.ToUpper();
-                    price.value = Convert.ToDecimal(item.Value);
+                    CryptoComparePrice price = new CryptoComparePrice()
+                    {
+                        symbol = symbol,
+                        market = item.Key.ToUpper(),
+                        value = Convert.ToDecimal(item.Value)
+                    };
                     list.Add(price);
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getPriceHistoricalList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getPriceHistoricalList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -269,13 +271,13 @@ namespace TwEX_API.Market
                 RestClient tclient = new RestClient("https://www.cryptocompare.com");
                 var request = new RestRequest("/api/data/coinsnapshot/?fsym=" + fsym.ToUpper() + "&tsym=" + tsym.ToUpper(), Method.GET);
                 var response = tclient.Execute(request);
-                LogManager.AddLogMessage(thisClassName, "getCoinSnapshot", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getCoinSnapshot", "response.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response.Content);
                 return jsonObject.ToObject<CryptoCompareCoinSnapshot>();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(thisClassName, "getDayAverage", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getDayAverage", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -393,7 +395,7 @@ namespace TwEX_API.Market
             /// <summary>The proof type of the cryptocurrency<para>string</para></summary>
             public string ProofType { get; set; }
             /// <summary><para></para></summary>
-            public string FullyPremined { get; set; }
+            public int FullyPremined { get; set; }
             /// <summary><para></para></summary>
             public string TotalCoinSupply { get; set; }
             /// <summary><para></para></summary>
@@ -401,7 +403,7 @@ namespace TwEX_API.Market
             /// <summary><para></para></summary>
             public string TotalCoinsFreeFloat { get; set; }
             /// <summary>The order we rank the coin inside our internal system<para>int</para></summary>
-            public string SortOrder { get; set; }
+            public int SortOrder { get; set; }
             /// <summary><para></para></summary>
             public bool Sponsored { get; set; }
         }

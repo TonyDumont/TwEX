@@ -47,8 +47,7 @@
             this.toolStripMenuItem_EarnGG = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_TradingView = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator_3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem_import = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_export = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_PreferenceManager = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -146,8 +145,7 @@
             this.toolStripMenuItem_EarnGG,
             this.toolStripMenuItem_TradingView,
             this.toolStripSeparator_3,
-            this.toolStripMenuItem_import,
-            this.toolStripMenuItem_export});
+            this.toolStripMenuItem_PreferenceManager});
             this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
             this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
@@ -158,73 +156,66 @@
             // toolStripSeparator_1
             // 
             this.toolStripSeparator_1.Name = "toolStripSeparator_1";
-            this.toolStripSeparator_1.Size = new System.Drawing.Size(181, 6);
+            this.toolStripSeparator_1.Size = new System.Drawing.Size(186, 6);
             // 
             // toolStripMenuItem_LogManager
             // 
             this.toolStripMenuItem_LogManager.Name = "toolStripMenuItem_LogManager";
-            this.toolStripMenuItem_LogManager.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_LogManager.Size = new System.Drawing.Size(189, 22);
             this.toolStripMenuItem_LogManager.Tag = "LogManager";
             this.toolStripMenuItem_LogManager.Text = "Log Manager";
             // 
             // toolStripSeparator_2
             // 
             this.toolStripSeparator_2.Name = "toolStripSeparator_2";
-            this.toolStripSeparator_2.Size = new System.Drawing.Size(181, 6);
+            this.toolStripSeparator_2.Size = new System.Drawing.Size(186, 6);
             // 
             // toolStripMenuItem_ArbitrageManager
             // 
             this.toolStripMenuItem_ArbitrageManager.Name = "toolStripMenuItem_ArbitrageManager";
-            this.toolStripMenuItem_ArbitrageManager.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_ArbitrageManager.Size = new System.Drawing.Size(189, 22);
             this.toolStripMenuItem_ArbitrageManager.Tag = "ArbitrageManager";
             this.toolStripMenuItem_ArbitrageManager.Text = "Arbitrage Manager";
             // 
             // toolStripMenuItem_CoinMarketCap
             // 
             this.toolStripMenuItem_CoinMarketCap.Name = "toolStripMenuItem_CoinMarketCap";
-            this.toolStripMenuItem_CoinMarketCap.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_CoinMarketCap.Size = new System.Drawing.Size(189, 22);
             this.toolStripMenuItem_CoinMarketCap.Tag = "CoinMarketCap";
             this.toolStripMenuItem_CoinMarketCap.Text = "Coin Market Caps";
             // 
             // toolStripMenuItem_CryptoCompare
             // 
             this.toolStripMenuItem_CryptoCompare.Name = "toolStripMenuItem_CryptoCompare";
-            this.toolStripMenuItem_CryptoCompare.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_CryptoCompare.Size = new System.Drawing.Size(189, 22);
             this.toolStripMenuItem_CryptoCompare.Tag = "CryptoCompare";
             this.toolStripMenuItem_CryptoCompare.Text = "CryptoCompare";
             // 
             // toolStripMenuItem_EarnGG
             // 
             this.toolStripMenuItem_EarnGG.Name = "toolStripMenuItem_EarnGG";
-            this.toolStripMenuItem_EarnGG.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_EarnGG.Size = new System.Drawing.Size(189, 22);
             this.toolStripMenuItem_EarnGG.Tag = "EarnGGManager";
             this.toolStripMenuItem_EarnGG.Text = "EarnGG Manager";
             // 
             // toolStripMenuItem_TradingView
             // 
             this.toolStripMenuItem_TradingView.Name = "toolStripMenuItem_TradingView";
-            this.toolStripMenuItem_TradingView.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_TradingView.Size = new System.Drawing.Size(189, 22);
             this.toolStripMenuItem_TradingView.Tag = "TradingView";
             this.toolStripMenuItem_TradingView.Text = "Trading View";
             // 
             // toolStripSeparator_3
             // 
             this.toolStripSeparator_3.Name = "toolStripSeparator_3";
-            this.toolStripSeparator_3.Size = new System.Drawing.Size(181, 6);
+            this.toolStripSeparator_3.Size = new System.Drawing.Size(186, 6);
             // 
-            // toolStripMenuItem_import
+            // toolStripMenuItem_PreferenceManager
             // 
-            this.toolStripMenuItem_import.Name = "toolStripMenuItem_import";
-            this.toolStripMenuItem_import.Size = new System.Drawing.Size(184, 22);
-            this.toolStripMenuItem_import.Tag = "ImportPreferences";
-            this.toolStripMenuItem_import.Text = "Import Preferences";
-            // 
-            // toolStripMenuItem_export
-            // 
-            this.toolStripMenuItem_export.Name = "toolStripMenuItem_export";
-            this.toolStripMenuItem_export.Size = new System.Drawing.Size(184, 22);
-            this.toolStripMenuItem_export.Tag = "ExportPreferences";
-            this.toolStripMenuItem_export.Text = "Export Preferences";
+            this.toolStripMenuItem_PreferenceManager.Name = "toolStripMenuItem_PreferenceManager";
+            this.toolStripMenuItem_PreferenceManager.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem_PreferenceManager.Tag = "PreferenceManager";
+            this.toolStripMenuItem_PreferenceManager.Text = "Preference Manager";
             // 
             // toolStripSeparator7
             // 
@@ -267,8 +258,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EarnGG;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_TradingView;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator_3;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_import;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_export;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_PreferenceManager;
     }
 }

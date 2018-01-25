@@ -187,6 +187,7 @@ namespace TwEX_API.Controls
                     string html = getHtmlString();
                     browser.LoadHtml(html, "http://rendering/");
                     browser.Refresh();
+                    //browser.Refresh();
                 }
                 catch (Exception ex)
                 {

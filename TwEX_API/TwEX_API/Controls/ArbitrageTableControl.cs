@@ -82,7 +82,7 @@ namespace TwEX_API.Controls
                             button.Tag = ticker.exchange;
                             //button.
 
-                            button.BackgroundImage = ContentManager.ResizeImage(ExchangeManager.getExchangeIcon(ticker.exchange), iconSize, iconSize);
+                            button.BackgroundImage = ContentManager.ResizeImage(ContentManager.GetExchangeIcon(ticker.exchange), iconSize, iconSize);
 
                             if (market.Contains("USD"))
                             {

@@ -15,11 +15,18 @@ namespace TwEX_API.Controls
         public CoinMarketCapControl()
         {
             InitializeComponent();
+            FormManager.coinMarketCapControl = this;
             InitializeColumns();
         }
         private void CoinMarketCapControl_Load(object sender, EventArgs e)
         {
-            toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            //toolStripMenuItem_add.Image = ContentManager.GetIconByUrl(ContentManager.AddWalletIconUrl);
+            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
             UpdateUI(true);
         }
         private void InitializeColumns()
@@ -85,8 +92,9 @@ namespace TwEX_API.Controls
             }
             else
             {
-                toolStripLabel_details.Text = CoinMarketCap.Tickers.Count + " Coins (" + CoinMarketCap.Tickers.Sum(t => t.market_cap_usd).ToString("C") + ")";
-                listView.SetObjects(CoinMarketCap.Tickers.OrderBy(item => item.rank));
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                toolStripLabel_details.Text = PreferenceManager.CoinMarketCapPreferences.Tickers.Count + " Coins (" + PreferenceManager.CoinMarketCapPreferences.Tickers.Sum(t => t.market_cap_usd).ToString("C") + ")";
+                listView.SetObjects(PreferenceManager.CoinMarketCapPreferences.Tickers.OrderBy(item => item.rank));
                 toolStripLabel_update.Text = DateTime.Now.ToString();
 
                 if (resize)
@@ -97,7 +105,8 @@ namespace TwEX_API.Controls
         }
         #endregion
 
-        #region Aspect_Getters
+        #region Getters
+        /*
         public object aspect_chart(object rowObject)
         {
 
@@ -108,83 +117,78 @@ namespace TwEX_API.Controls
             return ContentManager.ResizeImage(ContentManager.GetIconByUrl("https://files.coinmarketcap.com/generated/sparklines/1027.png") , 164, 48);
 
             //return ticker.percent_change_24h + "%";
-            /*
-            if (e != null)
-            {
-                //return DataManager.ResizeImage(ExchangeManager.GetExchangeImage(e.exchange), 24, 24);
-                return ContentManager.ResizeImage(ExchangeManager.GetSymbolIcon(e.symbol), 24, 24);
-            }
-            else
-            {
-                return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, 24, 24);
-            }
-            */
+            
         }
+        */
         public object aspect_icon(object rowObject)
         {
-            //Machine m = (Machine)rowObject;
-            //CalculatorItem e = (CalculatorItem)rowObject;
             CoinMarketCapTicker e = (CoinMarketCapTicker)rowObject;
 
             if (e != null)
             {
                 //return DataManager.ResizeImage(ExchangeManager.GetExchangeImage(e.exchange), 24, 24);
-                return ContentManager.ResizeImage(ExchangeManager.GetSymbolIcon(e.symbol), 24, 24);
+                return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(e.symbol), listView.RowHeightEffective, listView.RowHeightEffective);
             }
             else
             {
-                return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, 24, 24);
+                return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, listView.RowHeightEffective, listView.RowHeightEffective);
             }
         }
         public object aspect_24hchange(object rowObject)
         {
-            //CalculatorItem listItem = (CalculatorItem)rowObject;
             CoinMarketCapTicker ticker = (CoinMarketCapTicker)rowObject;
-
             return ticker.percent_change_24h + "%";
-            //CoinMarketCapTicker priceItem = CoinMarketCap.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
-            //Decimal total = 0;
-            /*
-            if (priceItem != null)
-            {
-                total = numericUpDown_usd.Value / priceItem.price_usd;
-                listItem.value = total;
-            }
-            return listItem.symbol;
-            */
         }
         #endregion
 
         #region Event_Handlers
-        private void toolStripButton_FontDown_Click(object sender, EventArgs e)
+        private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
-        private void toolStripButton_FontUp_Click(object sender, EventArgs e)
-        {
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
-        private void toolStripButton_Font_Click(object sender, EventArgs e)
-        {
-            fontDialog.Font = ParentForm.Font;
-            DialogResult result = fontDialog.ShowDialog();
-            if (result == DialogResult.OK)
+            if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
             {
-                ParentForm.Font = fontDialog.Font;
+                ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+                //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+                switch (menuItem.Tag.ToString())
+                {
+                    case "Font":
+                        FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                        DialogResult result = dialog.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {
+                            ParentForm.Font = dialog.Font;
+                        }
+                        UpdateUI(true);
+                        break;
+
+                    case "FontIncrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "FontDecrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+                        
+                    case "Update":
+                        CoinMarketCap.updateTickers();
+                        UpdateUI();
+                        break;
+
+                    default:
+                        // NOTHING
+                        break;
+                }
             }
-            UpdateUI(true);
         }
-        
         private void toolStripLabel_update_Click(object sender, EventArgs e)
         {
             CoinMarketCap.updateTickers();
             UpdateUI();
         }
-
         #endregion
-        
+
+        #region Formatters
         private void ListView_FormatCell(object sender, FormatCellEventArgs e)
         {
             //EarnGGProfile machine = (EarnGGProfile)e.Model;
@@ -251,7 +255,6 @@ namespace TwEX_API.Controls
             }
             */
         }
-        
-        
+        #endregion
     }
 }

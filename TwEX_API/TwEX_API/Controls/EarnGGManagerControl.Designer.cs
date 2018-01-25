@@ -31,20 +31,20 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EarnGGManagerControl));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_timer = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton_AddAccount = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_active = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_email = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_lastLogin = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripButton_Font = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_FontDown = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_FontUp = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.fontDialog = new System.Windows.Forms.FontDialog();
+            this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_AddAccount = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
@@ -54,13 +54,7 @@
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton_timer,
             this.toolStripLabel_title,
-            this.toolStripButton_Font,
-            this.toolStripSeparator2,
-            this.toolStripButton_FontUp,
-            this.toolStripSeparator3,
-            this.toolStripButton_FontDown,
-            this.toolStripSeparator1,
-            this.toolStripButton_AddAccount});
+            this.toolStripDropDownButton_menu});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(612, 25);
@@ -78,16 +72,11 @@
             this.toolStripButton_timer.Text = "TIMER";
             this.toolStripButton_timer.Click += new System.EventHandler(this.toolStripButton_timer_Click);
             // 
-            // toolStripButton_AddAccount
+            // toolStripLabel_title
             // 
-            this.toolStripButton_AddAccount.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_AddAccount.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_AddAccount.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_AddAccount.Image")));
-            this.toolStripButton_AddAccount.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_AddAccount.Name = "toolStripButton_AddAccount";
-            this.toolStripButton_AddAccount.Size = new System.Drawing.Size(81, 22);
-            this.toolStripButton_AddAccount.Text = "Add Account";
-            this.toolStripButton_AddAccount.Click += new System.EventHandler(this.toolStripButton_AddAccount_Click);
+            this.toolStripLabel_title.Name = "toolStripLabel_title";
+            this.toolStripLabel_title.Size = new System.Drawing.Size(36, 22);
+            this.toolStripLabel_title.Text = "TITLE";
             // 
             // listView
             // 
@@ -143,66 +132,68 @@
             this.column_lastLogin.FillsFreeSpace = true;
             this.column_lastLogin.Text = "Last Login";
             // 
-            // toolStripLabel_title
+            // toolStripDropDownButton_menu
             // 
-            this.toolStripLabel_title.Name = "toolStripLabel_title";
-            this.toolStripLabel_title.Size = new System.Drawing.Size(36, 22);
-            this.toolStripLabel_title.Text = "TITLE";
+            this.toolStripDropDownButton_menu.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_font,
+            this.toolStripMenuItem_fontIncrease,
+            this.toolStripMenuItem_fontDecrease,
+            this.toolStripSeparator5,
+            this.toolStripMenuItem_AddAccount,
+            this.toolStripSeparator4,
+            this.toolStripMenuItem_update});
+            this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
+            this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
+            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(29, 22);
+            this.toolStripDropDownButton_menu.Text = "OPTIONS";
             // 
-            // toolStripButton_Font
+            // toolStripMenuItem_font
             // 
-            this.toolStripButton_Font.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_Font.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_Font.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Font.Image")));
-            this.toolStripButton_Font.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_Font.Name = "toolStripButton_Font";
-            this.toolStripButton_Font.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_Font.Text = "FONT";
-            this.toolStripButton_Font.Click += new System.EventHandler(this.toolStripButton_Font_Click);
+            this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_font.Tag = "Font";
+            this.toolStripMenuItem_font.Text = "Font";
             // 
-            // toolStripSeparator2
+            // toolStripMenuItem_fontIncrease
             // 
-            this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
+            this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
             // 
-            // toolStripButton_FontDown
+            // toolStripMenuItem_fontDecrease
             // 
-            this.toolStripButton_FontDown.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_FontDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_FontDown.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.toolStripButton_FontDown.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_FontDown.Image")));
-            this.toolStripButton_FontDown.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_FontDown.Name = "toolStripButton_FontDown";
-            this.toolStripButton_FontDown.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_FontDown.Text = "-";
-            this.toolStripButton_FontDown.ToolTipText = "Decrease Font Size";
-            this.toolStripButton_FontDown.Click += new System.EventHandler(this.toolStripButton_FontDown_Click);
+            this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
+            this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
             // 
-            // toolStripSeparator1
+            // toolStripSeparator5
             // 
-            this.toolStripSeparator1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
             // 
-            // toolStripButton_FontUp
+            // toolStripMenuItem_AddAccount
             // 
-            this.toolStripButton_FontUp.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_FontUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_FontUp.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.toolStripButton_FontUp.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_FontUp.Image")));
-            this.toolStripButton_FontUp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_FontUp.Name = "toolStripButton_FontUp";
-            this.toolStripButton_FontUp.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_FontUp.Text = "+";
-            this.toolStripButton_FontUp.ToolTipText = "Increase Font Size";
-            this.toolStripButton_FontUp.Click += new System.EventHandler(this.toolStripButton_FontUp_Click);
+            this.toolStripMenuItem_AddAccount.Name = "toolStripMenuItem_AddAccount";
+            this.toolStripMenuItem_AddAccount.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_AddAccount.Tag = "AddAccount";
+            this.toolStripMenuItem_AddAccount.Text = "Add Account";
             // 
-            // toolStripSeparator3
+            // toolStripSeparator4
             // 
-            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(149, 6);
+            // 
+            // toolStripMenuItem_update
+            // 
+            this.toolStripMenuItem_update.Name = "toolStripMenuItem_update";
+            this.toolStripMenuItem_update.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_update.Tag = "Update";
+            this.toolStripMenuItem_update.Text = "Update";
             // 
             // EarnGGManagerControl
             // 
@@ -230,14 +221,14 @@
         private BrightIdeasSoftware.OLVColumn column_email;
         private BrightIdeasSoftware.OLVColumn column_balance;
         private BrightIdeasSoftware.OLVColumn column_lastLogin;
-        private System.Windows.Forms.ToolStripButton toolStripButton_AddAccount;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_title;
-        private System.Windows.Forms.ToolStripButton toolStripButton_Font;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripButton toolStripButton_FontDown;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolStripButton_FontUp;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.FontDialog fontDialog;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_menu;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_AddAccount;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_update;
     }
 }

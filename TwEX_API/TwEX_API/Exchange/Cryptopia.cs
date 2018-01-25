@@ -26,7 +26,6 @@ namespace TwEX_API.Exchange
         public static ExchangeApi Api { get; set; }
         private static RestClient client = new RestClient("https://www.cryptopia.co.nz/api");
         public static string Api_privateUrl = "https://www.cryptopia.co.nz/Api/";
-        //public static Boolean isAsync { get; set; } = true;
         // STATUS
         public static int ErrorCount { get; set; } = 0;
         public static DateTime LastUpdate { get; set; } = DateTime.Now;

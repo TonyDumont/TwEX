@@ -90,11 +90,11 @@ namespace TwEX_API.Controls
                 WalletName = textBox_WalletName.Text
             };
 
-            WalletManager.WalletBalance listItem = WalletManager.Wallets.FirstOrDefault(b => b.Address == wallet.Address && b.Symbol == wallet.Symbol);
+            WalletManager.WalletBalance listItem = PreferenceManager.WalletPreferences.Wallets.FirstOrDefault(b => b.Address == wallet.Address && b.Symbol == wallet.Symbol);
 
             if (listItem == null)
             {
-                WalletManager.Wallets.Add(wallet);
+                PreferenceManager.WalletPreferences.Wallets.Add(wallet);
             }
             else
             {
@@ -103,8 +103,10 @@ namespace TwEX_API.Controls
                 listItem.Name = wallet.Name;
                 listItem.WalletName = wallet.WalletName;
             }
-            PreferenceManager.UpdatePreferenceSnapshots();
-            WalletManager.UpdateUI();
+            //PreferenceManager.UpdatePreferenceSnapshots();
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Wallet);
+            //WalletManager.UpdateUI();
+            FormManager.UpdateWalletManager();
             ParentForm.Close();
         }
         #endregion

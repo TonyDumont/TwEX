@@ -16,15 +16,15 @@ namespace TwEX_API.Controls
         }
         private void ArbitrageManagerControl_Load(object sender, EventArgs e)
         {
-            toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
 
-            toolStripMenuItem_font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconIncrease);
-            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIconByUrl(ContentManager.FontIconDecrease);
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
             //toolStripMenuItem_add.Image = ContentManager.GetIconByUrl(ContentManager.AddWalletIconUrl);
-            toolStripMenuItem_update.Image = ContentManager.GetIconByUrl(ContentManager.RefreshIcon);
+            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
 
-            if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
+            if (PreferenceManager.ArbitragePreferences.ShowCharts)
             {
                 toolStripMenuItem_chart.Text = "Hide Charts";
                 toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ACTIVE;
@@ -134,7 +134,7 @@ namespace TwEX_API.Controls
                 int padding = 20;
                 int barCount = 2;
 
-                if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
+                if (PreferenceManager.ArbitragePreferences.ShowCharts)
                 {
                     chartHeight = 275;
                     barCount = 3;
@@ -143,12 +143,10 @@ namespace TwEX_API.Controls
                 int controlHeight = chartHeight + (rowHeight * ExchangeManager.Exchanges.Count) + (statusHeight * barCount) + padding;
 
                 // USD
-                foreach (ExchangeManager.ExchangeTicker ticker in PreferenceManager.preferences.ArbitragePreferences.ArbitrageWatchList)
+                foreach (ExchangeManager.ExchangeTicker ticker in PreferenceManager.ArbitragePreferences.ArbitrageWatchList)
                 {
-                    ArbitrageItemControl control = new ArbitrageItemControl();
+                    ArbitrageItemControl control = new ArbitrageItemControl() { Height = controlHeight };
                     //LogManager.AddLogMessage(Name, "SetWatchlist", "ticker=" + ticker.symbol + " | " + ticker.market + " | " + ticker.last, LogManager.LogMessageType.DEBUG);
-                    control.Height = controlHeight;
-
                     flowLayoutPanel.Controls.Add(control);
                     control.SetData(ticker.symbol, "USD");
                 }
@@ -161,11 +159,11 @@ namespace TwEX_API.Controls
         #region EventHandlers
         private void ToggleCharts()
         {
-            if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
+            if (PreferenceManager.ArbitragePreferences.ShowCharts)
             {
                 // Remove Charts
-                PreferenceManager.preferences.ArbitragePreferences.ShowCharts = false;
-                PreferenceManager.UpdatePreferencesFile();
+                PreferenceManager.ArbitragePreferences.ShowCharts = false;
+                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Arbitrage);
                 //toolStripButton_charts.Text = "Show Charts";
                 //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ERROR;
                 //controlSize = new Size(150, 150);
@@ -175,8 +173,8 @@ namespace TwEX_API.Controls
             else
             {
                 // Add Charts
-                PreferenceManager.preferences.ArbitragePreferences.ShowCharts = true;
-                PreferenceManager.UpdatePreferencesFile();
+                PreferenceManager.ArbitragePreferences.ShowCharts = true;
+                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Arbitrage);
                 //toolStripButton_charts.Text = "Hide Charts";
                 //toolStripButton_charts.Image = Properties.Resources.ConnectionStatus_ACTIVE;
                 //controlSize = new Size(150, 300);

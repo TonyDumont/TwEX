@@ -54,7 +54,7 @@ namespace TwEX_API.Controls
                     //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | market=" + market, LogManager.LogMessageType.OTHER);
                     toolStripLabel_symbol.Text = symbol.ToUpper();
 
-                    if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
+                    if (PreferenceManager.ArbitragePreferences.ShowCharts)
                     {
                         toolStrip.Visible = false;
                         panel.Visible = true;
@@ -105,7 +105,7 @@ namespace TwEX_API.Controls
 
                 Width = newWidth + (padding * 2);
 
-                if (PreferenceManager.preferences.ArbitragePreferences.ShowCharts)
+                if (PreferenceManager.ArbitragePreferences.ShowCharts)
                 {
                     toolStrip.Visible = false;
                     panel.Visible = true;

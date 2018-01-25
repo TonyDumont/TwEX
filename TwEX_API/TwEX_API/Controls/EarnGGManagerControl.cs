@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using TwEX_API.Faucet;
 using BrightIdeasSoftware;
 using static TwEX_API.Faucet.EarnGG;
 using System.Linq;
@@ -14,12 +13,19 @@ namespace TwEX_API.Controls
         public EarnGGManagerControl()
         {
             InitializeComponent();
-            EarnGG.earnGGManagerControl = this;
+            earnGGManagerControl = this;
             InitializeColumns();
         }
         private void EarnGGManagerControl_Load(object sender, EventArgs e)
         {
-            toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            toolStripMenuItem_AddAccount.Image = ContentManager.GetIcon("AddWallet");
+            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
             UpdateUI(true);
         }
         private void InitializeColumns()
@@ -44,9 +50,9 @@ namespace TwEX_API.Controls
                 toolStripButton_timer.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeManager.ExchangeTimerType.EARNGG) != ExchangeManager.ExchangeTimerType.NONE;
                 toolStripButton_timer.Image = ContentManager.GetActiveIcon(toolStripButton_timer.Checked);
 
-                listView.SetObjects(Accounts.OrderByDescending(item => item.lastLogin));
-                int totalPoints = Accounts.Sum(item => item.balance);
-                toolStripLabel_title.Text = Accounts.Count + " EarnGG Accounts : " + decimal.Multiply(totalPoints, .00001M).ToString("C");               
+                listView.SetObjects(PreferenceManager.EarnGGPreferences.EarnGGAccounts.OrderByDescending(item => item.lastLogin));
+                int totalPoints = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Sum(item => item.balance);
+                toolStripLabel_title.Text = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Count + " EarnGG Accounts : " + decimal.Multiply(totalPoints, .00001M).ToString("C");               
                 //LogManager.AddLogMessage(Name, "UpdateUI", "Updating - " + resize, LogManager.LogMessageType.DEBUG);
             
                 if (resize)
@@ -67,6 +73,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 toolStrip.Font = ParentForm.Font;
                 listView.Font = ParentForm.Font;
                 //LogManager.AddLogMessage(Name, "ResizeUI", "RESIZING", LogManager.LogMessageType.DEBUG);
@@ -156,41 +163,58 @@ namespace TwEX_API.Controls
         #endregion
 
         #region EventHandlers
-        private void toolStripButton_AddAccount_Click(object sender, EventArgs e)
-        {
-            Form form = new Form() { Text = "EarnGG Account Editor" };
-            EarnGGAccountEditorControl control = new EarnGGAccountEditorControl() { Dock = DockStyle.Fill };
-            form.Controls.Add(control);
-            form.Show();
-        }
-        private void toolStripButton_Font_Click(object sender, EventArgs e)
-        {
-            fontDialog.Font = ParentForm.Font;
-            DialogResult result = fontDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                ParentForm.Font = fontDialog.Font;
-            }
-            UpdateUI(true);
-        }
-        private void toolStripButton_FontDown_Click(object sender, EventArgs e)
-        {
-            //ExchangeManager.UpdateFont(new Font(ExchangeManager.preferences.defaultFont.FontFamily, ExchangeManager.preferences.defaultFont.Size - 1));
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
-        private void toolStripButton_FontUp_Click(object sender, EventArgs e)
-        {
-            //ExchangeManager.UpdateFont(new Font(ExchangeManager.preferences.defaultFont.FontFamily, ExchangeManager.preferences.defaultFont.Size + 1));
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
         private void toolStripButton_timer_Click(object sender, EventArgs e)
         {
             ToolStripButton button = sender as ToolStripButton;
             ExchangeManager.ExchangeTimerType type = ExchangeManager.getExchangeTimerType(button.Tag.ToString());
             PreferenceManager.toggleTimerPreference(type);
             UpdateUI();
+        }
+        private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
+            {
+                ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+                //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+                switch (menuItem.Tag.ToString())
+                {
+                    case "Font":
+                        FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                        DialogResult result = dialog.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {
+                            ParentForm.Font = dialog.Font;
+                        }
+                        UpdateUI(true);
+                        break;
+
+                    case "FontIncrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "FontDecrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "AddAccount":
+                        Form form = new Form() { Text = "EarnGG Account Editor" };
+                        EarnGGAccountEditorControl control = new EarnGGAccountEditorControl() { Dock = DockStyle.Fill };
+                        form.Controls.Add(control);
+                        form.Show();
+                        break;
+
+                    case "Update":
+                        UpdateUI();
+                        break;
+
+                    default:
+                        // NOTHING
+                        break;
+                }
+
+            }
         }
         #endregion
     }

@@ -8,21 +8,7 @@ namespace TwEX_API.Market
     public class TradingView
     {
         #region Properties
-        public static String thisClassName = "TradingView";
-        public static string IconUrl { get; } = "https://www.tradingview.com/favicon.ico";
-        /*
-        public static List<ExchangeManager.ExchangeTicker> WatchList { get; set; } = new List<ExchangeManager.ExchangeTicker>()
-        {
-            new ExchangeManager.ExchangeTicker() { symbol="BTC", market="USDT", exchange="POLONIEX" },
-            new ExchangeManager.ExchangeTicker() { symbol="BCH", market="USDT", exchange="POLONIEX" },
-            new ExchangeManager.ExchangeTicker() { symbol="DASH", market="USDT", exchange="POLONIEX" },
-            new ExchangeManager.ExchangeTicker() { symbol="ETH", market="USDT", exchange="POLONIEX" },
-            new ExchangeManager.ExchangeTicker() { symbol="ZEC", market="USDT", exchange="POLONIEX" },
-            new ExchangeManager.ExchangeTicker() { symbol="XMR", market="USDT", exchange="POLONIEX" },
-            new ExchangeManager.ExchangeTicker() { symbol="LTC", market="USDT", exchange="POLONIEX" },
-            new ExchangeManager.ExchangeTicker() { symbol="ETC", market="USDT", exchange="POLONIEX" }
-        };
-        */
+        public static String Name = "TradingView";
         #endregion Properties
 
         #region Getters

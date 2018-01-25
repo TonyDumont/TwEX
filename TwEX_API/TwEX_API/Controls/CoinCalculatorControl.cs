@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using static TwEX_API.Market.CoinMarketCap;
-using TwEX_API.Market;
 using BrightIdeasSoftware;
 
 namespace TwEX_API.Controls
@@ -24,8 +23,18 @@ namespace TwEX_API.Controls
         }
         private void CoinCalculatorControl_Load(object sender, EventArgs e)
         {
-            toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            listView.SetObjects(symbolList);
+            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            //toolStripMenuItem_add.Image = ContentManager.GetIconByUrl(ContentManager.AddWalletIconUrl);
+            toolStripButton_AddSymbol.Image = ContentManager.GetIcon("Add");
+
+            //toolStripMenuItem_update.Image = ContentManager.GetIconByUrl(ContentManager.RefreshIcon);
+            //listView.SetObjects(symbolList);
+            UpdateUI(true);
         }
         private void InitializeColumns()
         {
@@ -61,6 +70,10 @@ namespace TwEX_API.Controls
                 {
                     listView.SetObjects(symbolList);
 
+                    if (resize)
+                    {
+                        ResizeUI();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -78,17 +91,20 @@ namespace TwEX_API.Controls
             }
             else
             {
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 //Font = this.ParentForm.Font;
                 //toolStrip.Font = ParentForm.Font;
                 //toolStrip_footer.Font = ParentForm.Font;
-
+                toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
                 //toolStripButton_AddSymbol.Font = ParentForm.Font;
 
                 //toolStripSpringTextBox_symbol.Font = ParentForm.Font;
                 //toolStripButton_AddSymbol.Font = ParentForm.Font;
-
+                //Size textSize = TextRenderer.MeasureText("OOOOO", ParentForm.Font);
                 column_symbol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_symbol.Width = column_symbol.Width + 25;
+                column_symbol.Width = column_symbol.Width + (listView.RowHeightEffective);
+                //column_symbol.Width = textSize.Width + (listView.RowHeightEffective * 2);
+                //column_symbol.Width = 200;
                 /*
                 int columnWidth = column_symbol.Width;
                 int rowHeight = listView.RowHeightEffective;
@@ -113,8 +129,8 @@ namespace TwEX_API.Controls
                     col.Width = col.Width + (rowHeight / 2);
                 }
                 */
-                PreferenceManager.UpdateFormPreferences(ParentForm, true);
-                
+                //PreferenceManager.UpdateFormPreferences(ParentForm, true);
+
             }
         }
         #endregion
@@ -128,11 +144,11 @@ namespace TwEX_API.Controls
             if (e != null)
             {
                 //return DataManager.ResizeImage(ExchangeManager.GetExchangeImage(e.exchange), 24, 24);
-                return ContentManager.ResizeImage(ExchangeManager.GetSymbolIcon(e.symbol), 24, 24);
+                return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(e.symbol), listView.RowHeightEffective, listView.RowHeightEffective);
             }
             else
             {
-                return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, 24, 24);
+                return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_DISABLED, listView.RowHeightEffective, listView.RowHeightEffective);
             }
             
         }
@@ -140,7 +156,7 @@ namespace TwEX_API.Controls
         {
             CalculatorItem listItem = (CalculatorItem)rowObject;
 
-            CoinMarketCapTicker priceItem = CoinMarketCap.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
+            CoinMarketCapTicker priceItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
             Decimal total = 0;
 
             if (priceItem != null)
@@ -154,7 +170,7 @@ namespace TwEX_API.Controls
         {
             CalculatorItem listItem = (CalculatorItem)rowObject;
 
-            CoinMarketCapTicker priceItem = CoinMarketCap.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
+            CoinMarketCapTicker priceItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
             Decimal total = 0;
 
             if (priceItem != null)
@@ -166,30 +182,6 @@ namespace TwEX_API.Controls
         #endregion
 
         #region EventHandlers
-        private void toolStripButton_FontUp_Click(object sender, EventArgs e)
-        {
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-
-            //ExchangeManager.preferences.symbolList = new List<string>() { "BTC", "BCH", "ETH", "DASH", "XMR", "LTC", "ETC", "XRP" };
-            //ExchangeManager.UpdatePreferencesFile();
-
-            UpdateUI(true);
-        }
-        private void toolStripButton_Font_Click(object sender, EventArgs e)
-        {
-            fontDialog.Font = ParentForm.Font;
-            DialogResult result = fontDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                ParentForm.Font = fontDialog.Font;
-            }
-            UpdateUI(true);
-        }
-        private void toolStripButton_FontDown_Click(object sender, EventArgs e)
-        {
-            ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-            UpdateUI(true);
-        }
         private void listView_SelectionChanged(object sender, EventArgs e)
         {
             if (listView.SelectedItem != null)
@@ -209,7 +201,7 @@ namespace TwEX_API.Controls
             {
                 CalculatorItem listItem = listView.SelectedObject as CalculatorItem;
 
-                CoinMarketCapTicker ticker = CoinMarketCap.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
+                CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
                 //Decimal total = 0;
 
                 if (ticker != null)
@@ -258,6 +250,49 @@ namespace TwEX_API.Controls
                 toolStripSpringTextBox_symbol.Text = "";
             }
             InitializeSymbolList();
+        }
+        private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
+            {
+                ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+                //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+                switch (menuItem.Tag.ToString())
+                {
+                    case "Font":
+                        FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                        DialogResult result = dialog.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {
+                            ParentForm.Font = dialog.Font;
+                        }
+                        UpdateUI(true);
+                        break;
+
+                    case "FontIncrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "FontDecrease":
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+                        /*
+                    case "Charts":
+                        ToggleCharts();
+                        break;
+                        
+                    case "Update":
+                        UpdateUI();
+                        break;
+                        */
+                    default:
+                        // NOTHING
+                        break;
+                }
+
+            }
         }
         #endregion
     }

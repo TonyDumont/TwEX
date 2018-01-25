@@ -101,12 +101,32 @@ namespace TwEX_API.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TwEX_Header {
+            get {
+                object obj = ResourceManager.GetObject("TwEX_Header", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon TwEX_RoundIcon {
             get {
                 object obj = ResourceManager.GetObject("TwEX_RoundIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TwEX_Trader {
+            get {
+                object obj = ResourceManager.GetObject("TwEX_Trader", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

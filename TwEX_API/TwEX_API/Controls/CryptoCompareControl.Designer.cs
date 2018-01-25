@@ -1,6 +1,6 @@
 ﻿namespace TwEX_API.Controls
 {
-    partial class CryptoCompareWidgetEditorControl
+    partial class CryptoCompareControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CryptoCompareWidgetEditorControl));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CryptoCompareControl));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton_widget = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_Chart = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,7 +70,6 @@
             this.toolStripMenuItem_DashPayMagazine = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_CoinJoker = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_SortOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Name = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -78,17 +77,17 @@
             this.column_Algorithm = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_ProofType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalCoinSupply = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_FullyPremined = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.panel = new System.Windows.Forms.Panel();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
-            this.splitContainer.Panel1.SuspendLayout();
-            this.splitContainer.Panel2.SuspendLayout();
-            this.splitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
+            this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip
             // 
+            this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton_widget,
             this.toolStripSeparator1,
@@ -103,9 +102,9 @@
             this.toolStripLabel_FeedSource,
             this.toolStripDropDownButton_FeedSource,
             this.toolStripSeparator4});
-            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Location = new System.Drawing.Point(375, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(955, 25);
+            this.toolStrip.Size = new System.Drawing.Size(580, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -244,7 +243,7 @@
             // toolStripTextBox_market
             // 
             this.toolStripTextBox_market.Name = "toolStripTextBox_market";
-            this.toolStripTextBox_market.Size = new System.Drawing.Size(150, 25);
+            this.toolStripTextBox_market.Size = new System.Drawing.Size(150, 23);
             this.toolStripTextBox_market.Text = "USD";
             this.toolStripTextBox_market.KeyUp += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox_KeyUp);
             // 
@@ -257,7 +256,7 @@
             // 
             this.toolStripLabel_period.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripLabel_period.Name = "toolStripLabel_period";
-            this.toolStripLabel_period.Size = new System.Drawing.Size(44, 22);
+            this.toolStripLabel_period.Size = new System.Drawing.Size(44, 15);
             this.toolStripLabel_period.Text = "Period:";
             // 
             // toolStripDropDownButton_period
@@ -275,7 +274,7 @@
             this.toolStripDropDownButton_period.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_period.Image")));
             this.toolStripDropDownButton_period.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_period.Name = "toolStripDropDownButton_period";
-            this.toolStripDropDownButton_period.Size = new System.Drawing.Size(51, 22);
+            this.toolStripDropDownButton_period.Size = new System.Drawing.Size(51, 19);
             this.toolStripDropDownButton_period.Text = "1 Day";
             this.toolStripDropDownButton_period.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_period_DropDownItemClicked);
             // 
@@ -338,7 +337,7 @@
             // toolStripLabel_FeedSource
             // 
             this.toolStripLabel_FeedSource.Name = "toolStripLabel_FeedSource";
-            this.toolStripLabel_FeedSource.Size = new System.Drawing.Size(74, 22);
+            this.toolStripLabel_FeedSource.Size = new System.Drawing.Size(74, 15);
             this.toolStripLabel_FeedSource.Text = "Feed Source:";
             // 
             // toolStripDropDownButton_FeedSource
@@ -358,7 +357,7 @@
             this.toolStripDropDownButton_FeedSource.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_FeedSource.Image")));
             this.toolStripDropDownButton_FeedSource.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_FeedSource.Name = "toolStripDropDownButton_FeedSource";
-            this.toolStripDropDownButton_FeedSource.Size = new System.Drawing.Size(99, 22);
+            this.toolStripDropDownButton_FeedSource.Size = new System.Drawing.Size(99, 19);
             this.toolStripDropDownButton_FeedSource.Text = "CoinTelegraph";
             this.toolStripDropDownButton_FeedSource.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_FeedSource_DropDownItemClicked);
             // 
@@ -423,23 +422,6 @@
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
-            // splitContainer
-            // 
-            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer.Location = new System.Drawing.Point(0, 25);
-            this.splitContainer.Name = "splitContainer";
-            // 
-            // splitContainer.Panel1
-            // 
-            this.splitContainer.Panel1.Controls.Add(this.listView);
-            // 
-            // splitContainer.Panel2
-            // 
-            this.splitContainer.Panel2.Controls.Add(this.panel);
-            this.splitContainer.Size = new System.Drawing.Size(955, 418);
-            this.splitContainer.SplitterDistance = 673;
-            this.splitContainer.TabIndex = 3;
-            // 
             // listView
             // 
             this.listView.AllColumns.Add(this.column_SortOrder);
@@ -448,6 +430,7 @@
             this.listView.AllColumns.Add(this.column_Algorithm);
             this.listView.AllColumns.Add(this.column_ProofType);
             this.listView.AllColumns.Add(this.column_TotalCoinSupply);
+            this.listView.AllColumns.Add(this.column_FullyPremined);
             this.listView.AutoArrange = false;
             this.listView.CellEditUseWholeCell = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -456,103 +439,115 @@
             this.column_CoinName,
             this.column_Algorithm,
             this.column_ProofType,
-            this.column_TotalCoinSupply});
+            this.column_TotalCoinSupply,
+            this.column_FullyPremined});
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
             this.listView.HasCollapsibleGroups = false;
             this.listView.HeaderUsesThemes = true;
             this.listView.HideSelection = false;
-            this.listView.Location = new System.Drawing.Point(0, 0);
+            this.listView.Location = new System.Drawing.Point(3, 28);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.ShowGroups = false;
-            this.listView.Size = new System.Drawing.Size(673, 418);
+            this.listView.Size = new System.Drawing.Size(369, 412);
             this.listView.TabIndex = 6;
             this.listView.UseCellFormatEvents = true;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
+            this.listView.ItemActivate += new System.EventHandler(this.listView_ItemActivate);
             // 
             // column_SortOrder
             // 
             this.column_SortOrder.AspectName = "SortOrder";
-            this.column_SortOrder.MaximumWidth = 70;
-            this.column_SortOrder.MinimumWidth = 70;
             this.column_SortOrder.Text = "";
             this.column_SortOrder.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.column_SortOrder.Width = 70;
+            this.column_SortOrder.Width = 50;
             // 
             // column_Name
             // 
             this.column_Name.AspectName = "Name";
-            this.column_Name.MaximumWidth = 100;
-            this.column_Name.MinimumWidth = 100;
             this.column_Name.Text = "Name";
-            this.column_Name.Width = 100;
+            this.column_Name.Width = 50;
             // 
             // column_CoinName
             // 
             this.column_CoinName.AspectName = "CoinName";
-            this.column_CoinName.MaximumWidth = 200;
-            this.column_CoinName.MinimumWidth = 125;
             this.column_CoinName.Text = "Coin Name";
-            this.column_CoinName.Width = 125;
+            this.column_CoinName.Width = 50;
             // 
             // column_Algorithm
             // 
             this.column_Algorithm.AspectName = "Algorithm";
-            this.column_Algorithm.MaximumWidth = 90;
-            this.column_Algorithm.MinimumWidth = 90;
             this.column_Algorithm.Text = "Algo.";
             this.column_Algorithm.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.column_Algorithm.Width = 90;
+            this.column_Algorithm.Width = 50;
             // 
             // column_ProofType
             // 
             this.column_ProofType.AspectName = "ProofType";
-            this.column_ProofType.MaximumWidth = 90;
-            this.column_ProofType.MinimumWidth = 90;
             this.column_ProofType.Text = "PType";
             this.column_ProofType.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.column_ProofType.Width = 90;
+            this.column_ProofType.Width = 50;
             // 
             // column_TotalCoinSupply
             // 
-            this.column_TotalCoinSupply.AspectName = "";
-            this.column_TotalCoinSupply.FillsFreeSpace = true;
+            this.column_TotalCoinSupply.AspectName = "TotalCoinSupply";
+            this.column_TotalCoinSupply.AspectToStringFormat = "";
             this.column_TotalCoinSupply.Text = "Total Coin Supply";
             this.column_TotalCoinSupply.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.column_TotalCoinSupply.Width = 140;
+            this.column_TotalCoinSupply.Width = 50;
+            // 
+            // column_FullyPremined
+            // 
+            this.column_FullyPremined.AspectName = "FullyPremined";
+            this.column_FullyPremined.CheckBoxes = true;
+            this.column_FullyPremined.Text = "Pre";
+            this.column_FullyPremined.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tableLayoutPanel
+            // 
+            this.tableLayoutPanel.ColumnCount = 2;
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 375F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.Controls.Add(this.toolStrip, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.listView, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.panel, 1, 1);
+            this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel.Name = "tableLayoutPanel";
+            this.tableLayoutPanel.RowCount = 2;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.Size = new System.Drawing.Size(955, 443);
+            this.tableLayoutPanel.TabIndex = 4;
             // 
             // panel
             // 
             this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel.Location = new System.Drawing.Point(0, 0);
+            this.panel.Location = new System.Drawing.Point(378, 28);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(278, 418);
-            this.panel.TabIndex = 3;
+            this.panel.Size = new System.Drawing.Size(574, 412);
+            this.panel.TabIndex = 7;
             // 
-            // CryptoCompareWidgetEditorControl
+            // CryptoCompareControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer);
-            this.Controls.Add(this.toolStrip);
-            this.Name = "CryptoCompareWidgetEditorControl";
+            this.Controls.Add(this.tableLayoutPanel);
+            this.Name = "CryptoCompareControl";
             this.Size = new System.Drawing.Size(955, 443);
-            this.Load += new System.EventHandler(this.CryptoCompareWidgetEditorControl_Load);
+            this.Load += new System.EventHandler(this.CryptoCompareControl_Load);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            this.splitContainer.Panel1.ResumeLayout(false);
-            this.splitContainer.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
-            this.splitContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
+            this.tableLayoutPanel.ResumeLayout(false);
+            this.tableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -598,8 +593,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_HeaderV2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_HeaderV3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_NewsFeed;
-        private System.Windows.Forms.SplitContainer splitContainer;
-        private System.Windows.Forms.Panel panel;
         private BrightIdeasSoftware.FastObjectListView listView;
         private BrightIdeasSoftware.OLVColumn column_SortOrder;
         private BrightIdeasSoftware.OLVColumn column_Name;
@@ -607,5 +600,8 @@
         private BrightIdeasSoftware.OLVColumn column_Algorithm;
         private BrightIdeasSoftware.OLVColumn column_ProofType;
         private BrightIdeasSoftware.OLVColumn column_TotalCoinSupply;
+        private BrightIdeasSoftware.OLVColumn column_FullyPremined;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+        private System.Windows.Forms.Panel panel;
     }
 }

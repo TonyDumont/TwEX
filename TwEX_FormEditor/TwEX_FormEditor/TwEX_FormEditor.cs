@@ -21,7 +21,7 @@ namespace TwEX_FormEditor
             {
                 if (InitializePreferences())
                 {
-                    Task.Factory.StartNew(() => ExchangeManager.InitializeExchangeList());
+                    Task.Factory.StartNew(() => ExchangeManager.InitializeExchanges());
                 }
                 else
                 {
@@ -31,7 +31,8 @@ namespace TwEX_FormEditor
         }
         private void TwEX_FormEditor_Load(object sender, EventArgs e)
         {
-            FormPreference preference = preferences.FormPreferences.FirstOrDefault(item => item.Name == Name);
+            Text = "TwEX Trader : Short Armed Trading Tools";
+            FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == Name);
             if (preference != null)
             {
                 //LogManager.AddLogMessage(Name, "toolStripButton_Form_Click", "FOUND : " + preference.Name + " | " + preference.Font.FontFamily + " | " + preference.Size + " | " + preference.Location);
@@ -49,7 +50,10 @@ namespace TwEX_FormEditor
             FontChanged += delegate { UpdateFormPreferences(this, true); };
             FormClosing += delegate { UpdateFormPreferences(this, false); };
 
-            ExchangeManager.InitializeSymbolImageList();
+            ContentManager.InitializeIconList();
+            ContentManager.InitializeExchangeIconList();
+            ContentManager.InitializeSymbolImageList();
+            ContentManager.InitializeWalletImageList();
             //Task.Factory.StartNew(() => ExchangeManager.InitializeSymbolImageList());
             Task.Factory.StartNew(() => CryptoCompare.Initialize());
 
@@ -57,12 +61,21 @@ namespace TwEX_FormEditor
         }
         private void TwEX_FormEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // SNAPSHOTS
-            PreferenceManager.UpdatePreferenceSnapshots();
+            UpdatePreferenceSnapshots();
         }
         private void TwEX_FormEditor_Shown(object sender, EventArgs e)
         {
             FormManager.RestoreForms();
+            /*
+            Width = preferr MinimumSize.Width;
+            Height = MinimumSize.Height;
+            */
+            Size = PreferredSize;
+            int height = Height + preferences.IconSize.Height + 10;
+            MaximumSize = new Size(4000, height);
+            MinimumSize = new Size(400, height);
+            //Height = height;
+            Size = new Size(400, height);
         }
         #endregion
     }

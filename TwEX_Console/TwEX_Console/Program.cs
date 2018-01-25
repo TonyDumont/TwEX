@@ -39,7 +39,7 @@ namespace TwEX_Console
 
             if (PreferenceManager.InitializePreferences())
             {
-                if (ExchangeManager.InitializeExchangeList())
+                if (ExchangeManager.InitializeExchanges())
                 {
                     ExchangeManager.InitializeTimer();
                     Run();
@@ -143,7 +143,7 @@ namespace TwEX_Console
             ColumnBreak();
             Console.Write(ExchangeManager.Tickers.Count + " Tickers");
             ColumnBreak();
-            ConsoleWrite(ConsoleColor.DarkYellow, CoinMarketCap.Tickers.Count + " Market Caps @ " + CoinMarketCap.Tickers.Sum(t => t.market_cap_usd).ToString("C"));
+            ConsoleWrite(ConsoleColor.DarkYellow, PreferenceManager.CoinMarketCapPreferences.Tickers.Count + " Market Caps @ " + PreferenceManager.CoinMarketCapPreferences.Tickers.Sum(t => t.market_cap_usd).ToString("C"));
 
             string btcOrders = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTCOrders)).ToString("N8");
             string btcTotal = ExchangeManager.Exchanges.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC)).ToString("N8");

@@ -34,27 +34,222 @@ namespace TwEX_API
     {
         #region Properties
         private static string Name = "ContentManager";
+        
+        public static ImageList ExchangeIconList = new ImageList();
+        public static ImageList IconList = new ImageList();
+        public static ImageList SymbolIconList = new ImageList();
+        public static ImageList WalletIconList = new ImageList();
 
-        //public static string FontIconUrl = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-font-icon.png";
-        public static string CalculatorIconUrl = "http://files.softicons.com/download/system-icons/web0.2ama-icons-by-chrfb/png/256x256/Calculator.png";
-        //public static string BalanceIconUrl = "http://www.iconarchive.com/download/i14513/icojoy/enjoyment/money.ico";
-        public static string BalanceIconUrl = "https://i.pinimg.com/originals/22/dd/de/22ddde0fc220582cf3688beca1795683.jpg";
-        public static string SymbolIconUrl = "https://cdn2.iconfinder.com/data/icons/bitcoin-and-mining/44/trade-512.png";
-        public static string ArbitrageIconUrl = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png";
-        public static string PreferenceIconUrl = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png";
-
+        /*
+        public static string BlockIOIconUrl { get; } = "https://block.io/favicon.ico";
         public static string WalletIconUrl = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png";
-        public static string AddWalletIconUrl = "https://cdn2.iconfinder.com/data/icons/finance-solid-icons-vol-3/48/112-256.png";
-
         public static string ExodusIconUrl = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr";
-        public static string ImportIconUrl = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png";
-        public static string ExportIconUrl = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/export.png";
+        */
 
-        public static string FontIconUrl = "https://cdn0.iconfinder.com/data/icons/exempli_gratia/256/z_File_FONT.png";
-        public static string FontIconDecrease = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-smaller.png";
-        public static string FontIconIncrease = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png";
 
-        public static string RefreshIcon = "https://cdn0.iconfinder.com/data/icons/huge-basic-icons/512/Refresh.png";
+        public static List<IconFile> IconUrlList = new List<IconFile>()
+        {
+            new IconFile(){ Name = "Add", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Add.png"},
+            new IconFile(){ Name = "AddWallet", Url = "https://cdn2.iconfinder.com/data/icons/finance-solid-icons-vol-3/48/112-256.png" },
+            new IconFile(){ Name = "ArbitrageManager", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },           
+            new IconFile(){ Name = "BalanceManager", Url = "https://i.pinimg.com/originals/22/dd/de/22ddde0fc220582cf3688beca1795683.jpg" },
+            new IconFile(){ Name = "BlockCypher", Url = "https://www.blockcypher.com/images/favicon-192x192.png" },
+            new IconFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
+            new IconFile(){ Name = "CoinCalculator", Url = "http://files.softicons.com/download/system-icons/web0.2ama-icons-by-chrfb/png/256x256/Calculator.png" },
+            new IconFile(){ Name = "CoinMarketCap", Url = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png" },
+            new IconFile(){ Name = "CryptoCompare", Url = "https://www.cryptocompare.com/media/20562/favicon.png?v=2" },
+            new IconFile(){ Name = "EarnGGManager", Url = "https://earn.gg/img/favicon-32x32.png" },
+            new IconFile(){ Name = "ExchangeEditor", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
+            new IconFile(){ Name = "ExchangeManager", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
+            new IconFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" },
+            new IconFile(){ Name = "Export", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/export.png" },
+            new IconFile(){ Name = "Font", Url = "https://cdn0.iconfinder.com/data/icons/exempli_gratia/256/z_File_FONT.png" },
+            new IconFile(){ Name = "FontDecrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-smaller.png" },
+            new IconFile(){ Name = "FontIncrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png" },
+            new IconFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
+            new IconFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
+            
+            new IconFile(){ Name = "Options", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new IconFile(){ Name = "PreferenceManager", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new IconFile(){ Name = "Refresh", Url = "https://cdn0.iconfinder.com/data/icons/huge-basic-icons/512/Refresh.png" },
+            new IconFile(){ Name = "Remove", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Delete.png"},
+            new IconFile(){ Name = "Symbol", Url = "https://cdn2.iconfinder.com/data/icons/bitcoin-and-mining/44/trade-512.png" },
+            //new IconFile(){ Name = "TradingView", Url = "https://www.tradingview.com/favicon.ico" },
+            new IconFile(){ Name = "TradingView", Url = "http://www.patternsmart.com/cart//image/data/tradingview.png" },
+            new IconFile(){ Name = "TwEX_FormEditor", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new IconFile(){ Name = "UpDown", Url = "https://cdn1.iconfinder.com/data/icons/touch-gestures-3/96/Scroll-512.png"},
+            new IconFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" }
+        };
+        public static List<IconFile> WalletIconUrlList = new List<IconFile>()
+        {
+            new IconFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
+            new IconFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" }
+
+        };
+        #endregion
+
+        #region Initialize
+        public static Boolean InitializeExchangeIconList()
+        {
+            ExchangeIconList.Images.Clear();
+            //string path = @"c:\\Windows\\Loader\\Applications\\symbols\\";
+            string path = WorkDirectory + "\\exchanges\\";
+            string[] filter = { ".png" };
+
+            ExchangeIconList.ImageSize = preferences.IconSize;
+
+            if (Directory.Exists(path))
+            {
+                // LOAD ITEMS
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                FileInfo[] fileInfo = directoryInfo.GetFiles();
+                ArrayList arrayList = new ArrayList();
+
+                foreach (FileInfo fi in fileInfo)
+                {
+                    foreach (string s in filter)
+                    {
+                        if (s == fi.Extension)
+                        {
+                            string icon = fi.Name.Split('.')[0];
+                            Image img = Image.FromFile(fi.FullName);
+                            ExchangeIconList.Images.Add(icon, img);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // CREATE FOLDER
+                Directory.CreateDirectory(path);
+                foreach (ExchangeManager.Exchange exchange in Exchanges)
+                {
+                    //AddLogMessage(Name, "SaveIcons", icon.Name + " | " + icon.Url, LogMessageType.DEBUG);
+                    GetExchangeIcon(exchange.Name);
+                }
+            }
+            AddLogMessage(Name, "InitializeExchangeIconList", "Exchange Icons Initialized " + ExchangeIconList.Images.Count + " Icons", LogMessageType.LOG);
+            return true;
+        }
+        public static Boolean InitializeIconList()
+        {
+            IconList.Images.Clear();
+            string path = WorkDirectory + "\\icons\\";
+            string[] filter = { ".png" };
+
+            IconList.ImageSize = preferences.IconSize;
+
+            if (Directory.Exists(path))
+            {
+                // LOAD ITEMS
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                FileInfo[] fileInfo = directoryInfo.GetFiles();
+                ArrayList arrayList = new ArrayList();
+
+                foreach (FileInfo fi in fileInfo)
+                {
+                    foreach (string s in filter)
+                    {
+                        if (s == fi.Extension)
+                        {
+                            string name = fi.Name.Split('.')[0];
+                            Image img = Image.FromFile(fi.FullName);
+                            IconList.Images.Add(name, img);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // CREATE FOLDER
+                AddLogMessage(Name, "SaveIcons", "ICONS folder does not exist - CREATING IT", LogMessageType.LOG);
+                Directory.CreateDirectory(path);
+                foreach (IconFile icon in IconUrlList)
+                {                   
+                    GetIcon(icon.Name);
+                }
+            }
+            AddLogMessage(Name, "InitializeIconList", "Icon List Initialized " + IconList.Images.Count + " Icons", LogMessageType.LOG);
+            return true;
+        }
+        public static Boolean InitializeSymbolImageList()
+        {
+            SymbolIconList.Images.Clear();
+            //string path = @"c:\\Windows\\Loader\\Applications\\symbols\\";
+            string path = PreferenceManager.WorkDirectory + "\\symbols\\";
+            string[] filter = { ".png" };
+
+            SymbolIconList.ImageSize = preferences.IconSize;
+
+            if (Directory.Exists(path))
+            {
+                // LOAD ITEMS
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                FileInfo[] fileInfo = directoryInfo.GetFiles();
+                ArrayList arrayList = new ArrayList();
+
+                foreach (FileInfo fi in fileInfo)
+                {
+                    foreach (string s in filter)
+                    {
+                        if (s == fi.Extension)
+                        {
+                            string symbol = fi.Name.Split('.')[0];
+                            Image img = Image.FromFile(fi.FullName);
+                            SymbolIconList.Images.Add(symbol, img);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // CREATE FOLDER
+                Directory.CreateDirectory(path);
+            }
+            AddLogMessage(Name, "InitializeIconList", "Symbol Icon List Initialized " + SymbolIconList.Images.Count + " Icons", LogMessageType.LOG);
+            return true;
+        }
+        public static Boolean InitializeWalletImageList()
+        {
+            WalletIconList.Images.Clear();
+            //string path = @"c:\\Windows\\Loader\\Applications\\symbols\\";
+            string path = WorkDirectory + "\\wallets\\";
+            string[] filter = { ".png" };
+
+            WalletIconList.ImageSize = preferences.IconSize;
+
+            if (Directory.Exists(path))
+            {
+                // LOAD ITEMS
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                FileInfo[] fileInfo = directoryInfo.GetFiles();
+                ArrayList arrayList = new ArrayList();
+
+                foreach (FileInfo fi in fileInfo)
+                {
+                    foreach (string s in filter)
+                    {
+                        if (s == fi.Extension)
+                        {
+                            string wallet = fi.Name.Split('.')[0];
+                            Image img = Image.FromFile(fi.FullName);
+                            WalletIconList.Images.Add(wallet, img);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // CREATE FOLDER
+                Directory.CreateDirectory(path);
+                foreach (IconFile icon in WalletIconUrlList)
+                {
+                    GetWalletIcon(icon.Url);
+                }
+            }
+            AddLogMessage(Name, "InitializeWalletIconList", "Wallet Icon List Initialized " + WalletIconList.Images.Count + " Icons", LogMessageType.LOG);
+            return true;
+        }
         #endregion
 
         #region Validators
@@ -76,6 +271,7 @@ namespace TwEX_API
         #endregion
 
         #region Getters
+        /*
         public static Bitmap GetIconByUrl(string url)
         {
             //LogManager.AddLogMessage(Name, "GetExchangeIcon", "getting fav icon : " + url, LogMessageType.DEBUG);
@@ -104,11 +300,47 @@ namespace TwEX_API
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "GetIconByUrl", ex.Message, LogMessageType.EXCEPTION);
+                AddLogMessage(Name, "GetIconByUrl", ex.Message, LogMessageType.EXCEPTION);
             }
             return icon;
         }
+        */
+        
+        public static Image GetIconByUrl(string url)
+        {
+            //LogManager.AddLogMessage(Name, "GetExchangeIcon", "getting fav icon : " + url, LogMessageType.DEBUG);
+            Bitmap icon = new Bitmap(16, 16);
+            //Image icon = new Image();
 
+            using (Graphics gr = Graphics.FromImage(icon))
+            {
+                gr.Clear(Color.FromKnownColor(KnownColor.Window));
+            }
+
+            try
+            {
+                if (DoesUrlRespond(url))
+                {
+                    //LogManager.AddLogMessage(Name, "GetExchangeIcon", "URL RESPONSED trying to get favicon : " + url, LogMessageType.DEBUG);
+                    Uri thisUrl = new Uri(url);
+                    if (thisUrl.HostNameType == UriHostNameType.Dns)
+                    {
+                        //string iconUrl = "http://" + thisUrl.Host + "/favicon.ico";
+                        //string iconUrl =
+                        WebRequest req = WebRequest.Create(url);
+                        WebResponse resp = req.GetResponse();
+                        icon = new Bitmap(Image.FromStream(resp.GetResponseStream()));
+                        resp.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "GetIconByUrl", ex.Message, LogMessageType.EXCEPTION);
+            }
+            return (Image)icon;
+        }
+        
         public static Image GetActiveIcon(bool active)
         {
             if (active)
@@ -120,6 +352,175 @@ namespace TwEX_API
                 return Properties.Resources.ConnectionStatus_ERROR;
             }
         }
+        
+        public static Image GetExchangeIcon(string name)
+        {
+            //Image image = Properties.Resources.ConnectionStatus_DISABLED;
+            Image image = GetIcon("WalletManager");
+
+            if (ExchangeIconList.Images.ContainsKey(name))
+            {
+                return ExchangeIconList.Images[name];
+            }
+            else if(WalletIconList.Images.ContainsKey(name))
+            {
+                return WalletIconList.Images[name];
+            }
+            else
+            {
+                try
+                {
+                    ExchangeManager.Exchange exchange = Exchanges.FirstOrDefault(item => item.Name == name);
+
+                    if (exchange != null)
+                    {
+                        Image icon = GetIconByUrl(exchange.IconUrl);
+                        ExchangeIconList.Images.Add(name, icon);
+                        icon.Save(WorkDirectory + "\\exchanges\\" + name + ".png", ImageFormat.Png);
+                        return icon;
+                    }
+                    else
+                    {
+                        return image;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AddLogMessage(Name, "GetExchangeIcon", name + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    // USE GENERIC ICON
+                    return image;
+                }
+            }
+        }
+        
+        public static Image GetIcon(string name)
+        {
+            Image image = Properties.Resources.ConnectionStatus_DISABLED;
+            // check imagelist for exist
+            if (IconList.Images.ContainsKey(name))
+            {
+                //AddLogMessage(Name, "GetIcon", "Icon List Contains Key " + name + " - Returning Image", LogMessageType.DEBUG);
+                return IconList.Images[name];
+            }
+            else
+            {
+                // set it up for later
+                try
+                {
+                    IconFile iconFile = IconUrlList.FirstOrDefault(item => item.Name == name);
+
+                    if (iconFile != null)
+                    {
+                        Image icon = GetIconByUrl(iconFile.Url);
+                        IconList.Images.Add(name, icon);
+                        icon.Save(WorkDirectory + "\\icons\\" + name + ".png", ImageFormat.Png);
+                        AddLogMessage(Name, "GetIcon", "Saving " + name + ".png in ICONS FOLDER", LogMessageType.LOG);
+                        return icon;
+                    }
+                    else
+                    {
+                        AddLogMessage(Name, "GetIcon", "Unable To Save " + name + ".png in ICONS FOLDER - No Entry In IconUrl List", LogMessageType.LOG);
+                        return image;
+                    }               
+                }
+                catch (Exception ex)
+                {
+                    AddLogMessage(Name, "GetIcon", name + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    // USE GENERIC ICON
+                    return image;
+                }
+            }
+        }
+         
+        public static Image GetSymbolIcon(string symbol)
+        {
+            Image image = Properties.Resources.ConnectionStatus_DISABLED;
+            // check imagelist for exist
+            if (SymbolIconList.Images.ContainsKey(symbol.ToUpper()))
+            {
+                return SymbolIconList.Images[symbol];
+            }
+            else
+            {
+                // set it up for later
+                try
+                { 
+                    CryptoCompareCoin coin = CryptoComparePreferences.CoinList.FirstOrDefault(listItem => listItem.Name == symbol);
+
+                    if (coin != null)
+                    {
+                        if (coin.ImageUrl.Length > 0)
+                        {
+                            string url = "https://www.cryptocompare.com" + coin.ImageUrl;
+                            WebClient wc = new WebClient();
+                            byte[] bytes = wc.DownloadData(url);
+                            MemoryStream ms = new MemoryStream(bytes);
+                            Image img = Image.FromStream(ms);
+
+                            if (symbol.Contains("*"))
+                            {
+                                symbol = symbol.Replace("*", "");
+                            }
+
+                            SymbolIconList.Images.Add(symbol.ToUpper(), img);
+                            img.Save(WorkDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+
+                            return img;
+                        }
+                        else
+                        {
+                            return image;
+                        }                      
+                    }
+                    else
+                    {
+                        return image;
+                    }                 
+                }
+                catch (Exception ex)
+                {
+                    AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    // USE GENERIC ICON
+                    return image;
+                }
+            }
+        }
+        
+        public static Image GetWalletIcon(string name)
+        {
+            Image image = Properties.Resources.ConnectionStatus_DISABLED;
+
+            if (WalletIconList.Images.ContainsKey(name))
+            {
+                return WalletIconList.Images[name];
+            }
+            else
+            {
+                try
+                {
+                    IconFile wallet = WalletIconUrlList.FirstOrDefault(item => item.Name == name);
+
+                    if (wallet != null)
+                    {
+                        Image icon = GetIconByUrl(wallet.Url);
+                        WalletIconList.Images.Add(name, icon);
+                        icon.Save(WorkDirectory + "\\wallets\\" + name + ".png", ImageFormat.Png);
+                        return icon;
+                    }
+                    else
+                    {
+                        return image;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AddLogMessage(Name, "GetWalletIcon", name + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    // USE GENERIC ICON
+                    return image;
+                }
+            }
+        }
+        
         /*
         private Bitmap GetColorIcon(Color color, int width, int height)
         {
@@ -165,6 +566,23 @@ namespace TwEX_API
             */
             return destImage;
         }
+
+        public static void SaveIcons()
+        {
+            foreach (IconFile icon in IconUrlList)
+            {
+                AddLogMessage(Name, "SaveIcons", icon.Name + " | " + icon.Url, LogMessageType.DEBUG);
+                GetIcon(icon.Name);
+            }
+        }
+        #endregion
+
+        #region DataModels
+        public class IconFile
+        {
+            public string Name { get; set; }
+            public string Url { get; set; }
+        }
         #endregion
     }
     // -------------------------------
@@ -172,24 +590,20 @@ namespace TwEX_API
     {
         #region Properties
         private static string Name { get; } = "ExchangeManager";
-        public static string IconUrl { get; } = "https://coinmarketcap.com/static/img/CoinMarketCap.png";
         public static System.Timers.Timer timer = new System.Timers.Timer();
-
         // COLLECTIONS
         public static BlockingCollection<Exchange> Exchanges = new BlockingCollection<Exchange>();
         public static BlockingCollection<ExchangeBalance> Balances = new BlockingCollection<ExchangeBalance>();
         public static BlockingCollection<ExchangeTicker> Tickers = new BlockingCollection<ExchangeTicker>();
-        public static ImageList symbolIconList = new ImageList();
-        public static ImageList exchangeIconList = new ImageList();
         #endregion Properties
 
         #region Initialize      
-        public static Boolean InitializeExchangeList()
+        public static Boolean InitializeExchanges()
         {
             List<string> list = getExchangeList();
             
-            exchangeIconList.Images.Clear();
-            exchangeIconList.ImageSize = new Size(32, 32);
+            //ContentManager.ExchangeIconList.Images.Clear();
+            //ContentManager.ExchangeIconList.ImageSize = new Size(32, 32);
             //WalletManager.Initialize();
 
             foreach (string name in list)
@@ -203,17 +617,15 @@ namespace TwEX_API
                     {
                         exchange.Url = type.GetProperty("Url", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();
                         exchange.IconUrl = type.GetProperty("IconUrl", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();
-                        exchange.Icon = ContentManager.GetIconByUrl(exchange.IconUrl);
-                        exchange.USDSymbol = type.GetProperty("USDSymbol", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();
-                        exchange.TradingView = type.GetProperty("TradingView", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();
 
-                        exchangeIconList.Images.Add(exchange.Name, exchange.Icon);
+                        exchange.USDSymbol = type.GetProperty("USDSymbol", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();
+                        exchange.TradingView = type.GetProperty("TradingView", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();                  
                         //LogManager.AddLogMessage(Name, "InitializeExchangeList", "type !+ null for " + exchange.SiteName + " | " + preferences.apiList.Count, LogManager.LogMessageType.DEBUG);
 
-                        ExchangeApi api = PreferenceManager.preferences.ApiList.FirstOrDefault(a => a.exchange.ToLower() == exchange.Name.ToLower());
+                        ExchangeApi api = preferences.ApiList.FirstOrDefault(a => a.exchange.ToLower() == exchange.Name.ToLower());
                         if (api != null)
                         {
-                            PreferenceManager.SetExchangeApi(api);
+                            SetExchangeApi(api);
                         }
 
                         Task.Factory.StartNew(() => type.InvokeMember("InitializeExchange",
@@ -224,57 +636,35 @@ namespace TwEX_API
                     }
                     catch (Exception ex)
                     {
-                        LogManager.AddLogMessage(Name, "InitializeExchangeList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                        AddLogMessage(Name, "InitializeExchangeList", ex.Message, LogMessageType.EXCEPTION);
                     }
                 }
                 else
                 {
-                    LogManager.AddLogMessage(Name, "InitializeExchangeList", "PROBLEM : type is NULL : " + exchange.Name, LogManager.LogMessageType.EXCHANGE);
+                    AddLogMessage(Name, "InitializeExchangeList", "PROBLEM : type is NULL : " + exchange.Name, LogMessageType.EXCHANGE);
                 }
 
-                Exchanges.Add(exchange);
+                Exchange listItem = Exchanges.FirstOrDefault(item => item.Name == exchange.Name);
+                if (listItem != null)
+                {
+                    // UPDATE
+                    listItem.IconUrl = exchange.IconUrl;
+                    listItem.TradingView = exchange.TradingView;
+                    listItem.Url = exchange.Url;
+                    listItem.USDSymbol = exchange.USDSymbol;
+                }
+                else
+                {
+                    Exchanges.Add(exchange);
+                }               
             }
 
-            WalletManager.Initialize();
+            ExchangePreferences.Exchanges = Exchanges.ToList();
+            UpdatePreferenceFile(PreferenceType.Exchange);
+            //WalletManager.Initialize();
             InitializeTimer();
             return true;
-        }
-        public static Boolean InitializeSymbolImageList()
-        {
-            symbolIconList.Images.Clear();
-            //string path = @"c:\\Windows\\Loader\\Applications\\symbols\\";
-            string path = PreferenceManager.WorkDirectory + "\\symbols\\";
-            string[] filter = { ".png" };
-
-            symbolIconList.ImageSize = new Size(32, 32);
-
-            if (Directory.Exists(path))
-            {
-                // LOAD ITEMS
-                DirectoryInfo directoryInfo = new DirectoryInfo(path);
-                FileInfo[] fileInfo = directoryInfo.GetFiles();
-                ArrayList arrayList = new ArrayList();
-
-                foreach (FileInfo fi in fileInfo)
-                {
-                    foreach (string s in filter)
-                    {
-                        if (s == fi.Extension)
-                        {
-                            string symbol = fi.Name.Split('.')[0];
-                            Image img = Image.FromFile(fi.FullName);
-                            symbolIconList.Images.Add(symbol, img);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // CREATE FOLDER
-                Directory.CreateDirectory(path);
-            }
-            return true;
-        }
+        }      
         #endregion Initialize
 
         #region Timer
@@ -591,78 +981,7 @@ namespace TwEX_API
             long ms = (long)((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds);
             return ms.ToString();
         }
-
-        public static Bitmap getExchangeIcon(string exchange)
-        {
-            Exchange item = Exchanges.FirstOrDefault(e => e.Name == exchange);
-            if (item != null)
-            {
-                return item.Icon;
-            }
-            else
-            {
-                //return Properties.Resources.ConnectionStatus_DISABLED;
-                return WalletManager.GetWalletIcon(exchange);
-            }
-        }
-
-        public static Image GetSymbolIcon(string symbol)
-        {
-            Image image = Properties.Resources.ConnectionStatus_DISABLED;
-
-            // check imagelist for exist
-            if (symbolIconList.Images.ContainsKey(symbol.ToUpper()))
-            {
-                //Int32 index = symbolIconList.Images.IndexOfKey("symbol");
-                return symbolIconList.Images[symbol];
-            }
-            else
-            {
-                // set it up for later
-                try
-                {
-                    //CryptoCompareCoin coin = cryptoCompareCoinList.FirstOrDefault(listItem => listItem.Symbol == symbol);
-                    CryptoCompareCoin coin = CryptoCompare.CoinList.FirstOrDefault(listItem => listItem.Name == symbol);
-
-                    if (coin != null)
-                    {
-                        if (coin.ImageUrl.Length > 0)
-                        {
-                            string url = "https://www.cryptocompare.com" + coin.ImageUrl;
-                            WebClient wc = new WebClient();
-                            byte[] bytes = wc.DownloadData(url);
-                            MemoryStream ms = new MemoryStream(bytes);
-                            Image img = Image.FromStream(ms);
-
-                            if (symbol.Contains("*"))
-                            {
-                                symbol = symbol.Replace("*", "");
-                            }
-
-                            symbolIconList.Images.Add(symbol.ToUpper(), img);
-                            img.Save(PreferenceManager.WorkDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
-
-                            return img;
-                        }
-                        else
-                        {
-                            return image;
-                        }
-                    }
-                    else
-                    {
-                        return image;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LogManager.AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
-                    // USE GENERIC ICON
-                    return image;
-                }
-            }
-        }
-
+        
         /// <summary>Gets a LIST of tickers for an exchange or gets ALL if no name specified</summary>
         public static List<ExchangeTicker> getTickerList(string exchangeName = "")
         {
@@ -741,26 +1060,30 @@ namespace TwEX_API
             {
                 foreach (Exchange exchange in Exchanges)
                 {
-                    ExchangeTicker newItem = new ExchangeTicker();
-                    newItem.exchange = exchange.Name;
-
                     if (market.Contains("USD"))
                     {
                         market = exchange.USDSymbol;
                     }
+                    ExchangeTicker newItem = new ExchangeTicker()
+                    {
+                        exchange = exchange.Name,
+                        market = market,
+                        symbol = symbol,
+                        last = GetPriceOfSymbol(exchange.Name, market, symbol)
+                    };
 
-                    newItem.market = market;
-                    newItem.symbol = symbol;
+                    //newItem.market = market;
+                    //newItem.symbol = symbol;
                     //newItem.price = GetExchangeUSDValueBySymbol(exchange.SiteName, symbol);
-                    LogManager.AddLogMessage(Name, "GetPriceWatchlist", exchange.Name + " | " + market + " | " + symbol, LogMessageType.DEBUG);
-                    newItem.last = GetPriceOfSymbol(exchange.Name, market, symbol);
+                    //AddLogMessage(Name, "GetPriceWatchlist", exchange.Name + " | " + market + " | " + symbol, LogMessageType.DEBUG);
+                    //newItem.last = GetPriceOfSymbol(exchange.Name, market, symbol);
 
                     list.Add(newItem);
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "GetPriceWatchlist", ex.Message, LogMessageType.EXCEPTION);
+                AddLogMessage(Name, "GetPriceWatchlist", ex.Message, LogMessageType.EXCEPTION);
             }
             return list.OrderByDescending(item => item.last).ToList();
         }
@@ -905,8 +1228,6 @@ namespace TwEX_API
             FormManager.UpdateForms();
         }
 
-
-
         /// <summary>Updates TICKER COLLECTION for an exchange or does ALL if no name specified</summary>
         public static void updateTickers(string exchangeName = "")
         {
@@ -960,6 +1281,8 @@ namespace TwEX_API
             //updateControls();
             FormManager.UpdateForms();
         }
+
+        
         #endregion Updaters
 
         #region DataModels
@@ -971,18 +1294,17 @@ namespace TwEX_API
             public string IconUrl { get; set; }
             public string USDSymbol { get; set; }
             public string TradingView { get; set; }
-            public Bitmap Icon { get; set; }
+            public bool Active { get; set; } = true;
             // TOTALS
             public int CoinCount { get { return BalanceList.FindAll(e => e.Balance > 0).Count; } }
             public Decimal TotalInBTC { get { return BalanceList.Sum(balance => balance.TotalInBTC); } }
             public Decimal TotalInBTCOrders { get { return BalanceList.Sum(balance => balance.TotalInBTCOrders); } }
             public Decimal TotalInUSD { get { return BalanceList.Sum(balance => balance.TotalInUSD); } }
             // COLLECTIONS
-            public List<ExchangeBalance> BalanceList { get { return ExchangeManager.Balances.Where(balance => balance.Exchange == Name).ToList(); } }
-            public List<ExchangeTicker> TickerList { get { return ExchangeManager.Tickers.Where(ticker => ticker.exchange == Name).ToList(); } }
+            public List<ExchangeBalance> BalanceList { get { return Balances.Where(balance => balance.Exchange == Name).ToList(); } }
+            public List<ExchangeTicker> TickerList { get { return Tickers.Where(ticker => ticker.exchange == Name).ToList(); } }
             // STATUS
             public int ErrorCount { get { return Convert.ToInt32(type.GetProperty("ErrorCount", BindingFlags.Public | BindingFlags.Static).GetValue(null)); } }
-            //public DateTime LastUpdate { get { return Convert.ToDateTime(type.GetProperty("LastUpdate", BindingFlags.Public | BindingFlags.Static).GetValue(null)); } }
             public DateTime LastUpdate { get { return Convert.ToDateTime(type.GetProperty("LastUpdate", BindingFlags.Public | BindingFlags.Static).GetValue(null)).ToUniversalTime(); } }
             public string LastMessage { get { return type.GetProperty("LastMessage", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString(); } }
         }
@@ -1008,17 +1330,6 @@ namespace TwEX_API
             public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
         }
-        /*
-        public class ExchangePrice
-        {
-            public string symbol { get; set; }
-            public string market { get; set; }
-            public string exchange { get; set; }
-            public Decimal price { get; set; }
-            // CALCULATOR
-            public Decimal value { get; set; }
-        }
-        */
         public class ExchangeTicker
         {
             // ID
@@ -1058,8 +1369,12 @@ namespace TwEX_API
         public static Form mainForm;
         public static FormToolStripControl mainToolStrip;
         public static ArbitrageManagerControl arbitrageManagerControl;
-        public static ExchangeEditorControl exchangeEditorControl;
-        //public static ToolStrip toolStrip;
+        public static CoinMarketCapControl coinMarketCapControl;
+        public static CryptoCompareControl cryptoCompareControl;
+        public static EarnGGManagerControl earnGGManagerControl;
+        public static ExchangeManagerControl exchangeManagerControl;
+        public static TradingViewManagerControl tradingViewManagerControl;
+        public static WalletManagerControl walletManagerControl;
         #endregion
 
         #region Validators
@@ -1090,6 +1405,7 @@ namespace TwEX_API
             }
             return form;
         }
+        /*
         public static Bitmap GetFormIcon(string name)
         {   
             switch (name)
@@ -1105,24 +1421,24 @@ namespace TwEX_API
                     return ContentManager.GetIconByUrl(ContentManager.CalculatorIconUrl);
 
                 case "CryptoCompare":
-                    return ContentManager.GetIconByUrl(CryptoCompare.IconUrl);
+                    return ContentManager.GetIconByUrl(ContentManager.CryptoCompareIconUrl);
 
                 case "CoinMarketCap":
-                    return ContentManager.GetIconByUrl(CoinMarketCap.IconUrl);
+                    return ContentManager.GetIconByUrl(ContentManager.CoinMarketCapIconUrl);
 
                 case "EarnGGManager":
                     //return ContentManager.ResizeImage(ContentManager.GetIconByUrl(ExchangeManager.IconUrl), 32, 32);
-                    return ContentManager.GetIconByUrl(EarnGG.IconUrl);
+                    return ContentManager.GetIconByUrl(ContentManager.EarnGGIconUrl);
 
                 case "ExchangeEditor":
                     //return ContentManager.ResizeImage(ContentManager.GetIconByUrl(ExchangeManager.IconUrl), 32, 32);
-                    return ContentManager.GetIconByUrl(ExchangeManager.IconUrl);
+                    return ContentManager.GetIconByUrl(ContentManager.ExchangeManagerIconUrl);
 
                 case "LogManager":
-                    return ContentManager.GetIconByUrl(LogManager.IconUrl);
+                    return ContentManager.GetIconByUrl(ContentManager.LogManagerIconUrl);
 
                 case "TradingView":
-                    return ContentManager.GetIconByUrl(TradingView.IconUrl);
+                    return ContentManager.GetIconByUrl(ContentManager.TradingViewIconUrl);
 
                 case "WalletManager":
                     return ContentManager.GetIconByUrl(ContentManager.WalletIconUrl);
@@ -1131,6 +1447,7 @@ namespace TwEX_API
                     return Properties.Resources.ConnectionStatus_DISABLED;
             }         
         }
+        */
         #endregion
 
         #region Functions
@@ -1142,15 +1459,26 @@ namespace TwEX_API
             {
                 if (name != "ImportPreferences" && name != "ExportPreferences")
                 {
-                    Form form = new Form() { Size = new Size(950, 550), Name = name, Text = text, Icon = Icon.FromHandle(new Bitmap(GetFormIcon(name)).GetHicon()) };
+                    Form form = new Form() { Size = new Size(950, 550), Name = name, Text = text, Icon = Icon.FromHandle(new Bitmap(ContentManager.GetIcon(name)).GetHicon()) };
+                    //Form form = new Form() { Size = new Size(950, 550), Name = name, Text = text };
                     form.Show();
 
-                    FormPreference preference = preferences.FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+                    FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+
                     if (preference != null)
                     {
                         //LogManager.AddLogMessage(Name, "toolStripButton_Form_Click", "FOUND : " + preference.Name + " | " + preference.Font.FontFamily + " | " + preference.Size + " | " + preference.Location);
                         form.SetBounds(preference.Location.X, preference.Location.Y, preference.Size.Width, preference.Size.Height);
-                        form.Font = new Font(preference.Font.FontFamily, preference.Font.Size, preference.Font.Style);
+                        
+                        if (preferences.UseGlobalFont)
+                        {
+                            form.Font = new Font(preferences.Font.FontFamily, preferences.Font.Size, preferences.Font.Style);
+                        }
+                        else
+                        {
+                            form.Font = new Font(preference.Font.FontFamily, preference.Font.Size, preference.Font.Style);
+                        }     
+                        
                     }
                     else
                     {
@@ -1183,7 +1511,7 @@ namespace TwEX_API
                             break;
 
                         case "CryptoCompare":
-                            form.Controls.Add(new CryptoCompareWidgetEditorControl() { Dock = DockStyle.Fill });
+                            form.Controls.Add(new CryptoCompareControl() { Dock = DockStyle.Fill });
                             break;
 
                         case "CoinMarketCap":
@@ -1195,12 +1523,16 @@ namespace TwEX_API
                             break;
 
                         case "ExchangeEditor":
-                            form.Controls.Add(new ExchangeEditorControl() { Dock = DockStyle.Fill });
+                            form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
                             break;
 
                         case "LogManager":
                             form.FormClosing += delegate { LogManager.logManagerControl = null; };
                             form.Controls.Add(new LogManagerControl() { Dock = DockStyle.Fill });
+                            break;
+
+                        case "PreferenceManager":
+                            form.Controls.Add(new PreferenceManagerControl() { Dock = DockStyle.Fill });
                             break;
 
                         case "TradingView":
@@ -1215,24 +1547,26 @@ namespace TwEX_API
                             LogManager.AddLogMessage(Name, "OpenForm", "NOTE DEFINED!!! : " + name, LogMessageType.DEBUG);
                             break;
                     }
+                    //form.Show();
                 }
                 else
                 {
                     switch (name)
                     {
                         case "ExportPreferences":
-                            PreferenceManager.ExportPreferences();
+                            //PreferenceManager.ExportPreferences();
                             break;
 
                         case "ImportPreferences":
-                            PreferenceManager.ImportPreferences();
+                            //PreferenceManager.ImportPreferences();
                             break;
 
                         default:
-                            LogManager.AddLogMessage(Name, "OpenForm", "NOTE DEFINED!!! : " + name, LogMessageType.DEBUG);
+                            AddLogMessage(Name, "OpenForm", "NOTE DEFINED!!! : " + name, LogMessageType.DEBUG);
                             break;
                     }
                 }
+                //form.Show();
             }
             else
             {
@@ -1244,22 +1578,34 @@ namespace TwEX_API
                 targetForm.Activate();
                 */
             }
+            //form.Show();
             UpdateToolStrip();
         }
         public static void RestoreForms()
         {
-            foreach (FormPreference pref in preferences.FormPreferences)
+            foreach (FormPreference pref in FormPreferences)
             {
                 //LogManager.AddLogMessage(Name, "InitializePreferences", pref.Name + " | " + pref.Open, LogMessageType.DEBUG);
                 if (pref.Open)
                 {
-                    FormManager.OpenForm(pref.Name, pref.Name);
+                    OpenForm(pref.Name, pref.Name);
                 }
             }
         }
         #endregion
 
         #region Updaters
+        public static void UpdateControlUIs(bool resize = false)
+        {
+            UpdateArbitrageManager(resize);
+            UpdateCoinMarketCap(resize);
+            UpdateCryptoCompare(resize);
+            UpdateEarnGGManager(resize);
+            UpdateExchangeManager(resize);
+            UpdateTradingViewManager(resize);
+            UpdateWalletManager(resize);
+            UpdateToolStrip(resize);
+        }
         public static void UpdateForms()
         {
             /*
@@ -1281,19 +1627,68 @@ namespace TwEX_API
             }
 
         }
-        public static void UpdateArbitrageManager()
+        public static void UpdateArbitrageManager(bool resize = false)
         {
             if (arbitrageManagerControl != null)
             {
                 arbitrageManagerControl.SetWatchlist();
             }
-            UpdatePreferencesFile();
+            //UpdatePreferenceFile(PreferenceType.Arbitrage);
         }
-        public static void UpdateToolStrip()
+        public static void UpdateCoinMarketCap(bool resize = false)
+        {
+            if (coinMarketCapControl != null)
+            {
+                coinMarketCapControl.UpdateUI(resize);
+            }
+            //UpdatePreferenceFile(PreferenceType.CoinMarketCap);
+        }
+        public static void UpdateCryptoCompare(bool resize = false)
+        {
+            if (cryptoCompareControl != null)
+            {
+                cryptoCompareControl.UpdateUI(resize);
+            }
+            //UpdatePreferenceFile(PreferenceType.CryptoCompare);
+        }
+        public static void UpdateEarnGGManager(bool resize = false)
+        {
+            if (earnGGManagerControl != null)
+            {
+                earnGGManagerControl.UpdateUI(resize);
+            }
+            //UpdatePreferenceFile(PreferenceType.EarnGG);
+        }
+        public static void UpdateExchangeManager(bool resize = false)
+        {
+            if (exchangeManagerControl != null)
+            {
+                //AddLogMessage(Name, "UpdateExchangeControlsUI", "Updating Exchanges : " + Exchanges.Where(item => item.Active == true).Count() + " Active", LogMessageType.DEBUG);
+                exchangeManagerControl.UpdateUI(true);
+            }
+            //UpdatePreferenceFile(PreferenceType.Exchange);
+        }
+        public static void UpdateTradingViewManager(bool resize = false)
+        {
+            if (tradingViewManagerControl != null)
+            {
+                tradingViewManagerControl.UpdateUI(resize);
+            }
+            //UpdatePreferenceFile(PreferenceType.TradingView);
+        }
+        public static void UpdateWalletManager(bool resize = false)
+        {
+            if (walletManagerControl != null)
+            {
+                walletManagerControl.UpdateUI(resize);
+            }
+            //UpdatePreferenceFile(PreferenceType.Wallet);
+        }
+        public static void UpdateToolStrip(bool resize = false)
         {
             if (mainToolStrip != null)
             {
-                mainToolStrip.UpdateUI();
+                mainToolStrip.UpdateUI(resize);
             }
         }
 
@@ -1306,7 +1701,6 @@ namespace TwEX_API
         #region Properties
         public static Boolean ConsoleLogging = true;
         const string _readPrompt = "TwEX Console : ";
-        public static string IconUrl { get; } = "https://image.flaticon.com/icons/png/512/28/28822.png";
         public static StreamWriter logFile;
         public static LogManagerControl logManagerControl;
         public static BlockingCollection<LogMessage> MessageList = new BlockingCollection<LogMessage>();
@@ -1324,13 +1718,22 @@ namespace TwEX_API
         #region Functions
         public static void AddLogMessage(String source, String functionCall, String message, LogMessageType type = LogMessageType.LOG)
         {
-            LogMessage logMessage = new LogMessage();
+            LogMessage logMessage = new LogMessage()
+            {
+                TimeStamp = DateTime.Now,
+                Source = source,
+                FunctionCall = functionCall,
+                Message = message,
+                type = type
+            };
+            /*
             logMessage.TimeStamp = DateTime.Now;
             logMessage.Source = source;
             logMessage.FunctionCall = functionCall;
             logMessage.Message = message;
             logMessage.type = type;
             //LogMessageList.Insert(0, logMessage);
+            */
             MessageList.Add(logMessage);
 
             if (ConsoleLogging == true && source != "LogManager")
@@ -1340,8 +1743,6 @@ namespace TwEX_API
 
             if (logManagerControl != null)
             {
-                //logManagerControl.Refresh();
-                //logManagerControl.Update();
                 logManagerControl.UpdateUI();
             }
 
@@ -1556,8 +1957,8 @@ namespace TwEX_API
         }
         public static void ToggleMessageFlag(LogMessageType type)
         {
-            PreferenceManager.preferences.MessageFlags ^= type;
-            PreferenceManager.UpdatePreferencesFile();
+            preferences.MessageFlags ^= type;
+            UpdatePreferenceFile();
         }
         public static bool getMessageTypeActive(string name)
         {
@@ -1721,7 +2122,16 @@ namespace TwEX_API
         #region Properties
         private static string Name { get; } = "PreferencesManager";
         public static string WorkDirectory = string.Empty;
+        // PREFERENCES
         public static Preferences preferences = new Preferences();
+        public static ArbitragePreference ArbitragePreferences { get; set; } = new ArbitragePreference();
+        public static CoinMarketCapPreference CoinMarketCapPreferences { get; set; } = new CoinMarketCapPreference();
+        public static CryptoComparePreference CryptoComparePreferences { get; set; } = new CryptoComparePreference();
+        public static EarnGGPreference EarnGGPreferences { get; set; } = new EarnGGPreference();
+        public static ExchangePreference ExchangePreferences { get; set; } = new ExchangePreference();
+        public static List<FormPreference> FormPreferences { get; set; } = new List<FormPreference>();
+        public static TradingViewPreference TradingViewPreferences { get; set; } = new TradingViewPreference();
+        public static WalletPreference WalletPreferences { get; set; } = new WalletPreference();
         // COLORS
         public static bool NightMode = false;
 
@@ -1750,49 +2160,162 @@ namespace TwEX_API
                 string text = File.ReadAllText(iniPath);
                 string json = Decrypt(text);
                 preferences = JsonConvert.DeserializeObject<Preferences>(json);
-                AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.FormPreferences.Count + " FORMS", LogManager.LogMessageType.LOG);
+                AddLogMessage(Name, "LoadPreferences", "PREFERENCES LOADED", LogMessageType.LOG);
             }
             else
             {
-                AddLogMessage(Name, "InitializePreferences", "Preferences.ini doese not exist - Creating It", LogMessageType.LOG);
-                UpdatePreferencesFile();
+                AddLogMessage(Name, "LoadPreferences", "Preferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile();
             }
+
+            // ARBITRAGE PREFERENCES
+            iniPath = WorkDirectory + "\\ArbitragePreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                ArbitragePreferences = JsonConvert.DeserializeObject<ArbitragePreference>(json);
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + ArbitragePreferences.ArbitrageWatchList.Count + " Arbitrage Preferences", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "ArbitragePreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.Arbitrage);
+            }
+            
+            // CoinMarketCap PREFERENCES
+            iniPath = WorkDirectory + "\\CoinMarketCapPreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                CoinMarketCapPreferences = JsonConvert.DeserializeObject<CoinMarketCapPreference>(json);
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + CoinMarketCapPreferences.Tickers.Count + " CoinMarketCap Tickers", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "CoinMarketCapPreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.CoinMarketCap);
+            }
+
+            // CryptoCompare PREFERENCES
+            iniPath = WorkDirectory + "\\CryptoComparePreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                CryptoComparePreferences = JsonConvert.DeserializeObject<CryptoComparePreference>(json);
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + CryptoComparePreferences.CoinList.Count + " CryptoCompare Coins", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "CryptoComparePreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.CryptoCompare);
+            }
+
+            // EarnGG PREFERENCES
+            iniPath = WorkDirectory + "\\EarnGGPreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                EarnGGPreferences = JsonConvert.DeserializeObject<EarnGGPreference>(json);
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + EarnGGPreferences.EarnGGAccounts.Count + " EarnGG Accounts Loaded", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "EarnGGPreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.EarnGG);
+            }
+
+            // Exchange PREFERENCES
+            iniPath = WorkDirectory + "\\ExchangePreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                ExchangePreferences = JsonConvert.DeserializeObject<ExchangePreference>(json);
+                Exchanges = new BlockingCollection<ExchangeManager.Exchange>(new ConcurrentQueue<ExchangeManager.Exchange>(ExchangePreferences.Exchanges));
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + ExchangePreferences.Exchanges.Count + " Exchanges Loaded", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "ExchangePreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.Exchange);
+            }
+
+            // FORM PREFERENCES
+            iniPath = WorkDirectory + "\\FormPreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                FormPreferences = JsonConvert.DeserializeObject<List<FormPreference>>(json);
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + FormPreferences.Count + " Form Preferences", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "FormPreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.Form);
+            }
+
+            // Trading View PREFERENCES
+            iniPath = WorkDirectory + "\\TradingViewPreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                TradingViewPreferences = JsonConvert.DeserializeObject<TradingViewPreference>(json);
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + TradingViewPreferences.WatchList.Count + " TradingView Preferences", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "TradingViewPreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.TradingView);
+            }
+
+            // WALLET PREFERENCES
+            iniPath = WorkDirectory + "\\WalletPreferences.ini";
+
+            if (File.Exists(iniPath))
+            {
+                string text = File.ReadAllText(iniPath);
+                string json = Decrypt(text);
+                WalletPreferences = JsonConvert.DeserializeObject<WalletPreference>(json);
+                AddLogMessage(Name, "LoadPreferences", "LOADED " + WalletPreferences.Wallets.Count + " Wallets", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "WalletPreferences.ini doese not exist - Creating It", LogMessageType.LOG);
+                UpdatePreferenceFile(PreferenceType.Wallet);
+            }
+            
             return true;
         }
         public static Boolean SetPreferenceSnapshots()
         {
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.ApiList.Count + " APIS", LogMessageType.LOG);
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.SymbolWatchList.Count + " Symbols In Watchlist", LogMessageType.LOG);
+            AddLogMessage(Name, "SetPreferenceSnapshots", "PREFERENCES INITIALIZED : " + preferences.ApiList.Count + " APIS", LogMessageType.LOG);
+            AddLogMessage(Name, "SetPreferenceSnapshots", "PREFERENCES INITIALIZED : " + preferences.SymbolWatchList.Count + " Symbols In Watchlist", LogMessageType.LOG);
             
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Balances.Count + " Balances", LogMessageType.LOG);
+            AddLogMessage(Name, "SetPreferenceSnapshots", "PREFERENCES INITIALIZED : " + preferences.Balances.Count + " Balances", LogMessageType.LOG);
             if (preferences.Balances.Count > 0)
             {
                 Balances = new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(preferences.Balances));
             }
 
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
+            AddLogMessage(Name, "SetPreferenceSnapshots", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
             if (preferences.Tickers.Count > 0)
             {
-                ExchangeManager.Tickers = new BlockingCollection<ExchangeTicker>(new ConcurrentQueue<ExchangeTicker>(preferences.Tickers));
+                Tickers = new BlockingCollection<ExchangeTicker>(new ConcurrentQueue<ExchangeTicker>(preferences.Tickers));
             }
-
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.CoinMarketCapTickers.Count + " Market Cap Tickers", LogMessageType.LOG);
-            if (preferences.CoinMarketCapTickers.Count > 0)
-            {
-                CoinMarketCap.Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(preferences.CoinMarketCapTickers));
-            }
-
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.Wallets.Count + " Wallets", LogMessageType.LOG);
-            if (preferences.Wallets.Count > 0)
-            {
-                WalletManager.Wallets = preferences.Wallets;
-            }
-
-            AddLogMessage(Name, "InitializePreferences", "PREFERENCES INITIALIZED : " + preferences.EarnGGAccounts.Count + " EarnGG APIS", LogMessageType.LOG);
-            if (preferences.EarnGGAccounts.Count > 0)
-            {
-                EarnGG.Accounts = preferences.EarnGGAccounts;
-            }
+            
             return true;
         }
         public static Boolean InitializePreferences()
@@ -1833,7 +2356,7 @@ namespace TwEX_API
                 match.secret = api.secret;
                 match.passphrase = api.passphrase;
             }
-            UpdatePreferencesFile();
+            UpdatePreferenceFile();
         }
         public static void RemoveExchangeApi(string exchange)
         {
@@ -1843,7 +2366,7 @@ namespace TwEX_API
             {
                 LogManager.AddLogMessage(Name, "RemoveExchangeApi", "Removing " + exchange + " from API List", LogManager.LogMessageType.DEBUG);
                 PreferenceManager.preferences.ApiList.Remove(match);
-                UpdatePreferencesFile();
+                UpdatePreferenceFile();
             }
             else
             {
@@ -1877,17 +2400,68 @@ namespace TwEX_API
         #endregion
 
         #region ImportExport
-        public static void ExportPreferences()
+        public static void ExportPreferences(PreferenceType type)
         {
-            string iniPath = WorkDirectory + "\\Preferences_export.ini";
+            //string iniPath = WorkDirectory + "\\" + type + "Preferences_EXPORT.ini";
+            string json = String.Empty;
+            string fileName = "TwEXport_" + type + "Preferences.txt";
+            //string iniPath = WorkDirectory + "\\Preferences_export.ini";
             //LogManager.AddLogMessage(Name, "ExportPreferences", "Exporting to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
             if (UpdatePreferenceSnapshots())
             {
-                string json = JsonConvert.SerializeObject(preferences);
+                switch (type)
+                {
+                    case PreferenceType.None:
+                        //iniPath = WorkDirectory + "\\Preferences.ini";
+                        fileName = "TwEXport_Preferences.txt";
+                        json = JsonConvert.SerializeObject(preferences);
+                        break;
+
+                    case PreferenceType.Arbitrage:
+                        json = JsonConvert.SerializeObject(ArbitragePreferences);
+                        break;
+
+                    case PreferenceType.CoinMarketCap:
+                        json = JsonConvert.SerializeObject(CoinMarketCapPreferences);
+                        break;
+
+                    case PreferenceType.CryptoCompare:
+                        json = JsonConvert.SerializeObject(CryptoComparePreferences);
+                        break;
+
+                    case PreferenceType.EarnGG:
+                        json = JsonConvert.SerializeObject(EarnGGPreferences);
+                        break;
+
+                    case PreferenceType.Exchange:
+                        json = JsonConvert.SerializeObject(ExchangePreferences);
+                        break;
+
+                    case PreferenceType.Form:
+                        json = JsonConvert.SerializeObject(FormPreferences);
+                        break;
+
+                    case PreferenceType.TradingView:
+                        json = JsonConvert.SerializeObject(TradingViewPreferences);
+                        break;
+
+                    case PreferenceType.Wallet:
+                        json = JsonConvert.SerializeObject(WalletPreferences);
+                        break;
+
+                    default:
+                        AddLogMessage(Name, "ExportPreferences", "Preference Not Defined : " + type, LogMessageType.DEBUG);
+                        break;
+                }
+
                 //File.WriteAllText(@iniPath, json);
-                SaveFileDialog save = new SaveFileDialog();
-                save.FileName = "TwEXport.txt";
-                save.Filter = "Text File | *.txt";
+                SaveFileDialog save = new SaveFileDialog()
+                {
+                    FileName = fileName,
+                    Filter = "Text File | *.txt"
+                };
+                //save.FileName = "TwEXport.txt";
+                //save.Filter = "Text File | *.txt";
 
                 if (save.ShowDialog() == DialogResult.OK)
                 {
@@ -1896,18 +2470,17 @@ namespace TwEX_API
                     writer.Dispose();
                     writer.Close();
                 }
-            }
+            }    
         }
-        public static Boolean ImportPreferences()
+        public static Boolean ImportPreferences(PreferenceType type)
         {
-            
             Stream myStream = null;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            //openFileDialog1.InitialDirectory = "c:\\";
-            openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog.FilterIndex = 2;
-            openFileDialog.RestoreDirectory = true;
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -1919,11 +2492,65 @@ namespace TwEX_API
                         {
                             string filename = openFileDialog.FileName;
                             string text = File.ReadAllText(filename);
+
+
                             preferences = JsonConvert.DeserializeObject<Preferences>(text.ToString());
-                            LogManager.AddLogMessage(Name, "InitializePreferences", "PREFERENCES IMPORTED : " + preferences.ApiList.Count + " APIS", LogManager.LogMessageType.LOG);
+
+                            switch (type)
+                            {
+                                case PreferenceType.None:
+                                    preferences = JsonConvert.DeserializeObject<Preferences>(text.ToString());
+                                    break;
+
+                                case PreferenceType.Arbitrage:
+                                    ArbitragePreferences = JsonConvert.DeserializeObject<ArbitragePreference>(text.ToString());
+                                    FormManager.UpdateArbitrageManager();
+                                    break;
+
+                                case PreferenceType.CoinMarketCap:
+                                    CoinMarketCapPreferences = JsonConvert.DeserializeObject<CoinMarketCapPreference>(text.ToString());
+                                    FormManager.UpdateCoinMarketCap();
+                                    break;
+
+                                case PreferenceType.CryptoCompare:
+                                    CryptoComparePreferences = JsonConvert.DeserializeObject<CryptoComparePreference>(text.ToString());
+                                    FormManager.UpdateCryptoCompare();
+                                    break;
+
+                                case PreferenceType.EarnGG:
+                                    EarnGGPreferences = JsonConvert.DeserializeObject<EarnGGPreference>(text.ToString());
+                                    FormManager.UpdateEarnGGManager();
+                                    break;
+
+                                case PreferenceType.Exchange:
+                                    ExchangePreferences = JsonConvert.DeserializeObject<ExchangePreference>(text.ToString());
+                                    FormManager.UpdateExchangeManager();
+                                    break;
+
+                                case PreferenceType.Form:
+                                    FormPreferences = JsonConvert.DeserializeObject<List<FormPreference>>(text.ToString());
+                                    FormManager.UpdateForms();
+                                    break;
+
+                                case PreferenceType.TradingView:
+                                    TradingViewPreferences = JsonConvert.DeserializeObject<TradingViewPreference>(text.ToString());
+                                    FormManager.UpdateTradingViewManager();
+                                    break;
+
+                                case PreferenceType.Wallet:
+                                    WalletPreferences = JsonConvert.DeserializeObject<WalletPreference>(text.ToString());
+                                    FormManager.UpdateWalletManager();
+                                    break;
+
+                                default:
+                                    AddLogMessage(Name, "ImportPreferences", "Preference Not Defined : " + type, LogMessageType.DEBUG);
+                                    break;
+                            }
+
+                            AddLogMessage(Name, "ImportPreferences", type + " PREFERENCES IMPORTED", LogMessageType.LOG);
                             if (SetPreferenceSnapshots())
                             {
-                                UpdatePreferencesFile();
+                                UpdatePreferenceFile(type);
                             }                        
                         }
                     }
@@ -1931,40 +2558,44 @@ namespace TwEX_API
                 }
                 catch (Exception ex)
                 {
-                    LogManager.AddLogMessage(Name, "ImportPreferences", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                    AddLogMessage(Name, "ImportPreferences", ex.Message, LogMessageType.EXCEPTION);
                     return false;
                 }
-            }
-            return false;
+            }            
+            return true;
         }
         #endregion
 
         #region ArbitrageWatchList
         public static void AddArbitrageWatchListItem(string symbol, string market)
         {
-            ExchangeTicker listItem = preferences.ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
+            ExchangeTicker listItem = ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
             if (listItem == null)
             {
-                ExchangeTicker newItem = new ExchangeTicker();
-                newItem.market = market;
-                newItem.symbol = symbol;
-                preferences.ArbitragePreferences.ArbitrageWatchList.Add(newItem);
+                ExchangeTicker newItem = new ExchangeTicker()
+                {
+                    market = market,
+                    symbol = symbol
+                };
+                //newItem.market = market;
+                //newItem.symbol = symbol;
+                ArbitragePreferences.ArbitrageWatchList.Add(newItem);
                 FormManager.UpdateArbitrageManager();
             }
         }
         public static void RemoveWatchlistItem(string market, string symbol)
         {
-            ExchangeTicker listItem = preferences.ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
+            ExchangeTicker listItem = ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
             if (listItem != null)
             {
-                preferences.ArbitragePreferences.ArbitrageWatchList.Remove(listItem);
+                ArbitragePreferences.ArbitrageWatchList.Remove(listItem);
                 FormManager.UpdateArbitrageManager();
             }
         }
         public static void MoveWatchlistItem(string market, string symbol, string direction)
         {
             //ExchangePrice listItem = symbolPriceLists.Find(item => item.market == market && item.symbol == symbol);
-            int index = preferences.ArbitragePreferences.ArbitrageWatchList.FindIndex(item => item.market == market && item.symbol == symbol);
+            int index = ArbitragePreferences.ArbitrageWatchList.FindIndex(item => item.market == market && item.symbol == symbol);
 
             if (index != -1)
             {
@@ -1973,15 +2604,15 @@ namespace TwEX_API
                 {
                     if (index > 0)
                     {
-                        preferences.ArbitragePreferences.ArbitrageWatchList.Move(index, MoveDirection.Up);
+                        ArbitragePreferences.ArbitrageWatchList.Move(index, MoveDirection.Up);
                     }
 
                 }
                 else
                 {
-                    if (index < preferences.ArbitragePreferences.ArbitrageWatchList.Count - 1)
+                    if (index < ArbitragePreferences.ArbitrageWatchList.Count - 1)
                     {
-                        preferences.ArbitragePreferences.ArbitrageWatchList.Move(index, MoveDirection.Down);
+                        ArbitragePreferences.ArbitrageWatchList.Move(index, MoveDirection.Down);
                     }
                 }
                 FormManager.UpdateArbitrageManager();
@@ -1997,12 +2628,12 @@ namespace TwEX_API
             {
                 preferences.SymbolWatchList.Add(symbol.ToUpper());
             }
-            UpdatePreferencesFile();
+            UpdatePreferenceFile();
         }
         public static void RemoveSymbolFromWatchlist(string symbol)
         {
             preferences.SymbolWatchList.Remove(symbol);
-            UpdatePreferencesFile();
+            UpdatePreferenceFile();
         }
         #endregion
 
@@ -2010,65 +2641,202 @@ namespace TwEX_API
         public static void toggleTimerPreference(ExchangeTimerType type)
         {
             preferences.TimerFlags ^= type;
-            UpdatePreferencesFile();
+            UpdatePreferenceFile();
+        }
+        #endregion
+
+        #region Getters
+        public static Font GetFormFont(Form form)
+        {
+            if (preferences.UseGlobalFont)
+            {
+                return preferences.Font;
+            }
+            else
+            {
+                FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+
+                if (preference != null)
+                {
+                    return preference.Font;
+                }
+                else
+                {
+                    AddLogMessage(Name, "GetFormFont", "No Preference Saved For Form : " + form.Name);
+                    return preferences.Font;
+                }
+            }
         }
         #endregion
 
         #region Updaters
-        public static void UpdateFormPreferences(Form form, bool open)
+        public static void ResetForm(FormPreference preference)
         {
-            //LogManager.AddLogMessage(Name, "UpdateFormPreferences", "form : " + form.Name + " | " + form.Font.FontFamily + " | " + form.Size + " | " + form.Location, LogMessageType.DEBUG);
-            FormPreference prefs = preferences.FormPreferences.FirstOrDefault(item => item.Name == form.Name);
-
-            if (prefs != null)
+            if (preference.Open)
             {
-                //prefs.Location = form.Location;
-                prefs.Location = new Point(form.Location.X, form.Location.Y);
-                //prefs.Size = form.Size;
-                prefs.Size = new Size(form.Size.Width, form.Size.Height);
-                //prefs.Font = form.Font;
-                //public Font defaultFont = new Font("Times New Roman", 12, FontStyle.Regular, GraphicsUnit.Pixel);
-                prefs.Font = new Font(form.Font.FontFamily, form.Font.Size, form.Font.Style);
-                prefs.Open = open;
+                Form form = FormManager.GetFormByName(preference.Name);
+                form.Location = new Point(0, 0);
+                form.Size = new Size(900, 500);
+                UpdateFormPreferences(form, true);
             }
             else
             {
-                preferences.FormPreferences.Add(new FormPreference() { Name = form.Name, Location = form.Location, Size = form.Size, Font = form.Font, Open = open });
+                FormPreferences.Remove(preference);
             }
-            UpdatePreferencesFile();
+        }
+        public static void UpdatePreferenceFile(PreferenceType type = PreferenceType.None)
+        {            
+            string iniPath = WorkDirectory + "\\" + type + "Preferences.ini";
+            string json = String.Empty;
+
+            switch (type)
+            {
+                case PreferenceType.None:
+                    iniPath = WorkDirectory + "\\Preferences.ini";
+                    json = JsonConvert.SerializeObject(preferences);
+                    break;
+
+                case PreferenceType.Arbitrage:
+                    json = JsonConvert.SerializeObject(ArbitragePreferences);
+                    break;
+
+                case PreferenceType.CoinMarketCap:
+                    json = JsonConvert.SerializeObject(CoinMarketCapPreferences);
+                    break;
+
+                case PreferenceType.CryptoCompare:
+                    json = JsonConvert.SerializeObject(CryptoComparePreferences);
+                    break;
+
+                case PreferenceType.EarnGG:
+                    json = JsonConvert.SerializeObject(EarnGGPreferences);
+                    break;
+
+                case PreferenceType.Exchange:
+                    json = JsonConvert.SerializeObject(ExchangePreferences);
+                    break;
+
+                case PreferenceType.Form:
+                    json = JsonConvert.SerializeObject(FormPreferences);
+                    break;
+
+                case PreferenceType.TradingView:
+                    json = JsonConvert.SerializeObject(TradingViewPreferences);
+                    break;
+
+                case PreferenceType.Wallet:
+                    json = JsonConvert.SerializeObject(WalletPreferences);
+                    break;
+
+                default:
+                    AddLogMessage(Name, "UpdatePreferenceFile", "Preference Not Defined : " + type, LogMessageType.DEBUG);
+                    break;
+            }
+            //AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogMessageType.DEBUG);
+            if (json.Length > 0)
+            {
+                string text = Encrypt(json);
+                File.WriteAllText(@iniPath, text);
+            }
         }
         public static bool UpdatePreferenceSnapshots()
         {
             preferences.Balances = Balances.ToList();
-            preferences.Tickers = ExchangeManager.Tickers.ToList();
-            preferences.CoinMarketCapTickers = CoinMarketCap.Tickers.ToList();
-            preferences.Wallets = WalletManager.Wallets.ToList();
-            preferences.EarnGGAccounts = EarnGG.Accounts;
+            preferences.Tickers = Tickers.ToList();
+            ExchangePreferences.Exchanges = Exchanges.ToList();
 
             foreach (Form form in Application.OpenForms)
             {
                 UpdateFormPreferences(form, true);
             }
 
+            var values = EnumUtils.GetValues<PreferenceType>();
+            foreach (PreferenceType type in values)
+            {
+                //AddLogMessage(Name, "UpdatePreferenceSnapshots", type.ToString() + " | " + type.GetHashCode(), LogMessageType.DEBUG);
+                UpdatePreferenceFile(type);
+            }          
             AddLogMessage(Name, "UpdatePreferenceSnapshots", "Snapshots Complete", LogMessageType.LOG);
-            UpdatePreferencesFile();
             return true;
         }
-        public static void UpdatePreferencesFile()
+        public static bool UpdateFontPreferences()
         {
-            string iniPath = WorkDirectory + "\\Preferences.ini";
-            //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
-            string json = JsonConvert.SerializeObject(preferences);
-            string text = LogManager.Encrypt(json);
-            File.WriteAllText(@iniPath, text);
+            //AddLogMessage(Name, "UpdateFontPreferences", "FUNCTION NEEDED HERE", LogMessageType.OTHER);
+            FormManager.UpdateControlUIs(true);
+            return true;
         }
+        public static void UpdateFormPreferences(Form form, bool open)
+        {
+            //LogManager.AddLogMessage(Name, "UpdateFormPreferences", "form : " + form.Name + " | " + form.Font.FontFamily + " | " + form.Size + " | " + form.Location, LogMessageType.DEBUG);
+            FormPreference prefs = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+
+            if (prefs != null)
+            {
+                prefs.Location = new Point(form.Location.X, form.Location.Y);
+                prefs.Size = new Size(form.Size.Width, form.Size.Height);
+                prefs.Font = new Font(form.Font.FontFamily, form.Font.Size, form.Font.Style);
+                prefs.Open = open;
+            }
+            else
+            {
+                FormPreferences.Add(new FormPreference() { Name = form.Name, Location = form.Location, Size = form.Size, Font = form.Font, Open = open });
+            }
+            UpdatePreferenceFile(PreferenceType.Form);
+        }
+        /*
+        public static void UpdateExchangePreferencesFile()
+        {
+            string iniPath = WorkDirectory + "\\ExchangePreferences.ini";
+            //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
+            string json = JsonConvert.SerializeObject(Exchanges);
+            //string text = LogManager.Encrypt(json);
+            File.WriteAllText(@iniPath, json);
+        }
+        */
         #endregion
 
         #region DataModels
+        public class Preferences
+        {
+            public Size IconSize { get; set; } = new Size(32, 32);
+            public bool UseGlobalFont { get; set; } = false;
+            public Font Font { get; set; } = new Font("Times New Roman", 12.0f);
+
+            public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();
+            public List<string> SymbolWatchList { get; set; } = new List<string>();
+
+            // FLAGS
+            public ExchangeTimerType TimerFlags { get; set; } = ExchangeTimerType.NONE;
+            public LogMessageType MessageFlags { get; set; } = LogMessageType.NONE;
+            // SNAPSHOTS
+            public List<ExchangeBalance> Balances { get; set; } = new List<ExchangeBalance>();
+            public List<ExchangeTicker> Tickers { get; set; } = new List<ExchangeTicker>();
+        }
+        // CUSTOM PREFERENCES
         public class ArbitragePreference
         {
             public bool ShowCharts { get; set; } = true;
             public List<ExchangeTicker> ArbitrageWatchList { get; set; } = new List<ExchangeTicker>();
+        }
+        public class CoinMarketCapPreference
+        {
+            public List<CoinMarketCapTicker> Tickers = new List<CoinMarketCapTicker>();
+        }
+        public class CryptoComparePreference
+        {
+            public string Symbol { get; set; } = "BTC";
+
+            public CryptoCompareWidgetType WidgetType { get; set; } = CryptoCompareWidgetType.ChartAdvanced;
+            public CryptoCompareChartPeriod PeriodType { get; set; } = CryptoCompareChartPeriod.Day_1D;
+            public List<CryptoCompareCoin> CoinList { get; set; } = new List<CryptoCompareCoin>();
+        }
+        public class EarnGGPreference
+        {
+            public List<EarnGG.EarnGGAccount> EarnGGAccounts { get; set; } = new List<EarnGG.EarnGGAccount>();
+        }
+        public class ExchangePreference
+        {
+            public List<ExchangeManager.Exchange> Exchanges { get; set; } = new List<ExchangeManager.Exchange>();
         }
         public class FormPreference
         {
@@ -2077,31 +2845,10 @@ namespace TwEX_API
             public Size Size { get; set; }
             public Font Font { get; set; }
             public bool Open { get; set; }
-        }
-        public class Preferences
-        {
-            public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();
-            public List<string> SymbolWatchList { get; set; } = new List<string>();
-            
-            // CUSTOM
-            public ArbitragePreference ArbitragePreferences { get; set; } = new ArbitragePreference();
-            public TradingViewPreference TradingViewPreferences { get; set; } = new TradingViewPreference();           
-            // FLAGS
-            public ExchangeTimerType TimerFlags { get; set; } = ExchangeTimerType.NONE;
-            public LogMessageType MessageFlags { get; set; } = LogMessageType.NONE;
-            // FORMS
-            public List<FormPreference> FormPreferences { get; set; } = new List<FormPreference>();
-            // SNAPSHOTS
-            public List<ExchangeBalance> Balances { get; set; } = new List<ExchangeBalance>();
-            public List<ExchangeTicker> Tickers { get; set; } = new List<ExchangeTicker>();
-            public List<CoinMarketCapTicker> CoinMarketCapTickers = new List<CoinMarketCapTicker>();
-            public List<WalletManager.WalletBalance> Wallets { get; set; } = new List<WalletManager.WalletBalance>();
-            public List<EarnGG.EarnGGAccount> EarnGGAccounts { get; set; } = new List<EarnGG.EarnGGAccount>();
-        }
+        }      
         public class TradingViewPreference
         {
             public TradingViewAdvancedChartParameters parameters { get; set; } = new TradingViewAdvancedChartParameters();
-
             public List<ExchangeTicker> WatchList { get; set; } = new List<ExchangeTicker>()
             {
                 new ExchangeTicker() { symbol="BTC", market="USDT", exchange="POLONIEX" },
@@ -2114,6 +2861,42 @@ namespace TwEX_API
                 new ExchangeTicker() { symbol="ETC", market="USDT", exchange="POLONIEX" }
             };
         }
+        public class WalletPreference
+        {
+            public List<WalletManager.WalletBalance> Wallets { get; set; } = new List<WalletManager.WalletBalance>();
+        }
+        #endregion
+
+        #region Enums
+        public enum PreferenceType
+        {
+            [Description("Options")]
+            None,
+
+            [Description("ArbitrageManager")]
+            Arbitrage,
+
+            [Description("CoinMarketCap")]
+            CoinMarketCap,
+
+            [Description("CryptoCompare")]
+            CryptoCompare,
+
+            [Description("EarnGGManager")]
+            EarnGG,
+
+            [Description("ExchangeManager")]
+            Exchange,
+
+            [Description("Options")]
+            Form,
+
+            [Description("TradingView")]
+            TradingView,
+
+            [Description("WalletManager")]
+            Wallet
+        }
         #endregion
     }
     // -------------------------------
@@ -2121,48 +2904,47 @@ namespace TwEX_API
     {
         #region Properties
         private static string Name { get; } = "WalletManager";
-        public static List<WalletBalance> Wallets = new List<WalletBalance>();
-        public static WalletManagerControl walletManagerControl;
+        //public static WalletManagerControl walletManagerControl;
         public static ImageList WalletIconList = new ImageList();
         #endregion
 
         #region Initialize
+        /*
         public static void Initialize()
         {
             //WalletIconList.Images.Clear();
             //WalletIconList.ImageSize = new Size(32, 32);
-            /*
-            WalletIconList.Images.Add("BlockIO", ContentManager.GetIconByUrl(BlockIO.IconUrl));
-            WalletIconList.Images.Add("Exodus", ContentManager.GetIconByUrl(ContentManager.ExodusIconUrl));
-            WalletIconList.Images.Add("", ContentManager.GetIconByUrl(ContentManager.WalletIconUrl));
-            */
-            exchangeIconList.Images.Add("BlockIO", ContentManager.GetIconByUrl(BlockIO.IconUrl));
-            exchangeIconList.Images.Add("Exodus", ContentManager.GetIconByUrl(ContentManager.ExodusIconUrl));
-            exchangeIconList.Images.Add("", ContentManager.GetIconByUrl(ContentManager.WalletIconUrl));
+
+            ContentManager.ExchangeIconList.Images.Add("BlockIO", ContentManager.GetIconByUrl(ContentManager.BlockIOIconUrl));
+            ContentManager.ExchangeIconList.Images.Add("Exodus", ContentManager.GetIconByUrl(ContentManager.ExodusIconUrl));
+            ContentManager.ExchangeIconList.Images.Add("", ContentManager.GetIconByUrl(ContentManager.WalletIconUrl));
         }
+        */
         #endregion
 
         #region Getters
+            /*
         public static Bitmap GetWalletIcon(string walletName)
         {
             switch (walletName)
             {
                 case "BlockIO":
-                    return ContentManager.GetIconByUrl(BlockIO.IconUrl);
+                    return ContentManager.GetIconByUrl(ContentManager.BlockIOIconUrl);
 
                 case "Exodus":
                     //return ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.BalanceIconUrl), 32, 32);
                     return ContentManager.GetIconByUrl(ContentManager.ExodusIconUrl);
 
                 default:
-                    return ContentManager.GetIconByUrl(ContentManager.WalletIconUrl);
+                    return new Bitmap(ContentManager.GetIcon("WalletManager"));
             }
         }
+        */
         public static List<ExchangeBalance> GetWalletBalances()
         {
             List<ExchangeBalance> list = new List<ExchangeBalance>();
 
-            foreach (WalletBalance wallet in Wallets)
+            foreach (WalletBalance wallet in WalletPreferences.Wallets)
             {
                 if (wallet.Balance > 0)
                 {
@@ -2181,18 +2963,20 @@ namespace TwEX_API
             return list;
         }
         #endregion
-
+        
         #region Updaters
+        /*
         public static void UpdateUI()
         {
-            if (walletManagerControl != null)
+            if (FormManager.walletManagerControl != null)
             {
-                walletManagerControl.UpdateUI();
+                FormManager.walletManagerControl.UpdateUI();
             }
         }
+        */
         public static bool UpdateWallets()
         {
-            foreach (WalletBalance balance in Wallets)
+            foreach (WalletBalance balance in WalletPreferences.Wallets)
             {
                 if (balance.Api.Length > 0)
                 {
@@ -2234,8 +3018,10 @@ namespace TwEX_API
                     balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
                 }
             }
-            UpdatePreferenceSnapshots();
-            UpdateUI();
+            //UpdatePreferenceSnapshots();
+            UpdatePreferenceFile(PreferenceType.Wallet);
+            //UpdateUI();
+            FormManager.UpdateWalletManager();
             return true;
         }
         #endregion

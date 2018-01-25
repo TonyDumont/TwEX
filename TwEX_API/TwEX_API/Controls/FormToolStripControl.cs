@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using TwEX_API.Market;
-using TwEX_API.Faucet;
 
 namespace TwEX_API.Controls
 {
@@ -15,23 +13,26 @@ namespace TwEX_API.Controls
         }
         private void FormToolStripControl_Load(object sender, EventArgs e)
         {
-            toolStripButton_ExchangeEditor.Image = ContentManager.ResizeImage(ContentManager.GetIconByUrl(ExchangeManager.IconUrl), 32, 32);
-            toolStripButton_Balance.Image = ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.BalanceIconUrl), 32, 32);
-            toolStripButton_Calculator.Image = ContentManager.GetIconByUrl(ContentManager.CalculatorIconUrl);
-            toolStripButton_Wallet.Image = ContentManager.GetIconByUrl(ContentManager.WalletIconUrl);
+            //toolStripButton_ExchangeEditor.Image = ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.ExchangeManagerIconUrl), 32, 32);
+            toolStripButton_ExchangeEditor.Image = ContentManager.GetIcon("ExchangeEditor");
+            //toolStripButton_Balance.Image = ContentManager.ResizeImage(ContentManager.GetIcon("BalanceManager"), 32, 32);
+            toolStripButton_Balance.Image = ContentManager.GetIcon("BalanceManager");
+            toolStripButton_Calculator.Image = ContentManager.GetIcon("CoinCalculator");
+            toolStripButton_Wallet.Image = ContentManager.GetIcon("WalletManager");
 
             //toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
             toolStripDropDownButton_menu.Image = Properties.Resources.TwEX_RoundIcon.ToBitmap();
 
-            toolStripMenuItem_LogManager.Image = ContentManager.GetIconByUrl(LogManager.IconUrl);
-            toolStripMenuItem_ArbitrageManager.Image = ContentManager.GetIconByUrl(ContentManager.ArbitrageIconUrl);
-            toolStripMenuItem_CoinMarketCap.Image = ContentManager.GetIconByUrl(CoinMarketCap.IconUrl);
-            toolStripMenuItem_CryptoCompare.Image = ContentManager.GetIconByUrl(CryptoCompare.IconUrl);
-            toolStripMenuItem_EarnGG.Image = ContentManager.GetIconByUrl(EarnGG.IconUrl);
-            toolStripMenuItem_TradingView.Image = ContentManager.GetIconByUrl(TradingView.IconUrl);
+            toolStripMenuItem_LogManager.Image = ContentManager.GetIcon("LogManager");
+            toolStripMenuItem_ArbitrageManager.Image = ContentManager.GetIcon("ArbitrageManager");
+            toolStripMenuItem_CoinMarketCap.Image = ContentManager.GetIcon("CoinMarketCap");
+            toolStripMenuItem_CryptoCompare.Image = ContentManager.GetIcon("CryptoCompare");
+            toolStripMenuItem_EarnGG.Image = ContentManager.GetIcon("EarnGGManager");
+            toolStripMenuItem_TradingView.Image = ContentManager.GetIcon("TradingView");
 
-            toolStripMenuItem_import.Image = ContentManager.GetIconByUrl(ContentManager.ImportIconUrl);
-            toolStripMenuItem_export.Image = ContentManager.GetIconByUrl(ContentManager.ExportIconUrl);
+            //toolStripMenuItem_import.Image = ContentManager.GetIcon("Import");
+            //toolStripMenuItem_export.Image = ContentManager.GetIcon("Export");
+            toolStripMenuItem_PreferenceManager.Image = ContentManager.GetIcon("Options");
         }
         #endregion
 
@@ -73,7 +74,8 @@ namespace TwEX_API.Controls
             }
             else
             {
-
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
             }
         }
         #endregion

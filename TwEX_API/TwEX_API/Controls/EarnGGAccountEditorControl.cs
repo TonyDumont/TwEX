@@ -121,11 +121,12 @@ namespace TwEX_API.Controls
             //account.api
             if (account.api.key.Length > 0 && account.api.secret.Length > 0)
             {
-                EarnGG.EarnGGAccount listItem = EarnGG.Accounts.FirstOrDefault(item => item.api.key == account.api.key && item.api.secret == account.api.secret);
+                EarnGG.EarnGGAccount listItem = PreferenceManager.EarnGGPreferences.EarnGGAccounts.FirstOrDefault(item => item.api.key == account.api.key && item.api.secret == account.api.secret);
                 if (listItem == null)
                 {
-                    EarnGG.Accounts.Add(account);
-                    PreferenceManager.UpdatePreferenceSnapshots();
+                    PreferenceManager.EarnGGPreferences.EarnGGAccounts.Add(account);
+                    //PreferenceManager.UpdatePreferenceSnapshots();
+                    PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.EarnGG);
                     EarnGG.UpdateUI();
                     ParentForm.Close();
                 }

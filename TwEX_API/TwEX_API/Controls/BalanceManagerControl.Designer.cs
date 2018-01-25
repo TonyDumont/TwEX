@@ -29,17 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BalanceManagerControl));
-            this.toolStrip_footer = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton_Font = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_FontDown = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_FontUp = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_collapse = new System.Windows.Forms.ToolStripButton();
-            this.fontDialog = new System.Windows.Forms.FontDialog();
-            this.toolStrip_header = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_CoinCount = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton_collapse = new System.Windows.Forms.ToolStripButton();
             this.toolStripRadioButton_symbol = new TwEX_API.ToolStripRadioButton();
             this.toolStripRadioButton_exchange = new TwEX_API.ToolStripRadioButton();
             this.toolStripRadioButton_balance = new TwEX_API.ToolStripRadioButton();
@@ -51,108 +48,85 @@
             this.column_Balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInBTC = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.toolStrip_footer.SuspendLayout();
-            this.toolStrip_header.SuspendLayout();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
             // 
-            // toolStrip_footer
+            // toolStrip
             // 
-            this.toolStrip_footer.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.toolStrip_footer.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.toolStrip_footer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton_Font,
-            this.toolStripSeparator3,
-            this.toolStripButton_FontDown,
-            this.toolStripSeparator1,
-            this.toolStripButton_FontUp,
-            this.toolStripSeparator2,
-            this.toolStripButton_collapse});
-            this.toolStrip_footer.Location = new System.Drawing.Point(0, 315);
-            this.toolStrip_footer.Name = "toolStrip_footer";
-            this.toolStrip_footer.Size = new System.Drawing.Size(777, 39);
-            this.toolStrip_footer.TabIndex = 0;
-            this.toolStrip_footer.Text = "toolStrip1";
-            // 
-            // toolStripButton_Font
-            // 
-            this.toolStripButton_Font.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_Font.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Font.Image")));
-            this.toolStripButton_Font.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_Font.Name = "toolStripButton_Font";
-            this.toolStripButton_Font.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButton_Font.Text = "FONT";
-            this.toolStripButton_Font.Click += new System.EventHandler(this.toolStripButton_Font_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripButton_FontDown
-            // 
-            this.toolStripButton_FontDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_FontDown.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.toolStripButton_FontDown.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_FontDown.Image")));
-            this.toolStripButton_FontDown.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_FontDown.Name = "toolStripButton_FontDown";
-            this.toolStripButton_FontDown.Size = new System.Drawing.Size(23, 36);
-            this.toolStripButton_FontDown.Text = "-";
-            this.toolStripButton_FontDown.ToolTipText = "Decrease Font Size";
-            this.toolStripButton_FontDown.Click += new System.EventHandler(this.toolStripButton_FontDown_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripButton_FontUp
-            // 
-            this.toolStripButton_FontUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_FontUp.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.toolStripButton_FontUp.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_FontUp.Image")));
-            this.toolStripButton_FontUp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_FontUp.Name = "toolStripButton_FontUp";
-            this.toolStripButton_FontUp.Size = new System.Drawing.Size(23, 36);
-            this.toolStripButton_FontUp.Text = "+";
-            this.toolStripButton_FontUp.ToolTipText = "Increase Font Size";
-            this.toolStripButton_FontUp.Click += new System.EventHandler(this.toolStripButton_FontUp_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripButton_collapse
-            // 
-            this.toolStripButton_collapse.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_collapse.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_collapse.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_collapse.Image")));
-            this.toolStripButton_collapse.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_collapse.Name = "toolStripButton_collapse";
-            this.toolStripButton_collapse.Size = new System.Drawing.Size(99, 36);
-            this.toolStripButton_collapse.Text = "Expand/Collapse";
-            this.toolStripButton_collapse.Click += new System.EventHandler(this.toolStripButton_toggleGroup_Click);
-            // 
-            // toolStrip_header
-            // 
-            this.toolStrip_header.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.toolStrip_header.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDropDownButton_menu,
+            this.toolStripSeparator4,
             this.toolStripLabel_CoinCount,
+            this.toolStripButton_collapse,
+            this.toolStripSeparator1,
             this.toolStripRadioButton_symbol,
             this.toolStripRadioButton_exchange,
             this.toolStripRadioButton_balance});
-            this.toolStrip_header.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip_header.Name = "toolStrip_header";
-            this.toolStrip_header.Size = new System.Drawing.Size(777, 39);
-            this.toolStrip_header.TabIndex = 1;
-            this.toolStrip_header.Text = "toolStrip1";
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(777, 39);
+            this.toolStrip.TabIndex = 1;
+            this.toolStrip.Text = "toolStrip1";
+            // 
+            // toolStripDropDownButton_menu
+            // 
+            this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_font,
+            this.toolStripMenuItem_fontIncrease,
+            this.toolStripMenuItem_fontDecrease});
+            this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
+            this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
+            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(45, 36);
+            this.toolStripDropDownButton_menu.Text = "OPTIONS";
+            this.toolStripDropDownButton_menu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_menu_DropDownItemClicked);
+            // 
+            // toolStripMenuItem_font
+            // 
+            this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_font.Tag = "Font";
+            this.toolStripMenuItem_font.Text = "Font";
+            // 
+            // toolStripMenuItem_fontIncrease
+            // 
+            this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
+            this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
+            // 
+            // toolStripMenuItem_fontDecrease
+            // 
+            this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
+            this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripLabel_CoinCount
             // 
             this.toolStripLabel_CoinCount.Name = "toolStripLabel_CoinCount";
             this.toolStripLabel_CoinCount.Size = new System.Drawing.Size(80, 36);
             this.toolStripLabel_CoinCount.Text = "COIN COUNT";
+            // 
+            // toolStripButton_collapse
+            // 
+            this.toolStripButton_collapse.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_collapse.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_collapse.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_collapse.Image")));
+            this.toolStripButton_collapse.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_collapse.Name = "toolStripButton_collapse";
+            this.toolStripButton_collapse.Size = new System.Drawing.Size(36, 36);
+            this.toolStripButton_collapse.Text = "Expand/Collapse";
+            this.toolStripButton_collapse.Click += new System.EventHandler(this.toolStripButton_toggleGroup_Click);
             // 
             // toolStripRadioButton_symbol
             // 
@@ -228,9 +202,10 @@
             this.listView.Location = new System.Drawing.Point(0, 39);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
+            this.listView.ShowGroups = false;
             this.listView.ShowImagesOnSubItems = true;
             this.listView.ShowItemCountOnGroups = true;
-            this.listView.Size = new System.Drawing.Size(777, 276);
+            this.listView.Size = new System.Drawing.Size(777, 315);
             this.listView.SortGroupItemsByPrimaryColumn = false;
             this.listView.TabIndex = 5;
             this.listView.UseCellFormatEvents = true;
@@ -290,20 +265,23 @@
             this.column_TotalInUSD.Text = "USD Total";
             this.column_TotalInUSD.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
+            // 
             // BalanceManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listView);
-            this.Controls.Add(this.toolStrip_header);
-            this.Controls.Add(this.toolStrip_footer);
+            this.Controls.Add(this.toolStrip);
             this.Name = "BalanceManagerControl";
             this.Size = new System.Drawing.Size(777, 354);
             this.Load += new System.EventHandler(this.BalanceManagerControl_Load);
-            this.toolStrip_footer.ResumeLayout(false);
-            this.toolStrip_footer.PerformLayout();
-            this.toolStrip_header.ResumeLayout(false);
-            this.toolStrip_header.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -311,16 +289,7 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ToolStrip toolStrip_footer;
-        private System.Windows.Forms.ToolStripButton toolStripButton_Font;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton toolStripButton_FontDown;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolStripButton_FontUp;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.FontDialog fontDialog;
-        private System.Windows.Forms.ToolStrip toolStrip_header;
+        private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_CoinCount;
         private BrightIdeasSoftware.FastObjectListView listView;
         private BrightIdeasSoftware.OLVColumn column_Symbol;
@@ -333,6 +302,12 @@
         private ToolStripRadioButton toolStripRadioButton_balance;
         private BrightIdeasSoftware.OLVColumn column_SymbolIcon;
         private BrightIdeasSoftware.OLVColumn column_Exchange;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_menu;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton toolStripButton_collapse;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
