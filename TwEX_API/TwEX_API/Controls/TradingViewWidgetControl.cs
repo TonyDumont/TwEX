@@ -25,7 +25,7 @@ namespace TwEX_API.Controls
         {
             //Cef.Initialize(new CefSettings());
             browser = new ChromiumWebBrowser(String.Empty);
-            this.Controls.Add(browser);
+            Controls.Add(browser);
             browser.Dock = DockStyle.Fill;
         }
         #endregion
@@ -474,7 +474,7 @@ namespace TwEX_API.Controls
                     "\"toolbar_bg\": \"" + parameters.toolbar_bg + "\"," +
                     "\"enable_publishing\": " + GetBoolean(parameters.enable_publishing) + "," +
                     "\"withdateranges\": " + GetBoolean(parameters.withdateranges) + "," +
-                    "\"hide_top_toolbar\": " + GetBoolean(!parameters.hide_top_toolbar) + "," +
+                    "\"hide_top_toolbar\": " + GetBoolean(parameters.hide_top_toolbar) + "," +
                     "\"hide_side_toolbar\": " + GetBoolean(!parameters.hide_side_toolbar) + "," +
                     "\"allow_symbol_change\": " + GetBoolean(parameters.allow_symbol_change) + "," +
                     GetWatchlistString(parameters.WatchList) +

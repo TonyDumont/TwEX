@@ -34,30 +34,25 @@ namespace TwEX_API
     {
         #region Properties
         private static string Name = "ContentManager";
-        
+        // IMAGE LISTS
         public static ImageList ExchangeIconList = new ImageList();
         public static ImageList IconList = new ImageList();
         public static ImageList SymbolIconList = new ImageList();
         public static ImageList WalletIconList = new ImageList();
-
-        /*
-        public static string BlockIOIconUrl { get; } = "https://block.io/favicon.ico";
-        public static string WalletIconUrl = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png";
-        public static string ExodusIconUrl = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr";
-        */
-
-
+        // URL LISTS
         public static List<IconFile> IconUrlList = new List<IconFile>()
         {
             new IconFile(){ Name = "Add", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Add.png"},
             new IconFile(){ Name = "AddWallet", Url = "https://cdn2.iconfinder.com/data/icons/finance-solid-icons-vol-3/48/112-256.png" },
-            new IconFile(){ Name = "ArbitrageManager", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },           
+            new IconFile(){ Name = "ArbitrageManager", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },
             new IconFile(){ Name = "BalanceManager", Url = "https://i.pinimg.com/originals/22/dd/de/22ddde0fc220582cf3688beca1795683.jpg" },
             new IconFile(){ Name = "BlockCypher", Url = "https://www.blockcypher.com/images/favicon-192x192.png" },
             new IconFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
+            new IconFile(){ Name = "ChartView", Url = "https://cdn1.iconfinder.com/data/icons/web-design-seo/512/26-512.png" },
             new IconFile(){ Name = "CoinCalculator", Url = "http://files.softicons.com/download/system-icons/web0.2ama-icons-by-chrfb/png/256x256/Calculator.png" },
             new IconFile(){ Name = "CoinMarketCap", Url = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png" },
             new IconFile(){ Name = "CryptoCompare", Url = "https://www.cryptocompare.com/media/20562/favicon.png?v=2" },
+            new IconFile(){ Name = "CustomView", Url ="http://cdn.mysitemyway.com/icons-watermarks/simple-black/bfa/bfa_table/bfa_table_simple-black_512x512.png" },
             new IconFile(){ Name = "EarnGGManager", Url = "https://earn.gg/img/favicon-32x32.png" },
             new IconFile(){ Name = "ExchangeEditor", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
             new IconFile(){ Name = "ExchangeManager", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
@@ -66,6 +61,7 @@ namespace TwEX_API
             new IconFile(){ Name = "Font", Url = "https://cdn0.iconfinder.com/data/icons/exempli_gratia/256/z_File_FONT.png" },
             new IconFile(){ Name = "FontDecrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-smaller.png" },
             new IconFile(){ Name = "FontIncrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png" },
+            
             new IconFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
             new IconFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
             
@@ -73,11 +69,13 @@ namespace TwEX_API
             new IconFile(){ Name = "PreferenceManager", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new IconFile(){ Name = "Refresh", Url = "https://cdn0.iconfinder.com/data/icons/huge-basic-icons/512/Refresh.png" },
             new IconFile(){ Name = "Remove", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Delete.png"},
+            new IconFile(){ Name = "SearchList", Url = "http://icons.iconarchive.com/icons/icons8/windows-8/512/Programming-Search-Property-icon.png"},
             new IconFile(){ Name = "Symbol", Url = "https://cdn2.iconfinder.com/data/icons/bitcoin-and-mining/44/trade-512.png" },
             //new IconFile(){ Name = "TradingView", Url = "https://www.tradingview.com/favicon.ico" },
             new IconFile(){ Name = "TradingView", Url = "http://www.patternsmart.com/cart//image/data/tradingview.png" },
             new IconFile(){ Name = "TwEX_FormEditor", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new IconFile(){ Name = "UpDown", Url = "https://cdn1.iconfinder.com/data/icons/touch-gestures-3/96/Scroll-512.png"},
+            new IconFile(){ Name = "USDSymbol", Url = "http://www.tirosagol.com/wp-content/uploads/moneyTAG.jpg"},
             new IconFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" }
         };
         public static List<IconFile> WalletIconUrlList = new List<IconFile>()
@@ -1038,14 +1036,17 @@ namespace TwEX_API
             try
             {
                 ExchangeTicker ticker = Tickers.FirstOrDefault(item => item.exchange == exchange && item.market == market && item.symbol == symbol);
+                //AddLogMessage(Name, "GetPriceOfSymbol", exchange + " | " + market + " | " + symbol, LogMessageType.OTHER);
                 if (ticker != null)
                 {
+                    //AddLogMessage(Name, "GetPriceOfSymbol", exchange + " | " + market + " | " + symbol, LogMessageType.OTHER);
+                    //AddLogMessage(Name, "GetPriceOfSymbol", "LAST=" + ticker.last, LogMessageType.OTHER);
                     value = ticker.last;
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "GetPriceOfSymbol", ex.Message, LogMessageType.EXCEPTION);
+                AddLogMessage(Name, "GetPriceOfSymbol", ex.Message, LogMessageType.EXCEPTION);
             }
             //LogManager.AddLogMessage(Name, "GetPriceOfSymbol", "exchange=" + exchange + " | market=" + market + " | symbol=" + symbol + " | value=" + value);
             return value;
@@ -1053,17 +1054,21 @@ namespace TwEX_API
 
         public static List<ExchangeTicker> GetPriceWatchlist(string market, string symbol)
         {
-            //LogManager.AddLogMessage(Name, "GetPriceWatchlist", "market=" + market + " | " + symbol, LogMessageType.DEBUG);
+            //AddLogMessage(Name, "GetPriceWatchlist", "market=" + market + " | " + symbol, LogMessageType.DEBUG);
             List<ExchangeTicker> list = new List<ExchangeTicker>();
 
             try
             {
                 foreach (Exchange exchange in Exchanges)
                 {
-                    if (market.Contains("USD"))
+                    //AddLogMessage(Name, "GetPriceWatchlist", "Exchange : " + exchange.Name + " | USDSymbol=" + exchange.USDSymbol + " | " + symbol + " | " + market, LogMessageType.OTHER);
+                    if (market.Contains("USD") && exchange.USDSymbol.Length > 0)
                     {
+                        //AddLogMessage(Name, "GetPriceWatchlist", "Exchange : " + exchange.Name + "USD MARKET =" + exchange.USDSymbol + " | " + symbol + " | " + market, LogMessageType.OTHER);
                         market = exchange.USDSymbol;
+                        //AddLogMessage(Name, "GetPriceWatchlist", "Exchange : " + exchange.Name + " | USDSymbol=" + exchange.USDSymbol + " | " + symbol + " | " + market, LogMessageType.OTHER);
                     }
+                    
                     ExchangeTicker newItem = new ExchangeTicker()
                     {
                         exchange = exchange.Name,
@@ -1497,6 +1502,7 @@ namespace TwEX_API
                         case "ArbitrageManager":
                              ArbitrageManagerControl control = new ArbitrageManagerControl() { Dock = DockStyle.Fill };
                             //form.Controls.Add(new ArbitrageManagerControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { arbitrageManagerControl = null; };
                             form.FormClosing += delegate { control.DisposeTimer(); };
                             form.Controls.Add(control);
                             
@@ -1512,22 +1518,26 @@ namespace TwEX_API
 
                         case "CryptoCompare":
                             form.Controls.Add(new CryptoCompareControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { cryptoCompareControl = null; };
                             break;
 
                         case "CoinMarketCap":
                             form.Controls.Add(new CoinMarketCapControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { coinMarketCapControl = null; };
                             break;
 
                         case "EarnGGManager":
                             form.Controls.Add(new EarnGGManagerControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { earnGGManagerControl = null; };
                             break;
 
                         case "ExchangeEditor":
                             form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { exchangeManagerControl = null; };
                             break;
 
                         case "LogManager":
-                            form.FormClosing += delegate { LogManager.logManagerControl = null; };
+                            form.FormClosing += delegate { logManagerControl = null; };
                             form.Controls.Add(new LogManagerControl() { Dock = DockStyle.Fill });
                             break;
 
@@ -1537,17 +1547,18 @@ namespace TwEX_API
 
                         case "TradingView":
                             form.Controls.Add(new TradingViewManagerControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { tradingViewManagerControl = null; };
                             break;
 
                         case "WalletManager":
                             form.Controls.Add(new WalletManagerControl() { Dock = DockStyle.Fill });
+                            form.FormClosing += delegate { walletManagerControl = null; };
                             break;
 
                         default:
-                            LogManager.AddLogMessage(Name, "OpenForm", "NOTE DEFINED!!! : " + name, LogMessageType.DEBUG);
+                            AddLogMessage(Name, "OpenForm", "NOTE DEFINED!!! : " + name, LogMessageType.DEBUG);
                             break;
                     }
-                    //form.Show();
                 }
                 else
                 {
@@ -1566,7 +1577,6 @@ namespace TwEX_API
                             break;
                     }
                 }
-                //form.Show();
             }
             else
             {
@@ -1578,7 +1588,6 @@ namespace TwEX_API
                 targetForm.Activate();
                 */
             }
-            //form.Show();
             UpdateToolStrip();
         }
         public static void RestoreForms()
@@ -2825,9 +2834,11 @@ namespace TwEX_API
         public class CryptoComparePreference
         {
             public string Symbol { get; set; } = "BTC";
+            public string Market { get; set; } = "USD";
 
             public CryptoCompareWidgetType WidgetType { get; set; } = CryptoCompareWidgetType.ChartAdvanced;
             public CryptoCompareChartPeriod PeriodType { get; set; } = CryptoCompareChartPeriod.Day_1D;
+            public CryptoCompareFeedType feedType = CryptoCompareFeedType.CoinTelegraph;
             public List<CryptoCompareCoin> CoinList { get; set; } = new List<CryptoCompareCoin>();
         }
         public class EarnGGPreference
@@ -2849,6 +2860,7 @@ namespace TwEX_API
         public class TradingViewPreference
         {
             public TradingViewAdvancedChartParameters parameters { get; set; } = new TradingViewAdvancedChartParameters();
+            //public TradingViewAdvancedChartParameters CustomParameters { get; set; } = new TradingViewAdvancedChartParameters();
             public List<ExchangeTicker> WatchList { get; set; } = new List<ExchangeTicker>()
             {
                 new ExchangeTicker() { symbol="BTC", market="USDT", exchange="POLONIEX" },

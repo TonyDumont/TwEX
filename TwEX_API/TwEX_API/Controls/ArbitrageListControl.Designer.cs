@@ -115,6 +115,7 @@
             // 
             // column_price
             // 
+            this.column_price.FillsFreeSpace = true;
             this.column_price.Text = "Price";
             this.column_price.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 

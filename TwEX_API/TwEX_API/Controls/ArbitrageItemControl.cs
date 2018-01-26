@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -8,16 +9,17 @@ namespace TwEX_API.Controls
     public partial class ArbitrageItemControl : UserControl
     {
         #region Properties
-        public string market { get; set; } = String.Empty;
-        public string symbol { get; set; } = String.Empty;
-        //private Timer timer = new Timer() { Interval = 60000 };
-
         private CryptoCompareWidgetControl chart = new CryptoCompareWidgetControl()
         {
             widgetType = Market.CryptoCompare.CryptoCompareWidgetType.Chart,
             Dock = DockStyle.Fill,
             hideScrollbars = true
         };
+        public string market { get; set; } = String.Empty;
+        public string symbol { get; set; } = String.Empty;
+
+        public int minChartWidth = 300;
+        public int minChartHeight = 265;
         #endregion
 
         #region Initialize
@@ -27,7 +29,10 @@ namespace TwEX_API.Controls
         }
         private void ArbitrageItemControl_Load(object sender, EventArgs e)
         {
+            
+            panel.Height = minChartHeight;
             panel.Controls.Add(chart);
+            //chart.updateBrowser();
             UpdateUI(true);
             //timer.Tick += new EventHandler(timer_Tick);
             //timer.Start();
@@ -42,41 +47,52 @@ namespace TwEX_API.Controls
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
                 try
-                {                
-                    //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | market=" + market, LogManager.LogMessageType.OTHER);
-                    toolStripLabel_symbol.Text = symbol.ToUpper();
-
-                    if (PreferenceManager.ArbitragePreferences.ShowCharts)
+                {
+                    if (symbol.Length > 0 && market.Length > 0)
                     {
-                        toolStrip.Visible = false;
-                        panel.Visible = true;
-                        chart.updateBrowser();
-                    }
-                    else
-                    {
-                        toolStrip.Visible = true;
-                        panel.Visible = false;
-                    }
+                        //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | market=" + market, LogManager.LogMessageType.OTHER);
+                        //toolStripLabel_symbol.Text = symbol.ToUpper();
+                        //toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
 
-                    arbitrageListControl_btc.UpdateUI(resize);
-                    arbitrageListControl_usd.UpdateUI(resize);
+                        if (PreferenceManager.ArbitragePreferences.ShowCharts)
+                        {
+                            toolStrip.Visible = false;
+                            panel.Visible = true;
+                            //LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market, LogManager.LogMessageType.DEBUG);
+                            //chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
+                            if (chart != null)
+                            {
+                                chart.updateBrowser();
+                            }
+                        }
+                        else
+                        {
+                            toolStrip.Visible = true;
+                            panel.Visible = false;
+                            toolStripLabel_symbol.Text = symbol.ToUpper();
+                            toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
+                        }
 
-                    if (resize)
-                    {
-                        ResizeUI();                        
+                        arbitrageListControl_btc.UpdateUI(resize);
+                        arbitrageListControl_usd.UpdateUI(resize);
+
+                        if (resize)
+                        {
+                            ResizeUI();
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    LogManager.AddLogMessage(Name, "UpdateUI", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                    LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
             }
         }
@@ -84,43 +100,35 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
-                Size textSize = TextRenderer.MeasureText("0.00000000", ParentForm.Font);
-                int padding = textSize.Width / 10;
-                int rowHeight = textSize.Height;
-                int iconSize = rowHeight;
+                toolStrip.Font = ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                Width = minChartWidth;
+                
 
-                int newWidth = 0;
+                int rowHeight = toolStrip.Height;
+                int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
 
-                foreach (Control control in flowLayoutPanel.Controls)
-                {
-                    newWidth += control.Width;
-                }
-
-                Width = newWidth + (padding * 2);
-
+                int newHeight = listHeight + (rowHeight * 3);
+                
                 if (PreferenceManager.ArbitragePreferences.ShowCharts)
                 {
-                    toolStrip.Visible = false;
-                    panel.Visible = true;
-                    panel.Width = Width;
-                    panel.Height = Width - (Width / 5);
-                    Size = new Size(Width, arbitrageListControl_usd.ClientSize.Height + panel.Height + padding);
+                    //newHeight = newHeight + minChartHeight;
+                    newHeight = newHeight + (rowHeight * 3);
                 }
                 else
                 {
-                    toolStrip.Visible = true;
-                    panel.Visible = false;
-                    panel.Height = 0;
-                    Size = new Size(Width, arbitrageListControl_usd.ClientSize.Height + toolStrip.Height + padding);
+                    //newHeight += rowHeight;
                 }
-                UpdateUI();
+                
+                //LogManager.AddLogMessage(Name, "ResizeUI", "tsHeight=" + toolStrip.Height + " | " + listHeight + " | " + newHeight, LogManager.LogMessageType.DEBUG);
+                ClientSize = new Size(Width, newHeight);
+                //UpdateUI();
             }
         }
 
@@ -134,15 +142,15 @@ namespace TwEX_API.Controls
             }
             else
             {
-                //LogManager.AddDebugMessage(this.Name, "SetPairCallback", symbol);  
+                
                 symbol = newSymbol;
                 market = newMarket;
 
                 arbitrageListControl_btc.SetProperties("BTC", symbol);
                 arbitrageListControl_usd.SetProperties("USD", symbol);
-
+                //LogManager.AddLogMessage(this.Name, "SetData", symbol + " | " + market, LogManager.LogMessageType.DEBUG);
                 chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
-                UpdateUI();
+                UpdateUI(true);
             }
         }
         #endregion

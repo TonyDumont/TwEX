@@ -78,6 +78,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 Width = column_Name.Width + listView.RowHeightEffective;
             }

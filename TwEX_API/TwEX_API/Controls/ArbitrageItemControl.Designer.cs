@@ -39,21 +39,23 @@
             this.toolStripMenuItem_remove = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_refresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.arbitrageListControl_usd = new TwEX_API.Controls.ArbitrageListControl();
             this.arbitrageListControl_btc = new TwEX_API.Controls.ArbitrageListControl();
+            this.arbitrageListControl_usd = new TwEX_API.Controls.ArbitrageListControl();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.toolStrip.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
-            this.flowLayoutPanel.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip
             // 
+            this.tableLayoutPanel1.SetColumnSpan(this.toolStrip, 2);
+            this.toolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel_symbol});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(366, 25);
+            this.toolStrip.Size = new System.Drawing.Size(301, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -65,10 +67,11 @@
             // 
             // panel
             // 
-            this.panel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel.Location = new System.Drawing.Point(0, 25);
+            this.tableLayoutPanel1.SetColumnSpan(this.panel, 2);
+            this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel.Location = new System.Drawing.Point(3, 28);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(366, 163);
+            this.panel.Size = new System.Drawing.Size(295, 163);
             this.panel.TabIndex = 0;
             // 
             // contextMenuStrip
@@ -122,33 +125,42 @@
             this.toolStripMenuItem_refresh.Tag = "refresh";
             this.toolStripMenuItem_refresh.Text = "REFRESH";
             // 
-            // flowLayoutPanel
+            // arbitrageListControl_btc
             // 
-            this.flowLayoutPanel.Controls.Add(this.arbitrageListControl_btc);
-            this.flowLayoutPanel.Controls.Add(this.arbitrageListControl_usd);
-            this.flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel.Location = new System.Drawing.Point(0, 188);
-            this.flowLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel.MinimumSize = new System.Drawing.Size(75, 75);
-            this.flowLayoutPanel.Name = "flowLayoutPanel";
-            this.flowLayoutPanel.Size = new System.Drawing.Size(366, 138);
-            this.flowLayoutPanel.TabIndex = 4;
+            this.arbitrageListControl_btc.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.arbitrageListControl_btc.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.arbitrageListControl_btc.Location = new System.Drawing.Point(3, 197);
+            this.arbitrageListControl_btc.Name = "arbitrageListControl_btc";
+            this.arbitrageListControl_btc.Size = new System.Drawing.Size(144, 353);
+            this.arbitrageListControl_btc.TabIndex = 1;
             // 
             // arbitrageListControl_usd
             // 
             this.arbitrageListControl_usd.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.arbitrageListControl_usd.Location = new System.Drawing.Point(153, 3);
+            this.arbitrageListControl_usd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.arbitrageListControl_usd.Location = new System.Drawing.Point(153, 197);
             this.arbitrageListControl_usd.Name = "arbitrageListControl_usd";
-            this.arbitrageListControl_usd.Size = new System.Drawing.Size(144, 353);
+            this.arbitrageListControl_usd.Size = new System.Drawing.Size(145, 353);
             this.arbitrageListControl_usd.TabIndex = 0;
             // 
-            // arbitrageListControl_btc
+            // tableLayoutPanel1
             // 
-            this.arbitrageListControl_btc.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.arbitrageListControl_btc.Location = new System.Drawing.Point(3, 3);
-            this.arbitrageListControl_btc.Name = "arbitrageListControl_btc";
-            this.arbitrageListControl_btc.Size = new System.Drawing.Size(144, 353);
-            this.arbitrageListControl_btc.TabIndex = 1;
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.arbitrageListControl_usd, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.arbitrageListControl_btc, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.toolStrip, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panel, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(301, 424);
+            this.tableLayoutPanel1.TabIndex = 5;
             // 
             // ArbitrageItemControl
             // 
@@ -156,20 +168,18 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.ContextMenuStrip = this.contextMenuStrip;
-            this.Controls.Add(this.flowLayoutPanel);
-            this.Controls.Add(this.panel);
-            this.Controls.Add(this.toolStrip);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimumSize = new System.Drawing.Size(150, 150);
             this.Name = "ArbitrageItemControl";
-            this.Size = new System.Drawing.Size(366, 326);
+            this.Size = new System.Drawing.Size(301, 424);
             this.Load += new System.EventHandler(this.ArbitrageItemControl_Load);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.contextMenuStrip.ResumeLayout(false);
-            this.flowLayoutPanel.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -182,10 +192,10 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_down;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_remove;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
         private ArbitrageListControl arbitrageListControl_usd;
         private ArbitrageListControl arbitrageListControl_btc;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_refresh;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }

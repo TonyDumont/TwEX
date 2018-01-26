@@ -58,8 +58,6 @@
             this.toolStripMenuItem_3M = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_6M = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_1Y = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel_FeedSource = new System.Windows.Forms.ToolStripLabel();
             this.toolStripDropDownButton_FeedSource = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_CoinTelegraph = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_CryptoSource = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,7 +67,6 @@
             this.toolStripMenuItem_CoreMediaSupernet = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_DashPayMagazine = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_CoinJoker = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_SortOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Name = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -80,14 +77,19 @@
             this.column_FullyPremined = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.panel = new System.Windows.Forms.Panel();
+            this.toolStrip_filter = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton_search = new System.Windows.Forms.ToolStripButton();
+            this.toolStripTextBox_search = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.tableLayoutPanel.SuspendLayout();
+            this.toolStrip_filter.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip
             // 
-            this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton_widget,
             this.toolStripSeparator1,
@@ -98,13 +100,10 @@
             this.toolStripSeparator2,
             this.toolStripLabel_period,
             this.toolStripDropDownButton_period,
-            this.toolStripSeparator3,
-            this.toolStripLabel_FeedSource,
-            this.toolStripDropDownButton_FeedSource,
-            this.toolStripSeparator4});
+            this.toolStripDropDownButton_FeedSource});
             this.toolStrip.Location = new System.Drawing.Point(375, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(580, 25);
+            this.toolStrip.Size = new System.Drawing.Size(975, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -230,7 +229,7 @@
             // toolStripTextBox_symbol
             // 
             this.toolStripTextBox_symbol.Name = "toolStripTextBox_symbol";
-            this.toolStripTextBox_symbol.Size = new System.Drawing.Size(150, 25);
+            this.toolStripTextBox_symbol.Size = new System.Drawing.Size(75, 25);
             this.toolStripTextBox_symbol.Text = "BTC";
             this.toolStripTextBox_symbol.KeyUp += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox_KeyUp);
             // 
@@ -243,7 +242,7 @@
             // toolStripTextBox_market
             // 
             this.toolStripTextBox_market.Name = "toolStripTextBox_market";
-            this.toolStripTextBox_market.Size = new System.Drawing.Size(150, 23);
+            this.toolStripTextBox_market.Size = new System.Drawing.Size(75, 25);
             this.toolStripTextBox_market.Text = "USD";
             this.toolStripTextBox_market.KeyUp += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox_KeyUp);
             // 
@@ -256,7 +255,7 @@
             // 
             this.toolStripLabel_period.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripLabel_period.Name = "toolStripLabel_period";
-            this.toolStripLabel_period.Size = new System.Drawing.Size(44, 15);
+            this.toolStripLabel_period.Size = new System.Drawing.Size(44, 22);
             this.toolStripLabel_period.Text = "Period:";
             // 
             // toolStripDropDownButton_period
@@ -274,7 +273,7 @@
             this.toolStripDropDownButton_period.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_period.Image")));
             this.toolStripDropDownButton_period.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_period.Name = "toolStripDropDownButton_period";
-            this.toolStripDropDownButton_period.Size = new System.Drawing.Size(51, 19);
+            this.toolStripDropDownButton_period.Size = new System.Drawing.Size(51, 22);
             this.toolStripDropDownButton_period.Text = "1 Day";
             this.toolStripDropDownButton_period.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_period_DropDownItemClicked);
             // 
@@ -329,19 +328,9 @@
             this.toolStripMenuItem_1Y.Tag = "Year_1Y";
             this.toolStripMenuItem_1Y.Text = "1 Year";
             // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripLabel_FeedSource
-            // 
-            this.toolStripLabel_FeedSource.Name = "toolStripLabel_FeedSource";
-            this.toolStripLabel_FeedSource.Size = new System.Drawing.Size(74, 15);
-            this.toolStripLabel_FeedSource.Text = "Feed Source:";
-            // 
             // toolStripDropDownButton_FeedSource
             // 
+            this.toolStripDropDownButton_FeedSource.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripDropDownButton_FeedSource.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButton_FeedSource.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_CoinTelegraph,
@@ -357,7 +346,7 @@
             this.toolStripDropDownButton_FeedSource.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_FeedSource.Image")));
             this.toolStripDropDownButton_FeedSource.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_FeedSource.Name = "toolStripDropDownButton_FeedSource";
-            this.toolStripDropDownButton_FeedSource.Size = new System.Drawing.Size(99, 19);
+            this.toolStripDropDownButton_FeedSource.Size = new System.Drawing.Size(99, 22);
             this.toolStripDropDownButton_FeedSource.Text = "CoinTelegraph";
             this.toolStripDropDownButton_FeedSource.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_FeedSource_DropDownItemClicked);
             // 
@@ -417,11 +406,6 @@
             this.toolStripMenuItem_CoinJoker.Tag = "CoinJoker";
             this.toolStripMenuItem_CoinJoker.Text = "CoinJoker";
             // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
-            // 
             // listView
             // 
             this.listView.AllColumns.Add(this.column_SortOrder);
@@ -457,6 +441,8 @@
             this.listView.TabIndex = 6;
             this.listView.UseCellFormatEvents = true;
             this.listView.UseCompatibleStateImageBehavior = false;
+            this.listView.UseFiltering = true;
+            this.listView.UseOverlays = false;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
             this.listView.ItemActivate += new System.EventHandler(this.listView_ItemActivate);
@@ -517,13 +503,14 @@
             this.tableLayoutPanel.Controls.Add(this.toolStrip, 1, 0);
             this.tableLayoutPanel.Controls.Add(this.listView, 0, 1);
             this.tableLayoutPanel.Controls.Add(this.panel, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.toolStrip_filter, 0, 0);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 2;
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(955, 443);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(1350, 443);
             this.tableLayoutPanel.TabIndex = 4;
             // 
             // panel
@@ -531,8 +518,46 @@
             this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel.Location = new System.Drawing.Point(378, 28);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(574, 412);
+            this.panel.Size = new System.Drawing.Size(969, 412);
             this.panel.TabIndex = 7;
+            // 
+            // toolStrip_filter
+            // 
+            this.toolStrip_filter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStrip_filter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel_title,
+            this.toolStripButton_search,
+            this.toolStripTextBox_search});
+            this.toolStrip_filter.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip_filter.Name = "toolStrip_filter";
+            this.toolStrip_filter.Size = new System.Drawing.Size(375, 25);
+            this.toolStrip_filter.TabIndex = 8;
+            this.toolStrip_filter.Text = "toolStrip1";
+            // 
+            // toolStripButton_search
+            // 
+            this.toolStripButton_search.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_search.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_search.Enabled = false;
+            this.toolStripButton_search.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_search.Image")));
+            this.toolStripButton_search.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_search.Name = "toolStripButton_search";
+            this.toolStripButton_search.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_search.Text = "SEARCH";
+            // 
+            // toolStripTextBox_search
+            // 
+            this.toolStripTextBox_search.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripTextBox_search.Name = "toolStripTextBox_search";
+            this.toolStripTextBox_search.Size = new System.Drawing.Size(100, 25);
+            this.toolStripTextBox_search.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolStripTextBox_search.TextChanged += new System.EventHandler(this.toolStripTextBox_search_TextChanged);
+            // 
+            // toolStripLabel_title
+            // 
+            this.toolStripLabel_title.Name = "toolStripLabel_title";
+            this.toolStripLabel_title.Size = new System.Drawing.Size(46, 22);
+            this.toolStripLabel_title.Text = "0 Coins";
             // 
             // CryptoCompareControl
             // 
@@ -540,13 +565,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "CryptoCompareControl";
-            this.Size = new System.Drawing.Size(955, 443);
+            this.Size = new System.Drawing.Size(1350, 443);
             this.Load += new System.EventHandler(this.CryptoCompareControl_Load);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
+            this.toolStrip_filter.ResumeLayout(false);
+            this.toolStrip_filter.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -568,8 +595,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_6M;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_1Y;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_period;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel_FeedSource;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_FeedSource;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_CoinTelegraph;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_CryptoSource;
@@ -579,7 +604,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_CoreMediaSupernet;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_DashPayMagazine;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_CoinJoker;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_widget;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Chart;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_PricesList;
@@ -603,5 +627,9 @@
         private BrightIdeasSoftware.OLVColumn column_FullyPremined;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Panel panel;
+        private System.Windows.Forms.ToolStrip toolStrip_filter;
+        private System.Windows.Forms.ToolStripButton toolStripButton_search;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBox_search;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_title;
     }
 }

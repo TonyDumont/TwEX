@@ -11,7 +11,7 @@ namespace TwEX_API.Controls
     {
         #region Properties
         CryptoCompareWidgetControl widget = new CryptoCompareWidgetControl() { Dock = DockStyle.Fill };
-        CryptoCompare.CryptoCompareFeedType feedType = CryptoCompare.CryptoCompareFeedType.CoinTelegraph;
+        //CryptoCompare.CryptoCompareFeedType feedType = CryptoCompare.CryptoCompareFeedType.CoinTelegraph;
         #endregion
 
         #region Initialize
@@ -23,23 +23,18 @@ namespace TwEX_API.Controls
         }
         private void CryptoCompareControl_Load(object sender, EventArgs e)
         {
-
-            LogManager.AddLogMessage(Name, "CryptoCompareControl_Load", "LOADED : " + PreferenceManager.CryptoComparePreferences.Symbol + " | " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.OTHER);
+            //LogManager.AddLogMessage(Name, "CryptoCompareControl_Load", "LOADED : " + PreferenceManager.CryptoComparePreferences.Symbol + " | " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.OTHER);
             toolStripDropDownButton_widget.Text = PreferenceManager.CryptoComparePreferences.WidgetType.ToString();
+            toolStripButton_search.Image = ContentManager.GetIcon("SearchList");
             //PreferenceManager.CryptoComparePreferences.WidgetType = (CryptoCompare.CryptoCompareWidgetType)Enum.Parse(typeof(CryptoCompare.CryptoCompareWidgetType), widgetName);
-            //widget.widgetType = PreferenceManager.CryptoComparePreferences.WidgetType;
-            //widget.widgetType = CryptoCompare.CryptoCompareWidgetType.ChartAdvanced;
 
             toolStripTextBox_symbol.Text = PreferenceManager.CryptoComparePreferences.Symbol;
-            toolStripTextBox_market.Text = "USD";
-            //setWidget();
-            //setWidget();
-            //widget.setAdvancedChart(toolStripTextBox_symbol.Text, toolStripTextBox_market.Text);
+            toolStripTextBox_market.Text = PreferenceManager.CryptoComparePreferences.Market;
+            setWidget();
             panel.Controls.Add(widget);
-            //widget.setAdvancedChart(toolStripTextBox_symbol.Text, toolStripTextBox_market.Text);
+            ChangeWidget(PreferenceManager.CryptoComparePreferences.WidgetType);
             UpdateUI(true);
         }
-
         private void InitializeColumns()
         {
             column_FullyPremined.AspectGetter = new AspectGetterDelegate(aspect_FullyPremined);         
@@ -60,6 +55,7 @@ namespace TwEX_API.Controls
             else
             {
                 listView.SetObjects(PreferenceManager.CryptoComparePreferences.CoinList.OrderBy(item => item.SortOrder));
+                toolStripLabel_title.Text = listView.Items.Count + " Coins";
                 setWidget();
 
                 if (resize)
@@ -81,6 +77,8 @@ namespace TwEX_API.Controls
             {
                 ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 listView.Font = ParentForm.Font;
+                toolStrip.Font = ParentForm.Font;
+
                 Size textSize = TextRenderer.MeasureText("O", ParentForm.Font);
                 
                 int listWidth = 0;
@@ -149,6 +147,7 @@ namespace TwEX_API.Controls
         }
         #endregion
 
+        #region Setters
         private void setWidget()
         {
             //LogManager.AddLogMessage(Name, "setWidget", toolStripTextBox_symbol.Text + " | " + toolStripTextBox_market.Text + " | " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.OTHER);
@@ -159,7 +158,7 @@ namespace TwEX_API.Controls
                     break;
 
                 case CryptoCompare.CryptoCompareWidgetType.NewsFeed:
-                    widget.setNewsFeed(toolStripTextBox_symbol.Text, toolStripTextBox_market.Text, feedType);
+                    widget.setNewsFeed(toolStripTextBox_symbol.Text, toolStripTextBox_market.Text, PreferenceManager.CryptoComparePreferences.feedType);
                     break;
 
                 case CryptoCompare.CryptoCompareWidgetType.PricesList:
@@ -187,7 +186,7 @@ namespace TwEX_API.Controls
                     break;
 
                 case CryptoCompare.CryptoCompareWidgetType.ChartAdvanced:
-                    LogManager.AddLogMessage(Name, "setWidget", toolStripTextBox_symbol.Text + " | " + toolStripTextBox_market.Text + " | " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.OTHER);
+                    //LogManager.AddLogMessage(Name, "setWidget", toolStripTextBox_symbol.Text + " | " + toolStripTextBox_market.Text + " | " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.OTHER);
                     widget.setAdvancedChart(toolStripTextBox_symbol.Text, toolStripTextBox_market.Text);
                     break;
 
@@ -211,11 +210,177 @@ namespace TwEX_API.Controls
                     LogManager.AddLogMessage(Name, "updateUI", "type NOT DEFINED : " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.DEBUG);
                     break;
             }
-            //widget.updateBrowser();
-            //widget.Refresh();
-            //Refresh();
         }
-        /*
+        private void ChangeWidget(CryptoCompare.CryptoCompareWidgetType type)
+        {
+            switch (type)
+            {
+                case CryptoCompare.CryptoCompareWidgetType.Chart:
+                    // SYMBOL , MARKET , PERIOD 
+                    toolStripLabel_symbol.Text = "Symbol:";
+                    toolStripLabel_market.Text = "Market:";
+
+                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
+                    toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
+
+                    //toolStripDropDownButton_period.Enabled = true;
+                    //toolStripDropDownButton_FeedSource.Enabled = false;
+                    toolStripDropDownButton_period.Visible = true;
+                    toolStripDropDownButton_FeedSource.Visible = false;
+                    break;
+
+                case CryptoCompare.CryptoCompareWidgetType.NewsFeed:
+                    // SYMBOL , MARKET , FEEDTYPE
+                    toolStripLabel_symbol.Text = "Symbol:";
+                    toolStripLabel_market.Text = "Market:";
+
+                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
+                    toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
+
+                    //toolStripDropDownButton_period.Enabled = false;
+                    //toolStripDropDownButton_FeedSource.Enabled = true;
+                    toolStripDropDownButton_period.Visible = false;
+                    toolStripDropDownButton_FeedSource.Visible = true;
+                    break;
+
+                case CryptoCompare.CryptoCompareWidgetType.PricesList:
+                case CryptoCompare.CryptoCompareWidgetType.PricesTiles:
+                case CryptoCompare.CryptoCompareWidgetType.Summary:
+                case CryptoCompare.CryptoCompareWidgetType.Converter:
+                    // Price List - SYMBOL , MARKETS (25)
+                    toolStripLabel_symbol.Text = "Symbol:";
+                    toolStripLabel_market.Text = "Markets(25):";
+
+                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
+
+                    //toolStripDropDownButton_period.Enabled = false;
+                    //toolStripDropDownButton_FeedSource.Enabled = false;
+                    toolStripDropDownButton_period.Visible = false;
+                    toolStripDropDownButton_FeedSource.Visible = false;
+                    break;
+
+                case CryptoCompare.CryptoCompareWidgetType.Tabbed:
+                    // Tabbed - SYMBOLS (5) , MARKETS (5)
+                    toolStripLabel_symbol.Text = "Symbols(5):";
+                    toolStripLabel_market.Text = "Markets(5):";
+
+                    //toolStripDropDownButton_period.Enabled = false;
+                    //toolStripDropDownButton_FeedSource.Enabled = false;
+                    toolStripDropDownButton_period.Visible = false;
+                    toolStripDropDownButton_FeedSource.Visible = false;
+                    break;
+
+                case CryptoCompare.CryptoCompareWidgetType.Horizontal:
+                    // Horizontal - SYMBOL , MARKETS (4 - 1/2 - 3/4)
+                    toolStripLabel_symbol.Text = "Symbol:";
+                    toolStripLabel_market.Text = "Markets(4):";
+
+                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
+
+                    //toolStripDropDownButton_period.Enabled = false;
+                    //toolStripDropDownButton_FeedSource.Enabled = false;
+                    toolStripDropDownButton_period.Visible = false;
+                    toolStripDropDownButton_FeedSource.Visible = false;
+                    break;
+
+                case CryptoCompare.CryptoCompareWidgetType.Historical:
+                case CryptoCompare.CryptoCompareWidgetType.ChartAdvanced:
+                    // Historical - SYMBOL , MARKET
+                    toolStripLabel_symbol.Text = "Symbol:";
+                    toolStripLabel_market.Text = "Market:";
+
+                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
+                    toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
+
+                    //toolStripDropDownButton_period.Enabled = false;
+                    //toolStripDropDownButton_FeedSource.Enabled = false;
+                    toolStripDropDownButton_period.Visible = false;
+
+                    toolStripDropDownButton_FeedSource.Visible = false;
+                    break;
+
+                case CryptoCompare.CryptoCompareWidgetType.HeaderV2:
+                case CryptoCompare.CryptoCompareWidgetType.HeaderV3:
+                    // Header V2 - SYMBOLS(5) , MARKETS(25)
+                    toolStripLabel_symbol.Text = "Symbols(5):";
+                    toolStripLabel_market.Text = "Markets(25):";
+
+                    //toolStripDropDownButton_period.Enabled = false;
+                    //toolStripDropDownButton_FeedSource.Enabled = false;
+                    toolStripDropDownButton_period.Visible = false;
+                    //toolStripLabel_period.Visible = toolStripDropDownButton_period.Visible;
+                    toolStripDropDownButton_FeedSource.Visible = false;
+                    break;
+
+                default:
+                    LogManager.AddLogMessage(Name, "toolStripDropDownButton_widget_DropDownItemClicked", "type NOT DEFINED : " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.DEBUG);
+                    break;
+            }
+            toolStripLabel_period.Visible = toolStripDropDownButton_period.Visible;
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CryptoCompare);
+            UpdateUI();
+        }
+        #endregion
+
+        #region EventHandlers
+        private void listView_ItemActivate(object sender, EventArgs e)
+        {
+            if (listView.SelectedObject != null)
+            {
+                CryptoCompare.CryptoCompareCoin coin = listView.SelectedObject as CryptoCompare.CryptoCompareCoin;
+                //LogManager.AddLogMessage(Name, "listView_ItemActivate", coin.Symbol, LogManager.LogMessageType.DEBUG);
+                PreferenceManager.CryptoComparePreferences.Symbol = coin.Symbol;
+                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CryptoCompare);
+                toolStripTextBox_symbol.Text = coin.Symbol;
+                UpdateUI();
+            }
+        }
+        private void toolStripDropDownButton_period_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            toolStripDropDownButton_period.Text = e.ClickedItem.Text;
+            CryptoCompare.CryptoCompareChartPeriod type = (CryptoCompare.CryptoCompareChartPeriod)Enum.Parse(typeof(CryptoCompare.CryptoCompareChartPeriod), e.ClickedItem.Tag.ToString());
+            PreferenceManager.CryptoComparePreferences.PeriodType = type;
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CryptoCompare);
+            UpdateUI();
+        }
+        private void toolStripDropDownButton_FeedSource_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            toolStripDropDownButton_FeedSource.Text = e.ClickedItem.Tag.ToString();
+            CryptoCompare.CryptoCompareFeedType type = (CryptoCompare.CryptoCompareFeedType)Enum.Parse(typeof(CryptoCompare.CryptoCompareFeedType), e.ClickedItem.Text);
+            PreferenceManager.CryptoComparePreferences.feedType = type;
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CryptoCompare);
+            UpdateUI();
+        }
+        private void toolStripDropDownButton_widget_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            string widgetName = e.ClickedItem.Tag.ToString();
+            toolStripDropDownButton_widget.Text = widgetName;
+            PreferenceManager.CryptoComparePreferences.WidgetType = (CryptoCompare.CryptoCompareWidgetType)Enum.Parse(typeof(CryptoCompare.CryptoCompareWidgetType), widgetName);
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CryptoCompare);
+            ChangeWidget(PreferenceManager.CryptoComparePreferences.WidgetType);
+        }
+        
+        private void toolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                PreferenceManager.CryptoComparePreferences.Symbol = toolStripTextBox_symbol.Text.ToUpper();
+                PreferenceManager.CryptoComparePreferences.Market = toolStripTextBox_market.Text.ToUpper();
+                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CryptoCompare);
+                UpdateUI();
+            }          
+        }
+        #endregion
+
+        private void toolStripTextBox_search_TextChanged(object sender, EventArgs e)
+        {
+            listView.ModelFilter = TextMatchFilter.Contains(listView, toolStripTextBox_search.Text);
+            toolStripLabel_title.Text = listView.Items.Count + " Coins";
+        }
+    }
+}
+
+/*
         #region Updaters
         private void updateUI()
         {
@@ -282,134 +447,3 @@ namespace TwEX_API.Controls
         }
         #endregion
         */
-        #region EventHandlers
-        private void toolStripDropDownButton_period_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            toolStripDropDownButton_period.Text = e.ClickedItem.Text;
-            CryptoCompare.CryptoCompareChartPeriod type = (CryptoCompare.CryptoCompareChartPeriod)Enum.Parse(typeof(CryptoCompare.CryptoCompareChartPeriod), e.ClickedItem.Tag.ToString());
-            PreferenceManager.CryptoComparePreferences.PeriodType = type;
-            UpdateUI();
-        }
-        private void toolStripDropDownButton_FeedSource_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            toolStripDropDownButton_FeedSource.Text = e.ClickedItem.Tag.ToString();
-            CryptoCompare.CryptoCompareFeedType type = (CryptoCompare.CryptoCompareFeedType)Enum.Parse(typeof(CryptoCompare.CryptoCompareFeedType), e.ClickedItem.Text);
-            feedType = type;
-            UpdateUI();
-        }
-        private void toolStripDropDownButton_widget_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            string widgetName = e.ClickedItem.Tag.ToString();
-            toolStripDropDownButton_widget.Text = widgetName;
-            PreferenceManager.CryptoComparePreferences.WidgetType = (CryptoCompare.CryptoCompareWidgetType) Enum.Parse(typeof(CryptoCompare.CryptoCompareWidgetType), widgetName);
-
-            switch (PreferenceManager.CryptoComparePreferences.WidgetType)
-            {
-                case CryptoCompare.CryptoCompareWidgetType.Chart:
-                    // SYMBOL , MARKET , PERIOD 
-                    toolStripLabel_symbol.Text = "Symbol:";
-                    toolStripLabel_market.Text = "Market:";
-
-                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
-                    toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
-
-                    toolStripDropDownButton_period.Enabled = true;
-                    toolStripDropDownButton_FeedSource.Enabled = false;
-                    break;
-
-                case CryptoCompare.CryptoCompareWidgetType.NewsFeed:
-                    // SYMBOL , MARKET , FEEDTYPE
-                    toolStripLabel_symbol.Text = "Symbol:";
-                    toolStripLabel_market.Text = "Market:";
-
-                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
-                    toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
-
-                    toolStripDropDownButton_period.Enabled = false;
-                    toolStripDropDownButton_FeedSource.Enabled = true;
-                    break;
-
-                case CryptoCompare.CryptoCompareWidgetType.PricesList:
-                case CryptoCompare.CryptoCompareWidgetType.PricesTiles:
-                case CryptoCompare.CryptoCompareWidgetType.Summary:
-                case CryptoCompare.CryptoCompareWidgetType.Converter:
-                    // Price List - SYMBOL , MARKETS (25)
-                    toolStripLabel_symbol.Text = "Symbol:";
-                    toolStripLabel_market.Text = "Markets(25):";
-
-                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
-
-                    toolStripDropDownButton_period.Enabled = false;
-                    toolStripDropDownButton_FeedSource.Enabled = false;
-                    break;
-
-                case CryptoCompare.CryptoCompareWidgetType.Tabbed:
-                    // Tabbed - SYMBOLS (5) , MARKETS (5)
-                    toolStripLabel_symbol.Text = "Symbols(5):";
-                    toolStripLabel_market.Text = "Markets(5):";
-
-                    toolStripDropDownButton_period.Enabled = false;
-                    toolStripDropDownButton_FeedSource.Enabled = false;
-                    break;
-
-                case CryptoCompare.CryptoCompareWidgetType.Horizontal:
-                    // Horizontal - SYMBOL , MARKETS (4 - 1/2 - 3/4)
-                    toolStripLabel_symbol.Text = "Symbol:";
-                    toolStripLabel_market.Text = "Markets(4):";
-
-                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
-
-                    toolStripDropDownButton_period.Enabled = false;
-                    toolStripDropDownButton_FeedSource.Enabled = false;
-                    break;
-
-                case CryptoCompare.CryptoCompareWidgetType.Historical:
-                case CryptoCompare.CryptoCompareWidgetType.ChartAdvanced:
-                    // Historical - SYMBOL , MARKET
-                    toolStripLabel_symbol.Text = "Symbol:";
-                    toolStripLabel_market.Text = "Market:";
-
-                    toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
-                    toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
-
-                    toolStripDropDownButton_period.Enabled = false;
-                    toolStripDropDownButton_FeedSource.Enabled = false;
-                    break;
-
-                case CryptoCompare.CryptoCompareWidgetType.HeaderV2:
-                case CryptoCompare.CryptoCompareWidgetType.HeaderV3:
-                    // Header V2 - SYMBOLS(5) , MARKETS(25)
-                    toolStripLabel_symbol.Text = "Symbols(5):";
-                    toolStripLabel_market.Text = "Markets(25):";
-
-                    toolStripDropDownButton_period.Enabled = false;
-                    toolStripDropDownButton_FeedSource.Enabled = false;
-                    break;
-
-                default:
-                    LogManager.AddLogMessage(Name, "toolStripDropDownButton_widget_DropDownItemClicked", "type NOT DEFINED : " + PreferenceManager.CryptoComparePreferences.WidgetType, LogManager.LogMessageType.DEBUG);
-                    break;
-            }
-            UpdateUI();
-        }
-        private void toolStripTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                UpdateUI();
-            }          
-        }
-        #endregion
-
-        private void listView_ItemActivate(object sender, EventArgs e)
-        {
-            if (listView.SelectedObject != null)
-            {
-                CryptoCompare.CryptoCompareCoin coin = listView.SelectedObject as CryptoCompare.CryptoCompareCoin;
-                LogManager.AddLogMessage(Name, "listView_ItemActivate", coin.Symbol, LogManager.LogMessageType.DEBUG);
-                toolStripTextBox_symbol.Text = coin.Symbol;
-                UpdateUI();
-            }
-        }
-    }
-}

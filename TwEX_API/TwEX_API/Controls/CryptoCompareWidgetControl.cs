@@ -37,17 +37,20 @@ namespace TwEX_API.Controls
             // ReSharper disable once UnusedVariable
             var browser = new CefSharp.Wpf.ChromiumWebBrowser(); //test, if browser can be instantiated
             */
+            //updateBrowser();
         }
         public void InitializeBrowser()
         {
             //Cef.Initialize(new CefSettings());
             browser = new ChromiumWebBrowser(String.Empty) { Dock = DockStyle.Fill };
             browser.FrameLoadEnd += OnBrowserFrameLoadEnd;
+            browser.LoadingStateChanged += OnLoadingStateChanged;
             panel.Controls.Add(browser);
             //browser.Dock = DockStyle.Fill;
         }
         private void OnBrowserFrameLoadEnd(object sender, FrameLoadEndEventArgs args)
         {
+            //LogManager.AddLogMessage(Name, "OnBrowserFrameLoadEnd", sender.ToString() + " | " + args.Frame.IsMain, LogManager.LogMessageType.DEBUG);
             if (args.Frame.IsMain && hideScrollbars)
             {
                 args
@@ -55,6 +58,20 @@ namespace TwEX_API.Controls
                     .MainFrame
                     .ExecuteJavaScriptAsync(
                     "document.body.style.overflow = 'hidden'");
+            }
+        }
+        private void OnLoadingStateChanged(object sender, LoadingStateChangedEventArgs args)
+        {
+            //Wait for while page to finish loading not just the first frame
+            //LogManager.AddLogMessage(Name, "OnLoadingStateChanged", sender.ToString() + " | " + args.IsLoading, LogManager.LogMessageType.DEBUG);
+
+            if (!args.IsLoading)
+            {
+                browser.LoadingStateChanged -= OnLoadingStateChanged;
+                //LogManager.AddLogMessage(Name, "OnLoadingStateChanged", "LOADED!!!", LogManager.LogMessageType.DEBUG);
+                //This is required when using a standard TaskCompletionSource
+                //Extension method found in the CefSharp.Internals namespace
+                //tcs.TrySetResultAsync(true);
             }
         }
         #endregion Initialize

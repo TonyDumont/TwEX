@@ -31,7 +31,6 @@
             this.checkBox_font = new System.Windows.Forms.CheckBox();
             this.groupBox = new System.Windows.Forms.GroupBox();
             this.button_font = new System.Windows.Forms.Button();
-            this.label_sample = new System.Windows.Forms.Label();
             this.groupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,7 +48,6 @@
             // 
             // groupBox
             // 
-            this.groupBox.Controls.Add(this.label_sample);
             this.groupBox.Controls.Add(this.button_font);
             this.groupBox.Controls.Add(this.checkBox_font);
             this.groupBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -72,17 +70,6 @@
             this.button_font.UseVisualStyleBackColor = true;
             this.button_font.Click += new System.EventHandler(this.button_font_Click);
             // 
-            // label_sample
-            // 
-            this.label_sample.AutoSize = true;
-            this.label_sample.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label_sample.Location = new System.Drawing.Point(3, 58);
-            this.label_sample.Name = "label_sample";
-            this.label_sample.Size = new System.Drawing.Size(66, 13);
-            this.label_sample.TabIndex = 2;
-            this.label_sample.Text = "Sample Text";
-            this.label_sample.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // ApplicationPreferenceControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -102,6 +89,5 @@
         private System.Windows.Forms.CheckBox checkBox_font;
         private System.Windows.Forms.GroupBox groupBox;
         private System.Windows.Forms.Button button_font;
-        private System.Windows.Forms.Label label_sample;
     }
 }

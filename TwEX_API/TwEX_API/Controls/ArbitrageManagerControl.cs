@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace TwEX_API.Controls
@@ -7,7 +8,9 @@ namespace TwEX_API.Controls
     public partial class ArbitrageManagerControl : UserControl
     {
         public static Timer timer = new Timer() { Interval = 60000 };
-        
+        public int minChartWidth = 300;
+        public int minChartHeight = 265;
+
         #region Initialize
         public ArbitrageManagerControl()
         {
@@ -119,36 +122,38 @@ namespace TwEX_API.Controls
         delegate void SetWatchlistCallback();
         public void SetWatchlist()
         {
-            if (this.flowLayoutPanel.InvokeRequired)
+            if (flowLayoutPanel.InvokeRequired)
             {
                 SetWatchlistCallback d = new SetWatchlistCallback(SetWatchlist);
-                this.flowLayoutPanel.Invoke(d, new object[] { });
+                flowLayoutPanel.Invoke(d, new object[] { });
             }
             else
             {
                 flowLayoutPanel.Controls.Clear();
 
-                int chartHeight = 0;
-                int rowHeight = 20;
-                int statusHeight = 22;
-                int padding = 20;
-                int barCount = 2;
+                int rowHeight = toolStrip.Height;
+                int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
+
+                int newHeight = listHeight + (rowHeight * 3);
 
                 if (PreferenceManager.ArbitragePreferences.ShowCharts)
                 {
-                    chartHeight = 275;
-                    barCount = 3;
+                    newHeight += minChartHeight;
                 }
+                else
+                {
+                    //newHeight += rowHeight;
+                }
+                //LogManager.AddLogMessage(Name, "SetWatchList", "rowHeight=" + rowHeight + " | newHeight=" + newHeight + " | " + listHeight);
 
-                int controlHeight = chartHeight + (rowHeight * ExchangeManager.Exchanges.Count) + (statusHeight * barCount) + padding;
-
-                // USD
                 foreach (ExchangeManager.ExchangeTicker ticker in PreferenceManager.ArbitragePreferences.ArbitrageWatchList)
                 {
-                    ArbitrageItemControl control = new ArbitrageItemControl() { Height = controlHeight };
+                    //ArbitrageItemControl control = new ArbitrageItemControl() { Height = controlHeight };
+                    ArbitrageItemControl control = new ArbitrageItemControl() { Height = newHeight };
                     //LogManager.AddLogMessage(Name, "SetWatchlist", "ticker=" + ticker.symbol + " | " + ticker.market + " | " + ticker.last, LogManager.LogMessageType.DEBUG);
-                    flowLayoutPanel.Controls.Add(control);
                     control.SetData(ticker.symbol, "USD");
+                    flowLayoutPanel.Controls.Add(control);
+                    
                 }
                 
                 UpdateUI(true);

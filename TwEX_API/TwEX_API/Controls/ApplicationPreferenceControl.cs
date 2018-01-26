@@ -19,9 +19,10 @@ namespace TwEX_API.Controls
 
         private void ApplicationPreferenceControl_Load(object sender, EventArgs e)
         {
-            label_sample.Font = PreferenceManager.preferences.Font;
+            //label_sample.Font = PreferenceManager.preferences.Font;
             checkBox_font.Checked = PreferenceManager.preferences.UseGlobalFont;
             button_font.Enabled = checkBox_font.Checked;
+            button_font.Font = PreferenceManager.preferences.Font;
         }
 
         private void button_font_Click(object sender, EventArgs e)
@@ -32,7 +33,8 @@ namespace TwEX_API.Controls
             {
                 PreferenceManager.preferences.Font = dialog.Font;
                 PreferenceManager.UpdatePreferenceFile();
-                label_sample.Font = PreferenceManager.preferences.Font;
+                //label_sample.Font = PreferenceManager.preferences.Font;
+                button_font.Font = PreferenceManager.preferences.Font;
                 PreferenceManager.UpdatePreferenceFile();
                 PreferenceManager.UpdateFontPreferences();
                 //UpdateUI();
