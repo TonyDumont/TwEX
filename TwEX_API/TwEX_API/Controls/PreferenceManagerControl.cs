@@ -38,15 +38,21 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
                 ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                
+                tableLayoutPanel.RowStyles[0].SizeType = SizeType.Absolute;
+                tableLayoutPanel.RowStyles[0].Height = 125;
+
+                tableLayoutPanel.RowStyles[1].SizeType = SizeType.Absolute;
+                tableLayoutPanel.RowStyles[1].Height = 300;
+
+                ParentForm.Size = new System.Drawing.Size(775, 525);
             }
         }
         #endregion

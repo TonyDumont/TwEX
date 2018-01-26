@@ -133,7 +133,7 @@ namespace TwEX_API.Controls
                     else
                     {
                         url = "var theUrl=baseUrl+'serve/v1/coin/chart?fsym=" + symbol + "&tsym=" + market + "';";
-                    } 
+                    }
                     break;
 
                 case CryptoCompare.CryptoCompareWidgetType.NewsFeed:
@@ -186,6 +186,35 @@ namespace TwEX_API.Controls
             }
             return url;
         }
+        private string GetThemeString()
+        {
+            /*
+            if (ExchangeManager.preferences.NightMode == true)
+            {
+
+                StringBuilder builder = new StringBuilder();
+                builder.Append("var cccTheme = ");
+                builder.Append("{\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\"},");
+                builder.Append("\"Header\":{\"background\":\"#000\",\"color\":\"#FFF\",\"displayFollowers\":false},");
+                builder.Append("\"Followers\":{\"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},");
+                builder.Append("\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},");
+                builder.Append("\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"}};");
+                //builder.AppendLine();
+                //builder.Append("1 cat").AppendLine();
+
+                // Get a reference to the StringBuilder's buffer content.
+                //string innerString = builder.ToString();
+                //string script = @"var cccTheme={"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{ "background":"#000","color":"#FFF"},"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}";
+                //return "var cccTheme={\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\"},\"Header\":{ \"background\":\"#000\",\"color\":\"#FFF\"},\"Followers\":{ \"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"};";
+                return builder.ToString();
+            }
+            else
+            {
+                return String.Empty;
+            }
+            */
+            return String.Empty;
+        }
         #endregion Getters
 
         #region Updaters
@@ -195,7 +224,7 @@ namespace TwEX_API.Controls
             if (this.browser.InvokeRequired)
             {
                 updateBrowserCallback d = new updateBrowserCallback(updateBrowser);
-                this.browser.Invoke(d, new object[] {  });
+                this.browser.Invoke(d, new object[] { });
             }
             else
             {
@@ -518,6 +547,7 @@ namespace TwEX_API.Controls
         }
         #endregion
     }
+
 }
 
 

@@ -52,23 +52,22 @@
             this.tableLayoutPanel.Controls.Add(this.preferenceEditorControl, 2, 1);
             this.tableLayoutPanel.Controls.Add(this.applicationPreferenceControl1, 3, 1);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel.Location = new System.Drawing.Point(5, 5);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 2;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(750, 450);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(740, 440);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // pictureBox
             // 
-            this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tableLayoutPanel.SetColumnSpan(this.pictureBox, 5);
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Image = global::TwEX_API.Properties.Resources.TwEX_Header;
             this.pictureBox.Location = new System.Drawing.Point(3, 3);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(744, 124);
+            this.pictureBox.Size = new System.Drawing.Size(734, 124);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             // 
@@ -77,7 +76,7 @@
             this.exchangePreferenceEditorControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.exchangePreferenceEditorControl1.Location = new System.Drawing.Point(3, 133);
             this.exchangePreferenceEditorControl1.Name = "exchangePreferenceEditorControl1";
-            this.exchangePreferenceEditorControl1.Size = new System.Drawing.Size(125, 314);
+            this.exchangePreferenceEditorControl1.Size = new System.Drawing.Size(125, 304);
             this.exchangePreferenceEditorControl1.TabIndex = 0;
             // 
             // formPreferenceEditorControl1
@@ -85,7 +84,7 @@
             this.formPreferenceEditorControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.formPreferenceEditorControl1.Location = new System.Drawing.Point(134, 133);
             this.formPreferenceEditorControl1.Name = "formPreferenceEditorControl1";
-            this.formPreferenceEditorControl1.Size = new System.Drawing.Size(138, 314);
+            this.formPreferenceEditorControl1.Size = new System.Drawing.Size(138, 304);
             this.formPreferenceEditorControl1.TabIndex = 0;
             // 
             // preferenceEditorControl
@@ -93,7 +92,7 @@
             this.preferenceEditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.preferenceEditorControl.Location = new System.Drawing.Point(278, 133);
             this.preferenceEditorControl.Name = "preferenceEditorControl";
-            this.preferenceEditorControl.Size = new System.Drawing.Size(122, 314);
+            this.preferenceEditorControl.Size = new System.Drawing.Size(122, 304);
             this.preferenceEditorControl.TabIndex = 1;
             // 
             // applicationPreferenceControl1
@@ -101,7 +100,7 @@
             this.applicationPreferenceControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.applicationPreferenceControl1.Location = new System.Drawing.Point(406, 133);
             this.applicationPreferenceControl1.Name = "applicationPreferenceControl1";
-            this.applicationPreferenceControl1.Size = new System.Drawing.Size(130, 314);
+            this.applicationPreferenceControl1.Size = new System.Drawing.Size(130, 304);
             this.applicationPreferenceControl1.TabIndex = 2;
             // 
             // PreferenceManagerControl
@@ -109,8 +108,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel);
-            this.MinimumSize = new System.Drawing.Size(750, 0);
+            this.MinimumSize = new System.Drawing.Size(750, 350);
             this.Name = "PreferenceManagerControl";
+            this.Padding = new System.Windows.Forms.Padding(5);
             this.Size = new System.Drawing.Size(750, 450);
             this.Load += new System.EventHandler(this.PreferenceManagerControl_Load);
             this.tableLayoutPanel.ResumeLayout(false);

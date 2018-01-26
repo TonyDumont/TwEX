@@ -71,16 +71,20 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
                 Invoke(d, new object[] { });
             }
             else
             {
-                
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                listView.Font = ParentForm.Font;
+
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                Width = column_Name.Width + listView.RowHeightEffective;
+                Width = column_Name.Width + (listView.RowHeightEffective * 2);
+
+
             }
         }
         #endregion

@@ -38,21 +38,6 @@ namespace TwEX_API.Controls
         #endregion
 
         #region Delegates
-        delegate void ResizeUICallback();
-        public void ResizeUI()
-        {
-            if (this.InvokeRequired)
-            {
-                ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                Invoke(d, new object[] { });
-            }
-            else
-            {
-                column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                Width = column_Name.Width + (listView.RowHeightEffective);
-            }
-        }
-
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
@@ -70,6 +55,24 @@ namespace TwEX_API.Controls
                 {
                     ResizeUI();
                 }
+            }
+        }
+
+        delegate void ResizeUICallback();
+        public void ResizeUI()
+        {
+            if (InvokeRequired)
+            {
+                ResizeUICallback d = new ResizeUICallback(ResizeUI);
+                Invoke(d, new object[] { });
+            }
+            else
+            {
+                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                groupBox.Font = ParentForm.Font;
+                listView.Font = ParentForm.Font;
+                column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                Width = column_Name.Width + (listView.RowHeightEffective);
             }
         }
         #endregion
