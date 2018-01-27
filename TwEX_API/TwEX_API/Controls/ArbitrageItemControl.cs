@@ -159,11 +159,11 @@ namespace TwEX_API.Controls
         private string GetThemeString()
         {
 
-            if (PreferenceManager.NightMode == true)
+            if (PreferenceManager.preferences.Theme.type != PreferenceManager.ThemeType.Default)
             {
                 StringBuilder builder = new StringBuilder();
                 builder.Append("var cccTheme = ");
-                builder.Append("{\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\",\"textColor\":\"" + ColorTranslator.ToHtml(PreferenceManager.BackgroundColor_text) + "\"},");
+                builder.Append("{\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\",\"textColor\":\"" + ColorTranslator.ToHtml(PreferenceManager.preferences.Theme.Text) + "\"},");
                 builder.Append("\"Header\":{\"background\":\"#000\",\"color\":\"#FFF\",\"displayFollowers\":false},");
                 builder.Append("\"Followers\":{\"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},");
                 builder.Append("\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},");

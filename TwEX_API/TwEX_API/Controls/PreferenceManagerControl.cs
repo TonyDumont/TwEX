@@ -5,15 +5,16 @@ namespace TwEX_API.Controls
 {
     public partial class PreferenceManagerControl : UserControl
     {
+        #region Initialize
         public PreferenceManagerControl()
         {
             InitializeComponent();
         }
-
         private void PreferenceManagerControl_Load(object sender, EventArgs e)
         {
             UpdateUI(true);
         }
+        #endregion
 
         #region Delegates
         delegate bool UpdateUICallback(bool resize = false);

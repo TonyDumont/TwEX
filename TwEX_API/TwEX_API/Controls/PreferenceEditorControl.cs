@@ -83,8 +83,6 @@ namespace TwEX_API.Controls
 
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 Width = column_Name.Width + (listView.RowHeightEffective * 2);
-
-
             }
         }
         #endregion
@@ -95,7 +93,7 @@ namespace TwEX_API.Controls
             //Machine m = (Machine)rowObject;
             ListItem item = (ListItem)rowObject;
             //int rowheight = listView.RowHeightEffective - 2;
-            string iconName = EnumUtils.GetDescription<PreferenceManager.PreferenceType>(item.type);
+            string iconName = EnumUtils.GetDescription(item.type);
             return ContentManager.ResizeImage(ContentManager.GetIcon(iconName), listView.RowHeightEffective, listView.RowHeightEffective);
         }
         #endregion

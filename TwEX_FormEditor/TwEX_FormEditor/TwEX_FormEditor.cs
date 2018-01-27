@@ -76,6 +76,7 @@ namespace TwEX_FormEditor
             MinimumSize = new Size(400, height);
             //Height = height;
             Size = new Size(400, height);
+            UpdateTheme(preferences.Theme.type);
         }
         #endregion
     }

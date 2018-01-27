@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BrightIdeasSoftware;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -2141,18 +2142,6 @@ namespace TwEX_API
         public static List<FormPreference> FormPreferences { get; set; } = new List<FormPreference>();
         public static TradingViewPreference TradingViewPreferences { get; set; } = new TradingViewPreference();
         public static WalletPreference WalletPreferences { get; set; } = new WalletPreference();
-        // COLORS
-        public static bool NightMode = false;
-
-        public static Color BackgroundColor_green = Color.LightGreen;
-        public static Color BackgroundColor_red = Color.LightPink;
-        public static Color BackgroundColor_yellow = Color.LightGoldenrodYellow;
-        public static Color BackgroundColor_browser = Color.White;
-        public static Color BackgroundColor_form = Color.White;
-        public static Color BackgroundColor_text = Color.Black;
-
-        public static Color BackgroundColor_header = Color.LightGray;
-        public static Color BackgroundColor_headerText = Color.DarkGray;
         #endregion
 
         #region Initialize
@@ -2693,8 +2682,74 @@ namespace TwEX_API
                 FormPreferences.Remove(preference);
             }
         }
+        public static void UpdateColorControls(Control myControl)
+        {
+            switch (myControl)
+            {
+                case Button b:
+                case GroupBox g:
+                case Label l:
+                case ToolStrip t:
+                    myControl.BackColor = preferences.Theme.FormBackground;
+                    myControl.ForeColor = preferences.Theme.Text;
+                    break;
+
+                case FastObjectListView f:
+                    FastObjectListView listView = myControl as FastObjectListView;
+                    listView.HeaderUsesThemes = false;
+
+                    myControl.BackColor = preferences.Theme.FormBackground;
+                    myControl.ForeColor = preferences.Theme.Text;
+
+                    var headerstyle = new HeaderFormatStyle();
+                    headerstyle.SetBackColor(preferences.Theme.HeaderBackground);
+                    headerstyle.SetForeColor(preferences.Theme.HeaderText);
+
+                    foreach (OLVColumn item in listView.Columns)
+                    {
+                        item.HeaderFormatStyle = headerstyle;
+                    }
+                    break;
+
+                default:
+                    //AddLogMessage(Name, "UpdateColorControls", "CONTROL NOT DEFINED : " + myControl.GetType(), LogMessageType.DEBUG);
+                    break;
+            }
+
+            // Any other non-standard controls should be implemented here aswell...
+
+            foreach (Control subC in myControl.Controls)
+            {
+                UpdateColorControls(subC);
+            }
+
+        }
+        public static bool UpdateFontPreferences()
+        {
+            //AddLogMessage(Name, "UpdateFontPreferences", "FUNCTION NEEDED HERE", LogMessageType.OTHER);
+            FormManager.UpdateControlUIs(true);
+            return true;
+        }
+        public static void UpdateFormPreferences(Form form, bool open)
+        {
+            //LogManager.AddLogMessage(Name, "UpdateFormPreferences", "form : " + form.Name + " | " + form.Font.FontFamily + " | " + form.Size + " | " + form.Location, LogMessageType.DEBUG);
+            FormPreference prefs = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+
+            if (prefs != null)
+            {
+                prefs.Location = new Point(form.Location.X, form.Location.Y);
+                prefs.Size = new Size(form.Size.Width, form.Size.Height);
+                prefs.Font = new Font(form.Font.FontFamily, form.Font.Size, form.Font.Style);
+                prefs.Open = open;
+            }
+            else
+            {
+                FormPreferences.Add(new FormPreference() { Name = form.Name, Location = form.Location, Size = form.Size, Font = form.Font, Open = open });
+            }
+            UpdatePreferenceFile(PreferenceType.Form);
+        }
         public static void UpdatePreferenceFile(PreferenceType type = PreferenceType.None)
-        {            
+        {
             string iniPath = WorkDirectory + "\\" + type + "Preferences.ini";
             string json = String.Empty;
 
@@ -2764,44 +2819,73 @@ namespace TwEX_API
             {
                 //AddLogMessage(Name, "UpdatePreferenceSnapshots", type.ToString() + " | " + type.GetHashCode(), LogMessageType.DEBUG);
                 UpdatePreferenceFile(type);
-            }          
+            }
             AddLogMessage(Name, "UpdatePreferenceSnapshots", "Snapshots Complete", LogMessageType.LOG);
             return true;
         }
-        public static bool UpdateFontPreferences()
+        public static void UpdateTheme(ThemeType type)
         {
-            //AddLogMessage(Name, "UpdateFontPreferences", "FUNCTION NEEDED HERE", LogMessageType.OTHER);
-            FormManager.UpdateControlUIs(true);
-            return true;
-        }
-        public static void UpdateFormPreferences(Form form, bool open)
-        {
-            //LogManager.AddLogMessage(Name, "UpdateFormPreferences", "form : " + form.Name + " | " + form.Font.FontFamily + " | " + form.Size + " | " + form.Location, LogMessageType.DEBUG);
-            FormPreference prefs = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
 
-            if (prefs != null)
+            if (type == ThemeType.Dark)
             {
-                prefs.Location = new Point(form.Location.X, form.Location.Y);
-                prefs.Size = new Size(form.Size.Width, form.Size.Height);
-                prefs.Font = new Font(form.Font.FontFamily, form.Font.Size, form.Font.Style);
-                prefs.Open = open;
+                // DARK MODE
+                preferences.Theme = new ThemePreference()
+                {
+                    type = ThemeType.Dark,
+                    Green = Color.DarkGreen,
+                    Red = Color.DarkRed,
+                    Yellow = Color.DarkGoldenrod,
+                    BrowserBackground = ColorTranslator.FromHtml("#333333"),
+                    FormBackground = ColorTranslator.FromHtml("#333333"),
+                    Text = ColorTranslator.FromHtml("#eaeaea"),
+                    HeaderBackground = ColorTranslator.FromHtml("#444444"),
+                    HeaderText = ColorTranslator.FromHtml("#fcfbef")
+                };
+                /*
+                BackgroundColor_green = Color.DarkGreen;
+                BackgroundColor_red = Color.DarkRed;
+                BackgroundColor_yellow = Color.DarkGoldenrod;
+
+                BackgroundColor_browser = ColorTranslator.FromHtml("#333333");
+                BackgroundColor_form = ColorTranslator.FromHtml("#333333");
+                BackgroundColor_text = ColorTranslator.FromHtml("#eaeaea");
+                BackgroundColor_header = ColorTranslator.FromHtml("#444444");
+                BackgroundColor_headerText = ColorTranslator.FromHtml("#fcfbef");
+                */
             }
             else
             {
-                FormPreferences.Add(new FormPreference() { Name = form.Name, Location = form.Location, Size = form.Size, Font = form.Font, Open = open });
+                // DEFAULT MODE
+                preferences.Theme = new ThemePreference()
+                {
+                    type = ThemeType.Default
+                };
+                /*
+                BackgroundColor_green = Color.LightGreen;
+                BackgroundColor_red = Color.LightPink;
+                BackgroundColor_yellow = Color.LightGoldenrodYellow;
+
+                BackgroundColor_browser = Color.White;
+                BackgroundColor_form = Color.White;
+                BackgroundColor_text = Color.Black;
+                BackgroundColor_header = Color.White;
+                BackgroundColor_headerText = Color.Black;
+                */
             }
-            UpdatePreferenceFile(PreferenceType.Form);
+
+            foreach (Form form in Application.OpenForms)
+            {
+                form.BackColor = preferences.Theme.FormBackground;
+                form.ForeColor = preferences.Theme.Text;
+
+                foreach (Control c in form.Controls)
+                {
+                    UpdateColorControls(c);
+                }
+            }
+            FormManager.UpdateControlUIs();
+            UpdatePreferenceFile();
         }
-        /*
-        public static void UpdateExchangePreferencesFile()
-        {
-            string iniPath = WorkDirectory + "\\ExchangePreferences.ini";
-            //LogManager.AddLogMessage(Name, "UpdatePreferencesFile", "writing to iniPath - " + iniPath, LogManager.LogMessageType.DEBUG);
-            string json = JsonConvert.SerializeObject(Exchanges);
-            //string text = LogManager.Encrypt(json);
-            File.WriteAllText(@iniPath, json);
-        }
-        */
         #endregion
 
         #region DataModels
@@ -2810,6 +2894,23 @@ namespace TwEX_API
             public Size IconSize { get; set; } = new Size(32, 32);
             public bool UseGlobalFont { get; set; } = false;
             public Font Font { get; set; } = new Font("Times New Roman", 12.0f);
+            public ThemePreference Theme { get; set; } = new ThemePreference();
+            //public ThemeType ThemeType { get; set; } = ThemeType.Default;
+
+            public string BrowserBackgroundColor
+            {
+                get
+                {
+                    if (Theme.type == ThemeType.Default)
+                    {
+                        return "#FFFFFF";
+                    }
+                    else
+                    {
+                        return "#000000";
+                    };
+                }
+            }
 
             public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();
             public List<string> SymbolWatchList { get; set; } = new List<string>();
@@ -2858,6 +2959,19 @@ namespace TwEX_API
             public Font Font { get; set; }
             public bool Open { get; set; }
         }      
+        public class ThemePreference
+        {
+            public ThemeType type = ThemeType.Default;
+            public Color Green { get; set; } = Color.LightGreen;
+            public Color Red { get; set; } = Color.LightPink;
+            public Color Yellow { get; set; } = Color.LightGoldenrodYellow;
+
+            public Color BrowserBackground { get; set; } = Color.White;
+            public Color FormBackground { get; set; } = Color.White;
+            public Color Text { get; set; } = Color.Black;
+            public Color HeaderBackground { get; set; } = Color.White;
+            public Color HeaderText { get; set; } = Color.Black;
+        }
         public class TradingViewPreference
         {
             //public TradingViewAdvancedChartParameters parameters { get; set; } = new TradingViewAdvancedChartParameters();
@@ -2910,6 +3024,11 @@ namespace TwEX_API
 
             [Description("WalletManager")]
             Wallet
+        }
+        public enum ThemeType
+        {
+            Default,
+            Dark
         }
         #endregion
     }

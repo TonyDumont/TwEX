@@ -78,6 +78,7 @@
             this.toolStripRadioButton_usd = new TwEX_API.ToolStripRadioButton();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripRadioButton_custom = new TwEX_API.ToolStripRadioButton();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.tabControl.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -104,8 +105,8 @@
             // tabPage_full
             // 
             this.tabPage_full.Location = new System.Drawing.Point(4, 5);
+            this.tabPage_full.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage_full.Name = "tabPage_full";
-            this.tabPage_full.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_full.Size = new System.Drawing.Size(984, 392);
             this.tabPage_full.TabIndex = 0;
             this.tabPage_full.Text = "FULL";
@@ -114,8 +115,8 @@
             // tabPage_btc
             // 
             this.tabPage_btc.Location = new System.Drawing.Point(4, 5);
+            this.tabPage_btc.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage_btc.Name = "tabPage_btc";
-            this.tabPage_btc.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_btc.Size = new System.Drawing.Size(984, 392);
             this.tabPage_btc.TabIndex = 1;
             this.tabPage_btc.Text = "BTC";
@@ -124,6 +125,7 @@
             // tabPage_usd
             // 
             this.tabPage_usd.Location = new System.Drawing.Point(4, 5);
+            this.tabPage_usd.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage_usd.Name = "tabPage_usd";
             this.tabPage_usd.Size = new System.Drawing.Size(984, 392);
             this.tabPage_usd.TabIndex = 2;
@@ -133,6 +135,7 @@
             // tabPage_custom
             // 
             this.tabPage_custom.Location = new System.Drawing.Point(4, 5);
+            this.tabPage_custom.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage_custom.Name = "tabPage_custom";
             this.tabPage_custom.Size = new System.Drawing.Size(984, 392);
             this.tabPage_custom.TabIndex = 3;
@@ -144,6 +147,7 @@
             this.toolStrip.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton_options,
+            this.toolStripSeparator14,
             this.toolStripButton_refresh,
             this.toolStripSeparator3,
             this.toolStripDropDownButton_exchange,
@@ -400,6 +404,7 @@
             // toolStripTextBox_market
             // 
             this.toolStripTextBox_market.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripTextBox_market.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.toolStripTextBox_market.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripTextBox_market.Name = "toolStripTextBox_market";
             this.toolStripTextBox_market.Size = new System.Drawing.Size(70, 25);
@@ -424,6 +429,7 @@
             // toolStripTextBox_symbol
             // 
             this.toolStripTextBox_symbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripTextBox_symbol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.toolStripTextBox_symbol.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripTextBox_symbol.Name = "toolStripTextBox_symbol";
             this.toolStripTextBox_symbol.Size = new System.Drawing.Size(70, 25);
@@ -530,6 +536,12 @@
             this.toolStripRadioButton_custom.Text = "CUSTOM";
             this.toolStripRadioButton_custom.Click += new System.EventHandler(this.toolStripRadioButton_Click);
             // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(6, 25);
+            // 
             // TradingViewManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -598,5 +610,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_theme;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_light;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_dark;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
     }
 }

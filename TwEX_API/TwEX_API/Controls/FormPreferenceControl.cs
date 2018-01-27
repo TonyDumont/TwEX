@@ -36,7 +36,7 @@ namespace TwEX_API.Controls
             {
                 try
                 {
-                    listView.SetObjects(PreferenceManager.FormPreferences);
+                    listView.SetObjects(FormPreferences);
                     groupBox.Text = listView.Items.Count + " Forms";
 
                     if (resize)
@@ -72,7 +72,7 @@ namespace TwEX_API.Controls
         #region Getters
         private object aspect_icon(object rowObject)
         {
-            PreferenceManager.FormPreference preference = (PreferenceManager.FormPreference)rowObject;
+            FormPreference preference = (FormPreference)rowObject;
             int rowheight = listView.RowHeightEffective - 2;
             return ContentManager.ResizeImage(ContentManager.GetIcon(preference.Name), rowheight, rowheight);
         }

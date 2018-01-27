@@ -20,20 +20,16 @@ namespace TwEX_API.Controls
         }
         private void CoinMarketCapControl_Load(object sender, EventArgs e)
         {
-            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
             toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
             toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
             toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
             toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
-            //toolStripMenuItem_add.Image = ContentManager.GetIconByUrl(ContentManager.AddWalletIconUrl);
             toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
             UpdateUI(true);
         }
         private void InitializeColumns()
         {
             column_name.ImageGetter = new ImageGetterDelegate(aspect_icon);
-            //column_value.AspectGetter = new AspectGetterDelegate(aspect_value);
-            //column_chart.ImageGetter = new ImageGetterDelegate(aspect_chart);
             column_24hchange.AspectGetter = new AspectGetterDelegate(aspect_24hchange);
         }
         #endregion
@@ -49,9 +45,6 @@ namespace TwEX_API.Controls
             }
             else
             {
-                //Font = this.ParentForm.Font;
-                //toolStrip_header.Font = ParentForm.Font;
-                //toolStrip_footer.Font = ParentForm.Font;
                 toolStrip.Font = ParentForm.Font;
                 listView.Font = ParentForm.Font;
                 int rowHeight = listView.RowHeightEffective;
@@ -64,21 +57,10 @@ namespace TwEX_API.Controls
                     formWidth += col.Width;
                 }
                 
-                //ExchangeManager.UpdateFormPreferences(ParentForm);
-                //ParentForm.Width = formWidth;
                 if (this.Parent.GetType() == typeof(Form))
                 {
-                    //Form form = ParentForm;
                     ParentForm.Width = formWidth + 50;
-                    /*
-                    Rectangle screenRectangle = RectangleToScreen(ParentForm.ClientRectangle);
-                    int titleHeight = screenRectangle.Top - ParentForm.Top;
-                    int formHeight = titleHeight + toolStrip_header.Height + toolStrip_header2.Height + toolStrip_footer.Height;
-                    formHeight += (ExchangeManager.Exchanges.Count + 4) * rowHeight;
-                    form.Height = formHeight;
-                    */
                 }
-                
             }
         }
 
@@ -106,27 +88,12 @@ namespace TwEX_API.Controls
         #endregion
 
         #region Getters
-        /*
-        public object aspect_chart(object rowObject)
-        {
-
-            //Machine m = (Machine)rowObject;
-            //CalculatorItem e = (CalculatorItem)rowObject;
-            CoinMarketCapTicker ticker = (CoinMarketCapTicker)rowObject;
-
-            return ContentManager.ResizeImage(ContentManager.GetIconByUrl("https://files.coinmarketcap.com/generated/sparklines/1027.png") , 164, 48);
-
-            //return ticker.percent_change_24h + "%";
-            
-        }
-        */
         public object aspect_icon(object rowObject)
         {
             CoinMarketCapTicker e = (CoinMarketCapTicker)rowObject;
 
             if (e != null)
             {
-                //return DataManager.ResizeImage(ExchangeManager.GetExchangeImage(e.exchange), 24, 24);
                 return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(e.symbol), listView.RowHeightEffective, listView.RowHeightEffective);
             }
             else
@@ -191,69 +158,19 @@ namespace TwEX_API.Controls
         #region Formatters
         private void ListView_FormatCell(object sender, FormatCellEventArgs e)
         {
-            //EarnGGProfile machine = (EarnGGProfile)e.Model;
             CoinMarketCapTicker ticker = (CoinMarketCapTicker)e.Model;
 
             if (e.ColumnIndex == column_24hchange.Index)
             {
-                //TimeSpan loginspan = DateTime.Now - machine.data.lastLogin;
-
                 if (ticker.percent_change_24h > 0)
                 {
-                    //e.SubItem.BackColor = Color.LightGreen;
-                    e.SubItem.BackColor = Color.LightGreen;
+                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Green;
                 }
                 else
                 {
-                    //e.SubItem.BackColor = Color.LightPink;
-                    e.SubItem.BackColor = Color.LightPink;
+                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Red;
                 }
             }
-            /*
-            if (machine.data != null)
-            {
-                if (e.ColumnIndex == this.column_lastLogin.Index)
-                {
-                    TimeSpan loginspan = DateTime.Now - machine.data.lastLogin;
-
-                    if (loginspan.Hours < 8)
-                    {
-                        //e.SubItem.BackColor = Color.LightGreen;
-                        e.SubItem.BackColor = ApplicationManager.BackgroundColor_green;
-                    }
-                    else
-                    {
-                        //e.SubItem.BackColor = Color.LightPink;
-                        e.SubItem.BackColor = ApplicationManager.BackgroundColor_red;
-                    }
-                }
-
-                if (e.ColumnIndex == this.column_lastNotification.Index)
-                {
-                    if (machine.data.notifications.Count > 0)
-                    {
-                        EarnGGNotification notification = machine.data.notifications[0];
-                        TimeSpan span = DateTime.Now - notification.timestamp;
-
-                        if (span.Hours < 1)
-                        {
-                            //e.SubItem.BackColor = Color.LightGreen;
-                            e.SubItem.BackColor = ApplicationManager.BackgroundColor_green;
-                        }
-                        else
-                        {
-                            //e.SubItem.BackColor = Color.LightPink;
-                            e.SubItem.BackColor = ApplicationManager.BackgroundColor_red;
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-                //return "unknown";
-            }
-            */
         }
         #endregion
     }

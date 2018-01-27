@@ -86,6 +86,7 @@ namespace TwEX_API.Controls
                     "<head></head>" +
                     "<body>" +
                     //"<body bgcolor=\"" + ColorTranslator.ToHtml(ApplicationManager.BackgroundColor_browser) + "\">" +
+                    "<body bgcolor=\"" + PreferenceManager.preferences.BrowserBackgroundColor + "\">" +
 
                     "<div id = \"container\">" +
 
