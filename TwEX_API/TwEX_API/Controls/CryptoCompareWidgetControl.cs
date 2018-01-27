@@ -4,6 +4,7 @@ using CefSharp.WinForms;
 using CefSharp;
 using TwEX_API.Market;
 using static TwEX_API.Market.CryptoCompare;
+using System.Text;
 
 namespace TwEX_API.Controls
 {
@@ -93,7 +94,7 @@ namespace TwEX_API.Controls
                     "var scripts = document.getElementsByTagName(\"script\");" +
                     "var embedder = scripts[scripts.length - 1];" +
 
-                    //GetThemeString() +
+                    GetThemeString() +
 
                     "(function(){" +
                         "var appName = encodeURIComponent(window.location.hostname);" +
@@ -102,11 +103,9 @@ namespace TwEX_API.Controls
                         "s.type = \"text/javascript\";" +
                         "s.async = true;" +
 
-
-                        // THIS NEEDS TO BE CONDITIONED
+                        // THIS IS WHAT NEEDS TO BE CONDITIONED
                         //"var theUrl = baseUrl + 'serve/v1/coin/feed?fsym=" + symbol + "&tsym=" + market + "&feedType=CoinTelegraph'';" +
                         getUrl() +
-
 
                         "s.src = theUrl + (theUrl.indexOf(\"?\") >= 0 ? \"&\" : \"?\") + \"app=\" + appName;" +
                         "embedder.parentNode.appendChild(s);" +
@@ -188,8 +187,8 @@ namespace TwEX_API.Controls
         }
         private string GetThemeString()
         {
-            /*
-            if (ExchangeManager.preferences.NightMode == true)
+            
+            if (PreferenceManager.CryptoComparePreferences.Theme != "Default")
             {
 
                 StringBuilder builder = new StringBuilder();
@@ -199,21 +198,31 @@ namespace TwEX_API.Controls
                 builder.Append("\"Followers\":{\"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},");
                 builder.Append("\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},");
                 builder.Append("\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"}};");
-                //builder.AppendLine();
-                //builder.Append("1 cat").AppendLine();
 
-                // Get a reference to the StringBuilder's buffer content.
-                //string innerString = builder.ToString();
-                //string script = @"var cccTheme={"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{ "background":"#000","color":"#FFF"},"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}";
-                //return "var cccTheme={\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\"},\"Header\":{ \"background\":\"#000\",\"color\":\"#FFF\"},\"Followers\":{ \"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"};";
-                return builder.ToString();
+
+                //var cccTheme = 
+                //{ "General":{ "background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},
+                //"Header":{ "background":"#000","color":"#FFF"},
+                //"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},
+                //"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},
+                //"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}};
+
+
+            //builder.AppendLine();
+            //builder.Append("1 cat").AppendLine();
+
+            // Get a reference to the StringBuilder's buffer content.
+            //string innerString = builder.ToString();
+            //string script = @"var cccTheme={"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{ "background":"#000","color":"#FFF"},"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}";
+            //return "var cccTheme={\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\"},\"Header\":{ \"background\":\"#000\",\"color\":\"#FFF\"},\"Followers\":{ \"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"};";
+            return builder.ToString();
             }
             else
             {
                 return String.Empty;
             }
-            */
-            return String.Empty;
+            
+            //return String.Empty;
         }
         #endregion Getters
 

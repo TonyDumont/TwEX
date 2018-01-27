@@ -2835,6 +2835,7 @@ namespace TwEX_API
         {
             public string Symbol { get; set; } = "BTC";
             public string Market { get; set; } = "USD";
+            public string Theme { get; set; } = "Dark";
 
             public CryptoCompareWidgetType WidgetType { get; set; } = CryptoCompareWidgetType.ChartAdvanced;
             public CryptoCompareChartPeriod PeriodType { get; set; } = CryptoCompareChartPeriod.Day_1D;
@@ -2859,7 +2860,8 @@ namespace TwEX_API
         }      
         public class TradingViewPreference
         {
-            public TradingViewAdvancedChartParameters parameters { get; set; } = new TradingViewAdvancedChartParameters();
+            //public TradingViewAdvancedChartParameters parameters { get; set; } = new TradingViewAdvancedChartParameters();
+            public TradingViewAdvancedChartParameters AdvancedChartParameters { get; set; } = new TradingViewAdvancedChartParameters();
             //public TradingViewAdvancedChartParameters CustomParameters { get; set; } = new TradingViewAdvancedChartParameters();
             public List<ExchangeTicker> WatchList { get; set; } = new List<ExchangeTicker>()
             {

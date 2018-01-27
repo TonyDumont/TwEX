@@ -56,6 +56,10 @@
             this.toolStripMenuItem_headlines = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_hotlist = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_calendar = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_theme = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_light = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_dark = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton_refresh = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_exchange = new System.Windows.Forms.ToolStripDropDownButton();
@@ -188,7 +192,9 @@
             this.toolStripMenuItem_stocktwits,
             this.toolStripMenuItem_headlines,
             this.toolStripMenuItem_hotlist,
-            this.toolStripMenuItem_calendar});
+            this.toolStripMenuItem_calendar,
+            this.toolStripSeparator13,
+            this.toolStripMenuItem_theme});
             this.toolStripDropDownButton_options.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_options.Image")));
             this.toolStripDropDownButton_options.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_options.Name = "toolStripDropDownButton_options";
@@ -326,6 +332,36 @@
             this.toolStripMenuItem_calendar.Tag = "calendar";
             this.toolStripMenuItem_calendar.Text = "Show Calendar";
             // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(199, 6);
+            // 
+            // toolStripMenuItem_theme
+            // 
+            this.toolStripMenuItem_theme.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_light,
+            this.toolStripMenuItem_dark});
+            this.toolStripMenuItem_theme.Name = "toolStripMenuItem_theme";
+            this.toolStripMenuItem_theme.Size = new System.Drawing.Size(202, 22);
+            this.toolStripMenuItem_theme.Tag = "theme";
+            this.toolStripMenuItem_theme.Text = "THEME";
+            this.toolStripMenuItem_theme.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_options_DropDownItemClicked);
+            // 
+            // toolStripMenuItem_light
+            // 
+            this.toolStripMenuItem_light.Name = "toolStripMenuItem_light";
+            this.toolStripMenuItem_light.Size = new System.Drawing.Size(100, 22);
+            this.toolStripMenuItem_light.Tag = "light";
+            this.toolStripMenuItem_light.Text = "Light";
+            // 
+            // toolStripMenuItem_dark
+            // 
+            this.toolStripMenuItem_dark.Name = "toolStripMenuItem_dark";
+            this.toolStripMenuItem_dark.Size = new System.Drawing.Size(100, 22);
+            this.toolStripMenuItem_dark.Tag = "dark";
+            this.toolStripMenuItem_dark.Text = "Dark";
+            // 
             // toolStripButton_refresh
             // 
             this.toolStripButton_refresh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -376,7 +412,7 @@
             this.toolStripLabel_market.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripLabel_market.Name = "toolStripLabel_market";
             this.toolStripLabel_market.Size = new System.Drawing.Size(46, 22);
-            this.toolStripLabel_market.Text = ":Market";
+            this.toolStripLabel_market.Text = "Market:";
             this.toolStripLabel_market.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // toolStripSeparator1
@@ -400,7 +436,7 @@
             this.toolStripLabel_symbol.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripLabel_symbol.Name = "toolStripLabel_symbol";
             this.toolStripLabel_symbol.Size = new System.Drawing.Size(47, 22);
-            this.toolStripLabel_symbol.Text = ":Symbol";
+            this.toolStripLabel_symbol.Text = "Symbol:";
             this.toolStripLabel_symbol.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // toolStripSeparator9
@@ -558,5 +594,9 @@
         private ToolStripRadioButton toolStripRadioButton_usd;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private ToolStripRadioButton toolStripRadioButton_custom;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_theme;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_light;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_dark;
     }
 }

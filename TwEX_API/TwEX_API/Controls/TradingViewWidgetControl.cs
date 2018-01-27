@@ -451,10 +451,10 @@ namespace TwEX_API.Controls
         delegate void setAdvancedChartCallback(TradingViewAdvancedChartParameters parameters);
         public void setAdvancedChart(TradingViewAdvancedChartParameters parameters)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setAdvancedChartCallback d = new setAdvancedChartCallback(setAdvancedChart);
-                this.Invoke(d, new object[] { parameters });
+                Invoke(d, new object[] { parameters });
             }
             else
             {

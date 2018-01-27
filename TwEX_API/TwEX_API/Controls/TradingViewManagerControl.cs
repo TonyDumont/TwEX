@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using System.Reflection;
 using static TwEX_API.ExchangeManager;
 using static TwEX_API.Market.TradingView;
-using TwEX_API.Market;
 
 namespace TwEX_API.Controls
 {
@@ -23,12 +22,12 @@ namespace TwEX_API.Controls
         }
         private void TradingViewManagerControl_Load(object sender, EventArgs e)
         {
-            toolStripTextBox_symbol.Text = PreferenceManager.TradingViewPreferences.parameters.symbol;
-            toolStripTextBox_market.Text = PreferenceManager.TradingViewPreferences.parameters.market;
+            toolStripTextBox_symbol.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol;
+            toolStripTextBox_market.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market;
             toolStripDropDownButton_options.Image = ContentManager.GetIcon("Options");
-            toolStripDropDownButton_style.Text = PreferenceManager.TradingViewPreferences.parameters.style.ToString();
+            toolStripDropDownButton_style.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style.ToString();
 
-            toolStripRadioButton_full.Image = ContentManager.GetSymbolIcon(PreferenceManager.TradingViewPreferences.parameters.symbol);
+            toolStripRadioButton_full.Image = ContentManager.GetSymbolIcon(PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol);
             toolStripRadioButton_btc.Image = ContentManager.GetSymbolIcon("BTC");
             toolStripRadioButton_usd.Image = ContentManager.GetIcon("USDSymbol");
             toolStripRadioButton_custom.Image = ContentManager.GetIcon("CustomView");
@@ -102,11 +101,24 @@ namespace TwEX_API.Controls
                 {
                     ToolStripMenuItem menuItem = item as ToolStripMenuItem;
 
-                    PropertyInfo pi = PreferenceManager.TradingViewPreferences.parameters.GetType().GetProperty(menuItem.Tag.ToString());
-                    menuItem.Checked = (bool)(pi.GetValue(PreferenceManager.TradingViewPreferences.parameters, null));
-
+                    if (menuItem.Tag.ToString() != "theme")
+                    {
+                        PropertyInfo pi = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType().GetProperty(menuItem.Tag.ToString());
+                        menuItem.Checked = (bool)(pi.GetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, null));
+                    }
                     //LogManager.AddLogMessage(Name, "UpdateOptionsMenu", menuItem.Text + " | " + menuItem.Tag, LogManager.LogMessageType.DEBUG);
                 }
+            }
+
+            if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme == TradingViewColorTheme.Light)
+            {
+                toolStripMenuItem_light.Checked = true;
+                toolStripMenuItem_dark.Checked = false;
+            }
+            else
+            {
+                toolStripMenuItem_light.Checked = false;
+                toolStripMenuItem_dark.Checked = true;
             }
         }
         private void UpdateExchangeMenus()
@@ -202,19 +214,19 @@ namespace TwEX_API.Controls
             foreach (ToolStripButton item in toolStripDropDownButton_exchange.DropDownItems)
             {
                 //LogManager.AddDebugMessage(this.Name, "SetExchangeMenu", item.Text + " | " + exchange);
-                if (item.Text.ToUpper() == PreferenceManager.TradingViewPreferences.parameters.exchange.ToString().ToUpper())
+                if (item.Text.ToUpper() == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.exchange.ToString().ToUpper())
                 {
                     toolStripDropDownButton_exchange.Image = item.Image;
                     toolStripDropDownButton_exchange.Text = item.Text;
 
-                    if (PreferenceManager.TradingViewPreferences.parameters.market.Contains("USD"))
+                    if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market.Contains("USD"))
                     {
-                        ExchangeManager.Exchange listItem = exchanges.FirstOrDefault(i => i.TradingView == PreferenceManager.TradingViewPreferences.parameters.exchange.ToString().ToUpper());
+                        ExchangeManager.Exchange listItem = exchanges.FirstOrDefault(i => i.TradingView == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.exchange.ToString().ToUpper());
 
                         if (listItem != null)
                         {
-                            PreferenceManager.TradingViewPreferences.parameters.market = listItem.USDSymbol;
-                            toolStripTextBox_market.Text = PreferenceManager.TradingViewPreferences.parameters.market;
+                            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market = listItem.USDSymbol;
+                            toolStripTextBox_market.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market;
                         }
                     }
                 }
@@ -228,46 +240,20 @@ namespace TwEX_API.Controls
             {
                 Dock = DockStyle.Fill
             };
-
-            //widget.Name = "tv_full";
-            /*
-            TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
-            {
-                symbol = PreferenceManager.TradingViewPreferences. .symbol,
-                market = PreferenceManager.preferences.TradingViewPreferences.market,
-                exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), PreferenceManager.preferences.TradingViewPreferences.exchange, true),
-                withdateranges = true,
-                hide_side_toolbar = true,
-                ShowWatchlist = true,
-                details = true,
-                WatchList = TradingView.GetWatchListBySymbol(PreferenceManager.preferences.TradingViewPreferences.symbol),
-                stocktwits = true,
-                headlines = true,
-                calendar = true,
-                hide_top_toolbar = true,
-                hotlist = true
-                //ShowIndicators = true
-            };
-            
-            widget.setAdvancedChart(parameters);
-            */
-            //PreferenceManager.TradingViewPreferences.parameters.WatchList = TradingView.GetWatchListBySymbol(PreferenceManager.preferences.TradingViewPreferences.symbol),
-            toolStripRadioButton_full.Image = ContentManager.GetSymbolIcon(PreferenceManager.TradingViewPreferences.parameters.symbol);
-            PreferenceManager.TradingViewPreferences.parameters.WatchList = GetWatchListBySymbol(PreferenceManager.TradingViewPreferences.parameters.symbol);
+            toolStripRadioButton_full.Image = ContentManager.GetSymbolIcon(PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol);
+            toolStripRadioButton_full.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol.ToUpper();
+            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.WatchList = GetWatchListBySymbol(PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol);
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
-            widget.setAdvancedChart(PreferenceManager.TradingViewPreferences.parameters);
-            //widget.SetPair(exchange, symbol, market, true);
+            widget.setAdvancedChart(PreferenceManager.TradingViewPreferences.AdvancedChartParameters);
             tabPage_full.Controls.Add(widget);
-
             SetBTCView();
             SetUSDView();
         }
         private void SetBTCView()
         {
-            // BTC
             tabPage_btc.Controls.Clear();
 
-            if (PreferenceManager.TradingViewPreferences.parameters.symbol == "BTC")
+            if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol == "BTC")
             {
                 //tabPage_btc.CanSelect = false;
             }
@@ -307,10 +293,11 @@ namespace TwEX_API.Controls
 
                 TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
                 {
-                    symbol = PreferenceManager.TradingViewPreferences.parameters.symbol,
+                    symbol = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol,
                     market = "BTC",
                     exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), exchange.TradingView, true),
-                    hide_top_toolbar = true
+                    hide_top_toolbar = true,
+                    theme = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme
                 };
                 chartWidget.setAdvancedChart(parameters);
                 //chartWidget.SetPair(exchange.Symbol, symbol, "BTC");
@@ -371,10 +358,11 @@ namespace TwEX_API.Controls
 
                 TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
                 {
-                    symbol = PreferenceManager.TradingViewPreferences.parameters.symbol,
+                    symbol = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol,
                     market = exchange.USDSymbol,
                     exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), exchange.TradingView, true),
-                    hide_top_toolbar = true
+                    hide_top_toolbar = true,
+                    theme = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme
                 };
                 chartWidget.setAdvancedChart(parameters);
                 //chartWidget.SetPair(exchange.Symbol, symbol, exchange.USDSymbol);
@@ -464,21 +452,21 @@ namespace TwEX_API.Controls
             toolStripDropDownButton_exchange.Image = e.ClickedItem.Image;
             toolStripDropDownButton_exchange.Text = e.ClickedItem.Text.ToUpper();
 
-            PreferenceManager.TradingViewPreferences.parameters.exchange = (TradingViewCryptoExchange)System.Enum.Parse(typeof(TradingViewCryptoExchange), e.ClickedItem.Text, true);
+            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.exchange = (TradingViewCryptoExchange)System.Enum.Parse(typeof(TradingViewCryptoExchange), e.ClickedItem.Text, true);
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
             SetFullView();
         }
         private void toolStripButton_refresh_Click(object sender, EventArgs e)
         {
-            PreferenceManager.TradingViewPreferences.parameters.symbol = toolStripTextBox_symbol.Text.ToUpper();
-            PreferenceManager.TradingViewPreferences.parameters.market = toolStripTextBox_market.Text.ToUpper();
-            if (PreferenceManager.TradingViewPreferences.parameters.market.Contains("USD"))
+            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol = toolStripTextBox_symbol.Text.ToUpper();
+            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market = toolStripTextBox_market.Text.ToUpper();
+            if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market.Contains("USD"))
             {
-                ExchangeManager.Exchange listItem = exchanges.FirstOrDefault(i => i.TradingView == PreferenceManager.TradingViewPreferences.parameters.exchange.ToString());
+                ExchangeManager.Exchange listItem = exchanges.FirstOrDefault(i => i.TradingView == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.exchange.ToString());
 
                 if (listItem != null)
                 {
-                    PreferenceManager.TradingViewPreferences.parameters.market = listItem.USDSymbol;
+                    PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market = listItem.USDSymbol;
                 }
             }
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
@@ -506,17 +494,39 @@ namespace TwEX_API.Controls
                 case "headlines":
                 case "hotlist":
                 case "calendar":
-                    {
-                        Type type = PreferenceManager.TradingViewPreferences.parameters.GetType();
-                        PropertyInfo prop = type.GetProperty(propertyName);
-                        bool value = (bool)(prop.GetValue(PreferenceManager.TradingViewPreferences.parameters, null));
-                        prop.SetValue(PreferenceManager.TradingViewPreferences.parameters, !value, null);
-                        //LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "SWITCH : " + propertyName + " : " + value, LogManager.LogMessageType.OTHER);
+                {
+                    Type type = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType();
+                    PropertyInfo prop = type.GetProperty(propertyName);
+                    bool value = (bool)(prop.GetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, null));
+                    prop.SetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, !value, null);
+                    //LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "SWITCH : " + propertyName + " : " + value, LogManager.LogMessageType.OTHER);
+                    UpdateOptionsMenu();
+                    PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+                    SetFullView();
+                    break;
+                }
+
+                case "light":
+                case "dark":
+                {
+                        //LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "LIGHT OR DARK : " + propertyName, LogManager.LogMessageType.OTHER);
+
+                        if (propertyName == "light")
+                        {
+                            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme = TradingViewColorTheme.Light;
+                        }
+                        else
+                        {
+                            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme = TradingViewColorTheme.Dark;
+                        }
                         UpdateOptionsMenu();
                         PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
                         SetFullView();
+                        SetCustomView();
+                        UpdateUI(true);
                         break;
-                    }
+                }
+                
                 /*
 
 
@@ -545,7 +555,7 @@ namespace TwEX_API.Controls
         {
             //LogManager.AddLogMessage(Name, "toolStripDropDownButton_style_DropDownItemClicked", e.ClickedItem.Text + " | " + e.ClickedItem.Tag, LogManager.LogMessageType.DEBUG);
             toolStripDropDownButton_style.Text = e.ClickedItem.Text;
-            PreferenceManager.TradingViewPreferences.parameters.style = (TradingViewChartStyle)Enum.Parse(typeof(TradingViewChartStyle), e.ClickedItem.Text);
+            PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style = (TradingViewChartStyle)Enum.Parse(typeof(TradingViewChartStyle), e.ClickedItem.Text);
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
             SetFullView();
         }
@@ -560,3 +570,28 @@ namespace TwEX_API.Controls
         #endregion
     }
 }
+
+
+//widget.Name = "tv_full";
+/*
+TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
+{
+    symbol = PreferenceManager.TradingViewPreferences. .symbol,
+    market = PreferenceManager.preferences.TradingViewPreferences.market,
+    exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), PreferenceManager.preferences.TradingViewPreferences.exchange, true),
+    withdateranges = true,
+    hide_side_toolbar = true,
+    ShowWatchlist = true,
+    details = true,
+    WatchList = TradingView.GetWatchListBySymbol(PreferenceManager.preferences.TradingViewPreferences.symbol),
+    stocktwits = true,
+    headlines = true,
+    calendar = true,
+    hide_top_toolbar = true,
+    hotlist = true
+    //ShowIndicators = true
+};
+
+widget.setAdvancedChart(parameters);
+*/
+//PreferenceManager.TradingViewPreferences.parameters.WatchList = TradingView.GetWatchListBySymbol(PreferenceManager.preferences.TradingViewPreferences.symbol),
