@@ -57,7 +57,7 @@ namespace TwEX_FormEditor
             //Task.Factory.StartNew(() => ExchangeManager.InitializeSymbolImageList());
             Task.Factory.StartNew(() => CryptoCompare.Initialize());
 
-            LogManager.AddLogMessage(this.Name, "TwEX_FormEditor_Load", "Load Complete", LogManager.LogMessageType.LOG);
+            LogManager.AddLogMessage(Name, "TwEX_FormEditor_Load", "Load Complete", LogManager.LogMessageType.LOG);
         }
         private void TwEX_FormEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -70,12 +70,16 @@ namespace TwEX_FormEditor
             Width = preferr MinimumSize.Width;
             Height = MinimumSize.Height;
             */
+
+
+            /*
             Size = PreferredSize;
             int height = Height + preferences.IconSize.Height + 10;
             MaximumSize = new Size(4000, height);
             MinimumSize = new Size(400, height);
             //Height = height;
             Size = new Size(400, height);
+            */
             UpdateTheme(preferences.Theme.type);
         }
         #endregion

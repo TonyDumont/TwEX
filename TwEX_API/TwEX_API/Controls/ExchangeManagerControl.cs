@@ -31,7 +31,8 @@ namespace TwEX_API.Controls
         }
         private void InitializeColumns()
         {
-            column_Icon.ImageGetter = new ImageGetterDelegate(aspect_Icon);
+            //column_Icon.ImageGetter = new ImageGetterDelegate(aspect_Icon);
+            column_Name.ImageGetter = new ImageGetterDelegate(aspect_Icon);
             column_Status.ImageGetter = new ImageGetterDelegate(aspect_Status);
             column_Tickers.AspectGetter = new AspectGetterDelegate(aspect_TickerCount);
             column_Orders.AspectGetter = new AspectGetterDelegate(aspect_TotalInBTCOrders);
@@ -94,10 +95,10 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
@@ -116,7 +117,7 @@ namespace TwEX_API.Controls
                 toolStrip_header.ImageScalingSize = new Size(iconSize, iconSize);
                 toolStrip_header2.ImageScalingSize = new Size(iconSize, iconSize);
 
-                column_Icon.Width = iconSize + 2;
+                //column_Icon.Width = iconSize + 2;
                 column_Status.Width = iconSize + 2;
                 
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -140,10 +141,17 @@ namespace TwEX_API.Controls
 
                 if (listView.Items.Count > 0)
                 {
-                    var last = listView.Items[listView.Items.Count - 4];
+                    var last = listView.Items[listView.Items.Count - 1];
                     listHeight = listView.Top + last.Bounds.Bottom;
+                    //listHeight = last.Bounds.Bottom;
+                    //LogManager.AddLogMessage(Name, "ResizeUI", listView.Top + " | " + last.Bounds.Bottom + " | " + listHeight);
                 }
-                  
+                listHeight += listView.RowHeightEffective;
+                //listView.Height = listHeight + listView.RowHeightEffective;
+                ClientSize = new Size(Width, listHeight);
+                Size = new Size(Width, listHeight);
+
+                /*
                 if (Parent.GetType() == typeof(Form))
                 {
                     Form form = this.Parent as Form;
@@ -154,6 +162,7 @@ namespace TwEX_API.Controls
                     //LogManager.AddLogMessage(Name, "ResizeUI", "titleHeight=" + titleHeight + " | listHeight=" + listHeight + " | " + toolStrip_header.Height + " | " + toolStrip_header2.Height);
                     form.ClientSize = new Size(listWidth + (padding* 2), totalHeight);
                 }
+                */
             }
         }
         #endregion

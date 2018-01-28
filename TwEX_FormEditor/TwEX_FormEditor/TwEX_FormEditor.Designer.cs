@@ -29,38 +29,67 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TwEX_FormEditor));
-            this.formToolStripControl = new TwEX_API.Controls.FormToolStripControl();
+            this.twEXTraderControl = new TwEX_API.Controls.TwEXTraderControl();
+            this.walletManagerControl = new TwEX_API.Controls.WalletManagerControl();
+            this.earnGGManagerControl = new TwEX_API.Controls.EarnGGManagerControl();
             this.SuspendLayout();
             // 
-            // formToolStripControl
+            // twEXTraderControl
             // 
-            this.formToolStripControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.formToolStripControl.Location = new System.Drawing.Point(0, 0);
-            this.formToolStripControl.Name = "formToolStripControl";
-            this.formToolStripControl.Size = new System.Drawing.Size(334, 41);
-            this.formToolStripControl.TabIndex = 0;
+            this.twEXTraderControl.AutoSize = true;
+            this.twEXTraderControl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.twEXTraderControl.Location = new System.Drawing.Point(0, 0);
+            this.twEXTraderControl.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.twEXTraderControl.Name = "twEXTraderControl";
+            this.twEXTraderControl.Size = new System.Drawing.Size(579, 410);
+            this.twEXTraderControl.TabIndex = 0;
+            // 
+            // walletManagerControl
+            // 
+            this.walletManagerControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.walletManagerControl.Location = new System.Drawing.Point(0, 410);
+            this.walletManagerControl.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.walletManagerControl.Name = "walletManagerControl";
+            this.walletManagerControl.Size = new System.Drawing.Size(579, 135);
+            this.walletManagerControl.TabIndex = 1;
+            // 
+            // earnGGManagerControl
+            // 
+            this.earnGGManagerControl.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.earnGGManagerControl.Location = new System.Drawing.Point(0, 478);
+            this.earnGGManagerControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.earnGGManagerControl.Name = "earnGGManagerControl";
+            this.earnGGManagerControl.Size = new System.Drawing.Size(579, 67);
+            this.earnGGManagerControl.TabIndex = 2;
             // 
             // TwEX_FormEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(334, 41);
-            this.Controls.Add(this.formToolStripControl);
+            this.ClientSize = new System.Drawing.Size(579, 545);
+            this.Controls.Add(this.earnGGManagerControl);
+            this.Controls.Add(this.walletManagerControl);
+            this.Controls.Add(this.twEXTraderControl);
+            this.Font = new System.Drawing.Font("Times New Roman", 12F);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(4000, 4000);
-            this.MinimumSize = new System.Drawing.Size(350, 20);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MaximumSize = new System.Drawing.Size(5992, 5828);
+            this.MinimumSize = new System.Drawing.Size(517, 39);
             this.Name = "TwEX_FormEditor";
-            this.Text = "TwEX Form Editor";
+            this.Text = "TwEX Trader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TwEX_FormEditor_FormClosing);
             this.Load += new System.EventHandler(this.TwEX_FormEditor_Load);
             this.Shown += new System.EventHandler(this.TwEX_FormEditor_Shown);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private TwEX_API.Controls.FormToolStripControl formToolStripControl;
+        private TwEX_API.Controls.TwEXTraderControl twEXTraderControl;
+        private TwEX_API.Controls.WalletManagerControl walletManagerControl;
+        private TwEX_API.Controls.EarnGGManagerControl earnGGManagerControl;
     }
 }
 

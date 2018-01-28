@@ -1373,7 +1373,9 @@ namespace TwEX_API
         #region Properties
         private static string Name = "FormManager";
         public static Form mainForm;
-        public static FormToolStripControl mainToolStrip;
+        //public static FormToolStripControl mainToolStrip;
+        public static TwEXTraderControl mainControl;
+
         public static ArbitrageManagerControl arbitrageManagerControl;
         public static CoinMarketCapControl coinMarketCapControl;
         public static CryptoCompareControl cryptoCompareControl;
@@ -1463,120 +1465,100 @@ namespace TwEX_API
             
             if (targetForm == null)
             {
-                if (name != "ImportPreferences" && name != "ExportPreferences")
+                Form form = new Form() { Size = new Size(950, 550), Name = name, Text = text, Icon = Icon.FromHandle(new Bitmap(ContentManager.GetIcon(name)).GetHicon()) };
+                form.Show();
+
+                FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+
+                if (preference != null)
                 {
-                    Form form = new Form() { Size = new Size(950, 550), Name = name, Text = text, Icon = Icon.FromHandle(new Bitmap(ContentManager.GetIcon(name)).GetHicon()) };
-                    //Form form = new Form() { Size = new Size(950, 550), Name = name, Text = text };
-                    form.Show();
-
-                    FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
-
-                    if (preference != null)
+                    //LogManager.AddLogMessage(Name, "toolStripButton_Form_Click", "FOUND : " + preference.Name + " | " + preference.Font.FontFamily + " | " + preference.Size + " | " + preference.Location);
+                    form.SetBounds(preference.Location.X, preference.Location.Y, preference.Size.Width, preference.Size.Height);
+                        
+                    if (preferences.UseGlobalFont)
                     {
-                        //LogManager.AddLogMessage(Name, "toolStripButton_Form_Click", "FOUND : " + preference.Name + " | " + preference.Font.FontFamily + " | " + preference.Size + " | " + preference.Location);
-                        form.SetBounds(preference.Location.X, preference.Location.Y, preference.Size.Width, preference.Size.Height);
-                        
-                        if (preferences.UseGlobalFont)
-                        {
-                            form.Font = new Font(preferences.Font.FontFamily, preferences.Font.Size, preferences.Font.Style);
-                        }
-                        else
-                        {
-                            form.Font = new Font(preference.Font.FontFamily, preference.Font.Size, preference.Font.Style);
-                        }     
-                        
+                        form.Font = new Font(preferences.Font.FontFamily, preferences.Font.Size, preferences.Font.Style);
                     }
                     else
                     {
-                        AddLogMessage(Name, "toolStripButton_Form_Click", "PREFERENCE NOT FOUND ADDING : " + form.Name + " | " + form.Location, LogMessageType.DEBUG);
-                        UpdateFormPreferences(form, true);
-                    }
-
-                    form.LocationChanged += delegate { UpdateFormPreferences(form, true); };
-                    form.SizeChanged += delegate { UpdateFormPreferences(form, true); };
-                    form.FontChanged += delegate { UpdateFormPreferences(form, true); };
-                    form.FormClosing += delegate { UpdateFormPreferences(form, false); };
-                    form.FormClosed += delegate { UpdateToolStrip(); };
-
-                    switch (name)
-                    {
-                        case "ArbitrageManager":
-                             ArbitrageManagerControl control = new ArbitrageManagerControl() { Dock = DockStyle.Fill };
-                            //form.Controls.Add(new ArbitrageManagerControl() { Dock = DockStyle.Fill });
-                            form.FormClosing += delegate { arbitrageManagerControl = null; };
-                            form.FormClosing += delegate { control.DisposeTimer(); };
-                            form.Controls.Add(control);
-                            
-                            break;
-
-                        case "BalanceManager":
-                            form.Controls.Add(new BalanceManagerControl() { Dock = DockStyle.Fill });
-                            break;
-
-                        case "CoinCalculator":
-                            form.Controls.Add(new CoinCalculatorControl() { Dock = DockStyle.Fill });
-                            break;
-
-                        case "CryptoCompare":
-                            form.Controls.Add(new CryptoCompareControl() { Dock = DockStyle.Fill });
-                            form.FormClosing += delegate { cryptoCompareControl = null; };
-                            break;
-
-                        case "CoinMarketCap":
-                            form.Controls.Add(new CoinMarketCapControl() { Dock = DockStyle.Fill });
-                            form.FormClosing += delegate { coinMarketCapControl = null; };
-                            break;
-
-                        case "EarnGGManager":
-                            form.Controls.Add(new EarnGGManagerControl() { Dock = DockStyle.Fill });
-                            form.FormClosing += delegate { earnGGManagerControl = null; };
-                            break;
-
-                        case "ExchangeEditor":
-                            form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
-                            form.FormClosing += delegate { exchangeManagerControl = null; };
-                            break;
-
-                        case "LogManager":
-                            form.FormClosing += delegate { logManagerControl = null; };
-                            form.Controls.Add(new LogManagerControl() { Dock = DockStyle.Fill });
-                            break;
-
-                        case "PreferenceManager":
-                            form.Controls.Add(new PreferenceManagerControl() { Dock = DockStyle.Fill });
-                            break;
-
-                        case "TradingView":
-                            form.Controls.Add(new TradingViewManagerControl() { Dock = DockStyle.Fill });
-                            form.FormClosing += delegate { tradingViewManagerControl = null; };
-                            break;
-
-                        case "WalletManager":
-                            form.Controls.Add(new WalletManagerControl() { Dock = DockStyle.Fill });
-                            form.FormClosing += delegate { walletManagerControl = null; };
-                            break;
-
-                        default:
-                            AddLogMessage(Name, "OpenForm", "NOTE DEFINED!!! : " + name, LogMessageType.DEBUG);
-                            break;
-                    }
+                        form.Font = new Font(preference.Font.FontFamily, preference.Font.Size, preference.Font.Style);
+                    }     
+                        
                 }
                 else
                 {
-                    switch (name)
-                    {
-                        case "ExportPreferences":
-                            //PreferenceManager.ExportPreferences();
-                            break;
+                    AddLogMessage(Name, "toolStripButton_Form_Click", "PREFERENCE NOT FOUND ADDING : " + form.Name + " | " + form.Location, LogMessageType.DEBUG);
+                    UpdateFormPreferences(form, true);
+                }
 
-                        case "ImportPreferences":
-                            //PreferenceManager.ImportPreferences();
-                            break;
+                form.LocationChanged += delegate { UpdateFormPreferences(form, true); };
+                form.SizeChanged += delegate { UpdateFormPreferences(form, true); };
+                form.FontChanged += delegate { UpdateFormPreferences(form, true); };
+                form.FormClosing += delegate { UpdateFormPreferences(form, false); };
+                form.FormClosed += delegate { UpdateToolStrip(); };
 
-                        default:
-                            AddLogMessage(Name, "OpenForm", "NOTE DEFINED!!! : " + name, LogMessageType.DEBUG);
-                            break;
-                    }
+                switch (name)
+                {
+                    case "ArbitrageManager":
+                            ArbitrageManagerControl control = new ArbitrageManagerControl() { Dock = DockStyle.Fill };
+                        //form.Controls.Add(new ArbitrageManagerControl() { Dock = DockStyle.Fill });
+                        form.FormClosing += delegate { arbitrageManagerControl = null; };
+                        form.FormClosing += delegate { control.DisposeTimer(); };
+                        form.Controls.Add(control);
+                            
+                        break;
+
+                    case "BalanceManager":
+                        form.Controls.Add(new BalanceManagerControl() { Dock = DockStyle.Fill });
+                        break;
+
+                    case "CoinCalculator":
+                        form.Controls.Add(new CoinCalculatorControl() { Dock = DockStyle.Fill });
+                        break;
+
+                    case "CryptoCompare":
+                        form.Controls.Add(new CryptoCompareControl() { Dock = DockStyle.Fill });
+                        form.FormClosing += delegate { cryptoCompareControl = null; };
+                        break;
+
+                    case "CoinMarketCap":
+                        form.Controls.Add(new CoinMarketCapControl() { Dock = DockStyle.Fill });
+                        form.FormClosing += delegate { coinMarketCapControl = null; };
+                        break;
+/*
+                    case "EarnGGManager":
+                        form.Controls.Add(new EarnGGManagerControl() { Dock = DockStyle.Fill });
+                        form.FormClosing += delegate { earnGGManagerControl = null; };
+                        break;
+                        */
+/*
+                    case "ExchangeEditor":
+                        form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
+                        form.FormClosing += delegate { exchangeManagerControl = null; };
+                        break;
+                        */
+                    case "LogManager":
+                        form.FormClosing += delegate { logManagerControl = null; };
+                        form.Controls.Add(new LogManagerControl() { Dock = DockStyle.Fill });
+                        break;
+
+                    case "PreferenceManager":
+                        form.Controls.Add(new PreferenceManagerControl() { Dock = DockStyle.Fill });
+                        break;
+
+                    case "TradingView":
+                        form.Controls.Add(new TradingViewManagerControl() { Dock = DockStyle.Fill });
+                        form.FormClosing += delegate { tradingViewManagerControl = null; };
+                        break;
+/*
+                    case "WalletManager":
+                        form.Controls.Add(new WalletManagerControl() { Dock = DockStyle.Fill });
+                        form.FormClosing += delegate { walletManagerControl = null; };
+                        break;
+                        */
+                    default:
+                        AddLogMessage(Name, "OpenForm", "FORM NOT DEFINED!!! : " + name, LogMessageType.DEBUG);
+                        break;
                 }
             }
             else
@@ -1696,9 +1678,9 @@ namespace TwEX_API
         }
         public static void UpdateToolStrip(bool resize = false)
         {
-            if (mainToolStrip != null)
+            if (mainControl != null)
             {
-                mainToolStrip.UpdateUI(resize);
+                mainControl.UpdateUI(resize);
             }
         }
 
@@ -2684,12 +2666,30 @@ namespace TwEX_API
         }
         public static void UpdateColorControls(Control myControl)
         {
+            myControl.BackColor = preferences.Theme.FormBackground;
+            myControl.ForeColor = preferences.Theme.Text;
+
+            if (myControl is FastObjectListView)
+            {
+                FastObjectListView listView = myControl as FastObjectListView;
+                listView.HeaderUsesThemes = false;
+                var headerstyle = new HeaderFormatStyle();
+                headerstyle.SetBackColor(preferences.Theme.HeaderBackground);
+                headerstyle.SetForeColor(preferences.Theme.HeaderText);
+
+                foreach (OLVColumn item in listView.Columns)
+                {
+                    item.HeaderFormatStyle = headerstyle;
+                }
+            }
+            /*
             switch (myControl)
             {
                 case Button b:
                 case GroupBox g:
                 case Label l:
                 case ToolStrip t:
+                //case ToolStripDropDown cm:
                     myControl.BackColor = preferences.Theme.FormBackground;
                     myControl.ForeColor = preferences.Theme.Text;
                     break;
@@ -2715,14 +2715,22 @@ namespace TwEX_API
                     //AddLogMessage(Name, "UpdateColorControls", "CONTROL NOT DEFINED : " + myControl.GetType(), LogMessageType.DEBUG);
                     break;
             }
+            */
 
+            /*
+            if (myControl is ContextMenuStrip)
+            {
+                myControl.BackColor = preferences.Theme.FormBackground;
+                myControl.ForeColor = preferences.Theme.Text;
+            }
+            
             // Any other non-standard controls should be implemented here aswell...
-
+            */
             foreach (Control subC in myControl.Controls)
             {
                 UpdateColorControls(subC);
             }
-
+            
         }
         public static bool UpdateFontPreferences()
         {
@@ -2835,23 +2843,12 @@ namespace TwEX_API
                     Green = Color.DarkGreen,
                     Red = Color.DarkRed,
                     Yellow = Color.DarkGoldenrod,
-                    BrowserBackground = ColorTranslator.FromHtml("#333333"),
+                    //BrowserBackground = ColorTranslator.FromHtml("#333333"),
                     FormBackground = ColorTranslator.FromHtml("#333333"),
                     Text = ColorTranslator.FromHtml("#eaeaea"),
                     HeaderBackground = ColorTranslator.FromHtml("#444444"),
                     HeaderText = ColorTranslator.FromHtml("#fcfbef")
                 };
-                /*
-                BackgroundColor_green = Color.DarkGreen;
-                BackgroundColor_red = Color.DarkRed;
-                BackgroundColor_yellow = Color.DarkGoldenrod;
-
-                BackgroundColor_browser = ColorTranslator.FromHtml("#333333");
-                BackgroundColor_form = ColorTranslator.FromHtml("#333333");
-                BackgroundColor_text = ColorTranslator.FromHtml("#eaeaea");
-                BackgroundColor_header = ColorTranslator.FromHtml("#444444");
-                BackgroundColor_headerText = ColorTranslator.FromHtml("#fcfbef");
-                */
             }
             else
             {
@@ -2860,17 +2857,6 @@ namespace TwEX_API
                 {
                     type = ThemeType.Default
                 };
-                /*
-                BackgroundColor_green = Color.LightGreen;
-                BackgroundColor_red = Color.LightPink;
-                BackgroundColor_yellow = Color.LightGoldenrodYellow;
-
-                BackgroundColor_browser = Color.White;
-                BackgroundColor_form = Color.White;
-                BackgroundColor_text = Color.Black;
-                BackgroundColor_header = Color.White;
-                BackgroundColor_headerText = Color.Black;
-                */
             }
 
             foreach (Form form in Application.OpenForms)
@@ -2895,22 +2881,6 @@ namespace TwEX_API
             public bool UseGlobalFont { get; set; } = false;
             public Font Font { get; set; } = new Font("Times New Roman", 12.0f);
             public ThemePreference Theme { get; set; } = new ThemePreference();
-            //public ThemeType ThemeType { get; set; } = ThemeType.Default;
-
-            public string BrowserBackgroundColor
-            {
-                get
-                {
-                    if (Theme.type == ThemeType.Default)
-                    {
-                        return "#FFFFFF";
-                    }
-                    else
-                    {
-                        return "#000000";
-                    };
-                }
-            }
 
             public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();
             public List<string> SymbolWatchList { get; set; } = new List<string>();
@@ -2966,11 +2936,17 @@ namespace TwEX_API
             public Color Red { get; set; } = Color.LightPink;
             public Color Yellow { get; set; } = Color.LightGoldenrodYellow;
 
-            public Color BrowserBackground { get; set; } = Color.White;
             public Color FormBackground { get; set; } = Color.White;
             public Color Text { get; set; } = Color.Black;
             public Color HeaderBackground { get; set; } = Color.White;
             public Color HeaderText { get; set; } = Color.Black;
+            public string BrowserBackgroundColor
+            {
+                get
+                {
+                    return ColorTranslator.ToHtml(FormBackground);
+                }
+            }
         }
         public class TradingViewPreference
         {

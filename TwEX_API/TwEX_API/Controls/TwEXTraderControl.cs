@@ -3,15 +3,15 @@ using System.Windows.Forms;
 
 namespace TwEX_API.Controls
 {
-    public partial class FormToolStripControl : UserControl
+    public partial class TwEXTraderControl : UserControl
     {
         #region Initialize
-        public FormToolStripControl()
+        public TwEXTraderControl()
         {
             InitializeComponent();
-            //FormManager.mainToolStrip = this;
+            FormManager.mainControl = this;
         }
-        private void FormToolStripControl_Load(object sender, EventArgs e)
+        private void TwEXTraderControl_Load(object sender, EventArgs e)
         {
             //toolStripButton_ExchangeEditor.Image = ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.ExchangeManagerIconUrl), 32, 32);
             toolStripButton_ExchangeEditor.Image = ContentManager.GetIcon("ExchangeEditor");
@@ -67,10 +67,10 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {

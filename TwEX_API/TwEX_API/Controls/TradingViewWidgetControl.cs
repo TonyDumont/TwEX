@@ -39,7 +39,7 @@ namespace TwEX_API.Controls
         {
             return "<html>" +
                     "<head></head>" +
-                    "<body bgcolor=\"" + PreferenceManager.preferences.BrowserBackgroundColor + "\">" +
+                    "<body bgcolor=\"" + PreferenceManager.preferences.Theme.BrowserBackgroundColor + "\">" +
                     "<div id = \"container\">";
         }
         private string GetBrowserFooter()

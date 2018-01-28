@@ -52,9 +52,10 @@ namespace TwEX_API.Controls
 
                 listView.SetObjects(PreferenceManager.EarnGGPreferences.EarnGGAccounts.OrderByDescending(item => item.lastLogin));
                 int totalPoints = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Sum(item => item.balance);
-                toolStripLabel_title.Text = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Count + " EarnGG Accounts : " + decimal.Multiply(totalPoints, .00001M).ToString("C");               
+                toolStripLabel_title.Text = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Count + " EarnGG Accounts";
+                toolStripLabel_total.Text = decimal.Multiply(totalPoints, .00001M).ToString("C"); 
                 //LogManager.AddLogMessage(Name, "UpdateUI", "Updating - " + resize, LogManager.LogMessageType.DEBUG);
-            
+
                 if (resize)
                 {
                     ResizeUI();
@@ -66,45 +67,42 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
                 ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 toolStrip.Font = ParentForm.Font;
                 listView.Font = ParentForm.Font;
-                //LogManager.AddLogMessage(Name, "ResizeUI", "RESIZING", LogManager.LogMessageType.DEBUG);
-                //Size textSize = TextRenderer.MeasureText("0.00000000", ParentForm.Font);
+
                 int rowHeight = listView.RowHeightEffective;
                 int padding = rowHeight / 2;
                 int iconSize = rowHeight - 2;
-                int listWidth = 0;
+
+                //int listWidth = 0;
                 int listHeight = 0;
 
-                column_active.Width = iconSize + padding;
-
                 column_email.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_email.Width = column_email.Width + padding;
                 column_balance.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_balance.Width = column_balance.Width + padding;
-
+                /*
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
-                    listWidth += col.Width;
+                    //listWidth += col.Width;
                 }
-
+                */
                 if (listView.Items.Count > 0)
                 {
                     var last = listView.Items[listView.Items.Count - 1];
-                    listHeight = listView.Top + last.Bounds.Bottom;
+                    listHeight = listView.Top + last.Bounds.Bottom + (listView.RowHeightEffective / 2);
+                    //LogManager.AddLogMessage(Name, "ResizeUI", listView.Top + " | " + last.Bounds.Bottom + " | " + listHeight);
                 }
-                //column_Name.Width = column_Name.Width + iconSize + 2;
-                ParentForm.ClientSize = new Size(listWidth + (padding * 2), toolStrip.Height + listHeight + (padding));
-                //UpdateUI();
-                
+
+                listView.Height = listHeight;
+                ClientSize = new Size(Width, listHeight);
+                Size = new Size(Width, listHeight);
             }
         }
         #endregion

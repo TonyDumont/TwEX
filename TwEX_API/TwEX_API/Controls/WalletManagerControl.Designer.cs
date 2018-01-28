@@ -38,16 +38,17 @@
             this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_timer = new System.Windows.Forms.ToolStripButton();
-            this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_add = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -89,7 +90,7 @@
             this.listView.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             this.listView.ShowFilterMenuOnRightClick = false;
             this.listView.ShowGroups = false;
-            this.listView.Size = new System.Drawing.Size(816, 320);
+            this.listView.Size = new System.Drawing.Size(812, 316);
             this.listView.SortGroupItemsByPrimaryColumn = false;
             this.listView.TabIndex = 4;
             this.listView.UseCellFormatEvents = true;
@@ -103,6 +104,7 @@
             // column_Name
             // 
             this.column_Name.AspectName = "Name";
+            this.column_Name.FillsFreeSpace = true;
             this.column_Name.Text = "Name";
             // 
             // column_Symbol
@@ -136,14 +138,15 @@
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton_timer,
-            this.toolStripLabel_title,
             this.toolStripDropDownButton_menu,
+            this.toolStripSeparator1,
+            this.toolStripButton_timer,
             this.toolStripSeparator4,
+            this.toolStripLabel_title,
             this.toolStripLabel_totals});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(816, 25);
+            this.toolStrip.Size = new System.Drawing.Size(812, 25);
             this.toolStrip.TabIndex = 5;
             // 
             // toolStripButton_timer
@@ -158,22 +161,13 @@
             this.toolStripButton_timer.ToolTipText = "TIMER";
             this.toolStripButton_timer.Click += new System.EventHandler(this.toolStripButton_timer_Click);
             // 
-            // toolStripLabel_totals
+            // toolStripSeparator1
             // 
-            this.toolStripLabel_totals.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel_totals.Name = "toolStripLabel_totals";
-            this.toolStripLabel_totals.Size = new System.Drawing.Size(47, 22);
-            this.toolStripLabel_totals.Text = "TOTALS";
-            // 
-            // toolStripLabel_title
-            // 
-            this.toolStripLabel_title.Name = "toolStripLabel_title";
-            this.toolStripLabel_title.Size = new System.Drawing.Size(55, 22);
-            this.toolStripLabel_title.Text = "# Wallets";
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripDropDownButton_menu
             // 
-            this.toolStripDropDownButton_menu.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_font,
@@ -188,12 +182,6 @@
             this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(29, 22);
             this.toolStripDropDownButton_menu.Text = "OPTIONS";
             this.toolStripDropDownButton_menu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_menu_DropDownItemClicked);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripMenuItem_font
             // 
@@ -235,14 +223,33 @@
             this.toolStripMenuItem_update.Tag = "UpdateWallets";
             this.toolStripMenuItem_update.Text = "Update Wallets";
             // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel_title
+            // 
+            this.toolStripLabel_title.Name = "toolStripLabel_title";
+            this.toolStripLabel_title.Size = new System.Drawing.Size(55, 22);
+            this.toolStripLabel_title.Text = "# Wallets";
+            // 
+            // toolStripLabel_totals
+            // 
+            this.toolStripLabel_totals.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel_totals.Name = "toolStripLabel_totals";
+            this.toolStripLabel_totals.Size = new System.Drawing.Size(47, 22);
+            this.toolStripLabel_totals.Text = "TOTALS";
+            // 
             // WalletManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Controls.Add(this.listView);
             this.Controls.Add(this.toolStrip);
             this.Name = "WalletManagerControl";
-            this.Size = new System.Drawing.Size(816, 345);
+            this.Size = new System.Drawing.Size(812, 341);
             this.Load += new System.EventHandler(this.WalletManagerControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
             this.toolStrip.ResumeLayout(false);
@@ -272,5 +279,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_add;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_update;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

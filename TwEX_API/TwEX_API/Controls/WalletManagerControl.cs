@@ -84,11 +84,43 @@ namespace TwEX_API.Controls
                 int rowHeight = listView.RowHeightEffective;
                 int padding = rowHeight / 2;
                 int iconSize = rowHeight - 2;         
-                int listWidth = 0;
+                //int listWidth = 0;
                 int listHeight = 0;
 
                 toolStrip.ImageScalingSize = new Size(iconSize, iconSize);
 
+                column_Symbol.Width = iconSize;
+                column_TotalInUSD.Width = textSize.Width;
+                column_TotalInBTC.Width = textSize.Width;
+                column_Balance.Width = textSize.Width + (textSize.Width / 2);
+                /*
+                //int listWidth = 0;
+                //int listHeight = 0;
+                foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
+                {
+                    //col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                    //col.Width = col.Width + (rowHeight / 2);
+                    listWidth += col.Width;
+                }
+                */
+
+
+                //column_Tickers.Width = 
+                /*
+                if (listView.Items.Count > 0)
+                {
+                    var last = listView.Items[listView.Items.Count - 4];
+                    listHeight = listView.Top + last.Bounds.Bottom;
+                    //listHeight = last.Bounds.Bottom;
+                    //LogManager.AddLogMessage(Name, "ResizeUI", listView.Top + " | " + last.Bounds.Bottom + " | " + listHeight);
+                }
+                */
+                listView.Height = listHeight;
+                ClientSize = new Size(Width, listHeight + (toolStrip.Height * 2) - (listView.RowHeightEffective / 2));
+                Size = new Size(Width, listHeight + (toolStrip.Height * 2) - (listView.RowHeightEffective / 2));
+
+
+                /*
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -104,8 +136,12 @@ namespace TwEX_API.Controls
                     var last = listView.Items[listView.Items.Count - 3];
                     listHeight = listView.Top + last.Bounds.Bottom;
                 }
+                */
 
-                
+
+
+
+
                 /*
                 Rectangle screenRectangle = RectangleToScreen(ParentForm.ClientRectangle);
                 int titleHeight = screenRectangle.Top - ParentForm.Top;

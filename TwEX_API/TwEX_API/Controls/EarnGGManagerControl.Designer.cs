@@ -32,11 +32,6 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_timer = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
-            this.listView = new BrightIdeasSoftware.FastObjectListView();
-            this.column_active = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_email = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_lastLogin = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,6 +40,14 @@
             this.toolStripMenuItem_AddAccount = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
+            this.listView = new BrightIdeasSoftware.FastObjectListView();
+            this.column_active = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_email = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_lastLogin = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel_total = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
@@ -52,12 +55,15 @@
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDropDownButton_menu,
+            this.toolStripSeparator1,
             this.toolStripButton_timer,
+            this.toolStripSeparator2,
             this.toolStripLabel_title,
-            this.toolStripDropDownButton_menu});
+            this.toolStripLabel_total});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(612, 25);
+            this.toolStrip.Size = new System.Drawing.Size(608, 25);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -77,6 +83,68 @@
             this.toolStripLabel_title.Name = "toolStripLabel_title";
             this.toolStripLabel_title.Size = new System.Drawing.Size(36, 22);
             this.toolStripLabel_title.Text = "TITLE";
+            // 
+            // toolStripDropDownButton_menu
+            // 
+            this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_font,
+            this.toolStripMenuItem_fontIncrease,
+            this.toolStripMenuItem_fontDecrease,
+            this.toolStripSeparator5,
+            this.toolStripMenuItem_AddAccount,
+            this.toolStripSeparator4,
+            this.toolStripMenuItem_update});
+            this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
+            this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
+            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(29, 22);
+            this.toolStripDropDownButton_menu.Text = "OPTIONS";
+            // 
+            // toolStripMenuItem_font
+            // 
+            this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_font.Tag = "Font";
+            this.toolStripMenuItem_font.Text = "Font";
+            // 
+            // toolStripMenuItem_fontIncrease
+            // 
+            this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
+            this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
+            // 
+            // toolStripMenuItem_fontDecrease
+            // 
+            this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
+            this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(145, 6);
+            // 
+            // toolStripMenuItem_AddAccount
+            // 
+            this.toolStripMenuItem_AddAccount.Name = "toolStripMenuItem_AddAccount";
+            this.toolStripMenuItem_AddAccount.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_AddAccount.Tag = "AddAccount";
+            this.toolStripMenuItem_AddAccount.Text = "Add Account";
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(145, 6);
+            // 
+            // toolStripMenuItem_update
+            // 
+            this.toolStripMenuItem_update.Name = "toolStripMenuItem_update";
+            this.toolStripMenuItem_update.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_update.Tag = "Update";
+            this.toolStripMenuItem_update.Text = "Update";
             // 
             // listView
             // 
@@ -101,7 +169,7 @@
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.ShowGroups = false;
-            this.listView.Size = new System.Drawing.Size(612, 332);
+            this.listView.Size = new System.Drawing.Size(608, 328);
             this.listView.SortGroupItemsByPrimaryColumn = false;
             this.listView.TabIndex = 5;
             this.listView.UseCellFormatEvents = true;
@@ -132,77 +200,32 @@
             this.column_lastLogin.FillsFreeSpace = true;
             this.column_lastLogin.Text = "Last Login";
             // 
-            // toolStripDropDownButton_menu
+            // toolStripSeparator1
             // 
-            this.toolStripDropDownButton_menu.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem_font,
-            this.toolStripMenuItem_fontIncrease,
-            this.toolStripMenuItem_fontDecrease,
-            this.toolStripSeparator5,
-            this.toolStripMenuItem_AddAccount,
-            this.toolStripSeparator4,
-            this.toolStripMenuItem_update});
-            this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
-            this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
-            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(29, 22);
-            this.toolStripDropDownButton_menu.Text = "OPTIONS";
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripMenuItem_font
+            // toolStripSeparator2
             // 
-            this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
-            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem_font.Tag = "Font";
-            this.toolStripMenuItem_font.Text = "Font";
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripMenuItem_fontIncrease
+            // toolStripLabel_total
             // 
-            this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
-            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
-            this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
-            // 
-            // toolStripMenuItem_fontDecrease
-            // 
-            this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
-            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
-            this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
-            // 
-            // toolStripMenuItem_AddAccount
-            // 
-            this.toolStripMenuItem_AddAccount.Name = "toolStripMenuItem_AddAccount";
-            this.toolStripMenuItem_AddAccount.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem_AddAccount.Tag = "AddAccount";
-            this.toolStripMenuItem_AddAccount.Text = "Add Account";
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(149, 6);
-            // 
-            // toolStripMenuItem_update
-            // 
-            this.toolStripMenuItem_update.Name = "toolStripMenuItem_update";
-            this.toolStripMenuItem_update.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem_update.Tag = "Update";
-            this.toolStripMenuItem_update.Text = "Update";
+            this.toolStripLabel_total.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel_total.Name = "toolStripLabel_total";
+            this.toolStripLabel_total.Size = new System.Drawing.Size(19, 22);
+            this.toolStripLabel_total.Text = "$0";
             // 
             // EarnGGManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Controls.Add(this.listView);
             this.Controls.Add(this.toolStrip);
             this.Name = "EarnGGManagerControl";
-            this.Size = new System.Drawing.Size(612, 357);
+            this.Size = new System.Drawing.Size(608, 353);
             this.Load += new System.EventHandler(this.EarnGGManagerControl_Load);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
@@ -230,5 +253,8 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_AddAccount;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_update;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_total;
     }
 }

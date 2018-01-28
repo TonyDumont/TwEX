@@ -49,10 +49,10 @@ namespace TwEX_API.Controls
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
@@ -241,7 +241,7 @@ namespace TwEX_API.Controls
 
                         if (balances.Count > 1)
                         {
-                            group.Task = "[" + balances.Count + "] " + usdTotal.ToString("C");
+                            group.Task = "[" + symbalances.Count + "] " + usdTotal.ToString("C");
                         }
                         else
                         {
