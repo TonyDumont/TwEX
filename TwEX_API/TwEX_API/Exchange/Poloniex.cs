@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
@@ -54,25 +55,47 @@ namespace TwEX_API.Exchange
                     if (!entry.Key.Contains("total"))
                     {
                         //LogManager.AddLogMessage(Name, "get24VolumeList", "Key=" + entry.Key + " | Value=" + entry.Value, LogManager.LogMessageType.DEBUG);
-                        Poloniex24hVolume item = new Poloniex24hVolume();
-                        item.pair = entry.Key; // MKT_SYM
-                        string[] stringSplit = item.pair.Split('_');
+                        string[] stringSplit = entry.Key.Split('_');
+
+                        Poloniex24hVolume item = new Poloniex24hVolume()
+                        {
+                            pair = entry.Key,
+                            market = stringSplit[0],
+                            marketVolume = Convert.ToDecimal(jsonObject[entry.Key][stringSplit[0]]),
+                            symbol = stringSplit[1],
+                            symbolVolume = Convert.ToDecimal(jsonObject[entry.Key][stringSplit[1]])
+                        };
+                        //item.pair = entry.Key; // MKT_SYM
+                        //string[] stringSplit = item.pair.Split('_');
+                        /*
                         item.market = stringSplit[0];
                         item.marketVolume = Convert.ToDecimal(jsonObject[item.pair][item.market]);
                         item.symbol = stringSplit[1];
                         item.symbolVolume = Convert.ToDecimal(jsonObject[item.pair][item.symbol]);
-                    
+                    */
                         list.Add(item);
                     }
                     else
                     {
                         // THESE ARE TOTALS - symbol & market contain same values
-                        Poloniex24hVolume item = new Poloniex24hVolume();
-                        item.pair = entry.Key; // totalMKT
-                        item.market = entry.Key.Replace("total", "");
-                        item.marketVolume = Convert.ToDecimal(entry.Value);
+                        //string pair = entry.Key;
+                        //string market = entry.Key.Replace("total", "");
+
+                        Poloniex24hVolume item = new Poloniex24hVolume()
+                        {
+                            pair = entry.Key,
+                            market = entry.Key.Replace("total", ""),
+                            marketVolume = Convert.ToDecimal(entry.Value),
+                            symbol = "total",
+                            symbolVolume = Convert.ToDecimal(entry.Value)
+                        };
+                        /*
+                        //item.pair = entry.Key; // totalMKT
+                        //item.market = entry.Key.Replace("total", "");
+                        //item.marketVolume = Convert.ToDecimal(entry.Value);
                         item.symbol = "total";
                         item.symbolVolume = Convert.ToDecimal(entry.Value);
+                        */
                         list.Add(item);
                     }
                 }
@@ -367,9 +390,13 @@ namespace TwEX_API.Exchange
                 foreach (var item in jsonObject)
                 {
                     //LogManager.AddLogMessage(Name, "getBalances", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
-                    PoloniexBalance balance = new PoloniexBalance();
-                    balance.symbol = item.Key;
-                    balance.available = Convert.ToDecimal(item.Value);
+                    PoloniexBalance balance = new PoloniexBalance()
+                    {
+                        symbol = item.Key,
+                        available = Convert.ToDecimal(item.Value)
+                    };
+                    //balance.symbol = item.Key;
+                    //balance.available = Convert.ToDecimal(item.Value);
                     list.Add(balance);
                 }
             }
@@ -431,9 +458,13 @@ namespace TwEX_API.Exchange
 
                 foreach (var item in jsonObject)
                 {
-                    PoloniexWallet wallet = new PoloniexWallet();
-                    wallet.symbol = item.Key;
-                    wallet.address = item.Value.ToString();
+                    PoloniexWallet wallet = new PoloniexWallet()
+                    {
+                        symbol = item.Key,
+                        address = item.Value.ToString()
+                    };
+                    //wallet.symbol = item.Key;
+                    //wallet.address = item.Value.ToString();
                     list.Add(wallet);
                 }
             }
@@ -524,12 +555,12 @@ namespace TwEX_API.Exchange
             try
             {
                 string url = "https://poloniex.com/tradingApi";
-                string param = "command=returnOpenOrders&currencyPair=" + market + "_" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                string param = "command=returnOpenOrders&currencyPair=" + market + "_" + symbol + "&nonce=" + GetNonce();
                 Boolean isAll = (symbol.ToLower() == "all" || market.ToLower() == "all");
 
                 if (isAll)
                 {
-                    param = "command=returnOpenOrders&currencyPair=all&nonce=" + ExchangeManager.GetNonce();
+                    param = "command=returnOpenOrders&currencyPair=all&nonce=" + GetNonce();
                 }
 
                 string result = await getPrivateApiRequestAsync(url, param);
@@ -590,7 +621,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string url = "https://poloniex.com/tradingApi";
-                string param = "command=returnOrderTrades&orderNumber=" + orderNumber + "&nonce=" + ExchangeManager.GetNonce();
+                string param = "command=returnOrderTrades&orderNumber=" + orderNumber + "&nonce=" + GetNonce();
                 string result = await getPrivateApiRequestAsync(url, param);
                 //LogManager.AddLogMessage(Name, "getOrderTradesList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(result) as JArray;
@@ -630,11 +661,11 @@ namespace TwEX_API.Exchange
 
                 if (isAll)
                 {
-                    param = "command=returnTradeHistory&currencyPair=all&nonce=" + ExchangeManager.GetNonce();
+                    param = "command=returnTradeHistory&currencyPair=all&nonce=" + GetNonce();
                 }
                 else
                 {
-                    param = "command=returnTradeHistory&currencyPair=" + market + "_" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                    param = "command=returnTradeHistory&currencyPair=" + market + "_" + symbol + "&nonce=" + GetNonce();
                 }
 
                 if (unixStart > 0)
@@ -651,10 +682,10 @@ namespace TwEX_API.Exchange
                 {
                     param += "&limit=" + limit;
                 }
-                //LogManager.AddDebugMessage(Name, "returnTradeHistory", "param=" + param);
+                LogManager.AddLogMessage(Name, "getTradeHistoryList", "param=" + param);
 
                 string result = await getPrivateApiRequestAsync(url, param);
-                //LogManager.AddDebugMessage(Name, "returnTradeHistory", "result=" + result);
+                LogManager.AddLogMessage(Name, "getTradeHistoryList", result, LogManager.LogMessageType.DEBUG);
 
                 if (isAll)
                 {
@@ -893,6 +924,51 @@ namespace TwEX_API.Exchange
                 }     
             }
         }
+        public async static void updateExchangeOrderList()
+        {
+            List<PoloniexOpenOrder> list = await getOpenOrdersList("all", "all");
+            foreach (PoloniexOpenOrder order in list)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.orderNumber,
+                    type = order.type,
+                    rate = order.rate,
+                    amount = order.amount,
+                    total = order.total,
+                    market = order.market,
+                    symbol = order.symbol,
+                    date = order.date,
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+
+            Thread.Sleep(1000);
+
+            List<PoloniexTradeHistory> trades = await getTradeHistoryList("all", "all", 1483228800);
+            foreach (PoloniexTradeHistory trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.symbol + " | " + trade.market + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.orderNumber,
+                    type = trade.type,
+                    rate = trade.rate,
+                    amount = trade.amount,
+                    total = trade.total,
+                    market = trade.market,
+                    symbol = trade.symbol,
+                    date = trade.date,
+                    open = false
+                };
+                processOrder(eOrder);
+            }
+            LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         public static void updateExchangeTickerList()
         {
             List<PoloniexTicker> list = getTickerList();
@@ -1058,19 +1134,21 @@ namespace TwEX_API.Exchange
             public Decimal low24hr { get; set; }
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
                 string[] pairs = pair.Split('_');
-                eTicker.market = pairs[0];
-                eTicker.symbol = pairs[1];
-                eTicker.last = last;
-                eTicker.ask = lowestAsk;
-                eTicker.bid = highestBid;
-                eTicker.change = percentChange;
-                eTicker.volume = baseVolume;
-                eTicker.high = high24hr;
-                eTicker.low = low24hr;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,
+                    market = pairs[0],
+                    symbol = pairs[1],
+                    last = last,
+                    ask = lowestAsk,
+                    bid = highestBid,
+                    change = percentChange,
+                    volume = baseVolume,
+                    high = high24hr,
+                    low = low24hr
+                };
+                return ticker;
             }
         }
         public class Poloniex24hVolume
@@ -1245,3 +1323,61 @@ namespace TwEX_API.Exchange
         #endregion DataModels
     }
 }
+
+
+
+/*
+if (balance.total > 0)
+{
+    if (balance.symbol != "BTC" && balance.symbol != USDSymbol)
+    {
+        // GET TICKER FOR PAIR IN BTC MARKET
+        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
+
+        if (ticker != null)
+        {
+            //Decimal orders = balance.Balance - balance.Available;
+            if (balance.onOrders > 0)
+            {
+                balance.TotalInBTCOrders = balance.onOrders * ticker.last;
+            }
+
+            balance.TotalInBTC = balance.total * ticker.last;
+            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+        }
+        else
+        {
+            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.symbol.ToUpper());
+        }
+    }
+    else
+    {
+        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+        if (balance.symbol == "BTC")
+        {
+            if (balance.onOrders > 0)
+            {
+                balance.TotalInBTCOrders = balance.onOrders;
+            }
+
+            balance.TotalInBTC = balance.total;
+            balance.TotalInUSD = btcTicker.last * balance.total;
+        }
+        else if (balance.symbol == USDSymbol)
+        {
+            if (btcTicker.last > 0)
+            {
+                if (balance.onOrders > 0)
+                {
+                    balance.TotalInBTCOrders = balance.onOrders / btcTicker.last;
+                }
+
+                balance.TotalInBTC = balance.total / btcTicker.last;
+            }
+            balance.TotalInUSD = balance.total;
+        }
+    }
+    //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
+    ExchangeManager.processBalance(balance.GetExchangeBalance());
+}
+*/

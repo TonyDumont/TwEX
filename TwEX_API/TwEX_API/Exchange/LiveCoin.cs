@@ -9,6 +9,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -476,8 +477,10 @@ namespace TwEX_API.Exchange
                     else
                     {
                         // DOES NOT EXIST SO CREATE AN ENTRY
-                        LiveCoinBalanceTotals newTotal = new LiveCoinBalanceTotals();
-                        newTotal.currency = b.currency;
+                        LiveCoinBalanceTotals newTotal = new LiveCoinBalanceTotals()
+                        {
+                            currency = b.currency                           
+                        };
                         newTotal.SetProperty(b.type, Convert.ToDecimal(b.value));
                         list.Add(newTotal);
                     }
@@ -509,13 +512,16 @@ namespace TwEX_API.Exchange
             List<LiveCoinTradeOrder> list = new List<LiveCoinTradeOrder>();
             try
             {
-                string requestUrl = Api_privateUrl + "exchange/client_orders&currencyPair=XMR/BTC";
+                string requestUrl = Api_privateUrl + "exchange/client_orders";
+                //string requestUrl = Api_privateUrl + "exchange/client_orders&currencyPair=XMR/BTC";
                 //requestUrl += "&openClosed=" + LiveCoinOrderOpenClosedType.CLOSED;
                 //string parameterString = getParameterString(parameters);
                 //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", parameterString);
                 //string response = getApiPrivateRequest(requestUrl, "");
                 string response = getApiPrivateRequest(requestUrl, "");
-                LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", response);
+                //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", response);
+                var jsonObject = JObject.Parse(response);
+                list = jsonObject["data"].ToObject<List<LiveCoinTradeOrder>>();
                 //JArray jsonVal = JArray.Parse(response) as JArray;
                 //LiveCoinTradeOrder[] array = jsonVal.ToObject<LiveCoinTradeOrder[]>();
                 //list = array.ToList();
@@ -671,6 +677,64 @@ namespace TwEX_API.Exchange
                 }
             }        
         }
+        public static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+
+            List<LiveCoinTradeOrder> openorders = getOrdersByCurrencyPairList(new LiveCoinClientOrderParameters());
+            foreach (LiveCoinTradeOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.side + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                string[] typeSplit = order.type.Split('_');
+                string[] pairSplit = order.currencyPair.Split('/');
+                //string market = order.symbol.Substring(order.symbol.Length)
+
+                bool open = false;
+                if (order.orderStatus == "OPEN")
+                {
+                    open = true;
+                }
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "OPEN : " + order.issueTime, LogManager.LogMessageType.DEBUG);
+                
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.clientOrderId,
+                    type = typeSplit[1].ToLower(),
+                    rate = order.price,
+                    amount = order.quantity,
+                    total = order.price * order.quantity,
+                    market = pairSplit[1],
+                    symbol = pairSplit[0],
+                    date = DateTimeOffset.FromUnixTimeMilliseconds(order.issueTime).UtcDateTime.ToLocalTime(),
+                    open = open
+                };
+                processOrder(eOrder);
+            }
+            
+            Thread.Sleep(1000);
+
+            List<LiveCoinTradeOrder> closedorders = getTradesList();
+            foreach (LiveCoinTradeOrder order in closedorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "CLOSED : " + order.datetime, LogManager.LogMessageType.DEBUG);
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.clientOrderId,
+                    type = order.type.ToLower(),
+                    rate = order.price,
+                    amount = order.quantity,
+                    total = order.price * order.quantity,
+                    market = order.symbol.Substring(order.symbol.Length - 3),
+                    symbol = order.symbol.Substring(0, order.symbol.Length - 4),
+                    date = DateTimeOffset.FromUnixTimeSeconds(order.datetime).UtcDateTime.ToLocalTime(),
+                    open = false
+                };
+                processOrder(eOrder); 
+            }
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         public static void updateExchangeTickerList()
         {
             List<LiveCoinTicker> list = getTickerList();
@@ -824,20 +888,21 @@ namespace TwEX_API.Exchange
             public decimal best_ask { get; set; }
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
                 string[] pairs = symbol.Split('/');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
-
-                eTicker.last = last;
-                eTicker.ask = best_ask;
-                eTicker.bid = best_bid;
-                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
-                eTicker.volume = volume;
-                eTicker.high = high;
-                eTicker.low = low;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,                  
+                    market = pairs[1],
+                    symbol = pairs[0],
+                    last = last,
+                    ask = best_ask,
+                    bid = best_bid,
+                    //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                    volume = volume,
+                    high = high,
+                    low = low
+                };   
+                return ticker;
             }
         }
         public class LiveCoinPublicTrade
@@ -887,16 +952,43 @@ namespace TwEX_API.Exchange
                 };
             }
         }
+        /*
         public class LiveCoinTradeOrder
         {
             public int datetime { get; set; }
-            public int id { get; set; }
-            public int clientorderid { get; set; }
+            public string id { get; set; }
+            public string clientorderid { get; set; }
             public string type { get; set; }
             public string symbol { get; set; }
             public double price { get; set; }
             public double quantity { get; set; }
             public double commission { get; set; }
+        }
+        */
+        public class LiveCoinTradeOrder
+        {
+            public string id { get; set; }
+            public double quantity { get; set; }
+            public double price { get; set; }
+            // CLOSED
+            public string clientOrderId { get; set; }
+            public object orderId { get; set; }
+            public string symbol { get; set; }
+            public string side { get; set; }          
+            public double fee { get; set; }
+            public long datetime { get; set; }
+            // OPEN
+            public string currencyPair { get; set; }
+            public object goodUntilTime { get; set; }
+            public string type { get; set; }
+            public string orderStatus { get; set; }
+            public long issueTime { get; set; }
+            public double remainingQuantity { get; set; }
+            public double commissionByTrade { get; set; }
+            public double bonusByTrade { get; set; }
+            public double bonusRate { get; set; }
+            public double commissionRate { get; set; }
+            public long lastModificationTime { get; set; }
         }
         #endregion
         #endregion DataModels

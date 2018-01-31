@@ -54,6 +54,7 @@ namespace TwEX_API
             new IconFile(){ Name = "CoinMarketCap", Url = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png" },
             new IconFile(){ Name = "CryptoCompare", Url = "https://www.cryptocompare.com/media/20562/favicon.png?v=2" },
             new IconFile(){ Name = "CustomView", Url ="http://cdn.mysitemyway.com/icons-watermarks/simple-black/bfa/bfa_table/bfa_table_simple-black_512x512.png" },
+            new IconFile(){ Name = "Deposit", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_deposit_income-512.png" },
             new IconFile(){ Name = "EarnGGManager", Url = "https://earn.gg/img/favicon-32x32.png" },
             new IconFile(){ Name = "ExchangeEditor", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
             new IconFile(){ Name = "ExchangeManager", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
@@ -77,7 +78,8 @@ namespace TwEX_API
             new IconFile(){ Name = "TwEX_FormEditor", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new IconFile(){ Name = "UpDown", Url = "https://cdn1.iconfinder.com/data/icons/touch-gestures-3/96/Scroll-512.png"},
             new IconFile(){ Name = "USDSymbol", Url = "http://www.tirosagol.com/wp-content/uploads/moneyTAG.jpg"},
-            new IconFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" }
+            new IconFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
+            new IconFile(){ Name = "Withdrawal", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_withdraw_expenses-256.png" }
         };
         public static List<IconFile> WalletIconUrlList = new List<IconFile>()
         {
@@ -593,6 +595,9 @@ namespace TwEX_API
         // COLLECTIONS
         public static BlockingCollection<Exchange> Exchanges = new BlockingCollection<Exchange>();
         public static BlockingCollection<ExchangeBalance> Balances = new BlockingCollection<ExchangeBalance>();
+
+        public static BlockingCollection<ExchangeOrder> Orders = new BlockingCollection<ExchangeOrder>();
+
         public static BlockingCollection<ExchangeTicker> Tickers = new BlockingCollection<ExchangeTicker>();
         #endregion Properties
 
@@ -708,6 +713,13 @@ namespace TwEX_API
                     {
                         //LogManager.AddLogMessage(Name, "TimerTick", "Updating All Exchange Balances", LogManager.LogMessageType.DEBUG);
                         Task.Factory.StartNew(() => updateBalances());
+                    }
+
+                    bool hasOrderType = (preferences.TimerFlags & ExchangeTimerType.ORDERS) != ExchangeTimerType.NONE;
+                    if (hasOrderType)
+                    {
+                        //LogManager.AddLogMessage(Name, "TimerTick", "Updating All Exchange Orders", LogManager.LogMessageType.DEBUG);
+                        Task.Factory.StartNew(() => updateOrders());
                     }
 
                     bool hasWalletType = (preferences.TimerFlags & ExchangeTimerType.WALLETS) != ExchangeTimerType.NONE;
@@ -1124,6 +1136,25 @@ namespace TwEX_API
             }
             */
         }
+        public static void processOrder(ExchangeOrder order)
+        {
+            ExchangeOrder listItem = Orders.FirstOrDefault(item => item.id == order.id && item.exchange == order.exchange);
+
+            if (listItem != null)
+            {
+                // UPDATE
+                listItem.amount = order.amount;
+                listItem.total = order.total;
+                listItem.open = order.open;
+                listItem.date = order.date;
+            }
+            else
+            {
+                Orders.Add(order);
+                //AddLogMessage(Name, "processOrder", "Added " + order.symbol + " for " + order.exchange, LogMessageType.DEBUG);
+            }
+            // UI UPDATE
+        }
         public static void processTicker(ExchangeTicker ticker)
         {
             /*
@@ -1187,12 +1218,12 @@ namespace TwEX_API
                         }
                         else
                         {
-                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "This Method Requires API CREDENTIALS", LogManager.LogMessageType.OTHER);
+                            AddLogMessage(Name, "updateExchangeBalanceList", "This Method Requires API CREDENTIALS", LogMessageType.OTHER);
                         }
                     }
                     else
                     {
-                        LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "type is NULL : " + exchangeName, LogManager.LogMessageType.DEBUG);
+                        AddLogMessage(Name, "updateExchangeBalanceList", "type is NULL : " + exchangeName, LogMessageType.DEBUG);
                     }
                 }
                 else
@@ -1215,23 +1246,97 @@ namespace TwEX_API
                             }
                             else
                             {
-                                LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "Balance List Requires API CREDENTIALS for " + exchange.Name, LogManager.LogMessageType.OTHER);
+                                AddLogMessage(Name, "updateExchangeBalanceList", "Balance List Requires API CREDENTIALS for " + exchange.Name, LogMessageType.OTHER);
                             }
                         }
                         else
                         {
-                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "type is NULL : " + exchangeName, LogManager.LogMessageType.DEBUG);
+                            AddLogMessage(Name, "updateExchangeBalanceList", "type is NULL : " + exchangeName, LogMessageType.DEBUG);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "updateBalanceList", "EXCEPTION!!! : " + ex.Message);
+                AddLogMessage(Name, "updateBalanceList", "EXCEPTION!!! : " + ex.Message);
             }
 
             //updateControls();
             FormManager.UpdateForms();
+        }
+
+        /// <summary>Updates ORDERS COLLECTION for an exchange or ALL if no name specified</summary>
+        public static void updateOrders(string exchangeName = "")
+        {
+            try
+            {
+                if (exchangeName.Length > 0)
+                {
+                    Type type = getExchangeType(exchangeName);
+                    if (type != null)
+                    {
+                        //LogManager.AddLogMessage(Name, "updateOrders", "type is : " + type.Name);
+                        var api = type.GetProperty("Api", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+
+                        if (api != null)
+                        {
+                            
+                            Task.Factory.StartNew(() => type.InvokeMember("updateExchangeOrderList",
+                                BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                null,
+                                type,
+                                null));
+                                
+                        }
+                        else
+                        {
+                            AddLogMessage(Name, "updateOrders", "This Method Requires API CREDENTIALS", LogMessageType.OTHER);
+                        }
+                    }
+                    else
+                    {
+                        AddLogMessage(Name, "updateOrders", "type is NULL : " + exchangeName, LogMessageType.DEBUG);
+                    }
+                }
+                else
+                {
+                    foreach (Exchange exchange in Exchanges)
+                    {
+                        Type type = getExchangeType(exchange.Name);
+                        if (type != null)
+                        {
+                            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "type is : " + type.Name);
+                            var api = type.GetProperty("Api", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+
+                            if (api != null)
+                            {
+                                
+                                Task.Factory.StartNew(() => type.InvokeMember("updateExchangeOrderList",
+                                                            BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                                            null,
+                                                            type,
+                                                            null));
+                                                            
+                            }
+                            else
+                            {
+                                AddLogMessage(Name, "updateOrders", "Order List Requires API CREDENTIALS for " + exchange.Name, LogMessageType.OTHER);
+                            }
+                        }
+                        else
+                        {
+                            AddLogMessage(Name, "updateOrders", "type is NULL : " + exchangeName, LogMessageType.DEBUG);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage(Name, "updateOrders", ex.Message, LogMessageType.EXCEPTION);
+            }
+
+            //updateControls();
+            //FormManager.UpdateForms();
         }
 
         /// <summary>Updates TICKER COLLECTION for an exchange or does ALL if no name specified</summary>
@@ -1335,6 +1440,22 @@ namespace TwEX_API
             public Decimal TotalInBTC { get; set; } = 0;
             public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
+        }
+        public class ExchangeOrder
+        {
+            public string id { get; set; }
+            public string type { get; set; } // buy or sell
+            public Double rate { get; set; }
+            public Double startingAmount { get; set; } // poloniex
+            public Double amount { get; set; }
+            public Double total { get; set; }
+            public DateTime date { get; set; }
+            //public int margin { get; set; } // poloniex
+            // ADDON
+            public string exchange { get; set; }
+            public string market { get; set; }
+            public string symbol { get; set; }
+            public Boolean open { get; set; }
         }
         public class ExchangeTicker
         {
@@ -1461,14 +1582,45 @@ namespace TwEX_API
         #region Functions
         public static void OpenForm(string name, string text)
         {
-            Form targetForm = GetFormByName(name);
-            
+            //Form targetForm;
+            string formName;
+            string formText;
+            Icon formIcon;
+
+            if (name != "ExchangeTrading")
+            {
+                formName = name;
+                formText = text;
+                formIcon = Icon.FromHandle(new Bitmap(ContentManager.GetIcon(name)).GetHicon());
+                //targetForm = GetFormByName(name);
+            }
+            else
+            {
+                formName = name + "_" + text;
+                formText = text + " Trading";
+                formIcon = Icon.FromHandle(new Bitmap(ContentManager.GetExchangeIcon(text)).GetHicon());
+                //targetForm = GetFormByName(name + "_" + text);
+            }
+
+            Form targetForm = GetFormByName(formName);
+
             if (targetForm == null)
             {
-                Form form = new Form() { Size = new Size(950, 550), Name = name, Text = text, Icon = Icon.FromHandle(new Bitmap(ContentManager.GetIcon(name)).GetHicon()) };
+                Form form = new Form() { Size = new Size(950, 550), Name = formName, Text = formText, Icon = formIcon };
                 form.Show();
 
-                FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+                //FormPreference preference;
+                FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == formName);
+                /*
+                if (name != "ExchangeTrading")
+                {
+                    preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
+                }
+                else
+                {
+                    preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name + "_" + text);
+                }
+                */
 
                 if (preference != null)
                 {
@@ -1487,7 +1639,7 @@ namespace TwEX_API
                 }
                 else
                 {
-                    AddLogMessage(Name, "toolStripButton_Form_Click", "PREFERENCE NOT FOUND ADDING : " + form.Name + " | " + form.Location, LogMessageType.DEBUG);
+                    AddLogMessage(Name, "toolStripButton_Form_Click", "PREFERENCE NOT FOUND ADDING : " + formName + " | " + formText, LogMessageType.DEBUG);
                     UpdateFormPreferences(form, true);
                 }
 
@@ -1525,18 +1677,32 @@ namespace TwEX_API
                         form.Controls.Add(new CoinMarketCapControl() { Dock = DockStyle.Fill });
                         form.FormClosing += delegate { coinMarketCapControl = null; };
                         break;
-/*
+
                     case "EarnGGManager":
                         form.Controls.Add(new EarnGGManagerControl() { Dock = DockStyle.Fill });
                         form.FormClosing += delegate { earnGGManagerControl = null; };
                         break;
-                        */
+                        
+                    case "ExchangeTrading":
+                        ExchangeTradingControl tradeControl = new ExchangeTradingControl() { Dock = DockStyle.Fill };
+                        //form.Controls.Add(new ExchangeTradingControl() { Dock = DockStyle.Fill });
+                        tradeControl.SetExchange(text);
+                        form.Controls.Add(tradeControl);
+                        //form.Name += "_" + text;
+                        //form.Text = text + " Trading";
+                        
+                        //form.FormClosing += delegate { exchangeManagerControl = null; };
+                        break;
+                        
+
 /*
                     case "ExchangeEditor":
                         form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
                         form.FormClosing += delegate { exchangeManagerControl = null; };
                         break;
                         */
+
+
                     case "LogManager":
                         form.FormClosing += delegate { logManagerControl = null; };
                         form.Controls.Add(new LogManagerControl() { Dock = DockStyle.Fill });
@@ -2321,11 +2487,11 @@ namespace TwEX_API
         #region ExchangeAPI
         public static void UpdateExchangeApi(ExchangeApi api)
         {
-            ExchangeApi match = PreferenceManager.preferences.ApiList.FirstOrDefault(item => item.exchange.ToLower() == api.exchange.ToLower());
+            ExchangeApi match = preferences.ApiList.FirstOrDefault(item => item.exchange.ToLower() == api.exchange.ToLower());
 
             if (match == null)
             {
-                PreferenceManager.preferences.ApiList.Add(api);
+                preferences.ApiList.Add(api);
                 //LogManager.AddLogMessage(Name, "AddExchangeApi", "Added API for " + api.exchange, LogManager.LogMessageType.DEBUG);
 
             }
@@ -2340,17 +2506,17 @@ namespace TwEX_API
         }
         public static void RemoveExchangeApi(string exchange)
         {
-            ExchangeApi match = PreferenceManager.preferences.ApiList.FirstOrDefault(item => item.exchange.ToLower() == exchange.ToLower());
+            ExchangeApi match = preferences.ApiList.FirstOrDefault(item => item.exchange.ToLower() == exchange.ToLower());
 
             if (match != null)
             {
-                LogManager.AddLogMessage(Name, "RemoveExchangeApi", "Removing " + exchange + " from API List", LogManager.LogMessageType.DEBUG);
-                PreferenceManager.preferences.ApiList.Remove(match);
+                AddLogMessage(Name, "RemoveExchangeApi", "Removing " + exchange + " from API List", LogMessageType.DEBUG);
+                preferences.ApiList.Remove(match);
                 UpdatePreferenceFile();
             }
             else
             {
-                LogManager.AddLogMessage(Name, "AddExchangeApi", exchange + " Does Not Exist in API List - Nothing To Remove");
+                AddLogMessage(Name, "AddExchangeApi", exchange + " Does Not Exist in API List - Nothing To Remove");
             }
         }
         public static void SetExchangeApi(ExchangeApi api)
@@ -2369,12 +2535,12 @@ namespace TwEX_API
                 }
                 catch (Exception ex)
                 {
-                    LogManager.AddLogMessage(Name, "SetExchangeApi", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                    AddLogMessage(Name, "SetExchangeApi", ex.Message, LogMessageType.EXCEPTION);
                 }
             }
             else
             {
-                LogManager.AddLogMessage(Name, "SetExchangeApi", "PROBLEM : type is NULL : " + api.exchange, LogManager.LogMessageType.DEBUG);
+                AddLogMessage(Name, "SetExchangeApi", "PROBLEM : type is NULL : " + api.exchange, LogMessageType.DEBUG);
             }
         }
         #endregion
@@ -2652,6 +2818,7 @@ namespace TwEX_API
         #region Updaters
         public static void ResetForm(FormPreference preference)
         {
+            /*
             if (preference.Open)
             {
                 Form form = FormManager.GetFormByName(preference.Name);
@@ -2663,6 +2830,8 @@ namespace TwEX_API
             {
                 FormPreferences.Remove(preference);
             }
+            */
+            FormPreferences.Remove(preference);
         }
         public static void UpdateColorControls(Control myControl)
         {

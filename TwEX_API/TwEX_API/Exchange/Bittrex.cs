@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -507,11 +508,11 @@ namespace TwEX_API.Exchange
 
                 if (market.Length > 0 && symbol.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?Api.key=" + Api.key + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?apikey=" + Api.key + "&market=" + market + "-" + symbol + "&nonce=" + GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getorderhistory?apikey=" + Api.key + "&nonce=" + GetNonce();
                 }
 
                 var url = new Uri(requestUrl);
@@ -522,7 +523,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
-                //LogManager.AddLogMessage(Name, "returnOrderHistory", "result=" + result);
+                //LogManager.AddLogMessage(Name, "returnOrderHistory", result, LogManager.LogMessageType.OTHER);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -533,7 +534,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getOrderHistory", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOrderHistory", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -552,13 +553,13 @@ namespace TwEX_API.Exchange
 
                 if (market.Length > 0 && symbol.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?Api.key=" + Api.key + "&market=" + market + "-" + symbol + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=" + Api.key + "&market=" + market + "-" + symbol + "&nonce=" + GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=" + Api.key + "&nonce=" + GetNonce();
                 }
-
+                //LogManager.AddLogMessage(Name, "getOpenOrdersList", "key=" + Api.key + " | " + requestUrl, LogManager.LogMessageType.DEBUG);
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
                 var signature = getHMAC(Api.secret, requestUrl);
@@ -824,6 +825,59 @@ namespace TwEX_API.Exchange
                 }
             }
         }
+        public static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            List<BittrexOpenOrder> openorders = getOpenOrdersList();
+
+            foreach (BittrexOpenOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = order.OrderType.Split('_');
+                string[] pairSplit = order.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = order.Limit,
+                    amount = order.Quantity,
+                    total = order.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = order.Opened,
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+            
+            Thread.Sleep(1000);
+
+            List<BittrexOrderHistoryItem> trades = getOrderHistoryList();
+            foreach (BittrexOrderHistoryItem trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = trade.OrderType.Split('_');
+                string[] pairSplit = trade.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = trade.Limit,
+                    amount = trade.Quantity,
+                    total = trade.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = trade.TimeStamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         public static void updateExchangeTickerList()
         {
             List<BittrexMarketSummary> list = getMarketSummariesList();
@@ -910,20 +964,22 @@ namespace TwEX_API.Exchange
 
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
                 string[] pairs = MarketName.Split('-');
-                eTicker.market = pairs[0];
-                eTicker.symbol = pairs[1];
 
-                eTicker.last = Last;
-                eTicker.ask = Ask;
-                eTicker.bid = Bid;
-                eTicker.change = (Last - PrevDay) / PrevDay;
-                eTicker.volume = BaseVolume;
-                eTicker.high = High;
-                eTicker.low = Low;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,                  
+                    market = pairs[0],
+                    symbol = pairs[1],
+                    last = Last,
+                    ask = Ask,
+                    bid = Bid,
+                    change = (Last - PrevDay) / PrevDay,
+                    volume = BaseVolume,
+                    high = High,
+                    low = Low,                
+                };
+                return ticker;
             }
         }
         public class BittrexOrderBookData

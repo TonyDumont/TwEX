@@ -59,7 +59,7 @@ namespace TwEX_API.Controls
                 Decimal orderBTC = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTCOrders));
                 Decimal orderUSD = CoinMarketCap.getUSDValue("BTC", orderBTC);
                 string orderString = "Orders : (" + orderUSD.ToString("C") + ") " + orderBTC.ToString("N8");
-                toolStripLabel_Orders.Text = orderString;
+                toolStripButton_OrderTotal.Text = orderString;
 
                 Decimal totalBTC = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC));
                 Decimal totalUSD = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD));
@@ -216,7 +216,6 @@ namespace TwEX_API.Controls
         #region Event_Handlers
         private void listView_SelectionChanged(object sender, EventArgs e)
         {
-            //ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)sender as ExchangeManager.Exchange;
             if (listView.SelectedObject != null)
             {
                 toolStripButton_API.Enabled = true;
@@ -312,7 +311,31 @@ namespace TwEX_API.Controls
                         break;
                 }
             }
-        }      
+        }
         #endregion
+
+        private void listView_ItemActivate(object sender, EventArgs e)
+        {
+            if (listView.SelectedObject != null)
+            {
+                ExchangeManager.Exchange exchange = listView.SelectedObject as ExchangeManager.Exchange;
+
+                if (ExchangeManager.getExchangeHasAPI(exchange))
+                {
+                    //toolStripButton_API.Image = Properties.Resources.ConnectionStatus_ACTIVE;
+                    FormManager.OpenForm("ExchangeTrading", exchange.Name);
+                }
+                else
+                {
+                    // ALERT
+                    MessageBox.Show("You need to setup your API keys to use this.", "No API For " + exchange.Name);
+                }
+            }
+        }
+
+        private void toolStripButton_OrderTotal_Click(object sender, EventArgs e)
+        {
+            ExchangeManager.updateOrders();
+        }
     }
 }

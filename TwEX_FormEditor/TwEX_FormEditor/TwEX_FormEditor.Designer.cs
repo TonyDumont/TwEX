@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TwEX_FormEditor));
             this.twEXTraderControl = new TwEX_API.Controls.TwEXTraderControl();
             this.walletManagerControl = new TwEX_API.Controls.WalletManagerControl();
-            this.earnGGManagerControl = new TwEX_API.Controls.EarnGGManagerControl();
             this.SuspendLayout();
             // 
             // twEXTraderControl
@@ -53,21 +52,11 @@
             this.walletManagerControl.Size = new System.Drawing.Size(579, 135);
             this.walletManagerControl.TabIndex = 1;
             // 
-            // earnGGManagerControl
-            // 
-            this.earnGGManagerControl.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.earnGGManagerControl.Location = new System.Drawing.Point(0, 478);
-            this.earnGGManagerControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.earnGGManagerControl.Name = "earnGGManagerControl";
-            this.earnGGManagerControl.Size = new System.Drawing.Size(579, 67);
-            this.earnGGManagerControl.TabIndex = 2;
-            // 
             // TwEX_FormEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(579, 545);
-            this.Controls.Add(this.earnGGManagerControl);
             this.Controls.Add(this.walletManagerControl);
             this.Controls.Add(this.twEXTraderControl);
             this.Font = new System.Drawing.Font("Times New Roman", 12F);
@@ -89,7 +78,6 @@
 
         private TwEX_API.Controls.TwEXTraderControl twEXTraderControl;
         private TwEX_API.Controls.WalletManagerControl walletManagerControl;
-        private TwEX_API.Controls.EarnGGManagerControl earnGGManagerControl;
     }
 }
 

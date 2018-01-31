@@ -505,7 +505,7 @@ namespace TwEX_API.Exchange
                 var stream = webresp.GetResponseStream();
                 var strRead = new StreamReader(stream);
                 String response = strRead.ReadToEnd();
-
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", response, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(response);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -516,7 +516,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage("BittrexControl", "getOpenOrders", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -820,15 +820,17 @@ namespace TwEX_API.Exchange
             Console.WriteLine("requestList.count=" + requestList.Count);
             foreach (BleuTradeBalance balance in requestList)
             {
-                ExchangeBalance eBalance = new ExchangeBalance();
+                ExchangeBalance eBalance = new ExchangeBalance()
+                {
+                    Symbol = balance.Currency,
+                    Exchange = Name,
+                    Balance = balance.Balance,
+                    OnOrders = balance.Balance - balance.Available
+                };
                 eBalance.Symbol = balance.Currency;
                 eBalance.Exchange = Name;
                 eBalance.Balance = balance.Balance;
                 eBalance.OnOrders = balance.Balance - balance.Available;
-                //cBalance.TotalBTC = balance.totalBTC;
-                //cBalance.TotalUSD = balance.totalUSD;
-                //ExchangeManager.ProcessBalance(cBalance);
-                //Task.Factory.StartNew(() => ExchangeManager.ProcessBalance(cBalance));
                 list.Add(eBalance);
             }
 
@@ -845,20 +847,21 @@ namespace TwEX_API.Exchange
 
                 foreach (BleuTradeMarketSummary ticker in tickerList)
                 {
-                    ExchangeTicker eTicker = new ExchangeTicker();
-                    eTicker.exchange = Name;
-
                     string[] pairs = ticker.MarketName.Split('_');
-                    eTicker.market = pairs[1];
-                    eTicker.symbol = pairs[0];
-
-                    eTicker.last = ticker.Last;
-                    eTicker.ask = ticker.Ask;
-                    eTicker.bid = ticker.Bid;
-                    //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
-                    eTicker.volume = ticker.BaseVolume;
-                    eTicker.high = ticker.High;
-                    eTicker.low = ticker.Low;
+                    ExchangeTicker eTicker = new ExchangeTicker()
+                    {
+                        exchange = Name,                      
+                        market = pairs[1],
+                        symbol = pairs[0],
+                        last = ticker.Last,
+                        ask = ticker.Ask,
+                        bid = ticker.Bid,
+                        //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                        volume = ticker.BaseVolume,
+                        high = ticker.High,
+                        low = ticker.Low
+                };
+                    
                     list.Add(eTicker);
                 }
                 
@@ -906,6 +909,39 @@ namespace TwEX_API.Exchange
 
                 ExchangeManager.processBalance(balance.GetExchangeBalance());
             }
+        }
+        public static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            
+            List<BleuTradeOrder> trades = getOrdersList("all", "all");
+            foreach (BleuTradeOrder trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                string[] pairSplit = trade.Exchange.Split('_');
+                bool open = false;
+                if (trade.Status == "OPEN")
+                {
+                    open = true;
+                }
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderId,
+                    type = trade.Type.ToLower(),
+                    rate = trade.Price,
+                    amount = trade.Quantity,
+                    total = trade.Quantity * trade.Price,
+                    market = pairSplit[1],
+                    symbol = pairSplit[0],
+                    date = trade.Created,
+                    open = open
+                };
+                processOrder(eOrder);
+            }
+            
+            LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         public static void updateExchangeTickerList()
         {
@@ -1068,20 +1104,20 @@ namespace TwEX_API.Exchange
 
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
-
                 string[] pairs = MarketName.Split('_');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
-
-                eTicker.last = Last;
-                eTicker.ask = Ask;
-                eTicker.bid = Bid;
-                //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
-                eTicker.volume = BaseVolume;
-                eTicker.high = High;
-                eTicker.low = Low;
+                ExchangeTicker eTicker = new ExchangeTicker()
+                {
+                    exchange = Name,
+                    market = pairs[1],
+                    symbol = pairs[0],
+                    last = Last,
+                    ask = Ask,
+                    bid = Bid,
+                    //eTicker.change = (ticker.Last - ticker.PrevDay) / ticker.PrevDay;
+                    volume = BaseVolume,
+                    high = High,
+                    low = Low
+                };
                 return eTicker;
             }
         }
@@ -1165,7 +1201,7 @@ namespace TwEX_API.Exchange
             public string QuantityBaseTraded { get; set; }
             public double Price { get; set; }
             public string Status { get; set; }
-            public string Created { get; set; }
+            public DateTime Created { get; set; }
             public string Comments { get; set; }
         }
         public class BleuTradeOrderHistory

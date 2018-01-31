@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -339,8 +340,9 @@ namespace TwEX_API.Exchange
                 {
                     requestUrl += "&market=" + market + "-" + symbol;
                 }
-
-                var jsonObject = JObject.Parse(GetApiRequest(requestUrl));
+                string result = GetApiRequest(requestUrl);
+                //LogManager.AddLogMessage(Name, "getOpenOrdersList", result, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
@@ -406,7 +408,7 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "getorderhistory" +
                     "&apikey=" + Api.key +
-                    "&nonce=" + ExchangeManager.GetNonce();
+                    "&nonce=" + GetNonce();
 
                 if (market.Length > 0 && symbol.Length > 0)
                 {
@@ -417,7 +419,9 @@ namespace TwEX_API.Exchange
                     requestUrl += "&count=" + count;
                 }
 
-                var jsonObject = JObject.Parse(GetApiRequest(requestUrl));
+                string result = GetApiRequest(requestUrl);
+                //LogManager.AddLogMessage(Name, "getOrderHistoryList", result, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
                 if (success == "true")
@@ -674,12 +678,65 @@ namespace TwEX_API.Exchange
                 }
             }
         }
+        public static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            List<CCEXOrder> openorders = getOpenOrdersList();
+
+            foreach (CCEXOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = order.OrderType.Split('_');
+                string[] pairSplit = order.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = order.Limit,
+                    amount = order.Quantity,
+                    total = order.Limit * order.Quantity,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = order.Opened,
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+            
+            Thread.Sleep(1000);
+
+            List<CCEXOrder> trades = getOrderHistoryList();
+            foreach (CCEXOrder trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = trade.OrderType.Split('_');
+                string[] pairSplit = trade.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = trade.Limit,
+                    amount = trade.Quantity,
+                    total = trade.Limit * trade.Quantity,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = trade.TimeStamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }  
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         public static void updateExchangeTickerList()
         {
             List<CCEXMarketSummary> list = getMarketSummariesList();
             foreach (CCEXMarketSummary ticker in list)
             {
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                processTicker(ticker.GetExchangeTicker());
             }
         }
         private static void UpdateStatus(Boolean success, string message = "")
@@ -746,18 +803,20 @@ namespace TwEX_API.Exchange
             public object DisplayMarketName { get; set; }
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
                 string[] pairs = MarketName.Split('-');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
-                eTicker.last = Last;
-                eTicker.ask = Ask;
-                eTicker.bid = Bid;
-                eTicker.volume = BaseVolume;
-                eTicker.high = High;
-                eTicker.low = Low;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,                   
+                    market = pairs[1],
+                    symbol = pairs[0],
+                    last = Last,
+                    ask = Ask,
+                    bid = Bid,
+                    volume = BaseVolume,
+                    high = High,
+                    low = Low
+                };           
+                return ticker;
             }
         }
         public class CCEXOrderBookData

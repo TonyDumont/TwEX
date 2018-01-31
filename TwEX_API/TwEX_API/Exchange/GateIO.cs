@@ -288,11 +288,13 @@ namespace TwEX_API.Exchange
                 foreach (string pair in pairs)
                 {
                     //LogManager.AddLogMessage(Name, "getTradingPairsList", pair, LogManager.LogMessageType.DEBUG);
-                    GateIOTradingPair tradingPair = new GateIOTradingPair();
-                    tradingPair.pair = pair;
                     string[] pairSplit = pair.Split('_');
-                    tradingPair.symbol = pairSplit[0];
-                    tradingPair.market = pairSplit[1];
+                    GateIOTradingPair tradingPair = new GateIOTradingPair()
+                    {
+                        pair = pair,                
+                        symbol = pairSplit[0],
+                        market = pairSplit[1]
+                    };
                     list.Add(tradingPair);
                 }
             }
@@ -340,7 +342,7 @@ namespace TwEX_API.Exchange
                 reqStream.Close();
 
                 responseString = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
-                //LogManager.AddLogMessage(Name, "getBalances", "response.Content=" + response, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getBalances", "response.Content=" + responseString, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(responseString);
                 string result = jsonObject["result"].ToString().ToLower();
                 
@@ -367,9 +369,11 @@ namespace TwEX_API.Exchange
                                 else
                                 {
                                     // add
-                                    GateIOBalance balance = new GateIOBalance();
-                                    balance.symbol = aItem.Key;
-                                    balance.available = Convert.ToDecimal(aItem.Value);
+                                    GateIOBalance balance = new GateIOBalance()
+                                    {
+                                        symbol = aItem.Key,
+                                        available = Convert.ToDecimal(aItem.Value)
+                                    };
                                     list.Add(balance);
                                 }
                             }
@@ -392,9 +396,11 @@ namespace TwEX_API.Exchange
                                 else
                                 {
                                     // add
-                                    GateIOBalance balance = new GateIOBalance();
-                                    balance.symbol = lItem.Key;
-                                    balance.locked = Convert.ToDecimal(lItem.Value);
+                                    GateIOBalance balance = new GateIOBalance()
+                                    {
+                                        symbol = lItem.Key,
+                                        locked = Convert.ToDecimal(lItem.Value)
+                                    };
                                     list.Add(balance);
                                 }
                             }
@@ -599,7 +605,7 @@ namespace TwEX_API.Exchange
                 if (request == null)
                     throw new Exception("Non HTTP WebRequest");
 
-                string parameters = "nonce=" + ExchangeManager.GetNonce();
+                string parameters = "nonce=" + GetNonce();
                 byte[] data = Encoding.ASCII.GetBytes(parameters);
 
                 request.Method = "POST";
@@ -614,7 +620,8 @@ namespace TwEX_API.Exchange
                 reqStream.Close();
 
                 var response = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
-                //LogManager.AddLogMessage(Name, "getOpenOrders", "response.Content=" + response, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getOpenOrders", response, LogManager.LogMessageType.DEBUG);
+
                 var jsonObject = JObject.Parse(response);
                 string result = jsonObject["result"].ToString().ToLower();
 
@@ -633,7 +640,7 @@ namespace TwEX_API.Exchange
             }
             return list;
         }
-
+    
         /// <summary>/getOrder
         /// <para>Get order status API</para>
         /// <para>Required : orderNumber</para>
@@ -706,11 +713,11 @@ namespace TwEX_API.Exchange
 
                 if (orderNumber.Length > 0)
                 {
-                    parameters = "currencyPair=" + symbol + "_" + market + "&orderNumber=" + orderNumber + "&nonce=" + ExchangeManager.GetNonce();
+                    parameters = "currencyPair=" + symbol + "_" + market + "&orderNumber=" + orderNumber + "&nonce=" + GetNonce();
                 }
                 else
                 {
-                    parameters = "currencyPair=" + symbol + "_" + market + "&nonce=" + ExchangeManager.GetNonce();
+                    parameters = "currencyPair=" + symbol + "_" + market + "&nonce=" + GetNonce();
                 }
 
                 byte[] data = Encoding.ASCII.GetBytes(parameters);
@@ -986,7 +993,7 @@ namespace TwEX_API.Exchange
         public static void updateExchangeBalanceList()
         {
             List<GateIOBalance> list = getBalances();
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+            ExchangeTicker btcTicker = getExchangeTicker(Name, "BTC", USDSymbol);
 
             foreach (GateIOBalance balance in list)
             {
@@ -995,7 +1002,7 @@ namespace TwEX_API.Exchange
                     if (balance.symbol != "BTC" && balance.symbol != USDSymbol)
                     {
                         // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
+                        ExchangeTicker ticker = getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
 
                         if (ticker != null)
                         {
@@ -1044,13 +1051,66 @@ namespace TwEX_API.Exchange
                 }
             }
         }
+        public static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            List<GateIOOrder> openorders = getOpenOrders();
+
+            foreach (GateIOOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                string[] pairSplit = order.currencyPair.Split('_');
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.orderNumber,
+                    type = order.type,
+                    rate = order.rate,
+                    amount = order.amount,
+                    total = order.total,
+                    market = pairSplit[1].ToUpper(),
+                    symbol = pairSplit[0].ToUpper(),
+                    date = DateTimeOffset.FromUnixTimeSeconds(order.timestamp).UtcDateTime.ToLocalTime(),
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+            // NO METHOD TO RETRIEVE TRADES WITHOUT SPECIFYING PAIR - THIS EXCHANGE SUCKS
+            /*
+            Thread.Sleep(1000);
+
+            List<GateIO> trades = getOrderHistoryList();
+            foreach (BittrexOrderHistoryItem trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = trade.OrderType.Split('_');
+                string[] pairSplit = trade.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = trade.Limit,
+                    amount = trade.Quantity,
+                    total = trade.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = trade.TimeStamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }
+            */
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         public static void updateExchangeTickerList()
         {
             List<GateIOTicker> requestList = getTickerList();
 
             foreach (GateIOTicker ticker in requestList)
             {
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                processTicker(ticker.GetExchangeTicker());
             }
         }
         private static void UpdateStatus(Boolean success, string message = "")
@@ -1096,20 +1156,22 @@ namespace TwEX_API.Exchange
             public Decimal high24hr { get; set; }
             public Decimal low24hr { get; set; }
             public ExchangeTicker GetExchangeTicker()
-            {     
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
+            {
                 string[] pairs = pair.Split('_');
-                eTicker.market = pairs[0];
-                eTicker.symbol = pairs[1];
-                eTicker.last = last;
-                eTicker.ask = lowestAsk;
-                eTicker.bid = highestBid;
-                eTicker.change = percentChange;
-                eTicker.volume = baseVolume;
-                eTicker.high = high24hr;
-                eTicker.low = low24hr;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,
+                    market = pairs[0],
+                    symbol = pairs[1],
+                    last = last,
+                    ask = lowestAsk,
+                    bid = highestBid,
+                    change = percentChange,
+                    volume = baseVolume,
+                    high = high24hr,
+                    low = low24hr
+                };
+                return ticker;
             }
         }
         public class GateIOOrderBook
@@ -1179,14 +1241,14 @@ namespace TwEX_API.Exchange
             public string pair { get; set; }
             public string type { get; set; }
             public double rate { get; set; }
-            public string amount { get; set; }
+            public double amount { get; set; }
             public double initial_rate { get; set; }
             public string initial_amount { get; set; }
             // OPEN ORDERS
             public string orderNumber { get; set; }
-            public string total { get; set; }
+            public double total { get; set; }
             public string currencyPair { get; set; }
-            public string timestamp { get; set; }
+            public long timestamp { get; set; }
         }
         public class GateIOTrade
         {
@@ -1215,3 +1277,56 @@ namespace TwEX_API.Exchange
         #endregion DataModels
     }
 }
+
+/*
+        public static List<GateIOOrder> getOpenOrders()
+        {
+            List<GateIOOrder> list = new List<GateIOOrder>();
+            string responseString = string.Empty;
+            try
+            {
+                string url = "https://api.gate.io/api2/1/private/openOrders";
+                var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
+                HMACSHA512 hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Api.secret));
+                if (request == null)
+                    throw new Exception("Non HTTP WebRequest");
+
+                string parameters = "nonce=" + GetNonce();
+                byte[] data = Encoding.ASCII.GetBytes(parameters);
+
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.Headers.Add("Key", Api.key);
+
+                string signature = BitConverter.ToString(hashMaker.ComputeHash(data)).ToLower().Replace("-", "");
+                request.Headers.Add("Sign", signature);
+
+                var reqStream = request.GetRequestStream();
+                //var reqStream = getPrivateRequest("balances").GetRequestStream();
+                reqStream.Write(data, 0, data.Length);
+                reqStream.Close();
+
+                responseString = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
+                LogManager.AddLogMessage(Name, "getOpenOrders", responseString, LogManager.LogMessageType.DEBUG);
+                var jsonObject = JObject.Parse(responseString);
+                string result = jsonObject["result"].ToString().ToLower();
+
+                if (result == "true")
+                {
+
+                    
+                }
+                else
+                {
+                    //UpdateStatus(true, responseString);
+                    LogManager.AddLogMessage(Name, "getOpenOrders", "RESULT NOT TRUE : " + responseString, LogManager.LogMessageType.DEBUG);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getOpenOrders", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                UpdateStatus(false, responseString);
+            }
+            return list;
+        }
+        */

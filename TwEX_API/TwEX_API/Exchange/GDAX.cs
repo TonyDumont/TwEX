@@ -295,6 +295,56 @@ namespace TwEX_API.Exchange
 
             return list;
         }
+
+        /// <summary>List Orders
+        /// <para>List your current open orders. Only open or un-settled orders are returned. As soon as an order is no longer open and settled, it will no longer appear in the default request.</para>
+        /// <para>Required : status : [open, pending, active] : Limit list of orders to these statuses. Passing 'all' returns orders of all statuses</para>
+        /// <para>Optional : product_id : Only list orders for a specific product</para>
+        /// </summary>
+        public async static Task<List<GDAXOrder>> getOrdersList()
+        {
+            List<GDAXOrder> list = new List<GDAXOrder>();
+            string responseString = string.Empty;
+            try
+            {
+                string ts = GetNonce();
+                string method = "/orders?status=all";
+                string sig = GetSignature(ts, "GET", method, string.Empty);
+                using (var acclient = new HttpClient())
+                {
+                    acclient.BaseAddress = new Uri("https://api.gdax.com");
+                    acclient.DefaultRequestHeaders.Accept.Clear();
+                    acclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-KEY", Api.key);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-SIGN", sig);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-TIMESTAMP", ts);
+                    acclient.DefaultRequestHeaders.Add("CB-ACCESS-PASSPHRASE", Api.passphrase);
+                    acclient.DefaultRequestHeaders.Add("User-Agent", "Win32");
+                    HttpResponseMessage response = acclient.GetAsync(method).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseString = await response.Content.ReadAsStringAsync();
+                        //LogManager.AddLogMessage(Name, "getOrdersList", "response.IsSuccess: " + responseString, LogManager.LogMessageType.DEBUG);
+                        
+                        JArray jArray = JArray.Parse(responseString) as JArray;
+                        list = jArray.ToObject<List<GDAXOrder>>();
+                        //UpdateStatus(true, "Updated Balances");
+                        
+                    }
+                    else
+                    {
+                        LogManager.AddLogMessage(Name, "getOrdersList", "response.IsSuccess is FALSE : NO ORDERS TO PROCESS : response.Content=" + response.Content);
+                        //UpdateStatus(true, response.Content.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                //UpdateStatus(false, responseString);
+            }
+            return list;
+        }
         #endregion
         #endregion API_Private
 
@@ -385,6 +435,64 @@ namespace TwEX_API.Exchange
             
             }
         }
+        public async static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            List<GDAXOrder> orders = await getOrdersList();
+            
+            foreach (GDAXOrder order in orders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                string[] pairSplit = order.product_id.Split('-');
+                bool open = false;
+                if (order.status == "open")
+                {
+                    open = true;
+                }
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.id,
+                    type = order.side,
+                    rate = order.price,
+                    amount = order.size,
+                    total = order.price * order.size,
+                    market = pairSplit[1],
+                    symbol = pairSplit[0],
+                    date = order.created_at,
+                    open = open
+                };
+                processOrder(eOrder);
+            }
+            /*
+            Thread.Sleep(1000);
+
+            List<BittrexOrderHistoryItem> trades = getOrderHistoryList();
+            foreach (BittrexOrderHistoryItem trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = trade.OrderType.Split('_');
+                string[] pairSplit = trade.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = trade.Limit,
+                    amount = trade.Quantity,
+                    total = trade.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = trade.TimeStamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }
+            */
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         public static void updateExchangeTickerList()
         {
             try
@@ -393,7 +501,7 @@ namespace TwEX_API.Exchange
                 foreach (GDAXProductTicker ticker in tickerList)
                 {
                     //LogManager.AddLogMessage(Name, "updateExchangeTickerList", ticker.id + " | " + ticker.price + " | " + ticker.ask, LogManager.LogMessageType.DEBUG);
-                    ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                   processTicker(ticker.GetExchangeTicker());
                 }
             }
             catch (Exception ex)
@@ -477,19 +585,17 @@ namespace TwEX_API.Exchange
 
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
-                //string[] pairs = ticker.pair.Split('_');
-                eTicker.market = market;
-                eTicker.symbol = symbol;
-                eTicker.last = price;
-                eTicker.ask = ask;
-                eTicker.bid = bid;
-                //eTicker.change = ticker.percentChange;
-                eTicker.volume = volume;
-                //eTicker.high = ticker.high24hr;
-                //eTicker.low = ticker.low24hr;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,
+                    market = market,
+                    symbol = symbol,
+                    last = price,
+                    ask = ask,
+                    bid = bid,
+                    volume = volume
+                };      
+                return ticker;
             }
         }
         #endregion
@@ -534,6 +640,28 @@ namespace TwEX_API.Exchange
             public string order_id { get; set; }
             public string trade_id { get; set; }
             public string product_id { get; set; }
+        }
+        public class GDAXOrder
+        {
+            public string id { get; set; }
+            public double price { get; set; }
+            public double size { get; set; }
+            public string product_id { get; set; }
+            public string side { get; set; }
+            public string stp { get; set; }
+            public string type { get; set; }
+            public string time_in_force { get; set; }
+            public bool post_only { get; set; }
+            public DateTime created_at { get; set; }
+            public string fill_fees { get; set; }
+            public string filled_size { get; set; }
+            public string executed_value { get; set; }
+            public string status { get; set; }
+            public bool settled { get; set; }
+            public string funds { get; set; }
+            public string specified_funds { get; set; }
+            public DateTime? done_at { get; set; }
+            public string done_reason { get; set; }
         }
         #endregion
         #endregion DataModels      

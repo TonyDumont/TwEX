@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -604,7 +605,8 @@ namespace TwEX_API.Exchange
                 string requestUrl = Api_privateUrl + "order";
                 var postData = new
                 {
-                    clientOrderId = clientOrderId
+                    //clientOrderId = clientOrderId
+                    clientOrderId
                 };
                 string response = GetApiPrivateRequest(requestUrl, postData);
                 //LogManager.AddLogMessage(Name, "getOrder", response);
@@ -645,6 +647,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string requestUrl = Api_privateUrl + "order";
+                /*
                 var postData = new
                 {
                     symbol = parameters.symbol,
@@ -657,6 +660,20 @@ namespace TwEX_API.Exchange
                     stopPrice = parameters.stopPrice,
                     expireTime = parameters.expireTime,
                     strictValidate = parameters.strictValidate
+                };
+                */
+                var postData = new
+                {
+                    parameters.symbol,
+                    parameters.market,
+                    parameters.side,
+                    parameters.type,
+                    parameters.timeInForce,
+                    parameters.quantity,
+                    parameters.price,
+                    parameters.stopPrice,
+                    parameters.expireTime,
+                    parameters.strictValidate
                 };
                 string response = GetApiPrivateRequest(requestUrl, postData);
                 //LogManager.AddLogMessage(Name, "getOrder", response, LogManager.LogMessageType.DEBUG);
@@ -800,7 +817,7 @@ namespace TwEX_API.Exchange
         public static void updateExchangeBalanceList()
         {
             List<HitBTCBalance> list = getAllAccountBalances();
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+            ExchangeTicker btcTicker = getExchangeTicker(Name, "BTC", USDSymbol);
             //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "count=" + list.Count + " | " + btcTicker.last);
             foreach (HitBTCBalance balance in list)
             {
@@ -810,7 +827,7 @@ namespace TwEX_API.Exchange
                     if (balance.currency != "BTC" && balance.currency != USDSymbol)
                     {
                         // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.currency.ToUpper(), "BTC");
+                        ExchangeTicker ticker = getExchangeTicker(Name, balance.currency.ToUpper(), "BTC");
 
                         if (ticker != null)
                         {
@@ -858,17 +875,65 @@ namespace TwEX_API.Exchange
                         }
                     }
                     //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
-                    ExchangeManager.processBalance(balance.GetExchangeBalance());
+                    processBalance(balance.GetExchangeBalance());
                 }
             }
             
+        }
+        public static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            List<HitBTCOrder> openorders = getOrdersList();
+
+            foreach (HitBTCOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.clientOrderId,
+                    type = order.side.ToLower(),
+                    rate = order.price,
+                    amount = order.quantity,
+                    total = order.price * order.quantity,
+                    market = order.symbol.Substring(3),
+                    symbol = order.symbol.Substring(0, 3),
+                    date = order.createdAt,
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+            
+            Thread.Sleep(1000);
+
+            List<HitBTCOrder> trades = getTradeHistoryList(new HitBTCTradeHistoryParameters());
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "Count=" + trades.Count, LogManager.LogMessageType.DEBUG);
+            foreach (HitBTCOrder trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.symbol + " | " + trade.quantity + " | " + trade.price, LogManager.LogMessageType.DEBUG);
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.clientOrderId,
+                    type = trade.side.ToLower(),
+                    rate = trade.price,
+                    amount = trade.quantity,
+                    total = trade.price * trade.quantity,
+                    market = trade.symbol.Substring(3),
+                    symbol = trade.symbol.Substring(0, 3),
+                    date = trade.timestamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }         
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         public static void updateExchangeTickerList()
         {
             List<HitBTCTicker> list = getTickerList();
             foreach (HitBTCTicker ticker in list)
             {
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                processTicker(ticker.GetExchangeTicker());
             }
         }
         private static void UpdateStatus(Boolean success, string message = "")
@@ -1092,19 +1157,20 @@ namespace TwEX_API.Exchange
 
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
                 string pair = symbol;
-                eTicker.market = pair.Substring(pair.Length - 3);
-                eTicker.symbol = pair.Substring(0, pair.Length - 3);
-
-                eTicker.last = last;
-                eTicker.ask = ask;
-                eTicker.bid = bid;
-                eTicker.volume = volume;
-                eTicker.high = high;
-                eTicker.low = low;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,                 
+                    market = pair.Substring(pair.Length - 3),
+                    symbol = pair.Substring(0, pair.Length - 3),
+                    last = last,
+                    ask = ask,
+                    bid = bid,
+                    volume = volume,
+                    high = high,
+                    low = low
+                }; 
+                return ticker;
             }
         }
         public class HitBTCTrades
@@ -1180,6 +1246,7 @@ namespace TwEX_API.Exchange
             // ERROR
             public HitBTCErrorMessage error { get; set; }
         }
+        
         public class HitBTCOrder
         {
             public string id { get; set; }
@@ -1189,16 +1256,17 @@ namespace TwEX_API.Exchange
             public string status { get; set; }
             public string type { get; set; }
             public string timeInForce { get; set; }
-            public Decimal quantity { get; set; }
-            public Decimal price { get; set; }
-            public Decimal cumQuantity { get; set; }
+            public Double quantity { get; set; }
+            public Double price { get; set; }
+            public Double cumQuantity { get; set; }
             public DateTime createdAt { get; set; }
             public DateTime updatedAt { get; set; }
             // TRADE HISTORY
-            public int orderId { get; set; }
+            public string orderId { get; set; }
             public string fee { get; set; }
             public DateTime timestamp { get; set; }
         }
+        
         public class HitBTCTransactionHistory
         {
             public string id { get; set; }
@@ -1245,6 +1313,7 @@ namespace TwEX_API.Exchange
                 */
             }
         }
+        /*
         public class HitBTCActiveOrder
         {
             public string orderId { get; set; }
@@ -1267,14 +1336,10 @@ namespace TwEX_API.Exchange
                 {
                     return DateTimeOffset.FromUnixTimeMilliseconds(lastTimestamp).UtcDateTime.ToLocalTime();
                 }
-                /*
-                set
-                {
-
-                }
-                */
+               
             }
         }
+*/
         public class HitBTCTransaction
         {
             public string id { get; set; }

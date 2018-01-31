@@ -30,17 +30,16 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExchangeManagerControl));
             this.listView = new BrightIdeasSoftware.FastObjectListView();
+            this.column_Status = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Name = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Tickers = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Coins = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Orders = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInBTC = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_Status = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip_header = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_Tickers = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_Balances = new System.Windows.Forms.ToolStripButton();
-            this.toolStripLabel_Orders = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButton_History = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_Orders = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel_Exchanges = new System.Windows.Forms.ToolStripLabel();
@@ -54,6 +53,7 @@
             this.toolStripButton_Totals = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.toolStripButton_OrderTotal = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.toolStrip_header.SuspendLayout();
             this.toolStrip_header2.SuspendLayout();
@@ -101,6 +101,13 @@
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
             this.listView.SelectionChanged += new System.EventHandler(this.listView_SelectionChanged);
+            this.listView.ItemActivate += new System.EventHandler(this.listView_ItemActivate);
+            // 
+            // column_Status
+            // 
+            this.column_Status.Text = "";
+            this.column_Status.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_Status.Width = 35;
             // 
             // column_Name
             // 
@@ -119,7 +126,6 @@
             // column_Coins
             // 
             this.column_Coins.AspectName = "CoinCount";
-            this.column_Coins.DisplayIndex = 3;
             this.column_Coins.Text = "#";
             this.column_Coins.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.column_Coins.Width = 35;
@@ -128,7 +134,6 @@
             // 
             this.column_Orders.AspectName = "";
             this.column_Orders.AspectToStringFormat = "{0:N8}";
-            this.column_Orders.DisplayIndex = 4;
             this.column_Orders.MinimumWidth = 100;
             this.column_Orders.Text = "Orders";
             this.column_Orders.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -138,7 +143,6 @@
             // 
             this.column_TotalInBTC.AspectName = "";
             this.column_TotalInBTC.AspectToStringFormat = "";
-            this.column_TotalInBTC.DisplayIndex = 5;
             this.column_TotalInBTC.MinimumWidth = 100;
             this.column_TotalInBTC.Text = "BTC";
             this.column_TotalInBTC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -148,17 +152,10 @@
             // 
             this.column_TotalInUSD.AspectName = "";
             this.column_TotalInUSD.AspectToStringFormat = "";
-            this.column_TotalInUSD.DisplayIndex = 6;
             this.column_TotalInUSD.MinimumWidth = 100;
             this.column_TotalInUSD.Text = "USD";
             this.column_TotalInUSD.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.column_TotalInUSD.Width = 100;
-            // 
-            // column_Status
-            // 
-            this.column_Status.Text = "";
-            this.column_Status.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.column_Status.Width = 35;
             // 
             // toolStrip_header
             // 
@@ -166,10 +163,10 @@
             this.toolStrip_header.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton_Tickers,
             this.toolStripButton_Balances,
-            this.toolStripLabel_Orders,
             this.toolStripButton_History,
             this.toolStripButton_Orders,
-            this.toolStripLabel_Exchanges});
+            this.toolStripLabel_Exchanges,
+            this.toolStripButton_OrderTotal});
             this.toolStrip_header.Location = new System.Drawing.Point(0, 0);
             this.toolStrip_header.Name = "toolStrip_header";
             this.toolStrip_header.Size = new System.Drawing.Size(484, 25);
@@ -199,13 +196,6 @@
             this.toolStripButton_Balances.Text = "BALANCES";
             this.toolStripButton_Balances.ToolTipText = "Balances";
             this.toolStripButton_Balances.Click += new System.EventHandler(this.toolStripButton_TimerItem_Click);
-            // 
-            // toolStripLabel_Orders
-            // 
-            this.toolStripLabel_Orders.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel_Orders.Name = "toolStripLabel_Orders";
-            this.toolStripLabel_Orders.Size = new System.Drawing.Size(50, 22);
-            this.toolStripLabel_Orders.Text = "ORDERS";
             // 
             // toolStripButton_History
             // 
@@ -336,6 +326,18 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 267);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
+            // toolStripButton_OrderTotal
+            // 
+            this.toolStripButton_OrderTotal.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_OrderTotal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton_OrderTotal.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_OrderTotal.Image")));
+            this.toolStripButton_OrderTotal.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_OrderTotal.Name = "toolStripButton_OrderTotal";
+            this.toolStripButton_OrderTotal.Size = new System.Drawing.Size(85, 22);
+            this.toolStripButton_OrderTotal.Text = "ORDER TOTAL";
+            this.toolStripButton_OrderTotal.ToolTipText = "ORDER TOTAL";
+            this.toolStripButton_OrderTotal.Click += new System.EventHandler(this.toolStripButton_OrderTotal_Click);
+            // 
             // ExchangeManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -365,7 +367,6 @@
         private BrightIdeasSoftware.OLVColumn column_TotalInUSD;
         private System.Windows.Forms.ToolStrip toolStrip_header;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_Exchanges;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel_Orders;
         private BrightIdeasSoftware.OLVColumn column_Tickers;
         private System.Windows.Forms.ToolStrip toolStrip_header2;
         private System.Windows.Forms.ToolStripButton toolStripButton_Totals;
@@ -382,5 +383,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
+        private System.Windows.Forms.ToolStripButton toolStripButton_OrderTotal;
     }
 }

@@ -7,6 +7,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using static TwEX_API.ExchangeManager;
@@ -311,11 +312,13 @@ namespace TwEX_API.Exchange
         public async static Task<string> GetApiPrivateRequest(string requestUrl, Object postData)
         {
             // Create Request
-            var request = new HttpRequestMessage();
-            request.Method = HttpMethod.Post;
-            request.RequestUri = new Uri(requestUrl);
-            request.Content = new ObjectContent(typeof(object), postData, new JsonMediaTypeFormatter());
-
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(requestUrl),
+                Content = new ObjectContent(typeof(object), postData, new JsonMediaTypeFormatter())
+            };
+            
             // Authentication
             string requestContentBase64String = string.Empty;
             if (request.Content != null)
@@ -435,20 +438,32 @@ namespace TwEX_API.Exchange
         /// <para>Optional : TradePairId - The Cryptopia tradepair identifier of the orders to return e.g. '100' (not required if 'Market' supplied)</para>
         /// <para>Optional : Count - The maximum amount of orders to return e.g. '10' (default: 100)</para>
         /// </summary>
-        public async static Task<List<CryptopiaOrder>> getOpenOrdersList(string symbol, string market, int Count = 100)
+        public async static Task<List<CryptopiaOrder>> getOpenOrdersList(string symbol = "", string market = "", int Count = 100)
         {
             List<CryptopiaOrder> list = new List<CryptopiaOrder>();
             try
             {
                 string requestUrl = Api_privateUrl + "GetOpenOrders";
-                var postData = new
-                {
-                    Market = "'" + symbol.ToUpper() + "/" + market.ToUpper() + "'",
-                    Count = Count
-                };
+                string result = String.Empty;
 
-                string result = await GetApiPrivateRequest(requestUrl, postData);
-                //LogManager.AddLogMessage(Name, "getOpenOrdersList", result);
+                if (symbol.Length > 0 && market.Length > 0)
+                {
+                    var postData = new
+                    {
+                        Market = "'" + symbol.ToUpper() + "/" + market.ToUpper() + "'",
+                        //Count = Count
+                        Count
+                    };
+                    result = await GetApiPrivateRequest(requestUrl, postData);
+                }
+                else
+                {
+                    result = await GetApiPrivateRequest(requestUrl, new { } );
+                }
+                
+
+                //string result = await GetApiPrivateRequest(requestUrl, postData);
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["Success"].ToString().ToLower();
 
@@ -470,19 +485,28 @@ namespace TwEX_API.Exchange
         /// <para>Optional : TradePairId - The Cryptopia tradepair identifier of the history to return e.g. '100' (not required if 'Market' supplied)</para>
         /// <para>Optional : Count - The maximum amount of history to return e.g. '10' (default: 100)</para>
         /// </summary>
-        public async static Task<List<CryptopiaOrder>> getTradeHistoryList(string symbol, string market, int Count = 100)
+        public async static Task<List<CryptopiaOrder>> getTradeHistoryList(string symbol = "", string market = "", int Count = 100)
         {
             List<CryptopiaOrder> list = new List<CryptopiaOrder>();
             try
             {
                 string requestUrl = Api_privateUrl + "GetTradeHistory";
-                var postData = new
-                {
-                    Market = "'" + symbol.ToUpper() + "/" + market.ToUpper() + "'",
-                    Count = Count
-                };
 
-                string result = await GetApiPrivateRequest(requestUrl, postData);
+                string result = String.Empty;
+
+                if (symbol.Length > 0 && market.Length > 0)
+                {
+                    var postData = new
+                    {
+                        Market = "'" + symbol.ToUpper() + "/" + market.ToUpper() + "'",
+                        Count
+                    };
+                    result = await GetApiPrivateRequest(requestUrl, postData);
+                }
+                else
+                {
+                    result = await GetApiPrivateRequest(requestUrl, new { });
+                }
                 //LogManager.AddLogMessage(Name, "getTradeHistoryList", result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["Success"].ToString().ToLower();
@@ -513,7 +537,8 @@ namespace TwEX_API.Exchange
                 var postData = new
                 {
                     Type = type,
-                    Count = Count
+                    //Count = Count
+                    Count
                 };
 
                 string result = await GetApiPrivateRequest(requestUrl, postData);
@@ -712,7 +737,7 @@ namespace TwEX_API.Exchange
         public async static void updateExchangeBalanceList()
         {
             List<CryptopiaBalance> list = await getBalanceList();
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+            ExchangeTicker btcTicker = getExchangeTicker(Name, "BTC", USDSymbol);
 
             foreach (CryptopiaBalance balance in list)
             {
@@ -721,7 +746,7 @@ namespace TwEX_API.Exchange
                     if (balance.Symbol != "BTC" && balance.Symbol != USDSymbol)
                     {
                         // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Symbol.ToUpper(), "BTC");
+                        ExchangeTicker ticker = getExchangeTicker(Name, balance.Symbol.ToUpper(), "BTC");
 
                         if (ticker != null)
                         {
@@ -767,10 +792,63 @@ namespace TwEX_API.Exchange
                         }
                     }
                     //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
-                    ExchangeManager.processBalance(balance.GetExchangeBalance());
+                    processBalance(balance.GetExchangeBalance());
                 }
             }
         }
+        
+        public async static void updateExchangeOrderList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            List<CryptopiaOrder> openorders = await getOpenOrdersList();
+
+            foreach (CryptopiaOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.Market + " | " + order.TradePairId + " | " + order.Type, LogManager.LogMessageType.DEBUG);
+                string[] pairSplit = order.Market.Split('/');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.OrderId,
+                    type = order.Type.ToLower(),
+                    rate = order.Rate,
+                    amount = order.Amount,
+                    total = order.Total,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = order.TimeStamp,
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+            
+            Thread.Sleep(1000);
+
+            List<CryptopiaOrder> trades = await getTradeHistoryList();
+            foreach (CryptopiaOrder trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.Market + " | " + order.TradePairId + " | " + order.Type, LogManager.LogMessageType.DEBUG);
+                string[] pairSplit = trade.Market.Split('/');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderId,
+                    type = trade.Type.ToLower(),
+                    rate = trade.Rate,
+                    amount = trade.Amount,
+                    total = trade.Total,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = trade.TimeStamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }          
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
+        
         public static void updateExchangeTickerList()
         {
             List<CryptopiaMarket> list = getMarketList();
@@ -852,19 +930,21 @@ namespace TwEX_API.Exchange
 
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
                 string[] pairs = Label.Split('/');
-                eTicker.market = pairs[1];
-                eTicker.symbol = pairs[0];
-                eTicker.last = LastPrice;
-                eTicker.ask = AskPrice;
-                eTicker.bid = BidPrice;
-                eTicker.change = Change;
-                eTicker.volume = BaseVolume;
-                eTicker.high = High;
-                eTicker.low = Low;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,
+                    market = pairs[1],
+                    symbol = pairs[0],
+                    last = LastPrice,
+                    ask = AskPrice,
+                    bid = BidPrice,
+                    change = Change,
+                    volume = BaseVolume,
+                    high = High,
+                    low = Low
+                };
+                return ticker;
             }
         }
         public class CryptopiaMarketOrder
@@ -958,13 +1038,13 @@ namespace TwEX_API.Exchange
         }
         public class CryptopiaOrder
         {
-            public int OrderId { get; set; }
+            public string OrderId { get; set; }
             public int TradePairId { get; set; }
             public string Market { get; set; }
             public string Type { get; set; }
             public double Rate { get; set; }
             public double Amount { get; set; }
-            public string Total { get; set; }
+            public double Total { get; set; }
             public string Remaining { get; set; }
             public DateTime TimeStamp { get; set; }
             // TRADE HISTORY

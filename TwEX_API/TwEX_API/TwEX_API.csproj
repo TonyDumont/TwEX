@@ -133,6 +133,12 @@
     <Compile Include="Controls\ArbitrageTableControl.Designer.cs">
       <DependentUpon>ArbitrageTableControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BalanceListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\BalanceListControl.Designer.cs">
+      <DependentUpon>BalanceListControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\BalanceManagerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -144,6 +150,12 @@
     </Compile>
     <Compile Include="Controls\BalanceTreeListControl.Designer.cs">
       <DependentUpon>BalanceTreeListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ClosedOrdersListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ClosedOrdersListControl.Designer.cs">
+      <DependentUpon>ClosedOrdersListControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\CoinCalculatorControl.cs">
       <SubType>UserControl</SubType>
@@ -193,6 +205,12 @@
     <Compile Include="Controls\ExchangePreferenceControl.Designer.cs">
       <DependentUpon>ExchangePreferenceControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ExchangeTradingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExchangeTradingControl.Designer.cs">
+      <DependentUpon>ExchangeTradingControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FormPreferenceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -205,11 +223,23 @@
     <Compile Include="Controls\FormToolStripControl.Designer.cs">
       <DependentUpon>FormToolStripControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HistoryTabControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\HistoryTabControl.Designer.cs">
+      <DependentUpon>HistoryTabControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LogManagerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\LogManagerControl.Designer.cs">
       <DependentUpon>LogManagerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OrdersListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OrdersListControl.Designer.cs">
+      <DependentUpon>OrdersListControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PreferenceEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -222,6 +252,12 @@
     </Compile>
     <Compile Include="Controls\PreferenceManagerControl.Designer.cs">
       <DependentUpon>PreferenceManagerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TickerListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TickerListControl.Designer.cs">
+      <DependentUpon>TickerListControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\TradingViewManagerControl.cs">
       <SubType>UserControl</SubType>
@@ -311,11 +347,17 @@
     <EmbeddedResource Include="Controls\ArbitrageTableControl.resx">
       <DependentUpon>ArbitrageTableControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\BalanceListControl.resx">
+      <DependentUpon>BalanceListControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\BalanceManagerControl.resx">
       <DependentUpon>BalanceManagerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\BalanceTreeListControl.resx">
       <DependentUpon>BalanceTreeListControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ClosedOrdersListControl.resx">
+      <DependentUpon>ClosedOrdersListControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CoinCalculatorControl.resx">
       <DependentUpon>CoinCalculatorControl.cs</DependentUpon>
@@ -341,20 +383,32 @@
     <EmbeddedResource Include="Controls\ExchangePreferenceControl.resx">
       <DependentUpon>ExchangePreferenceControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExchangeTradingControl.resx">
+      <DependentUpon>ExchangeTradingControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\FormPreferenceControl.resx">
       <DependentUpon>FormPreferenceControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FormToolStripControl.resx">
       <DependentUpon>FormToolStripControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\HistoryTabControl.resx">
+      <DependentUpon>HistoryTabControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogManagerControl.resx">
       <DependentUpon>LogManagerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OrdersListControl.resx">
+      <DependentUpon>OrdersListControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PreferenceEditorControl.resx">
       <DependentUpon>PreferenceEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PreferenceManagerControl.resx">
       <DependentUpon>PreferenceManagerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TickerListControl.resx">
+      <DependentUpon>TickerListControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\TradingViewManagerControl.resx">
       <DependentUpon>TradingViewManagerControl.cs</DependentUpon>

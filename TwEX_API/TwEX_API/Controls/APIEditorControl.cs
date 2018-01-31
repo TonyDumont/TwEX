@@ -16,10 +16,10 @@ namespace TwEX_API.Controls
         delegate void SetApiCallback(ExchangeApi api);
         public void SetApi(ExchangeApi api)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 SetApiCallback d = new SetApiCallback(SetApi);
-                this.Invoke(d, new object[] { api });
+                Invoke(d, new object[] { api });
             }
             else
             {
@@ -37,7 +37,11 @@ namespace TwEX_API.Controls
 
         private void button_save_Click(object sender, EventArgs e)
         {
+            Api.key = textBox_key.Text;
+            Api.secret = textBox_secret.Text;
+            Api.passphrase = textBox_passphrase.Text;
             PreferenceManager.UpdateExchangeApi(Api);
+            ParentForm.Close();
         }
     }
 }

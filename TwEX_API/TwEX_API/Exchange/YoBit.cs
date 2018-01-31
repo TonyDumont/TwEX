@@ -660,7 +660,61 @@ namespace TwEX_API.Exchange
             }  
             */
         }
-        
+        public static void updateExchangeOrderList()
+        {
+            /*
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+            List<BittrexOpenOrder> openorders = getOpenOrdersList();
+
+            foreach (BittrexOpenOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = order.OrderType.Split('_');
+                string[] pairSplit = order.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = order.Limit,
+                    amount = order.Quantity,
+                    total = order.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = order.Opened,
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+
+            Thread.Sleep(1000);
+
+            List<BittrexOrderHistoryItem> trades = getOrderHistoryList();
+            foreach (BittrexOrderHistoryItem trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = trade.OrderType.Split('_');
+                string[] pairSplit = trade.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = trade.Limit,
+                    amount = trade.Quantity,
+                    total = trade.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = trade.TimeStamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+            */
+        }
         public static void updateExchangeTickerList()
         {
             LogManager.AddLogMessage(Name, "updateExchangeTickerList", "THIS FUNCTION DISABLED UNTIL A SOLUTION IS FOUND ON PAIR REQUESTS", LogManager.LogMessageType.OTHER);
