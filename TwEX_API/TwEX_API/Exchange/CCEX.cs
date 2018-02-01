@@ -739,6 +739,11 @@ namespace TwEX_API.Exchange
                 processTicker(ticker.GetExchangeTicker());
             }
         }
+        public static void updateExchangeTransactionList()
+        {
+            // THIS EXCHANGE HAS NO METHOD FOR TRANSACTIONS
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         private static void UpdateStatus(Boolean success, string message = "")
         {
             if (success)

@@ -417,18 +417,17 @@ namespace TwEX_API.Exchange
         public static List<BittrexDeposit> getDepositHistoryList(string currency = "")
         {
             List<BittrexDeposit> list = new List<BittrexDeposit>();
-
             try
             {
                 string requestUrl = String.Empty;
 
                 if (currency.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?Api.key=" + Api.key + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?apikey=" + Api.key + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getdeposithistory?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
                 }
 
                 var url = new Uri(requestUrl);
@@ -440,6 +439,7 @@ namespace TwEX_API.Exchange
                 var strRead = new StreamReader(stream);
                 String result = strRead.ReadToEnd();
                 //LogManager.AddLogMessage(Name, "getDepositHistoryList", "result=" + result);
+                
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["success"].ToString().ToLower();
 
@@ -447,10 +447,11 @@ namespace TwEX_API.Exchange
                 {
                     list = jsonObject["result"].ToObject<List<BittrexDeposit>>();
                 }
+                
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getDepositHistoryList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getDepositHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -598,11 +599,11 @@ namespace TwEX_API.Exchange
 
                 if (currency.Length > 0)
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?Api.key=" + Api.key + "&currency=" + currency + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?apikey=" + Api.key + "&currency=" + currency + "&nonce=" + GetNonce();
                 }
                 else
                 {
-                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?Api.key=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
+                    requestUrl = "https://bittrex.com/api/v1.1/account/getwithdrawalhistory?apikey=" + Api.key + "&nonce=" + GetNonce();
                 }
 
                 var url = new Uri(requestUrl);
@@ -878,14 +879,34 @@ namespace TwEX_API.Exchange
             }
             //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
+        public static void updateExchangeTransactionList()
+        {
+            List<BittrexDeposit> depositList = getDepositHistoryList();
+            foreach(BittrexDeposit deposit in depositList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(deposit.ExchangeTransaction);
+            }
+
+            Thread.Sleep(1000);
+
+            List<BittrexWithdrawal> withdrawalList = getWithdrawalHistoryList();
+            foreach (BittrexWithdrawal withdraw in withdrawalList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", withdraw.Currency + " | " + withdraw.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(withdraw.ExchangeTransaction);
+            }           
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Transactions.Count, LogManager.LogMessageType.DEBUG);
+        }
         public static void updateExchangeTickerList()
         {
             List<BittrexMarketSummary> list = getMarketSummariesList();
             foreach (BittrexMarketSummary ticker in list)
             {
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                processTicker(ticker.GetExchangeTicker());
             }
         }
+
         private static void UpdateStatus(Boolean success, string message = "")
         {
             if (success)
@@ -1033,14 +1054,58 @@ namespace TwEX_API.Exchange
         }
         public class BittrexDeposit
         {
-            public int Id { get; set; }
+            public string Id { get; set; }
             public Double Amount { get; set; }
             public string Currency { get; set; }
             public int Confirmations { get; set; }
             public DateTime LastUpdated { get; set; }
             public string TxId { get; set; }
             public string CryptoAddress { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = Id,
+                        currency = Currency,
+                        address = CryptoAddress,
+                        amount = Amount,
+                        confirmations = Confirmations.ToString(),
+                        datetime = LastUpdated,
+                        exchange = Name,
+                        type = ExchangeTransactionType.deposit
+                    };
+                    return transaction;
+                }
+            }
         }
+            /*
+            ExchangeTransaction transaction 
+                // KEYS
+                public string id { get; set; }
+                // STANDARD
+                public string currency { get; set; }
+                public string address { get; set; }
+                public Double amount { get; set; }
+                public int confirmations { get; set; }
+                public long timestamp { get; set; }
+                public DateTime datetime
+                {
+                    get
+                    {
+                        return DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime.ToLocalTime();
+                    }
+
+                }
+                public string status { get; set; }
+                // ADDON
+                public string exchange { get; set; }
+                public ExchangeTransactionType type { get; set; }
+                */
+            //}
+        //}
         public class BittrexDepositMessage
         {
             public bool success { get; set; }
@@ -1129,9 +1194,80 @@ namespace TwEX_API.Exchange
             public string TxId { get; set; }
             public bool Canceled { get; set; }
             public bool InvalidAddress { get; set; }
+            
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = PaymentUuid,
+                        currency = Currency,
+                        address = Address,
+                        amount = Amount,
+                        //confirmations = ,
+                        datetime = Opened,
+                        exchange = Name,
+                        type = ExchangeTransactionType.withdrawal
+                    };
+                    return transaction;
+                }
+            }
+            
         }
 
         #endregion
         #endregion DataModels
     }
 }
+
+/*
+            List<BittrexOpenOrder> openorders = getOpenOrdersList();
+
+            foreach (BittrexOpenOrder order in openorders)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = order.OrderType.Split('_');
+                string[] pairSplit = order.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = order.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = order.Limit,
+                    amount = order.Quantity,
+                    total = order.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = order.Opened,
+                    open = true
+                };
+                processOrder(eOrder);
+            }
+
+            Thread.Sleep(1000);
+
+            List<BittrexOrderHistoryItem> trades = getOrderHistoryList();
+            foreach (BittrexOrderHistoryItem trade in trades)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                string[] orderTypeSplit = trade.OrderType.Split('_');
+                string[] pairSplit = trade.Exchange.Split('-');
+
+                ExchangeOrder eOrder = new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = trade.OrderUuid,
+                    type = orderTypeSplit[1].ToLower(),
+                    rate = trade.Limit,
+                    amount = trade.Quantity,
+                    total = trade.Price,
+                    market = pairSplit[0],
+                    symbol = pairSplit[1],
+                    date = trade.TimeStamp,
+                    open = false
+                };
+                processOrder(eOrder);
+            }
+            */

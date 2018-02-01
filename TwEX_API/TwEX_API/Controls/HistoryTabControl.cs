@@ -27,6 +27,8 @@ namespace TwEX_API.Controls
             toolStripRadioButton_closed.Image = Properties.Resources.ConnectionStatus_DISABLED;
             ordersListControl_open.OpenOrders = true;
             ordersListControl_closed.OpenOrders = false;
+            transactionsListControl_deposits.type = ExchangeManager.ExchangeTransactionType.deposit;
+            transactionsListControl_withdraw.type = ExchangeManager.ExchangeTransactionType.withdrawal;
             UpdateUI(true);
         }
         #endregion
@@ -46,6 +48,9 @@ namespace TwEX_API.Controls
                 ExchangeName = exchange;
                 ordersListControl_open.SetExchange(exchange);
                 ordersListControl_closed.SetExchange(exchange);
+                transactionsListControl_deposits.SetExchange(exchange);
+                transactionsListControl_withdraw.SetExchange(exchange);
+
                 UpdateUI(true);
             }
             return true;
@@ -63,9 +68,13 @@ namespace TwEX_API.Controls
             {
                 toolStripRadioButton_open.Text = ExchangeManager.Orders.Where(item => item.exchange == ExchangeName && item.open == true).Count() + " OPEN";
                 toolStripRadioButton_closed.Text = ExchangeManager.Orders.Where(item => item.exchange == ExchangeName && item.open == false).Count() + " CLOSED";
+                toolStripRadioButton_deposits.Text = ExchangeManager.Transactions.Where(item => item.exchange == ExchangeName && item.type == ExchangeManager.ExchangeTransactionType.deposit).Count() + " DEPOSITS";
+                toolStripRadioButton_withdrawals.Text = ExchangeManager.Transactions.Where(item => item.exchange == ExchangeName && item.type == ExchangeManager.ExchangeTransactionType.withdrawal).Count() + " WITHDRAWALS";
 
                 ordersListControl_open.UpdateUI(resize);
                 ordersListControl_closed.UpdateUI(resize);
+                transactionsListControl_deposits.UpdateUI(resize);
+                transactionsListControl_withdraw.UpdateUI(resize);
 
                 if (resize)
                 {
@@ -94,15 +103,14 @@ namespace TwEX_API.Controls
         #region EventHandlers
         private void toolStripButton_toggleHeight_Click(object sender, EventArgs e)
         {
-            //Poloniex.updateExchangeOrderList();
-            //Bittrex.updateExchangeOrderList();
-            //BleuTrade.updateExchangeOrderList();
-            //CCEX.updateExchangeOrderList();
-            //Cryptopia.updateExchangeOrderList();
-            //GateIO.updateExchangeOrderList();
-            //GDAX.updateExchangeOrderList();
-            //HitBTC.updateExchangeOrderList();
-            //LiveCoin.updateExchangeOrderList();
+            //Bittrex.updateExchangeTransactionList();
+            //BleuTrade.updateExchangeTransactionList();
+            //Cryptopia.updateExchangeTransactionList();
+            //GateIO.updateExchangeTransactionList();
+            //GDAX.updateExchangeTransactionList();
+            //HitBTC.updateExchangeTransactionList();
+            //LiveCoin.updateExchangeTransactionList();
+            //Poloniex.updateExchangeTransactionList();
             
             if (Height != toolStrip.Height)
             {
@@ -112,7 +120,7 @@ namespace TwEX_API.Controls
             else
             {
                 Size = new Size(Width, originalHeight);
-            }
+            } 
             
         }
         private void toolStripRadioButton_Click(object sender, EventArgs e)

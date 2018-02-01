@@ -35,6 +35,7 @@
             this.tabPage_closed = new System.Windows.Forms.TabPage();
             this.ordersListControl_closed = new TwEX_API.Controls.OrdersListControl();
             this.tabPage_deposits = new System.Windows.Forms.TabPage();
+            this.transactionsListControl_deposits = new TwEX_API.Controls.TransactionsListControl();
             this.tabPage_withdrawals = new System.Windows.Forms.TabPage();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_toggleHeight = new System.Windows.Forms.ToolStripButton();
@@ -46,9 +47,12 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton_refresh = new System.Windows.Forms.ToolStripButton();
             this.toolStripRadioButton_withdrawals = new TwEX_API.ToolStripRadioButton();
+            this.transactionsListControl_withdraw = new TwEX_API.Controls.TransactionsListControl();
             this.tabControl.SuspendLayout();
             this.tabPage_open.SuspendLayout();
             this.tabPage_closed.SuspendLayout();
+            this.tabPage_deposits.SuspendLayout();
+            this.tabPage_withdrawals.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -114,6 +118,7 @@
             // 
             // tabPage_deposits
             // 
+            this.tabPage_deposits.Controls.Add(this.transactionsListControl_deposits);
             this.tabPage_deposits.Location = new System.Drawing.Point(4, 5);
             this.tabPage_deposits.Name = "tabPage_deposits";
             this.tabPage_deposits.Size = new System.Drawing.Size(739, 292);
@@ -121,8 +126,18 @@
             this.tabPage_deposits.Text = "DEPOSITS (0)";
             this.tabPage_deposits.UseVisualStyleBackColor = true;
             // 
+            // transactionsListControl_deposits
+            // 
+            this.transactionsListControl_deposits.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.transactionsListControl_deposits.Font = new System.Drawing.Font("Times New Roman", 12F);
+            this.transactionsListControl_deposits.Location = new System.Drawing.Point(0, 0);
+            this.transactionsListControl_deposits.Name = "transactionsListControl_deposits";
+            this.transactionsListControl_deposits.Size = new System.Drawing.Size(739, 292);
+            this.transactionsListControl_deposits.TabIndex = 0;
+            // 
             // tabPage_withdrawals
             // 
+            this.tabPage_withdrawals.Controls.Add(this.transactionsListControl_withdraw);
             this.tabPage_withdrawals.Location = new System.Drawing.Point(4, 5);
             this.tabPage_withdrawals.Name = "tabPage_withdrawals";
             this.tabPage_withdrawals.Size = new System.Drawing.Size(739, 292);
@@ -243,6 +258,16 @@
             this.toolStripRadioButton_withdrawals.ToolTipText = "WITHDRAWALS (0)";
             this.toolStripRadioButton_withdrawals.Click += new System.EventHandler(this.toolStripRadioButton_Click);
             // 
+            // transactionsListControl_withdraw
+            // 
+            this.transactionsListControl_withdraw.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.transactionsListControl_withdraw.Font = new System.Drawing.Font("Times New Roman", 12F);
+            this.transactionsListControl_withdraw.Location = new System.Drawing.Point(0, 0);
+            this.transactionsListControl_withdraw.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.transactionsListControl_withdraw.Name = "transactionsListControl_withdraw";
+            this.transactionsListControl_withdraw.Size = new System.Drawing.Size(739, 292);
+            this.transactionsListControl_withdraw.TabIndex = 0;
+            // 
             // HistoryTabControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -255,6 +280,8 @@
             this.tabControl.ResumeLayout(false);
             this.tabPage_open.ResumeLayout(false);
             this.tabPage_closed.ResumeLayout(false);
+            this.tabPage_deposits.ResumeLayout(false);
+            this.tabPage_withdrawals.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -281,5 +308,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton toolStripButton_refresh;
         private OrdersListControl ordersListControl_closed;
+        private TransactionsListControl transactionsListControl_deposits;
+        private TransactionsListControl transactionsListControl_withdraw;
     }
 }

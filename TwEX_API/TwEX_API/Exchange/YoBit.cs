@@ -726,7 +726,28 @@ namespace TwEX_API.Exchange
             }
             */
         }
-        
+        public static void updateExchangeTransactionList()
+        {
+            // DISABLED
+            /*
+            List<BittrexDeposit> depositList = getDepositHistoryList();
+            foreach (BittrexDeposit deposit in depositList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(deposit.ExchangeTransaction);
+            }
+
+            Thread.Sleep(1000);
+
+            List<BittrexWithdrawal> withdrawalList = getWithdrawalHistoryList();
+            foreach (BittrexWithdrawal withdraw in withdrawalList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", withdraw.Currency + " | " + withdraw.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(withdraw.ExchangeTransaction);
+            }
+            */
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Transactions.Count, LogManager.LogMessageType.DEBUG);
+        }
         private static void UpdateStatus(Boolean success, string message = "")
         {
             if (success)
@@ -885,20 +906,19 @@ namespace TwEX_API.Exchange
 
             public ExchangeTicker GetExchangeTicker()
             {
-                ExchangeTicker eTicker = new ExchangeTicker();
-                eTicker.exchange = Name;
-                //string pair = symbol;
-                //eTicker.market = pair.Substring(pair.Length - 3);
-                //eTicker.symbol = pair.Substring(0, pair.Length - 3);
-                eTicker.symbol = symbol;
-                eTicker.market = market;
-                eTicker.last = last;
-                eTicker.ask = sell;
-                eTicker.bid = buy;
-                eTicker.volume = vol;
-                eTicker.high = high;
-                eTicker.low = low;
-                return eTicker;
+                ExchangeTicker ticker = new ExchangeTicker()
+                {
+                    exchange = Name,
+                    symbol = symbol,
+                    market = market,
+                    last = last,
+                    ask = sell,
+                    bid = buy,
+                    volume = vol,
+                    high = high,
+                    low = low
+                };               
+                return ticker;
             }
         }
         public class YoBitTrade

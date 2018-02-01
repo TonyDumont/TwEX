@@ -463,7 +463,7 @@ namespace TwEX_API.Exchange
                 
 
                 //string result = await GetApiPrivateRequest(requestUrl, postData);
-                LogManager.AddLogMessage(Name, "getOpenOrdersList", result);
+                //LogManager.AddLogMessage(Name, "getOpenOrdersList", result);
                 var jsonObject = JObject.Parse(result);
                 string success = jsonObject["Success"].ToString().ToLower();
 
@@ -796,7 +796,6 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        
         public async static void updateExchangeOrderList()
         {
             List<ExchangeOrder> list = new List<ExchangeOrder>();
@@ -848,7 +847,6 @@ namespace TwEX_API.Exchange
             }          
             //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
-        
         public static void updateExchangeTickerList()
         {
             List<CryptopiaMarket> list = getMarketList();
@@ -856,6 +854,30 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        public async static void updateExchangeTransactionList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+
+            List<CryptopiaTransaction> depositList = await getTransactionsList(CryptopiaTransactionType.Deposit);
+            foreach (CryptopiaTransaction deposit in depositList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                deposit.type = ExchangeTransactionType.deposit;
+                processTransaction(deposit.ExchangeTransaction);
+            }
+
+            Thread.Sleep(1000);
+
+            List<CryptopiaTransaction> withdrawList = await getTransactionsList(CryptopiaTransactionType.Withdraw);
+            foreach (CryptopiaTransaction withdraw in withdrawList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                withdraw.type = ExchangeTransactionType.withdrawal;
+                processTransaction(withdraw.ExchangeTransaction);
+            }
+            
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         private static void UpdateStatus(Boolean success, string message = "")
         {
@@ -1064,7 +1086,7 @@ namespace TwEX_API.Exchange
         }
         public class CryptopiaTransaction
         {
-            public int Id { get; set; }
+            public string Id { get; set; }
             public string Currency { get; set; }
             public string TxId { get; set; }
             public string Type { get; set; }
@@ -1074,6 +1096,26 @@ namespace TwEX_API.Exchange
             public string Confirmations { get; set; }
             public DateTime TimeStamp { get; set; }
             public string Address { get; set; }
+            public ExchangeTransactionType type { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = Id,
+                        currency = Currency,
+                        address = TxId,
+                        amount = Amount,
+                        confirmations = Confirmations,
+                        datetime = TimeStamp,
+                        exchange = Name,
+                        type = type
+                    };
+                    return transaction;
+                }
+            }
         }
         public class CryptopiaWithdrawMessage
         {

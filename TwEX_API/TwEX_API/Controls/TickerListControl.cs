@@ -105,39 +105,20 @@ namespace TwEX_API.Controls
             else
             {     
                 List<ExchangeManager.ExchangeTicker> list = ExchangeManager.Tickers.Where(item => item.exchange == ExchangeName).ToList();
-                //listView.SetObjects(list);
-                //toolStripLabel_title.Text = list.Count + " Tickers";
-                //toolStripLabel_totals.Text = "(" + list.Sum(item => item.TotalInUSD).ToString("C") + ") " + list.Sum(item => item.TotalInBTC).ToString("N8");
-                //List<ExchangeManager.ExchangeBalance> list = ExchangeManager.Balances.Where(item => item.Balance > 0).ToList();
-
-
-                //string selectedMarket = getSelectedMarket();
-                LogManager.AddLogMessage(Name, "UpdateUI", "selectedMarket=" + CurrentMarket, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "UpdateUI", "selectedMarket=" + CurrentMarket, LogManager.LogMessageType.DEBUG);
 
                 if (CurrentMarket == "ALL")
                 {
-
                     column_market.IsVisible = true;
-
-                    //listView_tickers.Refresh();
-                    //listView.SetObjects(list.Where(item => item.exchange == exchangeTradingView.exchange));
                     listView.SetObjects(list);
                 }
                 else
                 {
                     // FILTER BY MARKET SYMBOL
                     column_market.IsVisible = false;
-                    //listView_tickers.Refresh();
-                    //listView.SetObjects(ExchangeManager.tickerList.Where(item => item.exchange == exchangeTradingView.exchange && item.market == selectedMarket));
                     listView.SetObjects(list.Where(item => item.market == CurrentMarket));
-                    //listView.SetObjects(list);
                 }
-                //listView.RebuildColumns();
-                //listView_tickers.Refresh();
-                //grouper.GroupTitle = listView.Items.Count + " TICKERS";
                 toolStripLabel_title.Text = listView.Items.Count + " TICKERS";
-
-
 
                 if (resize)
                 {
@@ -172,20 +153,8 @@ namespace TwEX_API.Controls
                 int iconSize = rowHeight;
 
                 toolStrip.ImageScalingSize = new Size(iconSize, iconSize);
-                /*
-                //column_Symbol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                //column_Symbol.Width = column_Symbol.Width + (iconSize * 2);
-                column_Symbol.Width = textSize.Width;
-
-                column_Balance.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-                column_Orders.Width = textSize.Width;
-                column_TotalInBTC.Width = textSize.Width;
-                column_TotalInUSD.Width = textSize.Width;
-                */
-
                 int listWidth = 0;
-                //int listHeight = 0;
+
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -197,7 +166,6 @@ namespace TwEX_API.Controls
                 listWidth += iconSize;
                 PreferredWidth = listWidth + (iconSize * 2);
                 //LogManager.AddLogMessage(Name, "ResizeUI", "PreferredWidth = " + PreferredWidth);
-                
             }
         }
         #endregion

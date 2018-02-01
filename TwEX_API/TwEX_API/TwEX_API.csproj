@@ -277,6 +277,12 @@
     <Compile Include="Controls\TradingViewWidgetEditorControl.Designer.cs">
       <DependentUpon>TradingViewWidgetEditorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TransactionsListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TransactionsListControl.Designer.cs">
+      <DependentUpon>TransactionsListControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TwEXTraderControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -418,6 +424,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\TradingViewWidgetEditorControl.resx">
       <DependentUpon>TradingViewWidgetEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TransactionsListControl.resx">
+      <DependentUpon>TransactionsListControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\TwEXTraderControl.resx">
       <DependentUpon>TwEXTraderControl.cs</DependentUpon>

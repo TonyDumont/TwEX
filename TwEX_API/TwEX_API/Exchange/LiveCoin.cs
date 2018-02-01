@@ -262,7 +262,7 @@ namespace TwEX_API.Exchange
 
             //string Sign = getHashHMAC(ApiSecret, parameterString).ToUpper();
             string Sign = getHashHMAC(Api.secret, parameters).ToUpper();
-            LogManager.AddLogMessage(Name, "getApiPrivateRequest", requestUrl + parameters);
+            //LogManager.AddLogMessage(Name, "getApiPrivateRequest", requestUrl + parameters);
             HttpStatusCode StatusCode;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUrl + parameters);
             request.Method = "GET";
@@ -549,7 +549,7 @@ namespace TwEX_API.Exchange
                 string parameters = "";
 
                 string response = getApiPrivateRequest(requestUrl, parameters);
-                LogManager.AddLogMessage(Name, "getPaymentBalanceList", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getPaymentBalanceList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 LiveCoinBalance[] array = jsonVal.ToObject<LiveCoinBalance[]>();
                 list = array.ToList();
@@ -558,6 +558,42 @@ namespace TwEX_API.Exchange
             {
                 LogManager.AddLogMessage(Name, "getPaymentBalanceList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
+            return list;
+        }
+
+        /// <summary>/payment/history/transactions
+        /// <para>Returns a list of your transactions</para>
+        /// <para>Required : 'start' - Start date (in UNIX Time format in milliseconds)</para>
+        /// <para>Required : 'end' - end date (in UNIX Time format in milliseconds)</para>
+        /// <para>Optional : none</para>
+        /// </summary>
+        public static List<LiveCoinTransaction> getPaymentHistoryTransactionList(long start, long end)
+        {
+            
+            List<LiveCoinTransaction> list = new List<LiveCoinTransaction>();
+            
+            try
+            {
+
+                //string requestUrl = Api_privateUrl + "payment/history/transactions?end=" + end + "&start=" + start;
+                //LogManager.AddLogMessage(Name, "getPaymentHistoryTransactionList", requestUrl, LogManager.LogMessageType.DEBUG);
+                string requestUrl = Api_privateUrl + "payment/history/transactions?";
+                //string parameters = "?start=" + start + "&end=" + end;
+                string parameters = "end=" + end + "&start=" + start;
+
+                string response = getApiPrivateRequest(requestUrl, parameters);
+                //LogManager.AddLogMessage(Name, "getPaymentHistoryTransactionList", response, LogManager.LogMessageType.DEBUG);
+                
+                JArray jsonVal = JArray.Parse(response) as JArray;
+                LiveCoinTransaction[] array = jsonVal.ToObject<LiveCoinTransaction[]>();
+                list = array.ToList();
+                
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getPaymentHistoryTransactionList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            
             return list;
         }
 
@@ -598,6 +634,7 @@ namespace TwEX_API.Exchange
         #endregion Api_Private
 
         #region ExchangeManager
+        
         // INITIALIZE
         public static void InitializeExchange()
         {
@@ -618,7 +655,7 @@ namespace TwEX_API.Exchange
         public static void updateExchangeBalanceList()
         {
             List<LiveCoinBalanceTotals> list = getBalances();
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+            ExchangeTicker btcTicker = getExchangeTicker(Name, "BTC", USDSymbol);
 
             foreach (LiveCoinBalanceTotals balance in list)
             {
@@ -627,7 +664,7 @@ namespace TwEX_API.Exchange
                     if (balance.currency != "BTC" && balance.currency != USDSymbol)
                     {
                         // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.currency.ToUpper(), "BTC");
+                        ExchangeTicker ticker = getExchangeTicker(Name, balance.currency.ToUpper(), "BTC");
 
                         if (ticker != null)
                         {
@@ -673,7 +710,7 @@ namespace TwEX_API.Exchange
                         }
                     }
                     //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
-                    ExchangeManager.processBalance(balance.GetExchangeBalance());
+                    processBalance(balance.GetExchangeBalance());
                 }
             }        
         }
@@ -743,6 +780,27 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        public static void updateExchangeTransactionList()
+        {
+            
+            var dateTime = new DateTime(2017, 01, 01, 0, 0, 0, DateTimeKind.Local);
+            var dateTimeOffset = new DateTimeOffset(dateTime);
+            var unixStart = dateTimeOffset.ToUnixTimeMilliseconds();
+
+            var nowTimeOffset = new DateTimeOffset(DateTime.Now);
+            var unixEnd = nowTimeOffset.ToUnixTimeMilliseconds();
+
+            //getPaymentHistoryTransactionList(unixStart, unixEnd);
+
+            List<LiveCoinTransaction> transactions = getPaymentHistoryTransactionList(unixStart, unixEnd);
+            foreach (LiveCoinTransaction transaction in transactions)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(transaction.ExchangeTransaction);
+            }
+
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Transactions.Count, LogManager.LogMessageType.DEBUG);
         }
         private static void UpdateStatus(Boolean success, string message = "")
         {
@@ -989,6 +1047,40 @@ namespace TwEX_API.Exchange
             public double bonusRate { get; set; }
             public double commissionRate { get; set; }
             public long lastModificationTime { get; set; }
+        }
+        public class LiveCoinTransaction
+        {
+            public string id { get; set; }
+            public string type { get; set; }
+            public long date { get; set; }
+            public double amount { get; set; }
+            public double fee { get; set; }
+            public string fixedCurrency { get; set; }
+            public string taxCurrency { get; set; }
+            public double? variableAmount { get; set; }
+            public string variableCurrency { get; set; }
+            public string external { get; set; }
+            public object login { get; set; }
+            public string externalKey { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = id,
+                        currency = fixedCurrency,
+                        address = externalKey,
+                        amount = amount,
+                        //confirmations = Confirmations.ToString(),
+                        datetime = DateTimeOffset.FromUnixTimeMilliseconds(date).UtcDateTime.ToLocalTime(),
+                        exchange = Name,
+                        type = GetExchangeTransactionType(type)
+                    };
+                    return transaction;
+                }
+            }
         }
         #endregion
         #endregion DataModels

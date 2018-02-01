@@ -487,7 +487,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string url = "https://poloniex.com/tradingApi";
-                string parameters = "command=returnDepositsWithdrawals&start=" + start + "&end=" + end + "&nonce=" + ExchangeManager.GetNonce();
+                string parameters = "command=returnDepositsWithdrawals&start=" + start + "&end=" + end + "&nonce=" + GetNonce();
                 string result = await getPrivateApiRequestAsync(url, parameters);
                 //LogManager.AddLogMessage(Name, "getDepositsWithdrawals", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
@@ -682,10 +682,10 @@ namespace TwEX_API.Exchange
                 {
                     param += "&limit=" + limit;
                 }
-                LogManager.AddLogMessage(Name, "getTradeHistoryList", "param=" + param);
+                //LogManager.AddLogMessage(Name, "getTradeHistoryList", "param=" + param);
 
                 string result = await getPrivateApiRequestAsync(url, param);
-                LogManager.AddLogMessage(Name, "getTradeHistoryList", result, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTradeHistoryList", result, LogManager.LogMessageType.DEBUG);
 
                 if (isAll)
                 {
@@ -967,7 +967,7 @@ namespace TwEX_API.Exchange
                 };
                 processOrder(eOrder);
             }
-            LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         public static void updateExchangeTickerList()
         {
@@ -977,6 +977,33 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(ticker.GetExchangeTicker());
             }
+        }
+        public async static void updateExchangeTransactionList()
+        {
+            var dateTime = new DateTime(2017, 01, 01, 0, 0, 0, DateTimeKind.Local);
+            var dateTimeOffset = new DateTimeOffset(dateTime);
+            var unixStart = dateTimeOffset.ToUnixTimeSeconds();
+
+            var nowTimeOffset = new DateTimeOffset(DateTime.Now);
+            var unixEnd = nowTimeOffset.ToUnixTimeSeconds();
+
+            List<PoloniexTransaction> transactions = await getDepositsWithdrawalsList(unixStart, unixEnd);
+            foreach (PoloniexTransaction transaction in transactions)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(transaction.ExchangeTransaction);
+            }
+            /*
+            Thread.Sleep(1000);
+
+            List<BittrexWithdrawal> withdrawalList = getWithdrawalHistoryList();
+            foreach (BittrexWithdrawal withdraw in withdrawalList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", withdraw.Currency + " | " + withdraw.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(withdraw.ExchangeTransaction);
+            }
+            */
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Transactions.Count, LogManager.LogMessageType.DEBUG);
         }
         private static void UpdateStatus(Boolean success, string message = "")
         {
@@ -1271,6 +1298,25 @@ namespace TwEX_API.Exchange
             public int withdrawalNumber { get; set; }
             public Double fee { get; set; }
             public string ipAddress { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = txid,
+                        currency = currency,
+                        address = address,
+                        amount = amount,
+                        confirmations = confirmations.ToString(),
+                        datetime = datetime,
+                        exchange = Name,
+                        type = GetExchangeTransactionType(type)
+                    };
+                    return transaction;
+                }
+            }
         }
         public class PoloniexDeposit
         {

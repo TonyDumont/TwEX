@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using static TwEX_API.LogManager;
 
@@ -153,9 +154,18 @@ namespace TwEX_API.Controls
                         break;
 
                     case "FontDecrease":
-                        //ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-                        //UpdateUI(true);
-                        ContentManager.SaveIcons();
+                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
+                        UpdateUI(true);
+                        break;
+
+                    case "CopyAll": 
+                        StringBuilder s = new StringBuilder();
+
+                        foreach (LogMessage message in LogManager.MessageList)
+                        {
+                            s.AppendLine(message.ToString());
+                        }
+                        Clipboard.SetText(s.ToString());               
                         break;
 
                     default:

@@ -1,35 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Data;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using static TwEX_API.ExchangeManager;
 using BrightIdeasSoftware;
 
 namespace TwEX_API.Controls
 {
-    public partial class OrdersListControl : UserControl
+    public partial class TransactionsListControl : UserControl
     {
         #region Properties
         private string ExchangeName = String.Empty;
-        public bool OpenOrders = false;
+        public ExchangeTransactionType type = ExchangeTransactionType.deposit;
+        //public bool OpenOrders = false;
         //public int PreferredWidth = 0;
         #endregion
 
         #region Initialize
-        public OrdersListControl()
+        public TransactionsListControl()
         {
             InitializeComponent();
             InitializeColumns();
         }
-        private void OpenOrdersListControl_Load(object sender, EventArgs e)
+        private void TransactionsListControl_Load(object sender, EventArgs e)
         {
             UpdateUI(true);
         }
         private void InitializeColumns()
         {
-
+            
             //column_Icon.ImageGetter = new ImageGetterDelegate(aspect_Icon);
             //column_Symbol.ImageGetter = new ImageGetterDelegate(aspect_Icon);
-            column_symbol.ImageGetter = new ImageGetterDelegate(aspect_symbol);
+            column_currency.ImageGetter = new ImageGetterDelegate(aspect_currency);
+            /*
             column_market.ImageGetter = new ImageGetterDelegate(aspect_market);
             //column_Status.ImageGetter = new ImageGetterDelegate(aspect_Status);
             //column_Tickers.AspectGetter = new AspectGetterDelegate(aspect_TickerCount);
@@ -38,7 +46,7 @@ namespace TwEX_API.Controls
             column_total.AspectGetter = new AspectGetterDelegate(aspect_total);
             //column_TotalInBTC.AspectGetter = new AspectGetterDelegate(aspect_TotalInBTC);
             //column_TotalInUSD.AspectGetter = new AspectGetterDelegate(aspect_TotalInUSD);
-            
+            */
         }
         #endregion
 
@@ -69,7 +77,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                listView.SetObjects(ExchangeManager.Orders.Where(item => item.exchange == ExchangeName && item.open == OpenOrders));
+                listView.SetObjects(Transactions.Where(item => item.type == type && item.exchange == ExchangeName));
 
                 if (resize)
                 {
@@ -89,6 +97,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                
                 Font = PreferenceManager.preferences.Font;
                 listView.Font = Font;
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
@@ -97,21 +106,23 @@ namespace TwEX_API.Controls
                     col.Width = col.Width + listView.RowHeightEffective;
                     //listWidth += col.Width;
                 }
-                column_market.Width += listView.RowHeightEffective;
-                column_symbol.Width += listView.RowHeightEffective;
+                //column_market.Width += listView.RowHeightEffective;
+                //column_symbol.Width += listView.RowHeightEffective;
+                
             }
         }
         #endregion
 
         #region Getters
-        private object aspect_symbol(object rowObject)
+        private object aspect_currency(object rowObject)
         {
             //Machine m = (Machine)rowObject;
-            ExchangeManager.ExchangeOrder order = (ExchangeManager.ExchangeOrder)rowObject;
+            ExchangeTransaction transaction = (ExchangeTransaction)rowObject;
             int rowheight = listView.RowHeightEffective;
-            return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(order.symbol), rowheight, rowheight);
+            return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(transaction.currency), rowheight, rowheight);
             //return ContentManager.GetExchangeIcon(exchange.Name);
         }
+        /*
         private object aspect_market(object rowObject)
         {
             //Machine m = (Machine)rowObject;
@@ -120,6 +131,7 @@ namespace TwEX_API.Controls
             return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(order.market), rowheight, rowheight);
             //return ContentManager.GetExchangeIcon(exchange.Name);
         }
+        */
         public object aspect_amount(object rowObject)
         {
             ExchangeManager.ExchangeOrder order = (ExchangeManager.ExchangeOrder)rowObject;
@@ -145,7 +157,7 @@ namespace TwEX_API.Controls
             else
             {
                 return order.rate.ToString("N8");
-            } 
+            }
         }
         public object aspect_total(object rowObject)
         {

@@ -214,7 +214,7 @@ namespace TwEX_API.Exchange
             string responseString = string.Empty;
             try
             {
-                string ts = ExchangeManager.GetNonce();
+                string ts = GetNonce();
                 string method = "/accounts";
                 string sig = GetSignature(ts, "GET", method, string.Empty);
                 using (var acclient = new HttpClient())
@@ -261,7 +261,7 @@ namespace TwEX_API.Exchange
             List<GDAXAccountHistory> list = new List<GDAXAccountHistory>();
             try
             {
-                string ts = ExchangeManager.GetNonce();
+                string ts = GetNonce();
                 string method = "/accounts/" + account_id + "/ledger";
                 string sig = GetSignature(ts, "GET", method, string.Empty);
                 using (var acclient = new HttpClient())
@@ -278,9 +278,9 @@ namespace TwEX_API.Exchange
                     if (response.IsSuccessStatusCode)
                     {
                         String result = await response.Content.ReadAsStringAsync();
-                        //LogManager.AddLogMessage(Name, "getAccountHistoryList", "response.IsSuccess: " + dataString);
-                        //list = new JavaScriptSerializer().Deserialize<GDAXAccountHistory[]>(result).ToList();
-                        // TO TEST
+                        //LogManager.AddLogMessage(Name, "getAccountHistoryList", result, LogManager.LogMessageType.DEBUG);
+                        JArray jArray = JArray.Parse(result) as JArray;
+                        list = jArray.ToObject<List<GDAXAccountHistory>>();
                     }
                     else
                     {
@@ -509,7 +509,23 @@ namespace TwEX_API.Exchange
                 LogManager.AddLogMessage(Name, "updateExchangeTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
         }
-        
+        public async static void updateExchangeTransactionList()
+        {
+            List<GDAXAccount> accounts = await getAccountList();
+            foreach(GDAXAccount account in accounts)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", account.id + " | " + account.currency, LogManager.LogMessageType.DEBUG);
+                List<GDAXAccountHistory> history = await getAccountHistoryList(account.id);
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", account.currency + " | " + history.Count, LogManager.LogMessageType.DEBUG);
+                foreach(GDAXAccountHistory historyItem in history)
+                {
+                    //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", historyItem.type + " | " + historyItem.id, LogManager.LogMessageType.DEBUG);
+                    historyItem.currency = account.currency;
+                    processTransaction(historyItem.ExchangeTransaction);
+                }
+            }           
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Transactions.Count, LogManager.LogMessageType.DEBUG);         
+        }
         public static Boolean updateProductList()
         {
             List<GDAXProduct> list = getProductList();
@@ -630,16 +646,40 @@ namespace TwEX_API.Exchange
         {
             public string id { get; set; }
             public DateTime created_at { get; set; }
-            public string amount { get; set; }
+            public double amount { get; set; }
             public string balance { get; set; }
             public string type { get; set; }
             public GDAXAccountHistoryDetails details { get; set; }
+
+            public string currency { get; set; }
+            //public ExchangeTransactionType type { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = id,
+                        currency = currency,
+                        //address = CryptoAddress,
+                        amount = amount,
+                        //confirmations = Confirmations.ToString(),
+                        datetime = created_at,
+                        exchange = Name,
+                        type = GetExchangeTransactionType(type)
+                    };
+                    return transaction;
+                }
+            }
         }
         public class GDAXAccountHistoryDetails
         {
             public string order_id { get; set; }
             public string trade_id { get; set; }
             public string product_id { get; set; }
+            public string transfer_id { get; set; }
+            public string transfer_type { get; set; }
         }
         public class GDAXOrder
         {

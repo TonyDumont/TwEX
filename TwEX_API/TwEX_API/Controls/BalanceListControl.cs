@@ -94,20 +94,15 @@ namespace TwEX_API.Controls
                 //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 Font = PreferenceManager.preferences.Font;
                 toolStrip.Font = Font;
-                //toolStrip_header2.Font = ParentForm.Font;
                 listView.Font = Font;
  
                 Size textSize = TextRenderer.MeasureText("0.00000000", Font);
 
                 int rowHeight = listView.RowHeightEffective;
-                //int padding = rowHeight / 2;
-
                 int iconSize = rowHeight;
 
                 toolStrip.ImageScalingSize = new Size(iconSize, iconSize);
 
-                //column_Symbol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                //column_Symbol.Width = column_Symbol.Width + (iconSize * 2);
                 column_Symbol.Width = textSize.Width;
 
                 column_Balance.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -116,9 +111,7 @@ namespace TwEX_API.Controls
                 column_TotalInBTC.Width = textSize.Width;
                 column_TotalInUSD.Width = textSize.Width;
 
-                
                 int listWidth = 0;
-                //int listHeight = 0;
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     //col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -126,62 +119,7 @@ namespace TwEX_API.Controls
                     listWidth += col.Width;
                 }
                 PreferredWidth = listWidth + (iconSize * 2);
-                LogManager.AddLogMessage(Name, "ResizeUI", "PreferredWidth = " + PreferredWidth);
-                //listView.Width = listWidth;
-                //ClientSize = new Size(listWidth, Height);
-                //Size = new Size(listWidth, Height);
-                //Size = new Size(listWidth, Height);
-
-                //column_Tickers.Width = 
-                /*
-                if (listView.Items.Count > 0)
-                {
-                    var last = listView.Items[listView.Items.Count - 1];
-                    listHeight = listView.Top + last.Bounds.Bottom;
-                    //listHeight = last.Bounds.Bottom;
-                    //LogManager.AddLogMessage(Name, "ResizeUI", listView.Top + " | " + last.Bounds.Bottom + " | " + listHeight);
-                }
-                listHeight += listView.RowHeightEffective;
-                //listView.Height = listHeight + listView.RowHeightEffective;
-                */
-
-                /*
-                foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
-                {
-                    col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                    //col.Width = col.Width + (rowHeight / 2);
-                    //listWidth += col.Width;
-                }
-                */
-                //toolStrip_header2.ImageScalingSize = new Size(iconSize, iconSize);
-                /*
-                //column_Icon.Width = iconSize + 2;
-                column_Status.Width = iconSize + 2;
-
-                column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_Name.Width = column_Name.Width + padding;
-                */
-
-                //column_Coins.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-                /*
-                
-                */
-
-
-
-                /*
-                if (Parent.GetType() == typeof(Form))
-                {
-                    Form form = this.Parent as Form;
-                    Rectangle screenRectangle = RectangleToScreen(form.ClientRectangle);
-                    int titleHeight = screenRectangle.Top - form.Top;
-                    int formHeight = titleHeight + listHeight;
-                    int totalHeight = titleHeight + listHeight + toolStrip_header.Height + toolStrip_header2.Height + padding;
-                    //LogManager.AddLogMessage(Name, "ResizeUI", "titleHeight=" + titleHeight + " | listHeight=" + listHeight + " | " + toolStrip_header.Height + " | " + toolStrip_header2.Height);
-                    form.ClientSize = new Size(listWidth + (padding* 2), totalHeight);
-                }
-                */
+                //LogManager.AddLogMessage(Name, "ResizeUI", "PreferredWidth = " + PreferredWidth);
             }
         }
         #endregion

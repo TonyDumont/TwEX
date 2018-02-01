@@ -265,7 +265,7 @@ namespace TwEX_API
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "DoesUrlRespond", ex.Message, LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "DoesUrlRespond", ex.Message + " | " + url, LogMessageType.EXCEPTION);
                 return false;
             }
         }
@@ -415,18 +415,18 @@ namespace TwEX_API
                         Image icon = GetIconByUrl(iconFile.Url);
                         IconList.Images.Add(name, icon);
                         icon.Save(WorkDirectory + "\\icons\\" + name + ".png", ImageFormat.Png);
-                        AddLogMessage(Name, "GetIcon", "Saving " + name + ".png in ICONS FOLDER", LogMessageType.LOG);
+                        //AddLogMessage(Name, "GetIcon", "Saving " + name + ".png in ICONS FOLDER", LogMessageType.LOG);
                         return icon;
                     }
                     else
                     {
-                        AddLogMessage(Name, "GetIcon", "Unable To Save " + name + ".png in ICONS FOLDER - No Entry In IconUrl List", LogMessageType.LOG);
+                        //AddLogMessage(Name, "GetIcon", "Unable To Save " + name + ".png in ICONS FOLDER - No Entry In IconUrl List", LogMessageType.LOG);
                         return image;
                     }               
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    AddLogMessage(Name, "GetIcon", name + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    //AddLogMessage(Name, "GetIcon", name + " | " + ex.Message, LogMessageType.EXCEPTION);
                     // USE GENERIC ICON
                     return image;
                 }
@@ -595,10 +595,9 @@ namespace TwEX_API
         // COLLECTIONS
         public static BlockingCollection<Exchange> Exchanges = new BlockingCollection<Exchange>();
         public static BlockingCollection<ExchangeBalance> Balances = new BlockingCollection<ExchangeBalance>();
-
         public static BlockingCollection<ExchangeOrder> Orders = new BlockingCollection<ExchangeOrder>();
-
         public static BlockingCollection<ExchangeTicker> Tickers = new BlockingCollection<ExchangeTicker>();
+        public static BlockingCollection<ExchangeTransaction> Transactions = new BlockingCollection<ExchangeTransaction>();
         #endregion Properties
 
         #region Initialize      
@@ -727,6 +726,13 @@ namespace TwEX_API
                     {
                         //LogManager.AddLogMessage(Name, "TimerTick", "Updating All Wallets", LogManager.LogMessageType.DEBUG);
                         Task.Factory.StartNew(() => WalletManager.UpdateWallets());
+                    }
+
+                    bool hasHistoryType = (preferences.TimerFlags & ExchangeTimerType.HISTORY) != ExchangeTimerType.NONE;
+                    if (hasHistoryType)
+                    {
+                        //LogManager.AddLogMessage(Name, "TimerTick", "Updating All Wallets", LogManager.LogMessageType.DEBUG);
+                        Task.Factory.StartNew(() => updateTransactions());
                     }
 
                     bool hasEarnGGType = (preferences.TimerFlags & ExchangeTimerType.EARNGG) != ExchangeTimerType.NONE;
@@ -948,6 +954,31 @@ namespace TwEX_API
                 }
                 //LogManager.AddLogMessage(Name, "getExchangeTicker", "ticker NULL or CC : " + ccTicker.exchange + " | " + ccTicker.symbol + " | " + ccTicker.market + " | " + ccTicker.last);
                 return ccTicker;
+            }
+        }
+
+        public static ExchangeTransactionType GetExchangeTransactionType(string name)
+        {
+            switch (name.ToLower())
+            {
+                case "buy":
+                    return ExchangeTransactionType.buy;
+
+                case "sell":
+                    return ExchangeTransactionType.sell;
+
+                case "deposit":
+                case "payin":
+                    return ExchangeTransactionType.deposit;         
+
+                case "withdrawal":
+                case "withdraw":
+                case "payout":
+                    return ExchangeTransactionType.withdrawal;
+
+                default:
+                    //AddLogMessage(Name, "GetExchangeTransactionType", name + " TYPE NOT DEFINED!!!", LogMessageType.DEBUG);
+                    return ExchangeTransactionType.transfer;
             }
         }
 
@@ -1192,6 +1223,24 @@ namespace TwEX_API
             }
             */
         }
+        public static void processTransaction(ExchangeTransaction transaction)
+        {
+            ExchangeTransaction listItem = Transactions.FirstOrDefault(item => item.id == transaction.id && item.exchange == transaction.exchange);
+
+            if (listItem != null)
+            {
+                // UPDATE
+                listItem.amount = transaction.amount;
+                listItem.confirmations = transaction.confirmations;
+                listItem.datetime = transaction.datetime;
+            }
+            else
+            {
+                Transactions.Add(transaction);
+                //AddLogMessage(Name, "processTransaction", "Added " + transaction.id + " for " + transaction.exchange, LogMessageType.DEBUG);
+            }
+            // UI UPDATE
+        }
         #endregion Processors
 
         #region Updaters
@@ -1360,7 +1409,7 @@ namespace TwEX_API
                     }
                     else
                     {
-                        LogManager.AddLogMessage(Name, "updateExchangeTickerList", "type is NULL : " + exchangeName, LogManager.LogMessageType.DEBUG);
+                        AddLogMessage(Name, "updateExchangeTickerList", "type is NULL : " + exchangeName, LogMessageType.DEBUG);
                     }
                 }
                 else
@@ -1379,21 +1428,75 @@ namespace TwEX_API
                         }
                         else
                         {
-                            LogManager.AddLogMessage(Name, "updateExchangeTickerList", "type is NULL : " + exchangeName, LogManager.LogMessageType.DEBUG);
+                            AddLogMessage(Name, "updateExchangeTickerList", "type is NULL : " + exchangeName, LogMessageType.DEBUG);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "updateExchangeTickerList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                AddLogMessage(Name, "updateExchangeTickerList", ex.Message, LogMessageType.EXCEPTION);
             }
 
             //updateControls();
             FormManager.UpdateForms();
         }
 
-        
+        /// <summary>Updates TRANSACTIONS COLLECTION for an exchange or does ALL if no name specified</summary>
+        public static void updateTransactions(string exchangeName = "")
+        {
+            try
+            {
+                if (exchangeName.Length > 0)
+                {
+                    
+                    Type type = getExchangeType(exchangeName);
+                    if (type != null)
+                    {
+                        //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "type is : " + type.Name);
+                        Task.Factory.StartNew(() => type.InvokeMember("updateExchangeTransactionList",
+                                BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                null,
+                                type,
+                                null));
+                    }
+                    else
+                    {
+                        AddLogMessage(Name, "updateTransactions", "type is NULL : " + exchangeName, LogManager.LogMessageType.DEBUG);
+                    }
+                    
+                }
+                else
+                {
+                    foreach (Exchange exchange in Exchanges)
+                    {
+                        Type type = getExchangeType(exchange.Name);
+                        if (type != null)
+                        {
+                            
+                            //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "type is : " + type.Name);
+                            Task.Factory.StartNew(() => type.InvokeMember("updateExchangeTransactionList",
+                                BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                null,
+                                type,
+                                null));
+                                
+                        }
+                        else
+                        {
+                            AddLogMessage(Name, "updateTransactions", "type is NULL : " + exchangeName, LogMessageType.DEBUG);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage(Name, "updateTransactions", ex.Message, LogMessageType.EXCEPTION);
+            }
+
+            //updateControls();
+            //FormManager.UpdateForms();
+        }
         #endregion Updaters
 
         #region DataModels
@@ -1472,6 +1575,23 @@ namespace TwEX_API
             public Decimal high { get; set; }
             public Decimal low { get; set; }
         }
+        public class ExchangeTransaction
+        {
+            // KEYS
+            public string id { get; set; }
+            // STANDARD
+            public string currency { get; set; }
+            public string address { get; set; }
+            public Double amount { get; set; }
+            public string confirmations { get; set; }
+            public long timestamp { get; set; }
+            public DateTime datetime { get; set; }
+
+            public string status { get; set; }
+            // ADDON
+            public string exchange { get; set; }
+            public ExchangeTransactionType type { get; set; }
+        }
         #endregion DataModels
 
         #region Enums
@@ -1485,6 +1605,20 @@ namespace TwEX_API
             HISTORY = 1 << 3,   //8
             WALLETS = 1 << 4,   //16
             EARNGG = 1 << 5     //32
+        }
+        public enum ExchangeTransactionType
+        {
+            deposit,
+            withdrawal,
+            transfer,
+            fee,
+            match,
+            payout,
+            payin,
+            bankToExchange,
+            exchangeToBank,
+            buy,
+            sell
         }
         #endregion Enums
     }
@@ -2456,10 +2590,22 @@ namespace TwEX_API
                 Balances = new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(preferences.Balances));
             }
 
+            AddLogMessage(Name, "SetPreferenceSnapshots", "PREFERENCES INITIALIZED : " + preferences.Orders.Count + " Balances", LogMessageType.LOG);
+            if (preferences.Orders.Count > 0)
+            {
+                Orders = new BlockingCollection<ExchangeOrder>(new ConcurrentQueue<ExchangeOrder>(preferences.Orders));
+            }
+
             AddLogMessage(Name, "SetPreferenceSnapshots", "PREFERENCES INITIALIZED : " + preferences.Tickers.Count + " Tickers", LogMessageType.LOG);
             if (preferences.Tickers.Count > 0)
             {
                 Tickers = new BlockingCollection<ExchangeTicker>(new ConcurrentQueue<ExchangeTicker>(preferences.Tickers));
+            }
+            
+            AddLogMessage(Name, "SetPreferenceSnapshots", "PREFERENCES INITIALIZED : " + preferences.Transactions.Count + " Transactions", LogMessageType.LOG);
+            if (preferences.Transactions.Count > 0)
+            {
+                Transactions = new BlockingCollection<ExchangeTransaction>(new ConcurrentQueue<ExchangeTransaction>(preferences.Transactions));
             }
             
             return true;
@@ -2983,7 +3129,9 @@ namespace TwEX_API
         public static bool UpdatePreferenceSnapshots()
         {
             preferences.Balances = Balances.ToList();
+            preferences.Orders = Orders.Where(order => !order.open).ToList();
             preferences.Tickers = Tickers.ToList();
+            preferences.Transactions = Transactions.ToList();
             ExchangePreferences.Exchanges = Exchanges.ToList();
 
             foreach (Form form in Application.OpenForms)
@@ -3059,7 +3207,9 @@ namespace TwEX_API
             public LogMessageType MessageFlags { get; set; } = LogMessageType.NONE;
             // SNAPSHOTS
             public List<ExchangeBalance> Balances { get; set; } = new List<ExchangeBalance>();
+            public List<ExchangeOrder> Orders { get; set; } = new List<ExchangeOrder>();
             public List<ExchangeTicker> Tickers { get; set; } = new List<ExchangeTicker>();
+            public List<ExchangeTransaction> Transactions { get; set; } = new List<ExchangeTransaction>();
         }
         // CUSTOM PREFERENCES
         public class ArbitragePreference

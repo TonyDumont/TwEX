@@ -37,6 +37,7 @@
             // 
             // tableLayoutPanel
             // 
+            this.tableLayoutPanel.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
             this.tableLayoutPanel.ColumnCount = 3;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -56,28 +57,28 @@
             // balanceListControl
             // 
             this.balanceListControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.balanceListControl.Location = new System.Drawing.Point(3, 3);
+            this.balanceListControl.Location = new System.Drawing.Point(5, 5);
             this.balanceListControl.Name = "balanceListControl";
-            this.balanceListControl.Size = new System.Drawing.Size(494, 223);
+            this.balanceListControl.Size = new System.Drawing.Size(494, 217);
             this.balanceListControl.TabIndex = 0;
             // 
             // tickerListControl
             // 
             this.tickerListControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tickerListControl.Font = new System.Drawing.Font("Times New Roman", 12F);
-            this.tickerListControl.Location = new System.Drawing.Point(504, 4);
+            this.tickerListControl.Location = new System.Drawing.Point(508, 6);
             this.tickerListControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tickerListControl.Name = "tickerListControl";
-            this.tickerListControl.Size = new System.Drawing.Size(504, 221);
+            this.tickerListControl.Size = new System.Drawing.Size(504, 215);
             this.tickerListControl.TabIndex = 1;
             // 
             // historyTabControl
             // 
             this.tableLayoutPanel.SetColumnSpan(this.historyTabControl, 2);
             this.historyTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.historyTabControl.Location = new System.Drawing.Point(3, 232);
+            this.historyTabControl.Location = new System.Drawing.Point(5, 230);
             this.historyTabControl.Name = "historyTabControl";
-            this.historyTabControl.Size = new System.Drawing.Size(1006, 224);
+            this.historyTabControl.Size = new System.Drawing.Size(1008, 224);
             this.historyTabControl.TabIndex = 2;
             // 
             // ExchangeTradingControl

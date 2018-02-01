@@ -526,7 +526,7 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "history/trades";
                 string response = GetApiPrivateRequest(requestUrl);
-                LogManager.AddLogMessage(Name, "getOrdersHistoryList", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTradeHistoryList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCOrder[] array = jsonVal.ToObject<HitBTCOrder[]>();
                 list = array.ToList();
@@ -550,7 +550,7 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "history/order/" + orderId + "/trades";
                 string response = GetApiPrivateRequest(requestUrl);
-                LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCOrder[] array = jsonVal.ToObject<HitBTCOrder[]>();
                 list = array.ToList();
@@ -580,14 +580,14 @@ namespace TwEX_API.Exchange
             {
                 string requestUrl = Api_privateUrl + "account/transactions";
                 string response = GetApiPrivateRequest(requestUrl);
-                //LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTransactionsList", response, LogManager.LogMessageType.DEBUG);
                 JArray jsonVal = JArray.Parse(response) as JArray;
                 HitBTCTransactionHistory[] array = jsonVal.ToObject<HitBTCTransactionHistory[]>();
                 list = array.ToList();
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getTradeHistoryListByOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTransactionsList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -936,6 +936,16 @@ namespace TwEX_API.Exchange
                 processTicker(ticker.GetExchangeTicker());
             }
         }
+        public static void updateExchangeTransactionList()
+        {          
+            List<HitBTCTransactionHistory> transactions = getTransactionsList(new HitBTCTransactionParameters());
+            foreach (HitBTCTransactionHistory transaction in transactions)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", transaction.currency + " | " + transaction.type, LogManager.LogMessageType.DEBUG);
+                processTransaction(transaction.ExchangeTransaction);
+            }
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Transactions.Count, LogManager.LogMessageType.DEBUG);          
+        }
         private static void UpdateStatus(Boolean success, string message = "")
         {
             if (success)
@@ -1272,15 +1282,35 @@ namespace TwEX_API.Exchange
             public string id { get; set; }
             public int index { get; set; }
             public string currency { get; set; }
-            public string amount { get; set; }
+            public double amount { get; set; }
             public string fee { get; set; }
             public string networkFee { get; set; }
             public string address { get; set; }
             public string hash { get; set; }
             public string status { get; set; }
+            //public ExchangeTransactionType type { get; set; }
             public string type { get; set; }
             public DateTime createdAt { get; set; }
             public DateTime updatedAt { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = id,
+                        currency = currency,
+                        address = address,
+                        amount = amount,
+                        //confirmations = Confirmations.ToString(),
+                        datetime = updatedAt,
+                        exchange = Name,
+                        type = GetExchangeTransactionType(type)
+                    };
+                    return transaction;
+                }
+            }
         }
         public class HitBTCTransactionMessage
         {

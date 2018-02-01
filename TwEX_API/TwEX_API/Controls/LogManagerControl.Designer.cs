@@ -34,6 +34,8 @@
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_copy = new System.Windows.Forms.ToolStripMenuItem();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_TimeStamp = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_type = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -61,7 +63,9 @@
             this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_font,
             this.toolStripMenuItem_fontIncrease,
-            this.toolStripMenuItem_fontDecrease});
+            this.toolStripMenuItem_fontDecrease,
+            this.toolStripSeparator1,
+            this.toolStripMenuItem_copy});
             this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
             this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
@@ -89,6 +93,18 @@
             this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
             this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            // 
+            // toolStripMenuItem_copy
+            // 
+            this.toolStripMenuItem_copy.Name = "toolStripMenuItem_copy";
+            this.toolStripMenuItem_copy.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_copy.Tag = "CopyAll";
+            this.toolStripMenuItem_copy.Text = "Copy All";
             // 
             // listView
             // 
@@ -194,5 +210,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_copy;
     }
 }

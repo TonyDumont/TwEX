@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -456,7 +457,7 @@ namespace TwEX_API.Exchange
             try
             {
                 // BALANCES
-                string requestUrl = "https://bleutrade.com/api/v2/account/getdeposithistory?apikey=" + Api.key + "&nonce=" + ExchangeManager.GetNonce();
+                string requestUrl = "https://bleutrade.com/api/v2/account/getdeposithistory?apikey=" + Api.key + "&nonce=" + GetNonce();
                 var url = new Uri(requestUrl);
                 var webreq = WebRequest.Create(url);
                 var signature = GetApiSignature(Api.secret, requestUrl);
@@ -941,7 +942,7 @@ namespace TwEX_API.Exchange
                 processOrder(eOrder);
             }
             
-            LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+            //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         public static void updateExchangeTickerList()
         {
@@ -951,6 +952,30 @@ namespace TwEX_API.Exchange
             {
                 ExchangeManager.processTicker(item.GetExchangeTicker());
             }
+        }
+        public static void updateExchangeTransactionList()
+        {
+            List<ExchangeTransaction> list = new List<ExchangeTransaction>();
+
+            List<BleuTradeTransactionHistory> depositList = getDepositHistoryList();
+            foreach (BleuTradeTransactionHistory deposit in depositList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                deposit.type = ExchangeTransactionType.deposit;
+                processTransaction(deposit.ExchangeTransaction);
+            }
+
+            Thread.Sleep(1000);
+            
+            List<BleuTradeTransactionHistory> withdrawalList = getWithdrawHistoryList();
+            foreach (BleuTradeTransactionHistory withdraw in withdrawalList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", withdraw.Currency + " | " + withdraw.Amount, LogManager.LogMessageType.DEBUG);
+                withdraw.type = ExchangeTransactionType.withdrawal;
+                processTransaction(withdraw.ExchangeTransaction);
+            }
+            
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         private static void UpdateStatus(Boolean success, string message = "")
         {
@@ -1184,12 +1209,32 @@ namespace TwEX_API.Exchange
         public class BleuTradeTransactionHistory
         {
             public string Id { get; set; }
-            public string TimeStamp { get; set; }
+            public DateTime TimeStamp { get; set; }
             public string Coin { get; set; }
             public double Amount { get; set; }
             public string Label { get; set; }
             // WITHDRAWALS
             public string TransactionId { get; set; }
+            public ExchangeTransactionType type { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = Id,
+                        currency = Coin,
+                        address = Label,
+                        amount = Amount,
+                        //confirmations = Confirmations,
+                        datetime = TimeStamp,
+                        exchange = Name,
+                        type = type
+                    };
+                    return transaction;
+                }
+            }
         }
         public class BleuTradeOrder
         {

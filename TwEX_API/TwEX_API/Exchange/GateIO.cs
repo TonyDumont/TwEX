@@ -342,7 +342,7 @@ namespace TwEX_API.Exchange
                 reqStream.Close();
 
                 responseString = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
-                LogManager.AddLogMessage(Name, "getBalances", "response.Content=" + responseString, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getBalances", "response.Content=" + responseString, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(responseString);
                 string result = jsonObject["result"].ToString().ToLower();
                 
@@ -504,7 +504,7 @@ namespace TwEX_API.Exchange
                 reqStream.Close();
 
                 var response = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
-                LogManager.AddLogMessage(Name, "getNewAddress", "response.Content=" + response);
+                //LogManager.AddLogMessage(Name, "getDepositsWithdrawals", "response.Content=" + response);
                 var jsonObject = JObject.Parse(response);
                 string result = jsonObject["result"].ToString().ToLower();
 
@@ -516,13 +516,13 @@ namespace TwEX_API.Exchange
 
                     foreach (GateIOTransaction deposit in deposits)
                     {
-                        deposit.type = "deposit";
+                        deposit.type = ExchangeTransactionType.deposit;
                         list.Add(deposit);
                     }
 
                     foreach (GateIOTransaction withdraw in withdraws)
                     {
-                        withdraw.type = "withdraw";
+                        withdraw.type = ExchangeTransactionType.withdrawal;
                         list.Add(withdraw);
                     }
                     return list;
@@ -620,7 +620,7 @@ namespace TwEX_API.Exchange
                 reqStream.Close();
 
                 var response = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
-                LogManager.AddLogMessage(Name, "getOpenOrders", response, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getOpenOrders", response, LogManager.LogMessageType.DEBUG);
 
                 var jsonObject = JObject.Parse(response);
                 string result = jsonObject["result"].ToString().ToLower();
@@ -1113,6 +1113,25 @@ namespace TwEX_API.Exchange
                 processTicker(ticker.GetExchangeTicker());
             }
         }
+        public static void updateExchangeTransactionList()
+        {
+            List<ExchangeOrder> list = new List<ExchangeOrder>();
+
+            var dateTime = new DateTime(2017, 01, 01, 0, 0, 0, DateTimeKind.Local);
+            var dateTimeOffset = new DateTimeOffset(dateTime);
+            var unixDateTime = dateTimeOffset.ToUnixTimeSeconds();
+
+            var nowTimeOffset = new DateTimeOffset(DateTime.Now);
+            var nowUnixDateTime = nowTimeOffset.ToUnixTimeSeconds();
+
+            List<GateIOTransaction> transactionList = getDepositsWithdrawals(unixDateTime, nowUnixDateTime);
+            foreach (GateIOTransaction transaction in transactionList)
+            {
+                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                processTransaction(transaction.ExchangeTransaction);
+            }
+            //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
+        }
         private static void UpdateStatus(Boolean success, string message = "")
         {
             if (success)
@@ -1266,12 +1285,32 @@ namespace TwEX_API.Exchange
             public string id { get; set; }
             public string currency { get; set; }
             public string address { get; set; }
-            public string amount { get; set; }
+            public double amount { get; set; }
             public string txid { get; set; }
-            public string timestamp { get; set; }
+            public long timestamp { get; set; }
             public string status { get; set; }
             // ADDED
-            public string type { get; set; }
+            //public string type { get; set; }
+            public ExchangeTransactionType type { get; set; }
+
+            public ExchangeTransaction ExchangeTransaction
+            {
+                get
+                {
+                    ExchangeTransaction transaction = new ExchangeTransaction()
+                    {
+                        id = id,
+                        currency = currency,
+                        address = address,
+                        amount = amount,
+                        //confirmations = Confirmations.ToString(),
+                        datetime = DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime.ToLocalTime(),
+                        exchange = Name,
+                        type = type
+                    };
+                    return transaction;
+                }
+            }
         }
         #endregion
         #endregion DataModels

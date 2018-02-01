@@ -70,7 +70,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                LogManager.AddLogMessage(Name, "ResizeUI", "pref=" + balanceListControl.PreferredWidth);
+                //LogManager.AddLogMessage(Name, "ResizeUI", "pref=" + balanceListControl.PreferredWidth);
                 tableLayoutPanel.ColumnStyles[0].SizeType = SizeType.Absolute;
                 tableLayoutPanel.ColumnStyles[0].Width = balanceListControl.PreferredWidth;
 
