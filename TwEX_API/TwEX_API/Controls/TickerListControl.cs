@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Controls
 {
@@ -14,6 +15,7 @@ namespace TwEX_API.Controls
         private string CurrentMarket = "ALL";
         public int PreferredWidth = 0;
 
+        public ExchangeChartsControl chartControl;
         #endregion
 
         #region Initialize
@@ -234,12 +236,28 @@ namespace TwEX_API.Controls
         }
         #endregion
 
+        #region EventHandlers
         private void marketButton_Click(object sender, EventArgs e)
         {
             ToolStripRadioButton item = (ToolStripRadioButton)sender;
             CurrentMarket = item.Text;
             //LogManager.AddLogMessage(Name, "marketButton_Click", "marketClicked=" + marketClicked);
             UpdateUI(true);
+        }
+        #endregion
+
+        private void listView_ItemActivate(object sender, EventArgs e)
+        {
+            if (listView.SelectedObject != null)
+            {
+                ExchangeTicker ticker = listView.SelectedObject as ExchangeTicker;
+                LogManager.AddLogMessage(Name, "listView_ItemActivate", ticker.exchange + " | " + ticker.symbol + " | " + ticker.market);
+                if (chartControl != null)
+                {
+                    chartControl.SetCharts(ticker.symbol, ticker.market);
+                }
+
+            }
         }
     }
 }

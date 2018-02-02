@@ -1730,7 +1730,7 @@ namespace TwEX_API
             }
             else
             {
-                formName = name + "_" + text;
+                formName = text;
                 formText = text + " Trading";
                 formIcon = Icon.FromHandle(new Bitmap(ContentManager.GetExchangeIcon(text)).GetHicon());
                 //targetForm = GetFormByName(name + "_" + text);

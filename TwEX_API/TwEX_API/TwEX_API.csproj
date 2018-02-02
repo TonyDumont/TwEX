@@ -193,6 +193,12 @@
     <Compile Include="Controls\EarnGGManagerControl.Designer.cs">
       <DependentUpon>EarnGGManagerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ExchangeChartsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExchangeChartsControl.Designer.cs">
+      <DependentUpon>ExchangeChartsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExchangeManagerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -382,6 +388,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\EarnGGManagerControl.resx">
       <DependentUpon>EarnGGManagerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExchangeChartsControl.resx">
+      <DependentUpon>ExchangeChartsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExchangeManagerControl.resx">
       <DependentUpon>ExchangeManagerControl.cs</DependentUpon>

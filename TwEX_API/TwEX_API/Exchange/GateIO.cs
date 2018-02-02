@@ -1115,21 +1115,26 @@ namespace TwEX_API.Exchange
         }
         public static void updateExchangeTransactionList()
         {
-            List<ExchangeOrder> list = new List<ExchangeOrder>();
-
-            var dateTime = new DateTime(2017, 01, 01, 0, 0, 0, DateTimeKind.Local);
-            var dateTimeOffset = new DateTimeOffset(dateTime);
-            var unixDateTime = dateTimeOffset.ToUnixTimeSeconds();
-
-            var nowTimeOffset = new DateTimeOffset(DateTime.Now);
-            var nowUnixDateTime = nowTimeOffset.ToUnixTimeSeconds();
-
-            List<GateIOTransaction> transactionList = getDepositsWithdrawals(unixDateTime, nowUnixDateTime);
-            foreach (GateIOTransaction transaction in transactionList)
+            try
             {
-                //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
-                processTransaction(transaction.ExchangeTransaction);
+                var dateTime = new DateTime(2017, 01, 01, 0, 0, 0, DateTimeKind.Local);
+                var dateTimeOffset = new DateTimeOffset(dateTime);
+                var unixDateTime = dateTimeOffset.ToUnixTimeSeconds();
+
+                var nowTimeOffset = new DateTimeOffset(DateTime.Now);
+                var nowUnixDateTime = nowTimeOffset.ToUnixTimeSeconds();
+
+                List<GateIOTransaction> transactionList = getDepositsWithdrawals(unixDateTime, nowUnixDateTime);
+                foreach (GateIOTransaction transaction in transactionList)
+                {
+                    //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", deposit.Currency + " | " + deposit.Amount, LogManager.LogMessageType.DEBUG);
+                    processTransaction(transaction.ExchangeTransaction);
+                }
             }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "updateExchangeTransactionList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }    
             //LogManager.AddLogMessage(Name, "updateExchangeTransactionList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         private static void UpdateStatus(Boolean success, string message = "")

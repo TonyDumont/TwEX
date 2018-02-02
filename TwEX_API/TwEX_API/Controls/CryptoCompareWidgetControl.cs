@@ -188,8 +188,8 @@ namespace TwEX_API.Controls
         }
         private string GetThemeString()
         {
-            
-            if (PreferenceManager.CryptoComparePreferences.Theme != "Default")
+            if (PreferenceManager.preferences.Theme.type != PreferenceManager.ThemeType.Default)
+            //if (PreferenceManager.CryptoComparePreferences.Theme != "Default")
             {
 
                 StringBuilder builder = new StringBuilder();
@@ -310,10 +310,10 @@ namespace TwEX_API.Controls
         delegate void setPricesListCallback(string newSymbol, string newMarket);
         public void setPricesList(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setPricesListCallback d = new setPricesListCallback(setPricesList);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -460,10 +460,10 @@ namespace TwEX_API.Controls
         delegate void setAdvancedChartCallback(string newSymbol, string newMarket);
         public void setAdvancedChart(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setAdvancedChartCallback d = new setAdvancedChartCallback(setAdvancedChart);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {

@@ -14,6 +14,7 @@ namespace TwEX_API.Controls
         }
         private void ExchangeTradingControl_Load(object sender, EventArgs e)
         {
+            tickerListControl.chartControl = exchangeChartsControl;
             UpdateUI(true);
         }
         #endregion
@@ -33,6 +34,8 @@ namespace TwEX_API.Controls
                 balanceListControl.SetExchange(exchange);
                 tickerListControl.SetExchange(exchange);
                 historyTabControl.SetExchange(exchange);
+                exchangeChartsControl.SetExchange(exchange);
+
                 UpdateUI(true);
             }
             return true;
@@ -51,6 +54,7 @@ namespace TwEX_API.Controls
                 balanceListControl.UpdateUI(resize);
                 tickerListControl.UpdateUI(resize);
                 historyTabControl.UpdateUI(resize);
+
 
                 if (resize)
                 {

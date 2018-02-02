@@ -92,6 +92,7 @@
             this.listView.UseFiltering = true;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
+            this.listView.ItemActivate += new System.EventHandler(this.listView_ItemActivate);
             // 
             // column_symbol
             // 
