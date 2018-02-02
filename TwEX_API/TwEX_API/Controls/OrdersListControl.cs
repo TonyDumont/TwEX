@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Controls
 {
@@ -69,7 +70,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                listView.SetObjects(ExchangeManager.Orders.Where(item => item.exchange == ExchangeName && item.open == OpenOrders));
+                listView.SetObjects(ExchangeManager.Orders.Where(item => item.exchange == ExchangeName && item.open == OpenOrders).OrderByDescending(item => item.date));
 
                 if (resize)
                 {
@@ -99,6 +100,24 @@ namespace TwEX_API.Controls
                 }
                 column_market.Width += listView.RowHeightEffective;
                 column_symbol.Width += listView.RowHeightEffective;
+            }
+        }
+        #endregion
+
+        #region Formatters
+        private void ListView_FormatCell(object sender, FormatCellEventArgs e)
+        {
+            if (e.ColumnIndex == column_type.Index)
+            {
+                ExchangeOrder item = (ExchangeOrder)e.Model;
+                if (item.type == "buy")
+                {
+                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Green;
+                }
+                else
+                {
+                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Red;
+                }
             }
         }
         #endregion

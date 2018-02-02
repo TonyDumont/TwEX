@@ -27,15 +27,10 @@ namespace TwEX_API.Controls
         }
         private void InitializeColumns()
         {
-            //column_Icon.ImageGetter = new ImageGetterDelegate(aspect_Icon);
             column_Symbol.ImageGetter = new ImageGetterDelegate(aspect_Icon);
-            
-            //column_Status.ImageGetter = new ImageGetterDelegate(aspect_Status);
-            //column_Tickers.AspectGetter = new AspectGetterDelegate(aspect_TickerCount);
             column_Orders.AspectGetter = new AspectGetterDelegate(aspect_TotalInBTCOrders);
             column_TotalInBTC.AspectGetter = new AspectGetterDelegate(aspect_TotalInBTC);
             column_TotalInUSD.AspectGetter = new AspectGetterDelegate(aspect_TotalInUSD);
-            
         }
         #endregion
 
@@ -66,12 +61,21 @@ namespace TwEX_API.Controls
             }
             else
             {
-                List<ExchangeManager.ExchangeBalance> list = ExchangeManager.Balances.Where(item => item.Exchange == ExchangeName && item.Balance > 0).ToList();
+                List<ExchangeManager.ExchangeBalance> list = ExchangeManager.Balances.Where(item => item.Exchange == ExchangeName && item.Balance > 0).OrderByDescending(item => item.TotalInBTC).ToList();
+
+                if (list.Sum(item => item.TotalInBTCOrders) > 0)
+                {
+                    column_Orders.IsVisible = true;
+                }
+                else
+                {
+                    column_Orders.IsVisible = false;
+                }
+                listView.RebuildColumns();
                 listView.SetObjects(list);
+
                 toolStripLabel_title.Text = list.Count + " Balances";
                 toolStripLabel_totals.Text = "(" + list.Sum(item => item.TotalInUSD).ToString("C") + ") " + list.Sum(item => item.TotalInBTC).ToString("N8");
-                //List<ExchangeManager.ExchangeBalance> list = ExchangeManager.Balances.Where(item => item.Balance > 0).ToList();
-
 
                 if (resize)
                 {

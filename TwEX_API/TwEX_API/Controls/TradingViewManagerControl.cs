@@ -27,6 +27,8 @@ namespace TwEX_API.Controls
             toolStripDropDownButton_options.Image = ContentManager.GetIcon("Options");
             toolStripDropDownButton_style.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style.ToString();
 
+
+
             toolStripRadioButton_full.Image = ContentManager.GetSymbolIcon(PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol);
             toolStripRadioButton_btc.Image = ContentManager.GetSymbolIcon("BTC");
             toolStripRadioButton_usd.Image = ContentManager.GetIcon("USDSymbol");
@@ -95,13 +97,14 @@ namespace TwEX_API.Controls
         #region Updaters
         private void UpdateOptionsMenu()
         {
+            // BOOLEANS
             foreach (var item in toolStripDropDownButton_options.DropDownItems)
             {
                 if (item.GetType().Equals(typeof(ToolStripMenuItem)))
                 {
                     ToolStripMenuItem menuItem = item as ToolStripMenuItem;
 
-                    if (menuItem.Tag.ToString() != "theme")
+                    if (menuItem.Tag.ToString() != "theme" && menuItem.Tag.ToString() != "style")
                     {
                         PropertyInfo pi = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType().GetProperty(menuItem.Tag.ToString());
                         menuItem.Checked = (bool)(pi.GetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, null));
@@ -109,7 +112,7 @@ namespace TwEX_API.Controls
                     //LogManager.AddLogMessage(Name, "UpdateOptionsMenu", menuItem.Text + " | " + menuItem.Tag, LogManager.LogMessageType.DEBUG);
                 }
             }
-
+            // THEME
             if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme == TradingViewColorTheme.Light)
             {
                 toolStripMenuItem_light.Checked = true;
@@ -119,6 +122,18 @@ namespace TwEX_API.Controls
             {
                 toolStripMenuItem_light.Checked = false;
                 toolStripMenuItem_dark.Checked = true;
+            }
+            // STYLE
+            foreach (ToolStripMenuItem item in toolStripMenuItem_BarStyle.DropDownItems)
+            {
+                if (item.Tag.ToString() == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style.ToString())
+                {
+                    item.Checked = true;
+                }
+                else
+                {
+                    item.Checked = false;
+                }
             }
         }
         private void UpdateExchangeMenus()
@@ -144,15 +159,25 @@ namespace TwEX_API.Controls
 
             foreach (TradingViewChartStyle type in values)
             {
-                //LogManager.AddLogMessage(Name, "UpdateStyleMenu", type.ToString() + " | " + type.GetHashCode(), LogManager.LogMessageType.DEBUG);
-
+                bool isSelected = (type == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style);
+                // TOOLSTRIP DROPDOWN
                 ToolStripMenuItem menuItem = new ToolStripMenuItem()
                 {
                     Text = type.ToString(),
-                    Tag = type.GetHashCode()
+                    Tag = type.GetHashCode(),
+                    Checked = isSelected
                 };
-
                 toolStripDropDownButton_style.DropDownItems.Add(menuItem);
+
+                // OPTIONS MENU
+                ToolStripMenuItem barItem = new ToolStripMenuItem()
+                {
+                    Text = type.ToString(),
+                    Tag = type.GetHashCode(),
+                    Checked = isSelected
+                };
+                toolStripMenuItem_BarStyle.DropDownItems.Add(barItem);
+
             }
         }
         #endregion
@@ -545,7 +570,7 @@ namespace TwEX_API.Controls
                 */
                 default:
                     {
-                        //System.Console.WriteLine("Other number");
+                        LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "NOTDEFINED : " + propertyName, LogManager.LogMessageType.OTHER);
                         break;
                     }
 
@@ -555,6 +580,20 @@ namespace TwEX_API.Controls
         {
             //LogManager.AddLogMessage(Name, "toolStripDropDownButton_style_DropDownItemClicked", e.ClickedItem.Text + " | " + e.ClickedItem.Tag, LogManager.LogMessageType.DEBUG);
             toolStripDropDownButton_style.Text = e.ClickedItem.Text;
+            UpdateOptionsMenu();
+            /*
+            foreach(ToolStripMenuItem item in toolStripMenuItem_BarStyle.DropDownItems)
+            {
+                if (item.Text == e.ClickedItem.Text)
+                {
+                    item.Checked = true;
+                }
+                else
+                {
+                    item.Checked = false;
+                }
+            }
+            */
             PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style = (TradingViewChartStyle)Enum.Parse(typeof(TradingViewChartStyle), e.ClickedItem.Text);
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
             SetFullView();

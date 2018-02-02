@@ -88,10 +88,12 @@
             this.listView.Size = new System.Drawing.Size(504, 324);
             this.listView.SortGroupItemsByPrimaryColumn = false;
             this.listView.TabIndex = 4;
+            this.listView.UseCellFormatEvents = true;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.UseFiltering = true;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
+            this.listView.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.ListView_FormatCell);
             this.listView.ItemActivate += new System.EventHandler(this.listView_ItemActivate);
             // 
             // column_symbol

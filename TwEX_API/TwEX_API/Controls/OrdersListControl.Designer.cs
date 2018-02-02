@@ -42,8 +42,8 @@
             // listView
             // 
             this.listView.AllColumns.Add(this.column_date);
-            this.listView.AllColumns.Add(this.column_market);
             this.listView.AllColumns.Add(this.column_symbol);
+            this.listView.AllColumns.Add(this.column_market);
             this.listView.AllColumns.Add(this.column_amount);
             this.listView.AllColumns.Add(this.column_type);
             this.listView.AllColumns.Add(this.column_rate);
@@ -51,8 +51,8 @@
             this.listView.CellEditUseWholeCell = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.column_date,
-            this.column_market,
             this.column_symbol,
+            this.column_market,
             this.column_amount,
             this.column_type,
             this.column_rate,
@@ -75,27 +75,32 @@
             this.listView.Size = new System.Drawing.Size(482, 293);
             this.listView.SortGroupItemsByPrimaryColumn = false;
             this.listView.TabIndex = 4;
+            this.listView.UseCellFormatEvents = true;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.UseFiltering = true;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
+            this.listView.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.ListView_FormatCell);
             // 
             // column_date
             // 
             this.column_date.AspectName = "date";
+            this.column_date.AspectToStringFormat = "{0:MM/dd/yyyy HH:mm tt}";
             this.column_date.Text = "Date";
             // 
             // column_market
             // 
-            this.column_market.AspectName = "market";
-            this.column_market.Text = "Market";
+            this.column_market.AspectName = "";
+            this.column_market.Text = "Mkt.";
             this.column_market.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_market.Width = 35;
             // 
             // column_symbol
             // 
-            this.column_symbol.AspectName = "symbol";
-            this.column_symbol.Text = "Symbol";
+            this.column_symbol.AspectName = "";
+            this.column_symbol.Text = "Sym.";
             this.column_symbol.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_symbol.Width = 35;
             // 
             // column_amount
             // 
@@ -125,12 +130,12 @@
             this.column_total.Text = "Total";
             this.column_total.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // OpenOrdersListControl
+            // OrdersListControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listView);
-            this.Name = "OpenOrdersListControl";
+            this.Name = "OrdersListControl";
             this.Size = new System.Drawing.Size(482, 293);
             this.Load += new System.EventHandler(this.OpenOrdersListControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();

@@ -60,6 +60,7 @@
             this.toolStripMenuItem_theme = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_light = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_dark = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton_refresh = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_exchange = new System.Windows.Forms.ToolStripDropDownButton();
@@ -71,14 +72,15 @@
             this.toolStripLabel_symbol = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_style = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripRadioButton_full = new TwEX_API.ToolStripRadioButton();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripRadioButton_btc = new TwEX_API.ToolStripRadioButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripRadioButton_usd = new TwEX_API.ToolStripRadioButton();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_BarStyle = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripRadioButton_full = new TwEX_API.ToolStripRadioButton();
+            this.toolStripRadioButton_btc = new TwEX_API.ToolStripRadioButton();
+            this.toolStripRadioButton_usd = new TwEX_API.ToolStripRadioButton();
             this.toolStripRadioButton_custom = new TwEX_API.ToolStripRadioButton();
-            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.tabControl.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -198,7 +200,9 @@
             this.toolStripMenuItem_hotlist,
             this.toolStripMenuItem_calendar,
             this.toolStripSeparator13,
-            this.toolStripMenuItem_theme});
+            this.toolStripMenuItem_theme,
+            this.toolStripSeparator15,
+            this.toolStripMenuItem_BarStyle});
             this.toolStripDropDownButton_options.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_options.Image")));
             this.toolStripDropDownButton_options.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_options.Name = "toolStripDropDownButton_options";
@@ -355,16 +359,22 @@
             // toolStripMenuItem_light
             // 
             this.toolStripMenuItem_light.Name = "toolStripMenuItem_light";
-            this.toolStripMenuItem_light.Size = new System.Drawing.Size(100, 22);
+            this.toolStripMenuItem_light.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_light.Tag = "light";
             this.toolStripMenuItem_light.Text = "Light";
             // 
             // toolStripMenuItem_dark
             // 
             this.toolStripMenuItem_dark.Name = "toolStripMenuItem_dark";
-            this.toolStripMenuItem_dark.Size = new System.Drawing.Size(100, 22);
+            this.toolStripMenuItem_dark.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem_dark.Tag = "dark";
             this.toolStripMenuItem_dark.Text = "Dark";
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButton_refresh
             // 
@@ -463,6 +473,34 @@
             this.toolStripDropDownButton_style.Text = "Bars";
             this.toolStripDropDownButton_style.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_style_DropDownItemClicked);
             // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(199, 6);
+            // 
+            // toolStripMenuItem_BarStyle
+            // 
+            this.toolStripMenuItem_BarStyle.Name = "toolStripMenuItem_BarStyle";
+            this.toolStripMenuItem_BarStyle.Size = new System.Drawing.Size(202, 22);
+            this.toolStripMenuItem_BarStyle.Tag = "style";
+            this.toolStripMenuItem_BarStyle.Text = "BAR STYLE";
+            this.toolStripMenuItem_BarStyle.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_style_DropDownItemClicked);
+            // 
             // toolStripRadioButton_full
             // 
             this.toolStripRadioButton_full.Checked = true;
@@ -479,11 +517,6 @@
             this.toolStripRadioButton_full.Text = "FULL";
             this.toolStripRadioButton_full.Click += new System.EventHandler(this.toolStripRadioButton_Click);
             // 
-            // toolStripSeparator10
-            // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolStripRadioButton_btc
             // 
             this.toolStripRadioButton_btc.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
@@ -497,11 +530,6 @@
             this.toolStripRadioButton_btc.Tag = "1";
             this.toolStripRadioButton_btc.Text = "BTC";
             this.toolStripRadioButton_btc.Click += new System.EventHandler(this.toolStripRadioButton_Click);
-            // 
-            // toolStripSeparator11
-            // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripRadioButton_usd
             // 
@@ -517,11 +545,6 @@
             this.toolStripRadioButton_usd.Text = "USD";
             this.toolStripRadioButton_usd.Click += new System.EventHandler(this.toolStripRadioButton_Click);
             // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolStripRadioButton_custom
             // 
             this.toolStripRadioButton_custom.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
@@ -535,12 +558,6 @@
             this.toolStripRadioButton_custom.Tag = "3";
             this.toolStripRadioButton_custom.Text = "CUSTOM";
             this.toolStripRadioButton_custom.Click += new System.EventHandler(this.toolStripRadioButton_Click);
-            // 
-            // toolStripSeparator14
-            // 
-            this.toolStripSeparator14.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(6, 25);
             // 
             // TradingViewManagerControl
             // 
@@ -611,5 +628,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_light;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_dark;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_BarStyle;
     }
 }

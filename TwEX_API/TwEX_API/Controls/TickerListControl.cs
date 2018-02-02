@@ -50,11 +50,9 @@ namespace TwEX_API.Controls
             {
                 ExchangeName = exchange;
 
-                List<ExchangeManager.ExchangeTicker> list = ExchangeManager.Tickers.Where(item => item.exchange == ExchangeName).ToList();
+                List<ExchangeTicker> list = Tickers.Where(item => item.exchange == ExchangeName).ToList();
                 //LogManager.AddDebugMessage(this.Name, "ExchangeTickerListControl_Load", "list count=" + list.Count + " | " + exchange);
                 var markets = list.Select(p => p.market).OrderByDescending(m => m).Distinct();
-                //List<string> markets = list.Select(p => p.market).Distinct().ToList();
-                //markets = markets.Sort(item => item.ToString());
                 // CLEAR MARKET BUTTONS
                 foreach (ToolStripItem item in toolStrip.Items)
                 {
@@ -64,8 +62,6 @@ namespace TwEX_API.Controls
                     }
                 }
 
-                
-
                 foreach (string market in markets)
                 {
                     //LogManager.AddDebugMessage(this.Name, "ExchangeTickerListControl_Load", "market=" + market.ToString());
@@ -73,7 +69,8 @@ namespace TwEX_API.Controls
                     {
                         Text = market,
                         RadioButtonGroupId = 1,
-                        Alignment = ToolStripItemAlignment.Right
+                        Alignment = ToolStripItemAlignment.Right,
+                        Image = ContentManager.GetSymbolIcon(market)
                     };
                     button.Click += new EventHandler(marketButton_Click);
                     toolStrip.Items.Add(button);
@@ -85,6 +82,7 @@ namespace TwEX_API.Controls
                 {
                     Text = "ALL",
                     RadioButtonGroupId = 1,
+                    Image = Properties.Resources.ConnectionStatus_ACTIVE,
                     Checked = true,
                     Alignment = ToolStripItemAlignment.Right
                 };
@@ -106,7 +104,7 @@ namespace TwEX_API.Controls
             }
             else
             {     
-                List<ExchangeManager.ExchangeTicker> list = ExchangeManager.Tickers.Where(item => item.exchange == ExchangeName).ToList();
+                List<ExchangeTicker> list = Tickers.Where(item => item.exchange == ExchangeName).OrderBy(item => item.symbol).ToList();
                 //LogManager.AddLogMessage(Name, "UpdateUI", "selectedMarket=" + CurrentMarket, LogManager.LogMessageType.DEBUG);
 
                 if (CurrentMarket == "ALL")
@@ -164,8 +162,8 @@ namespace TwEX_API.Controls
                     listWidth += col.Width;
                 }
 
-                column_symbol.Width += iconSize;
-                listWidth += iconSize;
+                column_symbol.Width += (iconSize * 2);
+                listWidth += (iconSize * 2);
                 PreferredWidth = listWidth + (iconSize * 2);
                 //LogManager.AddLogMessage(Name, "ResizeUI", "PreferredWidth = " + PreferredWidth);
             }
@@ -243,6 +241,24 @@ namespace TwEX_API.Controls
             CurrentMarket = item.Text;
             //LogManager.AddLogMessage(Name, "marketButton_Click", "marketClicked=" + marketClicked);
             UpdateUI(true);
+        }
+        #endregion
+
+        #region Formatters
+        private void ListView_FormatCell(object sender, FormatCellEventArgs e)
+        {
+            if (e.ColumnIndex == column_change.Index)
+            {
+                ExchangeTicker item = (ExchangeTicker)e.Model;
+                if (item.change > 0)
+                {
+                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Green;
+                }
+                else
+                {
+                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Red;
+                }
+            }
         }
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Forms;
 using TwEX_API.Market;
 using static TwEX_API.Market.TradingView;
@@ -33,12 +34,14 @@ namespace TwEX_API.Controls
         {
             toolStripRadioButton_CryptoCompare.Image = ContentManager.GetIcon("CryptoCompare");
             toolStripRadioButton_TradingView.Image = ContentManager.GetIcon("TradingView");
-
-            cryptoCompare.setAdvancedChart("BTC", "USD");
+            toolStripDropDownButton_options.Image = ContentManager.GetIcon("Options");
+            UpdateStyleMenu();
+            //UpdateExchangeMenus();
+            UpdateOptionsMenu();
+            //cryptoCompare.setAdvancedChart("BTC", "USD");
 
             tabPage_CryptoCompare.Controls.Add(cryptoCompare);
             tabPage_TradingView.Controls.Add(tradingView);
-
         }
         #endregion
 
@@ -61,6 +64,7 @@ namespace TwEX_API.Controls
                 {
                     toolStripRadioButton_TradingView.Visible = true;
                     toolStripRadioButton_TradingView.Checked = true;
+                     
                     tabControl.SelectedIndex = 1;
                 }
                 else
@@ -69,6 +73,7 @@ namespace TwEX_API.Controls
                     toolStripRadioButton_CryptoCompare.Checked = true;
                     tabControl.SelectedIndex = 0;
                 }
+                toolStripDropDownButton_options.Visible = toolStripRadioButton_TradingView.Visible;
                 UpdateUI(true);
             }
             return true;
@@ -196,13 +201,107 @@ namespace TwEX_API.Controls
             if (item.Text == "CryptoCompare")
             {
                 tabControl.SelectedIndex = 0;
+                toolStripDropDownButton_options.Visible = false;
             }
             else
             {
                 tabControl.SelectedIndex = 1;
+                toolStripDropDownButton_options.Visible = true;
             }
 
             UpdateUI(true);
+        }
+        #endregion
+
+        #region Updaters
+        private void UpdateOptionsMenu()
+        {
+            // BOOLEANS
+            foreach (var item in toolStripDropDownButton_options.DropDownItems)
+            {
+                if (item.GetType().Equals(typeof(ToolStripMenuItem)))
+                {
+                    ToolStripMenuItem menuItem = item as ToolStripMenuItem;
+
+                    if (menuItem.Tag.ToString() != "theme" && menuItem.Tag.ToString() != "style")
+                    {
+                        PropertyInfo pi = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType().GetProperty(menuItem.Tag.ToString());
+                        menuItem.Checked = (bool)(pi.GetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, null));
+                    }
+                    //LogManager.AddLogMessage(Name, "UpdateOptionsMenu", menuItem.Text + " | " + menuItem.Tag, LogManager.LogMessageType.DEBUG);
+                }
+            }
+            // THEME
+            if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme == TradingViewColorTheme.Light)
+            {
+                toolStripMenuItem_light.Checked = true;
+                toolStripMenuItem_dark.Checked = false;
+            }
+            else
+            {
+                toolStripMenuItem_light.Checked = false;
+                toolStripMenuItem_dark.Checked = true;
+            }
+            // STYLE
+            foreach (ToolStripMenuItem item in toolStripMenuItem_BarStyle.DropDownItems)
+            {
+                if (item.Tag.ToString() == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style.ToString())
+                {
+                    item.Checked = true;
+                }
+                else
+                {
+                    item.Checked = false;
+                }
+            }
+        }
+        /*
+        private void UpdateExchangeMenus()
+        {
+            toolStripDropDownButton_exchange.DropDownItems.Clear();
+            exchanges = Exchanges.Where(item => item.TradingView.Length > 0).ToList();
+
+            foreach (ExchangeManager.Exchange exchange in exchanges)
+            {
+                var newItem = new ToolStripButton(exchange.Name)
+                {
+                    Image = ContentManager.GetExchangeIcon(exchange.Name),
+                    Text = exchange.TradingView
+                };
+                toolStripDropDownButton_exchange.DropDownItems.Add(newItem);
+            }
+            SetExchangeMenu();
+        }
+        */
+        private void UpdateStyleMenu()
+        {
+            var values = EnumUtils.GetValues<TradingViewChartStyle>();
+            //toolStripDropDownButton_style.DropDownItems.Clear();
+
+            foreach (TradingViewChartStyle type in values)
+            {
+                
+                bool isSelected = (type == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style);
+                /*
+                // TOOLSTRIP DROPDOWN
+                ToolStripMenuItem menuItem = new ToolStripMenuItem()
+                {
+                    Text = type.ToString(),
+                    Tag = type.GetHashCode(),
+                    Checked = isSelected
+                };
+                toolStripDropDownButton_style.DropDownItems.Add(menuItem);
+                */
+                // OPTIONS MENU
+                ToolStripMenuItem barItem = new ToolStripMenuItem()
+                {
+                    Text = type.ToString(),
+                    Tag = type.GetHashCode(),
+                    Checked = isSelected
+                };
+                toolStripMenuItem_BarStyle.DropDownItems.Add(barItem);
+
+            }
         }
         #endregion
     }
