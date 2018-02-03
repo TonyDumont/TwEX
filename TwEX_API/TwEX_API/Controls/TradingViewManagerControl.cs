@@ -552,22 +552,6 @@ namespace TwEX_API.Controls
                         break;
                 }
                 
-                /*
-
-
-
-
-                */
-
-                /*
-            case 3:
-            case 4:
-            case 5:
-                {
-                    System.Console.WriteLine("Medium number");
-                    break;
-                }
-                */
                 default:
                     {
                         LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "NOTDEFINED : " + propertyName, LogManager.LogMessageType.OTHER);

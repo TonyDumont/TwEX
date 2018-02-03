@@ -1507,7 +1507,12 @@ namespace TwEX_API
             public string Url { get; set; }
             public string IconUrl { get; set; }
             public string USDSymbol { get; set; }
+
+            public string Symbol { get; set; } = "LTC";
+            public string Market { get; set; } = "BTC";
+            public int ChartIndex { get; set; } = 0;
             public string TradingView { get; set; }
+            public TradingViewAdvancedChartParameters AdvancedChartParameters { get; set; } = new TradingViewAdvancedChartParameters();
             public bool Active { get; set; } = true;
             // TOTALS
             public int CoinCount { get { return BalanceList.FindAll(e => e.Balance > 0).Count; } }
@@ -1900,12 +1905,6 @@ namespace TwEX_API
         }
         public static void UpdateForms()
         {
-            /*
-            if (exchangeEditorControl != null)
-            {
-                exchangeEditorControl.UpdateUI();
-            }
-            */
             foreach(Form form in Application.OpenForms)
             {
                 /*
@@ -1917,7 +1916,6 @@ namespace TwEX_API
                                 */
                 //form.Refresh();
             }
-
         }
         public static void UpdateArbitrageManager(bool resize = false)
         {
@@ -3100,6 +3098,7 @@ namespace TwEX_API
                     break;
 
                 case PreferenceType.Exchange:
+                    ExchangePreferences.Exchanges = Exchanges.ToList();
                     json = JsonConvert.SerializeObject(ExchangePreferences);
                     break;
 

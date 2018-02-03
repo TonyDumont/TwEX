@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows.Forms;
-using TwEX_API.Market;
 using static TwEX_API.Market.TradingView;
 
 namespace TwEX_API.Controls
@@ -9,11 +8,7 @@ namespace TwEX_API.Controls
     public partial class ExchangeChartsControl : UserControl
     {
         #region Properties
-        private string symbol = "BTC";
-        private string market = "USD";
-        private string ExchangeName = String.Empty;
         private ExchangeManager.Exchange Exchange;
-
         private CryptoCompareWidgetControl cryptoCompare = new CryptoCompareWidgetControl()
         {
             Dock = DockStyle.Fill,
@@ -38,7 +33,6 @@ namespace TwEX_API.Controls
             UpdateStyleMenu();
             //UpdateExchangeMenus();
             UpdateOptionsMenu();
-            //cryptoCompare.setAdvancedChart("BTC", "USD");
 
             tabPage_CryptoCompare.Controls.Add(cryptoCompare);
             tabPage_TradingView.Controls.Add(tradingView);
@@ -46,79 +40,7 @@ namespace TwEX_API.Controls
         #endregion
 
         #region Delegates
-
-        delegate bool SetExchangeCallback(string exchange);
-        public bool SetExchange(string exchange)
-        {
-            if (InvokeRequired)
-            {
-                SetExchangeCallback d = new SetExchangeCallback(SetExchange);
-                Invoke(d, new object[] { });
-            }
-            else
-            {
-                ExchangeName = exchange;
-                Exchange = ExchangeManager.getExchange(ExchangeName);
-
-                if (Exchange.TradingView.Length > 0)
-                {
-                    toolStripRadioButton_TradingView.Visible = true;
-                    toolStripRadioButton_TradingView.Checked = true;
-                     
-                    tabControl.SelectedIndex = 1;
-                }
-                else
-                {
-                    toolStripRadioButton_TradingView.Visible = false;
-                    toolStripRadioButton_CryptoCompare.Checked = true;
-                    tabControl.SelectedIndex = 0;
-                }
-                toolStripDropDownButton_options.Visible = toolStripRadioButton_TradingView.Visible;
-                UpdateUI(true);
-            }
-            return true;
-        }
-
-        delegate bool SetChartsCallback(string targetSymbol, string targetMarket);
-        public bool SetCharts(string targetSymbol, string targetMarket)
-        {
-            if (InvokeRequired)
-            {
-                SetChartsCallback d = new SetChartsCallback(SetCharts);
-                Invoke(d, new object[] { targetSymbol, targetMarket });
-            }
-            else
-            {
-                //ExchangeName = exchange;
-                symbol = targetSymbol;
-                market = targetMarket;
-
-                toolStripLabel_symbol.Text = symbol;
-                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
-                toolStripLabel_market.Text = market;
-                toolStripLabel_market.Image = ContentManager.GetSymbolIcon(market);
-
-                cryptoCompare.setAdvancedChart(symbol, market);
-
-                if (Exchange.TradingView.Length > 0)
-                {
-                    TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
-                    {
-                        exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), Exchange.TradingView, true),
-                        allow_symbol_change = false,
-                        hide_top_toolbar = false,
-                        hide_side_toolbar = false,
-                        withdateranges = true,
-                        symbol = symbol,
-                        market = market
-                    };
-                    tradingView.setAdvancedChart(parameters);
-                }
-
-                UpdateUI(true);
-            }
-            return true;
-        }
+        
 
         delegate bool UpdateUICallback(bool resize = false);
         public bool UpdateUI(bool resize = false)
@@ -130,6 +52,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                tabControl.SelectedIndex = Exchange.ChartIndex;
                 //toolStripLabel_symbol.Text = symbol + " / " + market;
                 //cryptoCompare.setAdvancedChart(symbol, market);
                 /*
@@ -197,18 +120,195 @@ namespace TwEX_API.Controls
         private void radioButton_Click(object sender, EventArgs e)
         {
             ToolStripRadioButton item = (ToolStripRadioButton)sender;
+            Exchange.ChartIndex = Convert.ToInt16(item.Tag);
 
             if (item.Text == "CryptoCompare")
             {
-                tabControl.SelectedIndex = 0;
+                //tabControl.SelectedIndex = 0;
                 toolStripDropDownButton_options.Visible = false;
             }
             else
             {
-                tabControl.SelectedIndex = 1;
+                //tabControl.SelectedIndex = 1;
                 toolStripDropDownButton_options.Visible = true;
             }
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+            SetChartIndex(Exchange.ChartIndex);
+            UpdateUI(true);
+        }
+        private void toolStripDropDownButton_options_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", e.ClickedItem.Text + " | " + e.ClickedItem.Tag, LogManager.LogMessageType.OTHER);
+            string propertyName = e.ClickedItem.Tag.ToString();
 
+            switch (propertyName)
+            {
+                case "hide_top_toolbar":
+                case "withdateranges":
+                case "allow_symbol_change":
+                case "save_image":
+                case "hide_side_toolbar":
+                case "hideideas":
+                case "hideideasbutton":
+                case "enable_publishing":
+                case "ShowWatchlist":
+                case "ShowIndicators":
+                case "details":
+                case "stocktwits":
+                case "headlines":
+                case "hotlist":
+                case "calendar":
+                    {
+                        //Type type = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType();
+                        Type type = Exchange.AdvancedChartParameters.GetType();
+                        PropertyInfo prop = type.GetProperty(propertyName);
+                        bool value = (bool)(prop.GetValue(Exchange.AdvancedChartParameters, null));
+                        prop.SetValue(Exchange.AdvancedChartParameters, !value, null);
+                        //LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "SWITCH : " + propertyName + " : " + value, LogManager.LogMessageType.OTHER);
+                        UpdateOptionsMenu();
+                        //PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+                        break;
+                    }
+
+                case "light":
+                case "dark":
+                    {
+                        //LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "LIGHT OR DARK : " + propertyName, LogManager.LogMessageType.OTHER);
+                        if (propertyName == "light")
+                        {
+                            //PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme = TradingViewColorTheme.Light;
+                            Exchange.AdvancedChartParameters.theme = TradingViewColorTheme.Light;
+                        }
+                        else
+                        {
+                            Exchange.AdvancedChartParameters.theme = TradingViewColorTheme.Dark;
+
+                        }
+                        UpdateOptionsMenu();
+                        //PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+                        //UpdateUI(true);
+                        break;
+                    }
+
+                default:
+                    {
+                        LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "NOTDEFINED : " + propertyName, LogManager.LogMessageType.OTHER);
+                        break;
+                    }
+            }
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+            tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
+            UpdateUI(true);
+        }
+        #endregion
+
+        #region Setters
+        delegate bool SetExchangeCallback(string exchange);
+        public bool SetExchange(string exchange)
+        {
+            if (InvokeRequired)
+            {
+                SetExchangeCallback d = new SetExchangeCallback(SetExchange);
+                Invoke(d, new object[] { });
+            }
+            else
+            {
+                Exchange = ExchangeManager.getExchange(exchange);
+                toolStripLabel_symbol.Text = Exchange.Symbol;
+                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(Exchange.Symbol);
+                toolStripLabel_market.Text = Exchange.Market;
+                toolStripLabel_market.Image = ContentManager.GetSymbolIcon(Exchange.Market);
+                cryptoCompare.setAdvancedChart(Exchange.Symbol, "USD,BTC");
+                SetChartIndex(Exchange.ChartIndex);
+            }
+            return true;
+        }
+
+        delegate bool SetChartsCallback(string symbol, string market);
+        public bool SetCharts(string symbol, string market)
+        {
+            if (InvokeRequired)
+            {
+                SetChartsCallback d = new SetChartsCallback(SetCharts);
+                Invoke(d, new object[] { symbol, market });
+            }
+            else
+            {
+                //symbol = targetSymbol;
+                //market = targetMarket;
+                Exchange.Symbol = symbol;
+                Exchange.Market = market;
+
+                toolStripLabel_symbol.Text = symbol;
+                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
+                toolStripLabel_market.Text = market;
+                toolStripLabel_market.Image = ContentManager.GetSymbolIcon(market);
+
+                cryptoCompare.setAdvancedChart(symbol, "USD,BTC,GOLD");
+                /*
+                if (Exchange.TradingView.Length > 0)
+                {
+                    Exchange.AdvancedChartParameters.symbol = symbol;
+                    Exchange.AdvancedChartParameters.market = market;
+                    tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
+                }
+
+                if(Exchange.ChartIndex > 0)
+                {
+                    toolStripDropDownButton_options.Visible = true;
+                }
+                else
+                {
+                    toolStripDropDownButton_options.Visible = false;
+                }
+                */
+                SetChartIndex(Exchange.ChartIndex);
+                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+                UpdateUI(true);
+            }
+            return true;
+        }
+
+        private void SetChartIndex(int index)
+        {
+            if (index > 0)
+            {
+                //toolStripRadioButton_TradingView.Visible = true;
+                toolStripRadioButton_TradingView.Checked = true;
+                toolStripDropDownButton_options.Visible = true;
+                /*
+                if (Exchange.AdvancedChartParameters.exchange == TradingViewCryptoExchange.none)
+                {
+                    Exchange.AdvancedChartParameters.exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), Exchange.TradingView);
+                    PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+                }
+                
+                if (Exchange.TradingView.Length > 0)
+                {
+                    Exchange.AdvancedChartParameters.symbol = symbol;
+                    Exchange.AdvancedChartParameters.market = market;
+                    tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
+                }
+
+                if (Exchange.ChartIndex > 0)
+                {
+                    toolStripDropDownButton_options.Visible = true;
+                }
+                else
+                {
+                    toolStripDropDownButton_options.Visible = false;
+                }
+                */
+                tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
+            }
+            else
+            {
+                //toolStripRadioButton_TradingView.Visible = false;
+                toolStripRadioButton_CryptoCompare.Checked = true;
+                toolStripDropDownButton_options.Visible = false;
+            }
+            //toolStripDropDownButton_options.Visible = toolStripRadioButton_TradingView.Visible;    
+            tabControl.SelectedIndex = index;
             UpdateUI(true);
         }
         #endregion
@@ -225,14 +325,17 @@ namespace TwEX_API.Controls
 
                     if (menuItem.Tag.ToString() != "theme" && menuItem.Tag.ToString() != "style")
                     {
-                        PropertyInfo pi = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType().GetProperty(menuItem.Tag.ToString());
-                        menuItem.Checked = (bool)(pi.GetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, null));
+                        //PropertyInfo pi = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType().GetProperty(menuItem.Tag.ToString());
+                        PropertyInfo pi = Exchange.AdvancedChartParameters.GetType().GetProperty(menuItem.Tag.ToString());
+                        //menuItem.Checked = (bool)(pi.GetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, null));
+                        menuItem.Checked = (bool)(pi.GetValue(Exchange.AdvancedChartParameters, null));
                     }
                     //LogManager.AddLogMessage(Name, "UpdateOptionsMenu", menuItem.Text + " | " + menuItem.Tag, LogManager.LogMessageType.DEBUG);
                 }
             }
             // THEME
-            if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme == TradingViewColorTheme.Light)
+            //if (PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme == TradingViewColorTheme.Light)
+            if (Exchange.AdvancedChartParameters.theme == TradingViewColorTheme.Light)
             {
                 toolStripMenuItem_light.Checked = true;
                 toolStripMenuItem_dark.Checked = false;
@@ -245,7 +348,8 @@ namespace TwEX_API.Controls
             // STYLE
             foreach (ToolStripMenuItem item in toolStripMenuItem_BarStyle.DropDownItems)
             {
-                if (item.Tag.ToString() == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style.ToString())
+                //if (item.Tag.ToString() == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style.ToString())
+                if (item.Tag.ToString() == Exchange.AdvancedChartParameters.style.ToString())
                 {
                     item.Checked = true;
                 }
@@ -280,8 +384,8 @@ namespace TwEX_API.Controls
 
             foreach (TradingViewChartStyle type in values)
             {
-                
-                bool isSelected = (type == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style);
+                bool isSelected = (type == Exchange.AdvancedChartParameters.style);
+                //bool isSelected = (type == PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style);
                 /*
                 // TOOLSTRIP DROPDOWN
                 ToolStripMenuItem menuItem = new ToolStripMenuItem()
@@ -306,3 +410,16 @@ namespace TwEX_API.Controls
         #endregion
     }
 }
+
+/*
+TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
+{
+    exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), Exchange.TradingView, true),
+    allow_symbol_change = false,
+    hide_top_toolbar = false,
+    hide_side_toolbar = false,
+    withdateranges = true,
+    symbol = symbol,
+    market = market
+};
+*/
