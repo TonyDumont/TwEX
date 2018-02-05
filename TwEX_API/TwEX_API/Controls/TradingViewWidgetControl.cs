@@ -486,6 +486,9 @@ namespace TwEX_API.Controls
 
                     GetSizeAutoString(parameters.autosize, parameters.width, parameters.height) +
                     "\"symbol\": \"" + parameters.GetSymbolString() + "\"," +
+                    //"\"symbol\": \"" + parameters.exchange.ToString().ToUpper() + ":" + parameters.symbol.ToUpper() + parameters.market.ToUpper() + "\"," +
+                    //exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper();
+                    //"\"symbol\": \"" + parameters.exchange
                     "\"interval\": \"" + GetInterval(parameters.interval) + "\"," +
                     "\"timezone\": \"America/New_York\"," +
                     "\"theme\": \"" + parameters.theme + "\"," +

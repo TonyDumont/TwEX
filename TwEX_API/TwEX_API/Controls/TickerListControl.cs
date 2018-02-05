@@ -11,7 +11,8 @@ namespace TwEX_API.Controls
     public partial class TickerListControl : UserControl
     {
         #region Properties
-        private string ExchangeName = String.Empty;
+        //private string ExchangeName = String.Empty;
+        private ExchangeManager.Exchange Exchange;
         private string CurrentMarket = "ALL";
         public int PreferredWidth = 0;
 
@@ -48,9 +49,10 @@ namespace TwEX_API.Controls
             }
             else
             {
-                ExchangeName = exchange;
+                //ExchangeName = exchange;
+                Exchange = getExchange(exchange);
 
-                List<ExchangeTicker> list = Tickers.Where(item => item.exchange == ExchangeName).ToList();
+                List<ExchangeTicker> list = Tickers.Where(item => item.exchange == Exchange.Name).ToList();
                 //LogManager.AddDebugMessage(this.Name, "ExchangeTickerListControl_Load", "list count=" + list.Count + " | " + exchange);
                 var markets = list.Select(p => p.market).OrderByDescending(m => m).Distinct();
                 // CLEAR MARKET BUTTONS
@@ -104,7 +106,7 @@ namespace TwEX_API.Controls
             }
             else
             {     
-                List<ExchangeTicker> list = Tickers.Where(item => item.exchange == ExchangeName).OrderBy(item => item.symbol).ToList();
+                List<ExchangeTicker> list = Tickers.Where(item => item.exchange == Exchange.Name).OrderBy(item => item.symbol).ToList();
                 //LogManager.AddLogMessage(Name, "UpdateUI", "selectedMarket=" + CurrentMarket, LogManager.LogMessageType.DEBUG);
 
                 if (CurrentMarket == "ALL")
@@ -235,6 +237,20 @@ namespace TwEX_API.Controls
         #endregion
 
         #region EventHandlers
+        private void listView_ItemActivate(object sender, EventArgs e)
+        {
+            if (listView.SelectedObject != null)
+            {
+                ExchangeTicker ticker = listView.SelectedObject as ExchangeTicker;
+                //LogManager.AddLogMessage(Name, "listView_ItemActivate", ticker.exchange + " | " + ticker.symbol + " | " + ticker.market);
+                if (chartControl != null)
+                {
+                    Exchange.CurrentTicker = ticker;
+                    PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+                    chartControl.SetCharts();
+                }
+            }
+        }
         private void marketButton_Click(object sender, EventArgs e)
         {
             ToolStripRadioButton item = (ToolStripRadioButton)sender;
@@ -262,18 +278,6 @@ namespace TwEX_API.Controls
         }
         #endregion
 
-        private void listView_ItemActivate(object sender, EventArgs e)
-        {
-            if (listView.SelectedObject != null)
-            {
-                ExchangeTicker ticker = listView.SelectedObject as ExchangeTicker;
-                LogManager.AddLogMessage(Name, "listView_ItemActivate", ticker.exchange + " | " + ticker.symbol + " | " + ticker.market);
-                if (chartControl != null)
-                {
-                    chartControl.SetCharts(ticker.symbol, ticker.market);
-                }
-
-            }
-        }
+        
     }
 }

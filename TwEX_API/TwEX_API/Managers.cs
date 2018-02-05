@@ -437,53 +437,60 @@ namespace TwEX_API
         {
             Image image = Properties.Resources.ConnectionStatus_DISABLED;
             // check imagelist for exist
-            if (SymbolIconList.Images.ContainsKey(symbol.ToUpper()))
+            if (symbol != null)
             {
-                return SymbolIconList.Images[symbol];
-            }
-            else
-            {
-                // set it up for later
-                try
-                { 
-                    CryptoCompareCoin coin = CryptoComparePreferences.CoinList.FirstOrDefault(listItem => listItem.Name == symbol);
-
-                    if (coin != null)
+                if (SymbolIconList.Images.ContainsKey(symbol.ToUpper()))
+                {
+                    return SymbolIconList.Images[symbol];
+                }
+                else
+                {
+                    // set it up for later
+                    try
                     {
-                        if (coin.ImageUrl.Length > 0)
+                        CryptoCompareCoin coin = CryptoComparePreferences.CoinList.FirstOrDefault(listItem => listItem.Name == symbol);
+
+                        if (coin != null)
                         {
-                            string url = "https://www.cryptocompare.com" + coin.ImageUrl;
-                            WebClient wc = new WebClient();
-                            byte[] bytes = wc.DownloadData(url);
-                            MemoryStream ms = new MemoryStream(bytes);
-                            Image img = Image.FromStream(ms);
-
-                            if (symbol.Contains("*"))
+                            if (coin.ImageUrl.Length > 0)
                             {
-                                symbol = symbol.Replace("*", "");
+                                string url = "https://www.cryptocompare.com" + coin.ImageUrl;
+                                WebClient wc = new WebClient();
+                                byte[] bytes = wc.DownloadData(url);
+                                MemoryStream ms = new MemoryStream(bytes);
+                                Image img = Image.FromStream(ms);
+
+                                if (symbol.Contains("*"))
+                                {
+                                    symbol = symbol.Replace("*", "");
+                                }
+
+                                SymbolIconList.Images.Add(symbol.ToUpper(), img);
+                                img.Save(WorkDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+
+                                return img;
                             }
-
-                            SymbolIconList.Images.Add(symbol.ToUpper(), img);
-                            img.Save(WorkDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
-
-                            return img;
+                            else
+                            {
+                                return image;
+                            }
                         }
                         else
                         {
                             return image;
-                        }                      
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
+                        AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
+                        // USE GENERIC ICON
                         return image;
-                    }                 
+                    }
                 }
-                catch (Exception ex)
-                {
-                    AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
-                    // USE GENERIC ICON
-                    return image;
-                }
+            }
+            else
+            {
+                return image;
             }
         }
         
@@ -1508,8 +1515,9 @@ namespace TwEX_API
             public string IconUrl { get; set; }
             public string USDSymbol { get; set; }
 
-            public string Symbol { get; set; } = "LTC";
-            public string Market { get; set; } = "BTC";
+            //public string Symbol { get; set; } = "LTC";
+            //public string Market { get; set; } = "BTC";
+            public ExchangeTicker CurrentTicker { get; set; } = new ExchangeTicker() { symbol = "LTC", market = "BTC", exchange = "none" };
             public int ChartIndex { get; set; } = 0;
             public string TradingView { get; set; }
             public TradingViewAdvancedChartParameters AdvancedChartParameters { get; set; } = new TradingViewAdvancedChartParameters();

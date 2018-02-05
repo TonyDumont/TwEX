@@ -661,8 +661,8 @@ namespace TwEX_API.Market
         public class TradingViewAdvancedChartParameters
         {
             public TradingViewCryptoExchange exchange { get; set; } = TradingViewCryptoExchange.none;
-            public string symbol { get; set; } = String.Empty;
-            public string market { get; set; } = String.Empty;
+            public string symbol { get; set; } = "LTC";
+            public string market { get; set; } = "BTC";
 
             public TradingViewChartInterval interval { get; set; } = TradingViewChartInterval.Minute_15;
             public string timezone { get; set; } = "America/New_York";
@@ -726,11 +726,19 @@ namespace TwEX_API.Market
             //public TradingViewIndicator studies { get; set; }
             //public List<TradingViewIndicator> studies { get; set; } = new List<TradingViewIndicator>() { TradingViewIndicator.MACD, TradingViewIndicator.BB, TradingViewIndicator.PSAR };
             public List<TradingViewIndicator> studies { get; set; } = new List<TradingViewIndicator>();
-
+            
             public string GetSymbolString()
             {
-                return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper();
+                if (symbol != null)
+                {
+                    return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper();
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
+            
         }
         public class TradingViewCryptocurrencyMarketParameters
         {

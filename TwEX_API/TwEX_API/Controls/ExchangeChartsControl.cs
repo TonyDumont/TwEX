@@ -9,6 +9,7 @@ namespace TwEX_API.Controls
     {
         #region Properties
         private ExchangeManager.Exchange Exchange;
+        //private string symbol = String.Empty;
         private CryptoCompareWidgetControl cryptoCompare = new CryptoCompareWidgetControl()
         {
             Dock = DockStyle.Fill,
@@ -40,8 +41,6 @@ namespace TwEX_API.Controls
         #endregion
 
         #region Delegates
-        
-
         delegate bool UpdateUICallback(bool resize = false);
         public bool UpdateUI(bool resize = false)
         {
@@ -214,54 +213,45 @@ namespace TwEX_API.Controls
             else
             {
                 Exchange = ExchangeManager.getExchange(exchange);
-                toolStripLabel_symbol.Text = Exchange.Symbol;
-                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(Exchange.Symbol);
-                toolStripLabel_market.Text = Exchange.Market;
-                toolStripLabel_market.Image = ContentManager.GetSymbolIcon(Exchange.Market);
-                cryptoCompare.setAdvancedChart(Exchange.Symbol, "USD,BTC");
+                toolStripLabel_symbol.Text = Exchange.CurrentTicker.symbol;
+                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(Exchange.CurrentTicker.symbol);
+                toolStripLabel_market.Text = Exchange.CurrentTicker.market;
+                toolStripLabel_market.Image = ContentManager.GetSymbolIcon(Exchange.CurrentTicker.market);
+                cryptoCompare.setAdvancedChart(Exchange.CurrentTicker.symbol, "USD,BTC");
+                if (Exchange.TradingView.Length > 0)
+                {
+                    Exchange.AdvancedChartParameters.exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), Exchange.TradingView);
+                    Exchange.AdvancedChartParameters.symbol = Exchange.CurrentTicker.symbol;
+                    Exchange.AdvancedChartParameters.symbol = Exchange.CurrentTicker.market;
+                    toolStripRadioButton_TradingView.Visible = true;
+                }
+                else
+                {
+                    toolStripRadioButton_TradingView.Visible = false;
+                }
                 SetChartIndex(Exchange.ChartIndex);
             }
             return true;
         }
 
-        delegate bool SetChartsCallback(string symbol, string market);
-        public bool SetCharts(string symbol, string market)
+        delegate bool SetChartsCallback();
+        public bool SetCharts()
         {
             if (InvokeRequired)
             {
                 SetChartsCallback d = new SetChartsCallback(SetCharts);
-                Invoke(d, new object[] { symbol, market });
+                Invoke(d, new object[] { });
             }
             else
             {
-                //symbol = targetSymbol;
-                //market = targetMarket;
-                Exchange.Symbol = symbol;
-                Exchange.Market = market;
+                toolStripLabel_symbol.Text = Exchange.CurrentTicker.symbol;
+                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(Exchange.CurrentTicker.symbol);
+                toolStripLabel_market.Text = Exchange.CurrentTicker.market;
+                toolStripLabel_market.Image = ContentManager.GetSymbolIcon(Exchange.CurrentTicker.market);
 
-                toolStripLabel_symbol.Text = symbol;
-                toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
-                toolStripLabel_market.Text = market;
-                toolStripLabel_market.Image = ContentManager.GetSymbolIcon(market);
+                Exchange.AdvancedChartParameters.symbol = Exchange.CurrentTicker.symbol;
+                Exchange.AdvancedChartParameters.market = Exchange.CurrentTicker.market;
 
-                cryptoCompare.setAdvancedChart(symbol, "USD,BTC,GOLD");
-                /*
-                if (Exchange.TradingView.Length > 0)
-                {
-                    Exchange.AdvancedChartParameters.symbol = symbol;
-                    Exchange.AdvancedChartParameters.market = market;
-                    tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
-                }
-
-                if(Exchange.ChartIndex > 0)
-                {
-                    toolStripDropDownButton_options.Visible = true;
-                }
-                else
-                {
-                    toolStripDropDownButton_options.Visible = false;
-                }
-                */
                 SetChartIndex(Exchange.ChartIndex);
                 PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
                 UpdateUI(true);
@@ -276,29 +266,7 @@ namespace TwEX_API.Controls
                 //toolStripRadioButton_TradingView.Visible = true;
                 toolStripRadioButton_TradingView.Checked = true;
                 toolStripDropDownButton_options.Visible = true;
-                /*
-                if (Exchange.AdvancedChartParameters.exchange == TradingViewCryptoExchange.none)
-                {
-                    Exchange.AdvancedChartParameters.exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), Exchange.TradingView);
-                    PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
-                }
                 
-                if (Exchange.TradingView.Length > 0)
-                {
-                    Exchange.AdvancedChartParameters.symbol = symbol;
-                    Exchange.AdvancedChartParameters.market = market;
-                    tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
-                }
-
-                if (Exchange.ChartIndex > 0)
-                {
-                    toolStripDropDownButton_options.Visible = true;
-                }
-                else
-                {
-                    toolStripDropDownButton_options.Visible = false;
-                }
-                */
                 tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
             }
             else
@@ -306,6 +274,7 @@ namespace TwEX_API.Controls
                 //toolStripRadioButton_TradingView.Visible = false;
                 toolStripRadioButton_CryptoCompare.Checked = true;
                 toolStripDropDownButton_options.Visible = false;
+                cryptoCompare.setAdvancedChart(Exchange.CurrentTicker.symbol, "USD,BTC,GOLD");
             }
             //toolStripDropDownButton_options.Visible = toolStripRadioButton_TradingView.Visible;    
             tabControl.SelectedIndex = index;
@@ -423,3 +392,45 @@ TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartPara
     market = market
 };
 */
+
+/*
+if (Exchange.TradingView.Length > 0)
+{
+Exchange.AdvancedChartParameters.symbol = symbol;
+Exchange.AdvancedChartParameters.market = market;
+tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
+}
+
+if(Exchange.ChartIndex > 0)
+{
+toolStripDropDownButton_options.Visible = true;
+}
+else
+{
+toolStripDropDownButton_options.Visible = false;
+}
+*/
+
+/*
+            if (Exchange.AdvancedChartParameters.exchange == TradingViewCryptoExchange.none)
+            {
+                Exchange.AdvancedChartParameters.exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), Exchange.TradingView);
+                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Exchange);
+            }
+
+            if (Exchange.TradingView.Length > 0)
+            {
+                Exchange.AdvancedChartParameters.symbol = symbol;
+                Exchange.AdvancedChartParameters.market = market;
+                tradingView.setAdvancedChart(Exchange.AdvancedChartParameters);
+            }
+
+            if (Exchange.ChartIndex > 0)
+            {
+                toolStripDropDownButton_options.Visible = true;
+            }
+            else
+            {
+                toolStripDropDownButton_options.Visible = false;
+            }
+            */
