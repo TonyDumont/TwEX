@@ -18,6 +18,7 @@ namespace TwEX_API.Controls
         public string market { get; set; } = String.Empty;
         public string symbol { get; set; } = String.Empty;
 
+        public int maxListCount = 0;
         public int minChartWidth = 300;
         public int minChartHeight = 265;
         #endregion
@@ -26,6 +27,8 @@ namespace TwEX_API.Controls
         public ArbitrageItemControl()
         {
             InitializeComponent();
+            arbitrageListControl_btc.arbitrageItem = this;
+            arbitrageListControl_usd.arbitrageItem = this;
         }
         private void ArbitrageItemControl_Load(object sender, EventArgs e)
         {
@@ -113,6 +116,8 @@ namespace TwEX_API.Controls
 
                 int rowHeight = toolStrip.Height;
                 int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
+                //int listHeight = maxListCount * rowHeight;
+                //int listHeight = 8 * rowHeight;
 
                 int newHeight = listHeight + (rowHeight * 3);
                 
@@ -151,6 +156,26 @@ namespace TwEX_API.Controls
                 //LogManager.AddLogMessage(this.Name, "SetData", symbol + " | " + market, LogManager.LogMessageType.DEBUG);
                 chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
                 UpdateUI(true);
+            }
+        }
+
+        delegate void SetListCountCallback(int count);
+        public void SetListCount(int count)
+        {
+            if (InvokeRequired)
+            {
+                SetListCountCallback d = new SetListCountCallback(SetListCount);
+                Invoke(d, new object[] { count });
+            }
+            else
+            {
+                //LogManager.AddLogMessage(Name, "SetListCount", "New Count : " + maxListCount + " | " + count);
+                if (count > maxListCount)
+                {
+                    maxListCount = count;
+                    LogManager.AddLogMessage(Name, "SetListCount", "New Count : " + maxListCount);
+                    UpdateUI(true);
+                }
             }
         }
         #endregion

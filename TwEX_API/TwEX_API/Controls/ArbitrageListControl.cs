@@ -13,6 +13,7 @@ namespace TwEX_API.Controls
         #region Properties
         public string market = String.Empty;
         public string symbol = String.Empty;
+        public ArbitrageItemControl arbitrageItem;
         //private Size textSize = new Size(10, 10);
         //private int iconSize = 18;
         //private int rowHeight = 10;
@@ -22,6 +23,7 @@ namespace TwEX_API.Controls
         public ArbitrageListControl()
         {
             InitializeComponent();
+            arbitrageItem = Parent as ArbitrageItemControl;
         }
         private void ArbitrageListControl_Load(object sender, EventArgs e)
         {
@@ -88,6 +90,8 @@ namespace TwEX_API.Controls
 
                             Decimal spread = high - low;
                             listView.SetObjects(list);
+                            arbitrageItem.SetListCount(listView.Items.Count);
+
                             toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
                             //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
 

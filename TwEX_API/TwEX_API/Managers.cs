@@ -1133,8 +1133,10 @@ namespace TwEX_API
                     //newItem.price = GetExchangeUSDValueBySymbol(exchange.SiteName, symbol);
                     //AddLogMessage(Name, "GetPriceWatchlist", exchange.Name + " | " + market + " | " + symbol, LogMessageType.DEBUG);
                     //newItem.last = GetPriceOfSymbol(exchange.Name, market, symbol);
-
-                    list.Add(newItem);
+                    if (newItem.last > 0)
+                    {
+                        list.Add(newItem);
+                    }
                 }
             }
             catch (Exception ex)
@@ -1608,6 +1610,14 @@ namespace TwEX_API
         #endregion DataModels
 
         #region Enums
+        public enum BalanceViewType
+        {
+            balance = 0,
+            exchange = 1,
+            symbol = 2,
+
+        }
+
         [Flags]
         public enum ExchangeTimerType
         {
@@ -3205,6 +3215,7 @@ namespace TwEX_API
             public bool UseGlobalFont { get; set; } = false;
             public Font Font { get; set; } = new Font("Times New Roman", 12.0f);
             public ThemePreference Theme { get; set; } = new ThemePreference();
+            public BalanceViewType BalanceView { get; set; } = BalanceViewType.balance;
 
             public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();
             public List<string> SymbolWatchList { get; set; } = new List<string>();

@@ -151,6 +151,12 @@
     <Compile Include="Controls\BalanceTreeListControl.Designer.cs">
       <DependentUpon>BalanceTreeListControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BalanceViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\BalanceViewControl.Designer.cs">
+      <DependentUpon>BalanceViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ClosedOrdersListControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -367,6 +373,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\BalanceTreeListControl.resx">
       <DependentUpon>BalanceTreeListControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\BalanceViewControl.resx">
+      <DependentUpon>BalanceViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ClosedOrdersListControl.resx">
       <DependentUpon>ClosedOrdersListControl.cs</DependentUpon>
