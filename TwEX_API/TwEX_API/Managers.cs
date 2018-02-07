@@ -3233,6 +3233,9 @@ namespace TwEX_API
         public class ArbitragePreference
         {
             public bool ShowCharts { get; set; } = true;
+            public int minChartWidth = 300;
+            public int minChartHeight = 265;
+            public int maxListCount = 0;
             public List<ExchangeTicker> ArbitrageWatchList { get; set; } = new List<ExchangeTicker>();
         }
         public class CoinMarketCapPreference

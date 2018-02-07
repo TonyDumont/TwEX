@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TwEX_API.Controls
@@ -17,28 +15,18 @@ namespace TwEX_API.Controls
         };
         public string market { get; set; } = String.Empty;
         public string symbol { get; set; } = String.Empty;
-
-        public int maxListCount = 0;
-        public int minChartWidth = 300;
-        public int minChartHeight = 265;
         #endregion
 
         #region Initialize
         public ArbitrageItemControl()
         {
             InitializeComponent();
-            arbitrageListControl_btc.arbitrageItem = this;
-            arbitrageListControl_usd.arbitrageItem = this;
         }
         private void ArbitrageItemControl_Load(object sender, EventArgs e)
-        {
-            
-            panel.Height = minChartHeight;
+        {            
+            panel.Height = PreferenceManager.ArbitragePreferences.minChartHeight;
             panel.Controls.Add(chart);
-            //chart.updateBrowser();
             UpdateUI(true);
-            //timer.Tick += new EventHandler(timer_Tick);
-            //timer.Start();
         }
         private void timer_Tick(object sender, EventArgs e)
         {
@@ -61,16 +49,12 @@ namespace TwEX_API.Controls
                 {
                     if (symbol.Length > 0 && market.Length > 0)
                     {
-                        //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | market=" + market, LogManager.LogMessageType.OTHER);
-                        //toolStripLabel_symbol.Text = symbol.ToUpper();
-                        //toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
 
                         if (PreferenceManager.ArbitragePreferences.ShowCharts)
                         {
                             toolStrip.Visible = false;
                             panel.Visible = true;
-                            //LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market, LogManager.LogMessageType.DEBUG);
-                            //chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
+                            
                             if (chart != null)
                             {
                                 chart.updateBrowser();
@@ -111,29 +95,18 @@ namespace TwEX_API.Controls
             else
             {
                 toolStrip.Font = ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                Width = minChartWidth;
-                
-
+                Width = PreferenceManager.ArbitragePreferences.minChartWidth;  
                 int rowHeight = toolStrip.Height;
-                int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
-                //int listHeight = maxListCount * rowHeight;
-                //int listHeight = 8 * rowHeight;
-
-                int newHeight = listHeight + (rowHeight * 3);
+                int listHeight = PreferenceManager.ArbitragePreferences.maxListCount * rowHeight;
+                int newHeight = listHeight + (rowHeight * 3) + (rowHeight / 4);
                 
                 if (PreferenceManager.ArbitragePreferences.ShowCharts)
                 {
-                    //newHeight = newHeight + minChartHeight;
                     newHeight = newHeight + (rowHeight * 3);
                 }
-                else
-                {
-                    //newHeight += rowHeight;
-                }
-                
                 //LogManager.AddLogMessage(Name, "ResizeUI", "tsHeight=" + toolStrip.Height + " | " + listHeight + " | " + newHeight, LogManager.LogMessageType.DEBUG);
                 ClientSize = new Size(Width, newHeight);
-                //UpdateUI();
+                Size = new Size(Width, newHeight);
             }
         }
 
@@ -156,50 +129,6 @@ namespace TwEX_API.Controls
                 //LogManager.AddLogMessage(this.Name, "SetData", symbol + " | " + market, LogManager.LogMessageType.DEBUG);
                 chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
                 UpdateUI(true);
-            }
-        }
-
-        delegate void SetListCountCallback(int count);
-        public void SetListCount(int count)
-        {
-            if (InvokeRequired)
-            {
-                SetListCountCallback d = new SetListCountCallback(SetListCount);
-                Invoke(d, new object[] { count });
-            }
-            else
-            {
-                //LogManager.AddLogMessage(Name, "SetListCount", "New Count : " + maxListCount + " | " + count);
-                if (count > maxListCount)
-                {
-                    maxListCount = count;
-                    LogManager.AddLogMessage(Name, "SetListCount", "New Count : " + maxListCount);
-                    UpdateUI(true);
-                }
-            }
-        }
-        #endregion
-
-        #region Getters
-        private string GetThemeString()
-        {
-
-            if (PreferenceManager.preferences.Theme.type != PreferenceManager.ThemeType.Default)
-            {
-                StringBuilder builder = new StringBuilder();
-                builder.Append("var cccTheme = ");
-                builder.Append("{\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\",\"textColor\":\"" + ColorTranslator.ToHtml(PreferenceManager.preferences.Theme.Text) + "\"},");
-                builder.Append("\"Header\":{\"background\":\"#000\",\"color\":\"#FFF\",\"displayFollowers\":false},");
-                builder.Append("\"Followers\":{\"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},");
-                builder.Append("\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},");
-                builder.Append("\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},");
-                builder.Append("\"Trend\":{\"colorUp\":\"#baffba\",\"colorDown\":\"#ffbaba\"},");
-                builder.Append("\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"}};");
-                return builder.ToString();
-            }
-            else
-            {
-                return String.Empty;
             }
         }
         #endregion

@@ -8,8 +8,12 @@ namespace TwEX_API.Controls
     public partial class ArbitrageManagerControl : UserControl
     {
         public static Timer timer = new Timer() { Interval = 60000 };
-        public int minChartWidth = 300;
-        public int minChartHeight = 265;
+
+        //public int minChartWidth = 300;
+        //public int minChartHeight = 265;
+        //public int maxListCount = 0;
+        //public int minChartWidth = 300;
+        //public int minChartHeight = 265;
 
         #region Initialize
         public ArbitrageManagerControl()
@@ -138,7 +142,7 @@ namespace TwEX_API.Controls
 
                 if (PreferenceManager.ArbitragePreferences.ShowCharts)
                 {
-                    newHeight += minChartHeight;
+                    newHeight += PreferenceManager.ArbitragePreferences.minChartHeight;
                 }
                 else
                 {

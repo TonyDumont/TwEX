@@ -13,17 +13,12 @@ namespace TwEX_API.Controls
         #region Properties
         public string market = String.Empty;
         public string symbol = String.Empty;
-        public ArbitrageItemControl arbitrageItem;
-        //private Size textSize = new Size(10, 10);
-        //private int iconSize = 18;
-        //private int rowHeight = 10;
         #endregion
 
         #region Initialize
         public ArbitrageListControl()
         {
             InitializeComponent();
-            arbitrageItem = Parent as ArbitrageItemControl;
         }
         private void ArbitrageListControl_Load(object sender, EventArgs e)
         {
@@ -90,7 +85,11 @@ namespace TwEX_API.Controls
 
                             Decimal spread = high - low;
                             listView.SetObjects(list);
-                            arbitrageItem.SetListCount(listView.Items.Count);
+                            if (list.Count > PreferenceManager.ArbitragePreferences.maxListCount)
+                            {
+                                PreferenceManager.ArbitragePreferences.maxListCount = list.Count;
+                            }
+                            //arbitrageItem.SetListCount(listView.Items.Count);
 
                             toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
                             //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
@@ -138,7 +137,7 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
                 Invoke(d, new object[] { });
@@ -149,10 +148,16 @@ namespace TwEX_API.Controls
                 toolStrip_btc.Font = ParentForm.Font;
                 toolStrip_usd.Font = ParentForm.Font;
                 toolStripLabel_symbol.Font = ParentForm.Font;
+                
                 int rowHeight = toolStrip_usd.Height;
 
-                int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
-                Height = (rowHeight * 2) + listHeight;
+                //int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
+                int listHeight = PreferenceManager.ArbitragePreferences.maxListCount * rowHeight;
+                
+                int newHeight = rowHeight + listHeight;
+                ClientSize = new Size(Width, newHeight);
+                Size = new Size(Width, newHeight);
+                
             }
         }
         #endregion
@@ -161,7 +166,6 @@ namespace TwEX_API.Controls
         public object aspect_icon(object rowObject)
         {
             ExchangeManager.ExchangeTicker ticker = (ExchangeManager.ExchangeTicker)rowObject;
-            //int size = listView.RowHeightEffective - 4;
 
             if (ticker.last > 0)
             {
