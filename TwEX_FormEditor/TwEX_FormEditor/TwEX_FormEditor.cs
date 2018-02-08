@@ -51,6 +51,7 @@ namespace TwEX_FormEditor
             FormClosing += delegate { UpdateFormPreferences(this, false); };
 
             ContentManager.InitializeIconList();
+            ContentManager.InitializeImages();
             ContentManager.InitializeExchangeIconList();
             ContentManager.InitializeSymbolImageList();
             ContentManager.InitializeWalletImageList();

@@ -107,7 +107,10 @@ namespace TwEX_API.Controls
         {
             TypeListItem item = listView.SelectedObject as TypeListItem;
             ThemeType type = (ThemeType)Enum.Parse(typeof(ThemeType), item.Name);
-            SetTheme(type);
+            if (SetTheme(type))
+            {
+                listView.SelectedIndex = preferences.Theme.type.GetHashCode();
+            }
         }
         private void checkBox_font_CheckedChanged(object sender, EventArgs e)
         {

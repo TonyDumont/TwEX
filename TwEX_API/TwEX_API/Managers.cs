@@ -40,56 +40,70 @@ namespace TwEX_API
         public static ImageList IconList = new ImageList();
         public static ImageList SymbolIconList = new ImageList();
         public static ImageList WalletIconList = new ImageList();
+        public static List<Image> Images = new List<Image>();
         // URL LISTS
-        public static List<IconFile> IconUrlList = new List<IconFile>()
+        public static List<ImageFile> IconUrlList = new List<ImageFile>()
         {
-            new IconFile(){ Name = "Add", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Add.png"},
-            new IconFile(){ Name = "AddWallet", Url = "https://cdn2.iconfinder.com/data/icons/finance-solid-icons-vol-3/48/112-256.png" },
-            new IconFile(){ Name = "Arbitrage", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },
-            new IconFile(){ Name = "ArbitrageManager", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },
-            new IconFile(){ Name = "Application", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
-            new IconFile(){ Name = "BalanceManager", Url = "https://i.pinimg.com/originals/22/dd/de/22ddde0fc220582cf3688beca1795683.jpg" },
-            new IconFile(){ Name = "BlockCypher", Url = "https://www.blockcypher.com/images/favicon-192x192.png" },
-            new IconFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
-            new IconFile(){ Name = "ChartView", Url = "https://cdn1.iconfinder.com/data/icons/web-design-seo/512/26-512.png" },
-            new IconFile(){ Name = "CoinCalculator", Url = "http://files.softicons.com/download/system-icons/web0.2ama-icons-by-chrfb/png/256x256/Calculator.png" },
-            new IconFile(){ Name = "CoinMarketCap", Url = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png" },
-            new IconFile(){ Name = "CryptoCompare", Url = "https://www.cryptocompare.com/media/20562/favicon.png?v=2" },
-            new IconFile(){ Name = "CustomView", Url ="http://cdn.mysitemyway.com/icons-watermarks/simple-black/bfa/bfa_table/bfa_table_simple-black_512x512.png" },
-            new IconFile(){ Name = "Deposit", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_deposit_income-512.png" },
-            new IconFile(){ Name = "EarnGG", Url = "https://earn.gg/img/favicon-32x32.png" },
-            new IconFile(){ Name = "EarnGGManager", Url = "https://earn.gg/img/favicon-32x32.png" },
-            new IconFile(){ Name = "Exchange", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
-            new IconFile(){ Name = "ExchangeEditor", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
-            new IconFile(){ Name = "ExchangeManager", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
-            new IconFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" },
-            new IconFile(){ Name = "Export", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/export.png" },
-            new IconFile(){ Name = "Font", Url = "https://cdn0.iconfinder.com/data/icons/exempli_gratia/256/z_File_FONT.png" },
-            new IconFile(){ Name = "FontDecrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-smaller.png" },
-            new IconFile(){ Name = "FontIncrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png" },
-            new IconFile(){ Name = "Form", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
-            new IconFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
-            new IconFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
-            
-            new IconFile(){ Name = "Options", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
-            new IconFile(){ Name = "PreferenceManager", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
-            new IconFile(){ Name = "Refresh", Url = "https://cdn0.iconfinder.com/data/icons/huge-basic-icons/512/Refresh.png" },
-            new IconFile(){ Name = "Remove", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Delete.png"},
-            new IconFile(){ Name = "SearchList", Url = "http://icons.iconarchive.com/icons/icons8/windows-8/512/Programming-Search-Property-icon.png"},
-            new IconFile(){ Name = "Symbol", Url = "https://cdn2.iconfinder.com/data/icons/bitcoin-and-mining/44/trade-512.png" },
-            //new IconFile(){ Name = "TradingView", Url = "https://www.tradingview.com/favicon.ico" },
-            new IconFile(){ Name = "TradingView", Url = "http://www.patternsmart.com/cart//image/data/tradingview.png" },
-            new IconFile(){ Name = "TwEX_FormEditor", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
-            new IconFile(){ Name = "UpDown", Url = "https://cdn1.iconfinder.com/data/icons/touch-gestures-3/96/Scroll-512.png"},
-            new IconFile(){ Name = "USDSymbol", Url = "http://www.tirosagol.com/wp-content/uploads/moneyTAG.jpg"},
-            new IconFile(){ Name = "Wallet", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
-            new IconFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
-            new IconFile(){ Name = "Withdrawal", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_withdraw_expenses-256.png" }
+            new ImageFile(){ Name = "Add", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Add.png"},
+            new ImageFile(){ Name = "AddWallet", Url = "https://cdn2.iconfinder.com/data/icons/finance-solid-icons-vol-3/48/112-256.png" },
+            new ImageFile(){ Name = "Arbitrage", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },
+            new ImageFile(){ Name = "ArbitrageManager", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },
+            new ImageFile(){ Name = "Application", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new ImageFile(){ Name = "BalanceManager", Url = "https://i.pinimg.com/originals/22/dd/de/22ddde0fc220582cf3688beca1795683.jpg" },
+            new ImageFile(){ Name = "BlockCypher", Url = "https://www.blockcypher.com/images/favicon-192x192.png" },
+            new ImageFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
+            new ImageFile(){ Name = "ChartView", Url = "https://cdn1.iconfinder.com/data/icons/web-design-seo/512/26-512.png" },
+            new ImageFile(){ Name = "CoinCalculator", Url = "http://files.softicons.com/download/system-icons/web0.2ama-icons-by-chrfb/png/256x256/Calculator.png" },
+            new ImageFile(){ Name = "CoinMarketCap", Url = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png" },
+            new ImageFile(){ Name = "CryptoCompare", Url = "https://www.cryptocompare.com/media/20562/favicon.png?v=2" },
+            new ImageFile(){ Name = "CustomView", Url ="http://cdn.mysitemyway.com/icons-watermarks/simple-black/bfa/bfa_table/bfa_table_simple-black_512x512.png" },
+            new ImageFile(){ Name = "Deposit", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_deposit_income-512.png" },
+            new ImageFile(){ Name = "EarnGG", Url = "https://earn.gg/img/favicon-32x32.png" },
+            new ImageFile(){ Name = "EarnGGManager", Url = "https://earn.gg/img/favicon-32x32.png" },
+            new ImageFile(){ Name = "Exchange", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
+            new ImageFile(){ Name = "ExchangeEditor", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
+            new ImageFile(){ Name = "ExchangeManager", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
+            new ImageFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" },
+            new ImageFile(){ Name = "Export", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/export.png" },
+            new ImageFile(){ Name = "Font", Url = "https://cdn0.iconfinder.com/data/icons/exempli_gratia/256/z_File_FONT.png" },
+            new ImageFile(){ Name = "FontDecrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-smaller.png" },
+            new ImageFile(){ Name = "FontIncrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png" },
+            new ImageFile(){ Name = "Form", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new ImageFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
+            new ImageFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
+
+            new ImageFile(){ Name = "Options", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new ImageFile(){ Name = "PreferenceManager", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new ImageFile(){ Name = "Refresh", Url = "https://cdn0.iconfinder.com/data/icons/huge-basic-icons/512/Refresh.png" },
+            new ImageFile(){ Name = "Remove", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Delete.png"},
+            new ImageFile(){ Name = "SearchList", Url = "http://icons.iconarchive.com/icons/icons8/windows-8/512/Programming-Search-Property-icon.png"},
+            new ImageFile(){ Name = "Symbol", Url = "https://cdn2.iconfinder.com/data/icons/bitcoin-and-mining/44/trade-512.png" },
+            //new ImageFile(){ Name = "TradingView", Url = "https://www.tradingview.com/favicon.ico" },
+            new ImageFile(){ Name = "TradingView", Url = "http://www.patternsmart.com/cart//image/data/tradingview.png" },
+            new ImageFile(){ Name = "TwEX_FormEditor", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new ImageFile(){ Name = "UpDown", Url = "https://cdn1.iconfinder.com/data/icons/touch-gestures-3/96/Scroll-512.png"},
+            new ImageFile(){ Name = "USDSymbol", Url = "http://www.tirosagol.com/wp-content/uploads/moneyTAG.jpg"},
+            new ImageFile(){ Name = "Wallet", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
+            new ImageFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
+            new ImageFile(){ Name = "Withdrawal", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_withdraw_expenses-256.png" },
+
+            // IMAGES
+            //new ImageFile(){ Name = "WhiteStone", Url = "https://www.brewsterwallcovering.com/data/default/images/catalog/original/OM91808.jpg"}
+            //new ImageFile(){ Name = "WhiteStone", Url = "https://www.designertileconcepts.com/media/catalog/product/cache/4/image/700x700/9df78eab33525d08d6e5fb8d27136e95/4/y/4yur0120_3.jpg" }
+            //new ImageFile(){ Name = "WhiteStone", Url = "http://1.bp.blogspot.com/-A6jxRCVEt54/UxbiNL3VV7I/AAAAAAAAFSM/S9aEW1ntIg8/s1600/Smooth_stucco_white_paint_dirty_plaster_wall_texture_seamless_tileable.jpg" }
         };
-        public static List<IconFile> WalletIconUrlList = new List<IconFile>()
+        public static List<ImageFile> ImageUrlList = new List<ImageFile>()
         {
-            new IconFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
-            new IconFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" }
+
+            // IMAGES
+            new ImageFile(){ Name = "StonedBackground", Url = "https://www.brewsterwallcovering.com/data/default/images/catalog/original/OM91808.jpg"}
+            //new ImageFile(){ Name = "WhiteStone", Url = "https://www.designertileconcepts.com/media/catalog/product/cache/4/image/700x700/9df78eab33525d08d6e5fb8d27136e95/4/y/4yur0120_3.jpg" }
+            //new ImageFile(){ Name = "WhiteStone", Url = "http://1.bp.blogspot.com/-A6jxRCVEt54/UxbiNL3VV7I/AAAAAAAAFSM/S9aEW1ntIg8/s1600/Smooth_stucco_white_paint_dirty_plaster_wall_texture_seamless_tileable.jpg" }
+        };
+        public static List<ImageFile> WalletIconUrlList = new List<ImageFile>()
+        {
+            new ImageFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
+            new ImageFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" }
 
         };
         #endregion
@@ -137,6 +151,7 @@ namespace TwEX_API
             AddLogMessage(Name, "InitializeExchangeIconList", "Exchange Icons Initialized " + ExchangeIconList.Images.Count + " Icons", LogMessageType.LOG);
             return true;
         }
+        
         public static Boolean InitializeIconList()
         {
             IconList.Images.Clear();
@@ -170,12 +185,55 @@ namespace TwEX_API
                 // CREATE FOLDER
                 AddLogMessage(Name, "SaveIcons", "ICONS folder does not exist - CREATING IT", LogMessageType.LOG);
                 Directory.CreateDirectory(path);
-                foreach (IconFile icon in IconUrlList)
+                foreach (ImageFile icon in IconUrlList)
                 {                   
                     GetIcon(icon.Name);
                 }
             }
             AddLogMessage(Name, "InitializeIconList", "Icon List Initialized " + IconList.Images.Count + " Icons", LogMessageType.LOG);
+            return true;
+        }
+        
+        public static Boolean InitializeImages()
+        {
+            Images.Clear();
+            string path = WorkDirectory + "\\images\\";
+            string[] filter = { ".png" };
+
+            //IconList.ImageSize = preferences.IconSize;
+
+            if (Directory.Exists(path))
+            {
+                // LOAD ITEMS
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                FileInfo[] fileInfo = directoryInfo.GetFiles();
+                ArrayList arrayList = new ArrayList();
+
+                foreach (FileInfo fi in fileInfo)
+                {
+                    foreach (string s in filter)
+                    {
+                        if (s == fi.Extension)
+                        {
+                            string name = fi.Name.Split('.')[0];
+                            Image img = Image.FromFile(fi.FullName);
+                            //IconList.Images.Add(name, img);
+                            img.Tag = name;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // CREATE FOLDER
+                AddLogMessage(Name, "InitializeImages", "IMAGES folder does not exist - CREATING IT", LogMessageType.LOG);
+                Directory.CreateDirectory(path);
+                foreach (ImageFile image in ImageUrlList)
+                {
+                    GetImage(image.Name);
+                }
+            }
+            AddLogMessage(Name, "InitializeImages", "Image List Initialized " + Images.Count + " Images", LogMessageType.LOG);
             return true;
         }
         public static Boolean InitializeSymbolImageList()
@@ -248,7 +306,7 @@ namespace TwEX_API
             {
                 // CREATE FOLDER
                 Directory.CreateDirectory(path);
-                foreach (IconFile icon in WalletIconUrlList)
+                foreach (ImageFile icon in WalletIconUrlList)
                 {
                     GetWalletIcon(icon.Url);
                 }
@@ -413,11 +471,11 @@ namespace TwEX_API
                 // set it up for later
                 try
                 {
-                    IconFile iconFile = IconUrlList.FirstOrDefault(item => item.Name == name);
+                    ImageFile ImageFile = IconUrlList.FirstOrDefault(item => item.Name == name);
 
-                    if (iconFile != null)
+                    if (ImageFile != null)
                     {
-                        Image icon = GetIconByUrl(iconFile.Url);
+                        Image icon = GetIconByUrl(ImageFile.Url);
                         IconList.Images.Add(name, icon);
                         icon.Save(WorkDirectory + "\\icons\\" + name + ".png", ImageFormat.Png);
                         //AddLogMessage(Name, "GetIcon", "Saving " + name + ".png in ICONS FOLDER", LogMessageType.LOG);
@@ -437,7 +495,52 @@ namespace TwEX_API
                 }
             }
         }
-         
+
+        public static Image GetImage(string name)
+        {
+            //Image image = Properties.Resources.ConnectionStatus_DISABLED;
+            // check imagelist for exist
+
+            Image image = Images.FirstOrDefault(item => item.Tag.ToString() == name);
+
+            if (image != null)
+            {
+                //AddLogMessage(Name, "GetImage", "Image List Contains Key " + name + " - Returning Image", LogMessageType.DEBUG);
+                return image;
+            }
+            else
+            {
+                // set it up for later
+                //AddLogMessage(Name, "GetImage", "Image List MISSING " + name + " - SETTING UP", LogMessageType.DEBUG);
+                try
+                {
+                    ImageFile ImageFile = ImageUrlList.FirstOrDefault(item => item.Name == name);
+
+                    if (ImageFile != null)
+                    {
+                        Image newImage = GetIconByUrl(ImageFile.Url);
+                        //IconList.Images.Add(name, newImage);
+                        newImage.Tag = name;
+                        Images.Add(newImage);
+                        newImage.Save(WorkDirectory + "\\images\\" + name + ".png", ImageFormat.Png);
+                        //AddLogMessage(Name, "GetIcon", "Saving " + name + ".png in ICONS FOLDER", LogMessageType.LOG);
+                        return newImage;
+                    }
+                    else
+                    {
+                        //AddLogMessage(Name, "GetIcon", "Unable To Save " + name + ".png in ICONS FOLDER - No Entry In IconUrl List", LogMessageType.LOG);
+                        return null;
+                    }
+                }
+                catch (Exception)
+                {
+                    //AddLogMessage(Name, "GetIcon", name + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    // USE GENERIC ICON
+                    return null;
+                }
+            }
+        }
+
         public static Image GetSymbolIcon(string symbol)
         {
             Image image = Properties.Resources.ConnectionStatus_DISABLED;
@@ -511,7 +614,7 @@ namespace TwEX_API
             {
                 try
                 {
-                    IconFile wallet = WalletIconUrlList.FirstOrDefault(item => item.Name == name);
+                    ImageFile wallet = WalletIconUrlList.FirstOrDefault(item => item.Name == name);
 
                     if (wallet != null)
                     {
@@ -582,7 +685,7 @@ namespace TwEX_API
 
         public static void SaveIcons()
         {
-            foreach (IconFile icon in IconUrlList)
+            foreach (ImageFile icon in IconUrlList)
             {
                 AddLogMessage(Name, "SaveIcons", icon.Name + " | " + icon.Url, LogMessageType.DEBUG);
                 GetIcon(icon.Name);
@@ -591,7 +694,7 @@ namespace TwEX_API
         #endregion
 
         #region DataModels
-        public class IconFile
+        public class ImageFile
         {
             public string Name { get; set; }
             public string Url { get; set; }
@@ -3173,7 +3276,6 @@ namespace TwEX_API
                         Green = Color.DarkGreen,
                         Red = Color.DarkRed,
                         Yellow = Color.DarkGoldenrod,
-                        //BrowserBackground = ColorTranslator.FromHtml("#333333"),
                         FormBackground = ColorTranslator.FromHtml("#333333"),
                         Text = ColorTranslator.FromHtml("#eaeaea"),
                         HeaderBackground = ColorTranslator.FromHtml("#444444"),
@@ -3183,7 +3285,9 @@ namespace TwEX_API
                 case ThemeType.Stoned:
                     return new ThemePreference()
                     {
-                        type = ThemeType.Stoned
+                        type = ThemeType.Stoned,
+                        //BackgroundImageUrl = "https://www.designertileconcepts.com/media/catalog/product/cache/4/image/700x700/9df78eab33525d08d6e5fb8d27136e95/4/y/4yur0120_3.jpg",
+                        BackgroundImageName = type + "Background"
                     };
 
                 default:
@@ -3195,10 +3299,28 @@ namespace TwEX_API
         {
             control.BackColor = theme.FormBackground;
             control.ForeColor = theme.Text;
+            
+            if (theme.BackgroundImageName.Length > 0)
+            {
+                control.BackgroundImageLayout = ImageLayout.Tile;
+                control.BackgroundImage = ContentManager.GetImage(theme.BackgroundImageName);
+            }
+            else
+            {
+                //control.BackgroundImageLayout = ImageLayout.Tile;
+                control.BackgroundImage = null;
+            }
+            
 
             if (control is FastObjectListView)
             {
                 FastObjectListView listView = control as FastObjectListView;
+                listView.BackColor = theme.FormBackground;
+                //listView.BackColor = Color.FromArgb(50, theme.FormBackground);
+                //SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+                //listView.BackColor = Color.Transparent;
+                //listView.BackgroundImageTiled = true;
+                //listView.BackgroundImage = ContentManager.GetIcon("WhiteStone");
                 listView.HeaderUsesThemes = false;
                 var headerstyle = new HeaderFormatStyle();
                 headerstyle.SetBackColor(theme.HeaderBackground);
@@ -3209,50 +3331,7 @@ namespace TwEX_API
                     item.HeaderFormatStyle = headerstyle;
                 }
             }
-            /*
-            switch (myControl)
-            {
-                case Button b:
-                case GroupBox g:
-                case Label l:
-                case ToolStrip t:
-                //case ToolStripDropDown cm:
-                    myControl.BackColor = preferences.Theme.FormBackground;
-                    myControl.ForeColor = preferences.Theme.Text;
-                    break;
-
-                case FastObjectListView f:
-                    FastObjectListView listView = myControl as FastObjectListView;
-                    listView.HeaderUsesThemes = false;
-
-                    myControl.BackColor = preferences.Theme.FormBackground;
-                    myControl.ForeColor = preferences.Theme.Text;
-
-                    var headerstyle = new HeaderFormatStyle();
-                    headerstyle.SetBackColor(preferences.Theme.HeaderBackground);
-                    headerstyle.SetForeColor(preferences.Theme.HeaderText);
-
-                    foreach (OLVColumn item in listView.Columns)
-                    {
-                        item.HeaderFormatStyle = headerstyle;
-                    }
-                    break;
-
-                default:
-                    //AddLogMessage(Name, "UpdateColorControls", "CONTROL NOT DEFINED : " + myControl.GetType(), LogMessageType.DEBUG);
-                    break;
-            }
-            */
-
-            /*
-            if (myControl is ContextMenuStrip)
-            {
-                myControl.BackColor = preferences.Theme.FormBackground;
-                myControl.ForeColor = preferences.Theme.Text;
-            }
             
-            // Any other non-standard controls should be implemented here aswell...
-            */
             foreach (Control subC in control.Controls)
             {
                 SetControlTheme(subC, theme);
@@ -3267,6 +3346,17 @@ namespace TwEX_API
             {
                 target.BackColor = theme.FormBackground;
                 target.ForeColor = theme.Text;
+
+                if (theme.BackgroundImageName.Length > 0)
+                {
+                    target.BackgroundImageLayout = ImageLayout.Tile;
+                    target.BackgroundImage = ContentManager.GetImage(theme.BackgroundImageName);
+                }
+                else
+                {
+                    //target.BackgroundImageLayout = ImageLayout.Tile;
+                    target.BackgroundImage = null;
+                }
 
                 foreach (Control c in target.Controls)
                 {
@@ -3360,6 +3450,8 @@ namespace TwEX_API
             public Color Yellow { get; set; } = Color.LightGoldenrodYellow;
 
             public Color FormBackground { get; set; } = SystemColors.Control;
+            public string BackgroundImageName { get; set; } = String.Empty;
+            //public Image BackgroundImage { get; set; } = null;
             //public Color Text { get; set; } = Color.Black;
             public Color Text { get; set; } = SystemColors.ControlText;
             public Color HeaderBackground { get; set; } = SystemColors.Control;
@@ -3626,3 +3718,48 @@ namespace TwEX_API
             UpdatePreferenceFile();
         }
         */
+
+/*
+        switch (myControl)
+        {
+            case Button b:
+            case GroupBox g:
+            case Label l:
+            case ToolStrip t:
+            //case ToolStripDropDown cm:
+                myControl.BackColor = preferences.Theme.FormBackground;
+                myControl.ForeColor = preferences.Theme.Text;
+                break;
+
+            case FastObjectListView f:
+                FastObjectListView listView = myControl as FastObjectListView;
+                listView.HeaderUsesThemes = false;
+
+                myControl.BackColor = preferences.Theme.FormBackground;
+                myControl.ForeColor = preferences.Theme.Text;
+
+                var headerstyle = new HeaderFormatStyle();
+                headerstyle.SetBackColor(preferences.Theme.HeaderBackground);
+                headerstyle.SetForeColor(preferences.Theme.HeaderText);
+
+                foreach (OLVColumn item in listView.Columns)
+                {
+                    item.HeaderFormatStyle = headerstyle;
+                }
+                break;
+
+            default:
+                //AddLogMessage(Name, "UpdateColorControls", "CONTROL NOT DEFINED : " + myControl.GetType(), LogMessageType.DEBUG);
+                break;
+        }
+        */
+
+/*
+if (myControl is ContextMenuStrip)
+{
+    myControl.BackColor = preferences.Theme.FormBackground;
+    myControl.ForeColor = preferences.Theme.Text;
+}
+
+// Any other non-standard controls should be implemented here aswell...
+*/
