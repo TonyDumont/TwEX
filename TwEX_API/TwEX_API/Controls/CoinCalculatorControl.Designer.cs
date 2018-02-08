@@ -46,14 +46,18 @@
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_symbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_value = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.pictureBox_usd = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.pictureBox_symbol = new System.Windows.Forms.PictureBox();
             this.toolStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_usd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_symbol)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_usd)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_symbol)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip
@@ -83,8 +87,9 @@
             // toolStripSpringTextBox_symbol
             // 
             this.toolStripSpringTextBox_symbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSpringTextBox_symbol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.toolStripSpringTextBox_symbol.Name = "toolStripSpringTextBox_symbol";
-            this.toolStripSpringTextBox_symbol.Size = new System.Drawing.Size(129, 52);
+            this.toolStripSpringTextBox_symbol.Size = new System.Drawing.Size(117, 39);
             this.toolStripSpringTextBox_symbol.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // toolStripDropDownButton_menu
@@ -98,7 +103,7 @@
             this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
             this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
-            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(45, 49);
+            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(45, 36);
             this.toolStripDropDownButton_menu.Text = "OPTIONS";
             this.toolStripDropDownButton_menu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_menu_DropDownItemClicked);
             // 
@@ -130,15 +135,17 @@
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.ColumnCount = 2;
+            this.tableLayoutPanel.ColumnCount = 3;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.Controls.Add(this.numericUpDown_usd, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.label_usd, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.label_usd, 2, 0);
             this.tableLayoutPanel.Controls.Add(this.numericUpDown_symbol, 0, 1);
-            this.tableLayoutPanel.Controls.Add(this.label_symbol, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.label_symbol, 2, 1);
             this.tableLayoutPanel.Controls.Add(this.listView, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.pictureBox_usd, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.pictureBox_symbol, 1, 1);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 39);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -151,7 +158,13 @@
             // 
             // numericUpDown_usd
             // 
+            this.numericUpDown_usd.DecimalPlaces = 2;
             this.numericUpDown_usd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDown_usd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
             this.numericUpDown_usd.Location = new System.Drawing.Point(3, 3);
             this.numericUpDown_usd.Maximum = new decimal(new int[] {
             1000000,
@@ -159,7 +172,7 @@
             0,
             0});
             this.numericUpDown_usd.Name = "numericUpDown_usd";
-            this.numericUpDown_usd.Size = new System.Drawing.Size(199, 20);
+            this.numericUpDown_usd.Size = new System.Drawing.Size(177, 20);
             this.numericUpDown_usd.TabIndex = 0;
             this.numericUpDown_usd.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericUpDown_usd.ValueChanged += new System.EventHandler(this.numericUpDown_usd_ValueChanged);
@@ -177,7 +190,13 @@
             // 
             // numericUpDown_symbol
             // 
+            this.numericUpDown_symbol.DecimalPlaces = 8;
             this.numericUpDown_symbol.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDown_symbol.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            524288});
             this.numericUpDown_symbol.Location = new System.Drawing.Point(3, 29);
             this.numericUpDown_symbol.Maximum = new decimal(new int[] {
             1000000,
@@ -185,7 +204,7 @@
             0,
             0});
             this.numericUpDown_symbol.Name = "numericUpDown_symbol";
-            this.numericUpDown_symbol.Size = new System.Drawing.Size(199, 20);
+            this.numericUpDown_symbol.Size = new System.Drawing.Size(177, 20);
             this.numericUpDown_symbol.TabIndex = 2;
             this.numericUpDown_symbol.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericUpDown_symbol.ValueChanged += new System.EventHandler(this.numericUpDown_symbol_ValueChanged);
@@ -208,7 +227,7 @@
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.column_symbol,
             this.column_value});
-            this.tableLayoutPanel.SetColumnSpan(this.listView, 2);
+            this.tableLayoutPanel.SetColumnSpan(this.listView, 3);
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView.FullRowSelect = true;
@@ -244,6 +263,16 @@
             this.column_value.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.column_value.Width = 50;
             // 
+            // pictureBox_usd
+            // 
+            this.pictureBox_usd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox_usd.Location = new System.Drawing.Point(186, 3);
+            this.pictureBox_usd.Name = "pictureBox_usd";
+            this.pictureBox_usd.Size = new System.Drawing.Size(16, 20);
+            this.pictureBox_usd.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox_usd.TabIndex = 5;
+            this.pictureBox_usd.TabStop = false;
+            // 
             // contextMenuStrip
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -256,6 +285,15 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem1.Text = "toolStripMenuItem1";
+            // 
+            // pictureBox_symbol
+            // 
+            this.pictureBox_symbol.Location = new System.Drawing.Point(186, 29);
+            this.pictureBox_symbol.Name = "pictureBox_symbol";
+            this.pictureBox_symbol.Size = new System.Drawing.Size(16, 20);
+            this.pictureBox_symbol.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox_symbol.TabIndex = 6;
+            this.pictureBox_symbol.TabStop = false;
             // 
             // CoinCalculatorControl
             // 
@@ -273,7 +311,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_usd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_symbol)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_usd)).EndInit();
             this.contextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_symbol)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -299,5 +339,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.PictureBox pictureBox_usd;
+        private System.Windows.Forms.PictureBox pictureBox_symbol;
     }
 }

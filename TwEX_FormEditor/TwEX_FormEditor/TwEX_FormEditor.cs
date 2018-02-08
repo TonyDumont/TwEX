@@ -80,7 +80,7 @@ namespace TwEX_FormEditor
             //Height = height;
             Size = new Size(400, height);
             */
-            UpdateTheme(preferences.Theme.type);
+            //UpdateTheme(preferences.Theme.type);
         }
         #endregion
     }

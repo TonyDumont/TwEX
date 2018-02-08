@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using static TwEX_API.PreferenceManager;
 
 namespace TwEX_API.Controls
 {
@@ -35,16 +36,16 @@ namespace TwEX_API.Controls
             else
             {
                 
-                var values = EnumUtils.GetValues<PreferenceManager.PreferenceType>();
-                List<ListItem> list = new List<ListItem>();
+                var values = EnumUtils.GetValues<PreferenceType>();
+                List<TypeListItem> list = new List<TypeListItem>();
 
-                foreach (PreferenceManager.PreferenceType type in values)
+                foreach (PreferenceType type in values)
                 {
                     //LogManager.AddLogMessage(Name, "UpdateUI", type.ToString() + " | " + type.GetHashCode(), LogManager.LogMessageType.DEBUG);
-                    ListItem item = new ListItem()
+                    TypeListItem item = new TypeListItem()
                     {
                         Name = type.ToString(),
-                        type = type
+                        type = type.GetType()
                     };
 
                     if (item.Name != "None")
@@ -91,10 +92,11 @@ namespace TwEX_API.Controls
         private object aspect_icon(object rowObject)
         {
             //Machine m = (Machine)rowObject;
-            ListItem item = (ListItem)rowObject;
+            TypeListItem item = (TypeListItem)rowObject;
             //int rowheight = listView.RowHeightEffective - 2;
-            string iconName = EnumUtils.GetDescription(item.type);
-            return ContentManager.ResizeImage(ContentManager.GetIcon(iconName), listView.RowHeightEffective, listView.RowHeightEffective);
+            //string iconName = EnumUtils.GetDescription(item.Name);
+            //return ContentManager.ResizeImage(ContentManager.GetIcon(iconName), listView.RowHeightEffective, listView.RowHeightEffective);
+            return ContentManager.ResizeImage(ContentManager.GetIcon(item.Name), listView.RowHeightEffective, listView.RowHeightEffective);
         }
         #endregion
 
@@ -107,7 +109,7 @@ namespace TwEX_API.Controls
                 {
                     if (listView.SelectedObject != null)
                     {
-                        ListItem item = listView.SelectedObject as ListItem;
+                        TypeListItem item = listView.SelectedObject as TypeListItem;
 
                         
                         //CalculatorItem item = listView.SelectedObject as CalculatorItem;
@@ -129,18 +131,20 @@ namespace TwEX_API.Controls
         }
         private void export_Menu_Click(object sender, EventArgs e)
         {
-            ListItem item = listView.SelectedObject as ListItem;
+            TypeListItem item = listView.SelectedObject as TypeListItem;
             //LogManager.AddLogMessage(Name, "export_Menu_Click", item.Name, LogManager.LogMessageType.DEBUG);
-            PreferenceManager.ExportPreferences(item.type);
+            PreferenceType type = (PreferenceType)Enum.Parse(typeof(PreferenceType), item.Name);
+            ExportPreferences(type);
         }
         private void import_Menu_Click(object sender, EventArgs e)
         {
-            ListItem item = listView.SelectedObject as ListItem;
+            TypeListItem item = listView.SelectedObject as TypeListItem;
             //LogManager.AddLogMessage(Name, "import_Menu_Click", item.Name, LogManager.LogMessageType.DEBUG);
-            PreferenceManager.ImportPreferences(item.type);
+            PreferenceType type = (PreferenceType)Enum.Parse(typeof(PreferenceType), item.Name);
+            ImportPreferences(type);
         }
         #endregion
-
+        /*
         #region DataModels
         private class ListItem
         {
@@ -148,5 +152,6 @@ namespace TwEX_API.Controls
             public PreferenceManager.PreferenceType type { get; set; }
         }
         #endregion
+    */
     }
 }

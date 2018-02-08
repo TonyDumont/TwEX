@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using static TwEX_API.PreferenceManager;
 
 namespace TwEX_API.Controls
 {
@@ -9,6 +11,7 @@ namespace TwEX_API.Controls
         public ApplicationPreferenceControl()
         {
             InitializeComponent();
+            InitializeThemes();
         }
         private void ApplicationPreferenceControl_Load(object sender, EventArgs e)
         {
@@ -16,7 +19,7 @@ namespace TwEX_API.Controls
             checkBox_font.Checked = PreferenceManager.preferences.UseGlobalFont;
             button_font.Enabled = checkBox_font.Checked;
             button_font.Font = PreferenceManager.preferences.Font;
-
+            /*
             if (PreferenceManager.preferences.Theme.type == PreferenceManager.ThemeType.Default)
             {
                 radioButton_default.Checked = true;
@@ -24,6 +27,61 @@ namespace TwEX_API.Controls
             else
             {
                 radioButton_dark.Checked = true;
+            }
+            */
+        }
+        private void InitializeThemes()
+        {
+            var values = EnumUtils.GetValues<ThemeType>();
+            List<TypeListItem> list = new List<TypeListItem>();
+
+            foreach (ThemeType type in values)
+            {
+                //LogManager.AddLogMessage(Name, "UpdateUI", type.ToString() + " | " + type.GetHashCode(), LogManager.LogMessageType.DEBUG);
+                TypeListItem item = new TypeListItem()
+                {
+                    Name = type.ToString(),
+                    type = type.GetType()
+                };
+                list.Add(item);
+            }
+            listView.SetObjects(list);
+            listView.SelectedIndex = preferences.Theme.type.GetHashCode();
+        }
+        #endregion
+
+        #region Delegates
+        delegate bool UpdateUICallback(bool resize = false);
+        public bool UpdateUI(bool resize = false)
+        {
+            if (InvokeRequired)
+            {
+                UpdateUICallback d = new UpdateUICallback(UpdateUI);
+                Invoke(d, new object[] { resize });
+            }
+            else
+            {
+
+                if (resize)
+                {
+                    ResizeUI();
+                }
+            }
+            return true;
+        }
+
+        delegate void ResizeUICallback();
+        public void ResizeUI()
+        {
+            if (InvokeRequired)
+            {
+                ResizeUICallback d = new ResizeUICallback(ResizeUI);
+                Invoke(d, new object[] { });
+            }
+            else
+            {
+                Font = ParentForm.Font;
+                listView.Font = ParentForm.Font;
             }
         }
         #endregion
@@ -45,6 +103,12 @@ namespace TwEX_API.Controls
             }
             //UpdateUI(true);
         }
+        private void button_SetTheme_Click(object sender, EventArgs e)
+        {
+            TypeListItem item = listView.SelectedObject as TypeListItem;
+            ThemeType type = (ThemeType)Enum.Parse(typeof(ThemeType), item.Name);
+            SetTheme(type);
+        }
         private void checkBox_font_CheckedChanged(object sender, EventArgs e)
         {
             button_font.Enabled = checkBox_font.Checked;
@@ -52,6 +116,17 @@ namespace TwEX_API.Controls
             PreferenceManager.UpdatePreferenceFile();
             PreferenceManager.UpdateFontPreferences();
         }
+        private void listView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView.SelectedObject != null)
+            {
+                TypeListItem item = listView.SelectedObject as TypeListItem;
+                ThemeType type = (ThemeType)Enum.Parse(typeof(ThemeType), item.Name);
+                SetTheme(type, ParentForm);
+
+            }
+        }
+        /*
         private void radioButtons_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
@@ -68,6 +143,7 @@ namespace TwEX_API.Controls
             //FormManager.UpdateControlUIs();
             //PreferenceManager.SetTheme();
         }
+        */
         #endregion
     }
 }

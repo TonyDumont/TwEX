@@ -45,7 +45,9 @@ namespace TwEX_API
         {
             new IconFile(){ Name = "Add", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Add.png"},
             new IconFile(){ Name = "AddWallet", Url = "https://cdn2.iconfinder.com/data/icons/finance-solid-icons-vol-3/48/112-256.png" },
+            new IconFile(){ Name = "Arbitrage", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },
             new IconFile(){ Name = "ArbitrageManager", Url = "https://orig00.deviantart.net/1028/f/2015/299/f/6/app_store_look_like_software_center_icon__1024__by_kayover-d9efmjt.png" },
+            new IconFile(){ Name = "Application", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new IconFile(){ Name = "BalanceManager", Url = "https://i.pinimg.com/originals/22/dd/de/22ddde0fc220582cf3688beca1795683.jpg" },
             new IconFile(){ Name = "BlockCypher", Url = "https://www.blockcypher.com/images/favicon-192x192.png" },
             new IconFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
@@ -55,15 +57,17 @@ namespace TwEX_API
             new IconFile(){ Name = "CryptoCompare", Url = "https://www.cryptocompare.com/media/20562/favicon.png?v=2" },
             new IconFile(){ Name = "CustomView", Url ="http://cdn.mysitemyway.com/icons-watermarks/simple-black/bfa/bfa_table/bfa_table_simple-black_512x512.png" },
             new IconFile(){ Name = "Deposit", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_deposit_income-512.png" },
+            new IconFile(){ Name = "EarnGG", Url = "https://earn.gg/img/favicon-32x32.png" },
             new IconFile(){ Name = "EarnGGManager", Url = "https://earn.gg/img/favicon-32x32.png" },
-            new IconFile(){ Name = "ExchangeEditor", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
-            new IconFile(){ Name = "ExchangeManager", Url = "https://coinmarketcap.com/static/img/CoinMarketCap.png" },
+            new IconFile(){ Name = "Exchange", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
+            new IconFile(){ Name = "ExchangeEditor", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
+            new IconFile(){ Name = "ExchangeManager", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
             new IconFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" },
             new IconFile(){ Name = "Export", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/export.png" },
             new IconFile(){ Name = "Font", Url = "https://cdn0.iconfinder.com/data/icons/exempli_gratia/256/z_File_FONT.png" },
             new IconFile(){ Name = "FontDecrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-smaller.png" },
             new IconFile(){ Name = "FontIncrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png" },
-            
+            new IconFile(){ Name = "Form", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new IconFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
             new IconFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
             
@@ -78,6 +82,7 @@ namespace TwEX_API
             new IconFile(){ Name = "TwEX_FormEditor", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new IconFile(){ Name = "UpDown", Url = "https://cdn1.iconfinder.com/data/icons/touch-gestures-3/96/Scroll-512.png"},
             new IconFile(){ Name = "USDSymbol", Url = "http://www.tirosagol.com/wp-content/uploads/moneyTAG.jpg"},
+            new IconFile(){ Name = "Wallet", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
             new IconFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
             new IconFile(){ Name = "Withdrawal", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_withdraw_expenses-256.png" }
         };
@@ -1766,18 +1771,7 @@ namespace TwEX_API
                 Form form = new Form() { Size = new Size(950, 550), Name = formName, Text = formText, Icon = formIcon };
                 form.Show();
 
-                //FormPreference preference;
                 FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == formName);
-                /*
-                if (name != "ExchangeTrading")
-                {
-                    preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name);
-                }
-                else
-                {
-                    preference = FormPreferences.FirstOrDefault(item => item.Name == form.Name + "_" + text);
-                }
-                */
 
                 if (preference != null)
                 {
@@ -1839,10 +1833,10 @@ namespace TwEX_API
                         form.Controls.Add(new EarnGGManagerControl() { Dock = DockStyle.Fill });
                         form.FormClosing += delegate { earnGGManagerControl = null; };
                         break;
-                        
+
+                        /*
                     case "ExchangeTrading":
                         ExchangeTradingControl tradeControl = new ExchangeTradingControl() { Dock = DockStyle.Fill };
-                        //form.Controls.Add(new ExchangeTradingControl() { Dock = DockStyle.Fill });
                         tradeControl.SetExchange(text);
                         form.Controls.Add(tradeControl);
                         //form.Name += "_" + text;
@@ -1850,15 +1844,13 @@ namespace TwEX_API
                         
                         //form.FormClosing += delegate { exchangeManagerControl = null; };
                         break;
-                        
-
+                        */
 /*
                     case "ExchangeEditor":
                         form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
                         form.FormClosing += delegate { exchangeManagerControl = null; };
                         break;
                         */
-
 
                     case "LogManager":
                         form.FormClosing += delegate { logManagerControl = null; };
@@ -1906,6 +1898,7 @@ namespace TwEX_API
                     OpenForm(pref.Name, pref.Name);
                 }
             }
+            SetTheme(preferences.Theme.type);
         }
         #endregion
 
@@ -1999,8 +1992,6 @@ namespace TwEX_API
                 mainControl.UpdateUI(resize);
             }
         }
-
-       // delegate void StringArgReturningVoidDelegate(string text);
         #endregion
     }
     // -------------------------------
@@ -2974,7 +2965,7 @@ namespace TwEX_API
                     return preferences.Font;
                 }
             }
-        }
+        }      
         #endregion
 
         #region Updaters
@@ -3165,46 +3156,134 @@ namespace TwEX_API
             AddLogMessage(Name, "UpdatePreferenceSnapshots", "Snapshots Complete", LogMessageType.LOG);
             return true;
         }
-        public static void UpdateTheme(ThemeType type)
-        {
+        #endregion
 
-            if (type == ThemeType.Dark)
+        #region Theme
+        public static ThemePreference GetThemePreference(ThemeType type)
+        {
+            switch (type)
             {
-                // DARK MODE
-                preferences.Theme = new ThemePreference()
+                case ThemeType.Default:
+                    return new ThemePreference();
+                    
+                case ThemeType.Dark:
+                    return new ThemePreference()
+                    {
+                        type = ThemeType.Dark,
+                        Green = Color.DarkGreen,
+                        Red = Color.DarkRed,
+                        Yellow = Color.DarkGoldenrod,
+                        //BrowserBackground = ColorTranslator.FromHtml("#333333"),
+                        FormBackground = ColorTranslator.FromHtml("#333333"),
+                        Text = ColorTranslator.FromHtml("#eaeaea"),
+                        HeaderBackground = ColorTranslator.FromHtml("#444444"),
+                        HeaderText = ColorTranslator.FromHtml("#fcfbef")
+                    };
+
+                case ThemeType.Stoned:
+                    return new ThemePreference()
+                    {
+                        type = ThemeType.Stoned
+                    };
+
+                default:
+                    return new ThemePreference();
+                    
+            }
+        }
+        public static void SetControlTheme(Control control, ThemePreference theme)
+        {
+            control.BackColor = theme.FormBackground;
+            control.ForeColor = theme.Text;
+
+            if (control is FastObjectListView)
+            {
+                FastObjectListView listView = control as FastObjectListView;
+                listView.HeaderUsesThemes = false;
+                var headerstyle = new HeaderFormatStyle();
+                headerstyle.SetBackColor(theme.HeaderBackground);
+                headerstyle.SetForeColor(theme.HeaderText);
+
+                foreach (OLVColumn item in listView.Columns)
                 {
-                    type = ThemeType.Dark,
-                    Green = Color.DarkGreen,
-                    Red = Color.DarkRed,
-                    Yellow = Color.DarkGoldenrod,
-                    //BrowserBackground = ColorTranslator.FromHtml("#333333"),
-                    FormBackground = ColorTranslator.FromHtml("#333333"),
-                    Text = ColorTranslator.FromHtml("#eaeaea"),
-                    HeaderBackground = ColorTranslator.FromHtml("#444444"),
-                    HeaderText = ColorTranslator.FromHtml("#fcfbef")
-                };
+                    item.HeaderFormatStyle = headerstyle;
+                }
+            }
+            /*
+            switch (myControl)
+            {
+                case Button b:
+                case GroupBox g:
+                case Label l:
+                case ToolStrip t:
+                //case ToolStripDropDown cm:
+                    myControl.BackColor = preferences.Theme.FormBackground;
+                    myControl.ForeColor = preferences.Theme.Text;
+                    break;
+
+                case FastObjectListView f:
+                    FastObjectListView listView = myControl as FastObjectListView;
+                    listView.HeaderUsesThemes = false;
+
+                    myControl.BackColor = preferences.Theme.FormBackground;
+                    myControl.ForeColor = preferences.Theme.Text;
+
+                    var headerstyle = new HeaderFormatStyle();
+                    headerstyle.SetBackColor(preferences.Theme.HeaderBackground);
+                    headerstyle.SetForeColor(preferences.Theme.HeaderText);
+
+                    foreach (OLVColumn item in listView.Columns)
+                    {
+                        item.HeaderFormatStyle = headerstyle;
+                    }
+                    break;
+
+                default:
+                    //AddLogMessage(Name, "UpdateColorControls", "CONTROL NOT DEFINED : " + myControl.GetType(), LogMessageType.DEBUG);
+                    break;
+            }
+            */
+
+            /*
+            if (myControl is ContextMenuStrip)
+            {
+                myControl.BackColor = preferences.Theme.FormBackground;
+                myControl.ForeColor = preferences.Theme.Text;
+            }
+            
+            // Any other non-standard controls should be implemented here aswell...
+            */
+            foreach (Control subC in control.Controls)
+            {
+                SetControlTheme(subC, theme);
+            }
+
+        }
+        public static bool SetTheme(ThemeType type, Form target = null)
+        {
+            ThemePreference theme = GetThemePreference(type);
+
+            if (target != null)
+            {
+                target.BackColor = theme.FormBackground;
+                target.ForeColor = theme.Text;
+
+                foreach (Control c in target.Controls)
+                {
+                    SetControlTheme(c, theme);
+                }
             }
             else
             {
-                // DEFAULT MODE
-                preferences.Theme = new ThemePreference()
+                foreach (Form form in Application.OpenForms)
                 {
-                    type = ThemeType.Default
-                };
-            }
-
-            foreach (Form form in Application.OpenForms)
-            {
-                form.BackColor = preferences.Theme.FormBackground;
-                form.ForeColor = preferences.Theme.Text;
-
-                foreach (Control c in form.Controls)
-                {
-                    UpdateColorControls(c);
+                    SetTheme(type, form);
                 }
+                preferences.Theme = theme;
+                FormManager.UpdateControlUIs();
+                UpdatePreferenceFile();
             }
-            FormManager.UpdateControlUIs();
-            UpdatePreferenceFile();
+            return true;
         }
         #endregion
 
@@ -3218,6 +3297,9 @@ namespace TwEX_API
             public BalanceViewType BalanceView { get; set; } = BalanceViewType.balance;
 
             public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();
+
+            // CALCULATOR
+            public string CalculatorSymbol { get; set; } = "BTC";
             public List<string> SymbolWatchList { get; set; } = new List<string>();
 
             // FLAGS
@@ -3238,6 +3320,7 @@ namespace TwEX_API
             public int maxListCount = 0;
             public List<ExchangeTicker> ArbitrageWatchList { get; set; } = new List<ExchangeTicker>();
         }
+        
         public class CoinMarketCapPreference
         {
             public List<CoinMarketCapTicker> Tickers = new List<CoinMarketCapTicker>();
@@ -3276,10 +3359,11 @@ namespace TwEX_API
             public Color Red { get; set; } = Color.LightPink;
             public Color Yellow { get; set; } = Color.LightGoldenrodYellow;
 
-            public Color FormBackground { get; set; } = Color.White;
-            public Color Text { get; set; } = Color.Black;
-            public Color HeaderBackground { get; set; } = Color.White;
-            public Color HeaderText { get; set; } = Color.Black;
+            public Color FormBackground { get; set; } = SystemColors.Control;
+            //public Color Text { get; set; } = Color.Black;
+            public Color Text { get; set; } = SystemColors.ControlText;
+            public Color HeaderBackground { get; set; } = SystemColors.Control;
+            public Color HeaderText { get; set; } = SystemColors.ControlText;
             public string BrowserBackgroundColor
             {
                 get
@@ -3308,6 +3392,12 @@ namespace TwEX_API
         public class WalletPreference
         {
             public List<WalletManager.WalletBalance> Wallets { get; set; } = new List<WalletManager.WalletBalance>();
+        }
+
+        public class TypeListItem
+        {
+            public string Name { get; set; }
+            public Type type { get; set; }
         }
         #endregion
 
@@ -3343,8 +3433,9 @@ namespace TwEX_API
         }
         public enum ThemeType
         {
-            Default,
-            Dark
+            Default = 0,
+            Dark    = 1,
+            Stoned  = 2
         }
         #endregion
     }
@@ -3491,3 +3582,47 @@ namespace TwEX_API
     }
     // -------------------------------
 }
+
+/*
+        public static void UpdateTheme(ThemeType type)
+        {
+
+            if (type == ThemeType.Dark)
+            {
+                // DARK MODE
+                preferences.Theme = new ThemePreference()
+                {
+                    type = ThemeType.Dark,
+                    Green = Color.DarkGreen,
+                    Red = Color.DarkRed,
+                    Yellow = Color.DarkGoldenrod,
+                    //BrowserBackground = ColorTranslator.FromHtml("#333333"),
+                    FormBackground = ColorTranslator.FromHtml("#333333"),
+                    Text = ColorTranslator.FromHtml("#eaeaea"),
+                    HeaderBackground = ColorTranslator.FromHtml("#444444"),
+                    HeaderText = ColorTranslator.FromHtml("#fcfbef")
+                };
+            }
+            else
+            {
+                // DEFAULT MODE
+                preferences.Theme = new ThemePreference()
+                {
+                    type = ThemeType.Default
+                };
+            }
+
+            foreach (Form form in Application.OpenForms)
+            {
+                form.BackColor = preferences.Theme.FormBackground;
+                form.ForeColor = preferences.Theme.Text;
+
+                foreach (Control c in form.Controls)
+                {
+                    UpdateColorControls(c);
+                }
+            }
+            FormManager.UpdateControlUIs();
+            UpdatePreferenceFile();
+        }
+        */

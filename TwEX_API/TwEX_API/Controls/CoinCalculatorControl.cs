@@ -23,17 +23,21 @@ namespace TwEX_API.Controls
         }
         private void CoinCalculatorControl_Load(object sender, EventArgs e)
         {
-            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
             toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
-
             toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
             toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
             toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
-            //toolStripMenuItem_add.Image = ContentManager.GetIconByUrl(ContentManager.AddWalletIconUrl);
             toolStripButton_AddSymbol.Image = ContentManager.GetIcon("Add");
 
-            //toolStripMenuItem_update.Image = ContentManager.GetIconByUrl(ContentManager.RefreshIcon);
-            //listView.SetObjects(symbolList);
+            Size iconSize = PreferenceManager.preferences.IconSize;
+
+            //pictureBox_usd.Size = PreferenceManager.preferences.IconSize;
+            pictureBox_usd.Image = ContentManager.GetIcon("USDSymbol");
+            //label_usd.Image = ContentManager.ResizeImage(ContentManager.GetIcon("USD"), iconSize.Width, iconSize.Height);
+            label_symbol.Text = PreferenceManager.preferences.CalculatorSymbol;
+            pictureBox_symbol.Image = ContentManager.GetSymbolIcon(PreferenceManager.preferences.CalculatorSymbol);
+            //label_symbol.Image = ContentManager.ResizeImage(ContentManager.GetSymbolIcon(PreferenceManager.preferences.CalculatorSymbol), iconSize.Width, iconSize.Height);
+
             UpdateUI(true);
         }
         private void InitializeColumns()
@@ -92,45 +96,11 @@ namespace TwEX_API.Controls
             else
             {
                 ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                //Font = this.ParentForm.Font;
-                //toolStrip.Font = ParentForm.Font;
-                //toolStrip_footer.Font = ParentForm.Font;
+                toolStrip.Font = ParentForm.Font;
                 toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
-                //toolStripButton_AddSymbol.Font = ParentForm.Font;
 
-                //toolStripSpringTextBox_symbol.Font = ParentForm.Font;
-                //toolStripButton_AddSymbol.Font = ParentForm.Font;
-                //Size textSize = TextRenderer.MeasureText("OOOOO", ParentForm.Font);
                 column_symbol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_symbol.Width = column_symbol.Width + (listView.RowHeightEffective);
-                //column_symbol.Width = textSize.Width + (listView.RowHeightEffective * 2);
-                //column_symbol.Width = 200;
-                /*
-                int columnWidth = column_symbol.Width;
-                int rowHeight = listView.RowHeightEffective;
-
-                //tableLayoutPanel.ColumnStyles[1].SizeType = SizeType.Absolute;
-                tableLayoutPanel.ColumnStyles[1].Width = columnWidth;
-                //tableLayoutPanel.RowStyles[0].SizeType = SizeType.Absolute;
-                tableLayoutPanel.RowStyles[0].Height = rowHeight;
-                //tableLayoutPanel.RowStyles[1].SizeType = SizeType.Absolute;
-                tableLayoutPanel.RowStyles[1].Height = rowHeight;
-                */
-
-                /*
-                toolStrip_header.Font = ParentForm.Font;
-                toolStrip_footer.Font = ParentForm.Font;
-
-                int rowHeight = listView.RowHeightEffective;
-
-                foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
-                {
-                    col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                    col.Width = col.Width + (rowHeight / 2);
-                }
-                */
-                //PreferenceManager.UpdateFormPreferences(ParentForm, true);
-
+                column_symbol.Width = column_symbol.Width + (listView.RowHeightEffective * 3); 
             }
         }
         #endregion
@@ -189,6 +159,7 @@ namespace TwEX_API.Controls
                 CalculatorItem item = listView.SelectedObject as CalculatorItem;
                 numericUpDown_symbol.Value = item.value;
                 label_symbol.Text = item.symbol;
+                pictureBox_symbol.Image = ContentManager.GetSymbolIcon(item.symbol);
             }
             else
             {
@@ -197,24 +168,22 @@ namespace TwEX_API.Controls
         }
         private void numericUpDown_symbol_ValueChanged(object sender, EventArgs e)
         {
-            if (listView.SelectedItem != null)
+            CoinMarketCapTicker priceItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == label_symbol.Text);
+
+            if (priceItem != null)
             {
-                CalculatorItem listItem = listView.SelectedObject as CalculatorItem;
-
-                CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
-                //Decimal total = 0;
-
-                if (ticker != null)
-                {
-                    //total = numericUpDown_symbol.Value * priceItem.price_usd;
-                    numericUpDown_usd.Value = numericUpDown_symbol.Value * ticker.price_usd;
-                    //listItem.value = total;
-                    UpdateUI();
-                }
+                numericUpDown_usd.Value = priceItem.price_usd * numericUpDown_symbol.Value;
             }
+            UpdateUI();
         }
         private void numericUpDown_usd_ValueChanged(object sender, EventArgs e)
         {
+            CoinMarketCapTicker priceItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == label_symbol.Text);
+
+            if (priceItem != null)
+            {
+                numericUpDown_symbol.Value = numericUpDown_usd.Value / priceItem.price_usd;
+            }
             UpdateUI();
         }
         private void listView_MouseClick(object sender, MouseEventArgs e)

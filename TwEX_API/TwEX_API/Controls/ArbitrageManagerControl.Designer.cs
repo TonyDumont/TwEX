@@ -30,19 +30,19 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ArbitrageManagerControl));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton_addSymbol = new System.Windows.Forms.ToolStripButton();
-            this.toolStripTextBox_symbol = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
-            this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.toolStripMenuItem_chart = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripTextBox_symbol = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripButton_addSymbol = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,34 +52,13 @@
             this.toolStripDropDownButton_menu,
             this.toolStripSeparator2,
             this.toolStripTextBox_symbol,
-            this.toolStripButton_addSymbol,
-            this.toolStripSeparator3});
+            this.toolStripSeparator3,
+            this.toolStripButton_addSymbol});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(550, 25);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip1";
-            // 
-            // toolStripButton_addSymbol
-            // 
-            this.toolStripButton_addSymbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_addSymbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_addSymbol.Image")));
-            this.toolStripButton_addSymbol.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_addSymbol.Name = "toolStripButton_addSymbol";
-            this.toolStripButton_addSymbol.Size = new System.Drawing.Size(76, 22);
-            this.toolStripButton_addSymbol.Text = "Add Symbol";
-            this.toolStripButton_addSymbol.Click += new System.EventHandler(this.toolStripButton_addSymbol_Click);
-            // 
-            // toolStripTextBox_symbol
-            // 
-            this.toolStripTextBox_symbol.Name = "toolStripTextBox_symbol";
-            this.toolStripTextBox_symbol.Size = new System.Drawing.Size(100, 25);
-            this.toolStripTextBox_symbol.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripDropDownButton_menu
             // 
@@ -102,35 +81,73 @@
             // toolStripMenuItem_font
             // 
             this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
-            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_font.Tag = "Font";
             this.toolStripMenuItem_font.Text = "Font";
             // 
             // toolStripMenuItem_fontIncrease
             // 
             this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
-            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
             this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
             // 
             // toolStripMenuItem_fontDecrease
             // 
             this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
-            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
             this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(145, 6);
+            // 
+            // toolStripMenuItem_chart
+            // 
+            this.toolStripMenuItem_chart.Name = "toolStripMenuItem_chart";
+            this.toolStripMenuItem_chart.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem_chart.Tag = "Charts";
+            this.toolStripMenuItem_chart.Text = "Hide Charts";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(145, 6);
             // 
             // toolStripMenuItem_update
             // 
             this.toolStripMenuItem_update.Name = "toolStripMenuItem_update";
-            this.toolStripMenuItem_update.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_update.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_update.Tag = "Update";
             this.toolStripMenuItem_update.Text = "Refresh All";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripTextBox_symbol
+            // 
+            this.toolStripTextBox_symbol.Name = "toolStripTextBox_symbol";
+            this.toolStripTextBox_symbol.Size = new System.Drawing.Size(65, 25);
+            this.toolStripTextBox_symbol.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // toolStripButton_addSymbol
+            // 
+            this.toolStripButton_addSymbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton_addSymbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_addSymbol.Image")));
+            this.toolStripButton_addSymbol.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_addSymbol.Name = "toolStripButton_addSymbol";
+            this.toolStripButton_addSymbol.Size = new System.Drawing.Size(76, 22);
+            this.toolStripButton_addSymbol.Text = "Add Symbol";
+            this.toolStripButton_addSymbol.Click += new System.EventHandler(this.toolStripButton_addSymbol_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // flowLayoutPanel
             // 
@@ -139,23 +156,6 @@
             this.flowLayoutPanel.Name = "flowLayoutPanel";
             this.flowLayoutPanel.Size = new System.Drawing.Size(550, 325);
             this.flowLayoutPanel.TabIndex = 1;
-            // 
-            // toolStripMenuItem_chart
-            // 
-            this.toolStripMenuItem_chart.Name = "toolStripMenuItem_chart";
-            this.toolStripMenuItem_chart.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem_chart.Tag = "Charts";
-            this.toolStripMenuItem_chart.Text = "Hide Charts";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // ArbitrageManagerControl
             // 

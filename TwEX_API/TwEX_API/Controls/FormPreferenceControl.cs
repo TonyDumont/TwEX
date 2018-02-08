@@ -64,7 +64,7 @@ namespace TwEX_API.Controls
                 listView.Font = ParentForm.Font;
 
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                Width = column_Name.Width + (listView.RowHeightEffective * 2);
+                Width = column_Name.Width + (listView.RowHeightEffective * 3);
             }
         }
         #endregion
@@ -74,7 +74,14 @@ namespace TwEX_API.Controls
         {
             FormPreference preference = (FormPreference)rowObject;
             int rowheight = listView.RowHeightEffective - 2;
-            return ContentManager.ResizeImage(ContentManager.GetIcon(preference.Name), rowheight, rowheight);
+            if (ContentManager.IconList.Images.ContainsKey(preference.Name))
+            {
+                return ContentManager.ResizeImage(ContentManager.GetIcon(preference.Name), rowheight, rowheight);
+            }
+            else
+            {
+                return ContentManager.ResizeImage(ContentManager.GetExchangeIcon(preference.Name), rowheight, rowheight);
+            }   
         }
         #endregion
 

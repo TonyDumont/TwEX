@@ -9,12 +9,6 @@ namespace TwEX_API.Controls
     {
         public static Timer timer = new Timer() { Interval = 60000 };
 
-        //public int minChartWidth = 300;
-        //public int minChartHeight = 265;
-        //public int maxListCount = 0;
-        //public int minChartWidth = 300;
-        //public int minChartHeight = 265;
-
         #region Initialize
         public ArbitrageManagerControl()
         {
@@ -51,7 +45,7 @@ namespace TwEX_API.Controls
         }
         private void timer_Tick(object sender, EventArgs e)
         {
-            LogManager.AddLogMessage(Name, "timer_Tick", "Ticked", LogManager.LogMessageType.DEBUG);
+            //LogManager.AddLogMessage(Name, "timer_Tick", "Ticked", LogManager.LogMessageType.DEBUG);
             UpdateUI();
         }
         #endregion
@@ -119,6 +113,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                Font = PreferenceManager.GetFormFont(ParentForm);
                 toolStrip.Font = ParentForm.Font;
             }
         }

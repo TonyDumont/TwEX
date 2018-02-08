@@ -79,7 +79,7 @@ namespace TwEX_API.Controls
                 }
                 catch (Exception ex)
                 {
-                    LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
+                    //LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
             }
         }
