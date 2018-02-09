@@ -1872,6 +1872,7 @@ namespace TwEX_API
             if (targetForm == null)
             {
                 Form form = new Form() { Size = new Size(950, 550), Name = formName, Text = formText, Icon = formIcon };
+                SetTheme(preferences.Theme.type, form);
                 form.Show();
 
                 FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == formName);
@@ -3279,7 +3280,55 @@ namespace TwEX_API
                         FormBackground = ColorTranslator.FromHtml("#333333"),
                         Text = ColorTranslator.FromHtml("#eaeaea"),
                         HeaderBackground = ColorTranslator.FromHtml("#444444"),
-                        HeaderText = ColorTranslator.FromHtml("#fcfbef")
+                        HeaderText = ColorTranslator.FromHtml("#fcfbef"),
+                        cryptoCompareChartTheme = new CryptoCompareChartTheme()
+                        {
+                            General = new CryptoCompareTheme_General()
+                            {
+                                background = "#333",
+                                borderWidth = "1px",
+                                borderColor = "#545454",
+                                borderRadius = "4px 4px 0 0"
+                            },
+                            Header = new CryptoCompareTheme_Header()
+                            {
+                                background = "#000",
+                                color = "#FFF",
+                                displayFollowers = true
+                            },
+                            Followers = new CryptoCompareTheme_Followers()
+                            {
+                                background = "#f7931a",
+                                color = "#FFF",
+                                borderColor = "#e0bd93",
+                                counterBorderColor = "#fdab48",
+                                counterColor = "#f5d7b2"
+                            },
+                            Data = new CryptoCompareTheme_Data()
+                            {
+                                priceColor = "#FFF",
+                                infoLabelColor = "#CCC",
+                                infoValueColor = "#CCC"
+                            },
+                            Chart = new CryptoCompareTheme_Chart()
+                            {
+                                animation = false,
+                                fillColor = "rgba(86,202,158,0.5)",
+                                borderColor = "#56ca9e"
+                            },
+                            Trend = new CryptoCompareTheme_Trend()
+                            {
+                                colorUp = "#3d9400",
+                                colorDown = "#A11B0A",
+                                colorUnchanged = "#2C4C76"
+                            },
+                            Conversion = new CryptoCompareTheme_Conversion()
+                            {
+                                background = "#000",
+                                lineHeight = "20px",
+                                color = "#999"
+                            }
+                        }
                     };
 
                 case ThemeType.Stoned:
@@ -3300,6 +3349,8 @@ namespace TwEX_API
             control.BackColor = theme.FormBackground;
             control.ForeColor = theme.Text;
             
+            
+
             if (theme.BackgroundImageName.Length > 0)
             {
                 control.BackgroundImageLayout = ImageLayout.Tile;
@@ -3316,6 +3367,8 @@ namespace TwEX_API
             {
                 FastObjectListView listView = control as FastObjectListView;
                 listView.BackColor = theme.FormBackground;
+                
+                //listView.BorderStyle = BorderStyle.Fixed3D;
                 //listView.BackColor = Color.FromArgb(50, theme.FormBackground);
                 //SetStyle(ControlStyles.SupportsTransparentBackColor, true);
                 //listView.BackColor = Color.Transparent;
@@ -3325,7 +3378,7 @@ namespace TwEX_API
                 var headerstyle = new HeaderFormatStyle();
                 headerstyle.SetBackColor(theme.HeaderBackground);
                 headerstyle.SetForeColor(theme.HeaderText);
-
+                
                 foreach (OLVColumn item in listView.Columns)
                 {
                     item.HeaderFormatStyle = headerstyle;
@@ -3463,6 +3516,7 @@ namespace TwEX_API
                     return ColorTranslator.ToHtml(FormBackground);
                 }
             }
+            public CryptoCompareChartTheme cryptoCompareChartTheme { get; set; } = new CryptoCompareChartTheme();
         }
         public class TradingViewPreference
         {

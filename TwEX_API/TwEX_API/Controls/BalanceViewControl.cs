@@ -34,6 +34,7 @@ namespace TwEX_API.Controls
         private void InitializeColumns()
         {
             column_SymbolIcon.ImageGetter = new ImageGetterDelegate(aspect_symbolIcon);
+            //column_Balance.ImageGetter = new ImageGetterDelegate(aspect_symbolIcon);
             column_ExchangeIcon.ImageGetter = new ImageGetterDelegate(aspect_exchangeIcon);
         }
         #endregion

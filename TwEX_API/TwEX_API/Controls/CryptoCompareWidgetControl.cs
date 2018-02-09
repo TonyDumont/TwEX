@@ -5,6 +5,7 @@ using CefSharp;
 using TwEX_API.Market;
 using static TwEX_API.Market.CryptoCompare;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace TwEX_API.Controls
 {
@@ -188,8 +189,18 @@ namespace TwEX_API.Controls
         }
         private string GetThemeString()
         {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("var cccTheme = ");
+
+            //CryptoCompare.CryptoCompareChartTheme theme = new CryptoCompare.CryptoCompareChartTheme();
+
+            string json = JsonConvert.SerializeObject(PreferenceManager.preferences.Theme.cryptoCompareChartTheme);
+            //LogManager.AddLogMessage(Name, "toolStripButton_OrderTotal_Click", json, LogManager.LogMessageType.DEBUG);
+            builder.Append(json);
+            builder.Append(";");
+            return builder.ToString();
+            /*
             if (PreferenceManager.preferences.Theme.type != PreferenceManager.ThemeType.Default)
-            //if (PreferenceManager.CryptoComparePreferences.Theme != "Default")
             {
 
                 StringBuilder builder = new StringBuilder();
@@ -201,28 +212,13 @@ namespace TwEX_API.Controls
                 builder.Append("\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"}};");
 
 
-                //var cccTheme = 
-                //{ "General":{ "background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},
-                //"Header":{ "background":"#000","color":"#FFF"},
-                //"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},
-                //"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},
-                //"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}};
-
-
-            //builder.AppendLine();
-            //builder.Append("1 cat").AppendLine();
-
-            // Get a reference to the StringBuilder's buffer content.
-            //string innerString = builder.ToString();
-            //string script = @"var cccTheme={"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{ "background":"#000","color":"#FFF"},"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}";
-            //return "var cccTheme={\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\"},\"Header\":{ \"background\":\"#000\",\"color\":\"#FFF\"},\"Followers\":{ \"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"};";
-            return builder.ToString();
+                return builder.ToString();
             }
             else
             {
                 return String.Empty;
-            }
-            
+            }      
+            */
             //return String.Empty;
         }
         #endregion Getters
@@ -231,10 +227,10 @@ namespace TwEX_API.Controls
         delegate void updateBrowserCallback();
         public void updateBrowser()
         {
-            if (this.browser.InvokeRequired)
+            if (browser.InvokeRequired)
             {
                 updateBrowserCallback d = new updateBrowserCallback(updateBrowser);
-                this.browser.Invoke(d, new object[] { });
+                browser.Invoke(d, new object[] { });
             }
             else
             {
@@ -247,7 +243,7 @@ namespace TwEX_API.Controls
                 }
                 catch (Exception ex)
                 {
-                    LogManager.AddLogMessage(this.Name, "updateBrowser", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                    LogManager.AddLogMessage(Name, "updateBrowser", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
             }
         }
@@ -557,218 +553,21 @@ namespace TwEX_API.Controls
         }
         #endregion
     }
-
 }
 
 
-/*
-                    if (ApplicationManager.NightMode == true)
-                    {
-                        browser.BackColor = Color.Black;
-                    }else
-                    {
-                        browser.BackColor = Color.White;
-                    }
-                    */
-//LogManager.AddDebugMessage(Name, "UpdateUI", "1 colcount=" + listView.OLVGroups. .CollapsedGroups.Count());
-
-/*
-                string html =
-                "<html>" +
-                "<head></head>" +
-                "<body>" +
-                //"<body bgcolor=\"" + ColorTranslator.ToHtml(ApplicationManager.BackgroundColor_browser) + "\">" +
-
-                "<div id = \"container\">" +
-
-                "<script type=\"text/javascript\">" +
-                "baseUrl=\"https://widgets.cryptocompare.com/\";" +
-                "var scripts = document.getElementsByTagName(\"script\");" +
-                "var embedder = scripts[scripts.length - 1];" +
-
-                //GetThemeString() +
-
-                "(function(){" +
-                    "var appName = encodeURIComponent(window.location.hostname);" +
-                    "if (appName == \"\") { appName = \"local\"; }" +
-                    "var s = document.createElement(\"script\");" +
-                    "s.type = \"text/javascript\";" +
-                    "s.async = true;" +
-                    "var theUrl = baseUrl + 'serve/v1/coin/chart?fsym=" + symbol + "&tsym=" + market + "';" +
-                    "s.src = theUrl + (theUrl.indexOf(\"?\") >= 0 ? \"&\" : \"?\") + \"app=\" + appName;" +
-                    "embedder.parentNode.appendChild(s);" +
-                    "})();" +
-                "</script>" +
-
-                "</div>" +
-                "</body></html>";
-                */
-
-/*
-// DELEGATE (Chart Advanced)
-delegate void SetChartAdvancedCallback(string symbol);
-public void SetChartAdvanced(string symbol)
-{
-    if (this.InvokeRequired)
-    {
-        SetChartAdvancedCallback d = new SetChartAdvancedCallback(SetChartAdvanced);
-        this.Invoke(d, new object[] { symbol });
-    }
-    else
-    {
-        string html =
-        "<html>" +
-        "<head></head>" +
-        "<body>" +
-        //GetBodyString() +
-        //"<body bgcolor=\"" + ColorTranslator.ToHtml(ApplicationManager.BackgroundColor_browser) + "\">" +
-
-        "<div id = \"container\">" +
-
-        "<script type=\"text/javascript\">" +
-        "baseUrl=\"https://widgets.cryptocompare.com/\";" +
-        "var scripts = document.getElementsByTagName(\"script\");" +
-        "var embedder = scripts[scripts.length - 1];" +
-
-        //GetThemeString() +
-
-        "(function(){" +
-            "var appName = encodeURIComponent(window.location.hostname);" +
-            "if(appName==\"\"){appName=\"local\";}" +
-            "var s = document.createElement(\"script\");" +
-            "s.type = \"text/javascript\";" +
-            "s.async = true;" +
-            "var theUrl = baseUrl+'serve/v3/coin/chart?fsym=" + symbol + "&tsyms=USD,BTC,CAD';" +
-            "s.src = theUrl+(theUrl.indexOf(\"?\") >= 0 ? \"&\" : \"?\") + \"app=\" + appName;" +
-            "embedder.parentNode.appendChild(s);" +
-        "})();" +
-        "</script>" +
-
-        "</div>" +
-        "</body></html>";
-
-        browser.LoadHtml(html, "http://rendering/");
-    }
-}
-
-// DELEGATE (News Feed)
-delegate void setNewsFeedCallback(string symbol, string market);
-public void setNewsFeed(string symbol, string market)
-{
-    if (this.InvokeRequired)
-    {
-        setNewsFeedCallback d = new setNewsFeedCallback(setNewsFeed);
-        this.Invoke(d, new object[] { symbol, market });
-    }
-    else
-    {
-        try
-        {
-            string html =
-
-            "<html>" +
-            "<head></head>" +
-            "<body>" +
-            //"<body bgcolor=\"" + ColorTranslator.ToHtml(ApplicationManager.BackgroundColor_browser) + "\">" +
-
-            "<div id = \"container\">" +
-
-            "<script type=\"text/javascript\">" +
-            "baseUrl=\"https://widgets.cryptocompare.com/\";" +
-            "var scripts = document.getElementsByTagName(\"script\");" +
-            "var embedder = scripts[scripts.length - 1];" +
-
-            //GetThemeString() +
-
-            "(function(){" +
-                "var appName = encodeURIComponent(window.location.hostname);" +
-                "if (appName == \"\") { appName = \"local\"; }" +
-                "var s = document.createElement(\"script\");" +
-                "s.type = \"text/javascript\";" +
-                "s.async = true;" +
+//var cccTheme = 
+//{ "General":{ "background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},
+//"Header":{ "background":"#000","color":"#FFF"},
+//"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},
+//"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},
+//"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}};
 
 
+//builder.AppendLine();
+//builder.Append("1 cat").AppendLine();
 
-                "var theUrl = baseUrl + 'serve/v1/coin/feed?fsym=" + symbol + "&tsym=" + market + "&feedType=CoinTelegraph'';" +
-
-
-
-                "s.src = theUrl + (theUrl.indexOf(\"?\") >= 0 ? \"&\" : \"?\") + \"app=\" + appName;" +
-                "embedder.parentNode.appendChild(s);" +
-                "})();" +
-            "</script>" +
-
-            "</div>" +
-            "</body></html>";
-
-            browser.LoadHtml(html, "http://rendering/");
-
-        }
-        catch (Exception ex)
-        {
-            LogManager.AddLogMessage(this.Name, "setChartWidget", ex.Message, LogManager.LogMessageType.EXCEPTION);
-        }
-    }
-}
-
-// DELEGATE (setWidget)
-delegate void setWidgetCallback(string symbol, string market);
-public void setWidget(string symbol, string market)
-{
-    if (this.InvokeRequired)
-    {
-        setWidgetCallback d = new setWidgetCallback(setWidget);
-        this.Invoke(d, new object[] { symbol, market });
-    }
-    else
-    {
-        try
-        {
-            string html =
-
-            "<html>" +
-            "<head></head>" +
-            "<body>" +
-            //"<body bgcolor=\"" + ColorTranslator.ToHtml(ApplicationManager.BackgroundColor_browser) + "\">" +
-
-            "<div id = \"container\">" +
-
-            "<script type=\"text/javascript\">" +
-            "baseUrl=\"https://widgets.cryptocompare.com/\";" +
-            "var scripts = document.getElementsByTagName(\"script\");" +
-            "var embedder = scripts[scripts.length - 1];" +
-
-            //GetThemeString() +
-
-            "(function(){" +
-                "var appName = encodeURIComponent(window.location.hostname);" +
-                "if (appName == \"\") { appName = \"local\"; }" +
-                "var s = document.createElement(\"script\");" +
-                "s.type = \"text/javascript\";" +
-                "s.async = true;" +
-
-
-
-                "var theUrl = baseUrl + 'serve/v1/coin/feed?fsym=" + symbol + "&tsym=" + market + "&feedType=CoinTelegraph'';" +
-
-
-
-                "s.src = theUrl + (theUrl.indexOf(\"?\") >= 0 ? \"&\" : \"?\") + \"app=\" + appName;" +
-                "embedder.parentNode.appendChild(s);" +
-                "})();" +
-            "</script>" +
-
-            "</div>" +
-            "</body></html>";
-
-            browser.LoadHtml(html, "http://rendering/");
-
-        }
-        catch (Exception ex)
-        {
-            LogManager.AddLogMessage(this.Name, "setChartWidget", ex.Message, LogManager.LogMessageType.EXCEPTION);
-        }
-    }
-
-}
-*/
+// Get a reference to the StringBuilder's buffer content.
+//string innerString = builder.ToString();
+//string script = @"var cccTheme={"General":{"background":"#333","borderColor":"#545454","borderRadius":"4px 4px 0 0"},"Header":{ "background":"#000","color":"#FFF"},"Followers":{ "background":"#f7931a","color":"#FFF","borderColor":"#e0bd93","counterBorderColor":"#fdab48","counterColor":"#f5d7b2"},"Data":{ "priceColor":"#FFF","infoLabelColor":"#CCC","infoValueColor":"#CCC"},"Chart":{ "fillColor":"rgba(86,202,158,0.5)","borderColor":"#56ca9e"},"Conversion":{ "background":"#000","color":"#999"}";
+//return "var cccTheme={\"General\":{\"background\":\"#333\",\"borderColor\":\"#545454\",\"borderRadius\":\"4px 4px 0 0\"},\"Header\":{ \"background\":\"#000\",\"color\":\"#FFF\"},\"Followers\":{ \"background\":\"#f7931a\",\"color\":\"#FFF\",\"borderColor\":\"#e0bd93\",\"counterBorderColor\":\"#fdab48\",\"counterColor\":\"#f5d7b2\"},\"Data\":{\"priceColor\":\"#FFF\",\"infoLabelColor\":\"#CCC\",\"infoValueColor\":\"#CCC\"},\"Chart\":{\"fillColor\":\"rgba(86,202,158,0.5)\",\"borderColor\":\"#56ca9e\"},\"Conversion\":{\"background\":\"#000\",\"color\":\"#999\"};";

@@ -299,81 +299,65 @@ namespace TwEX_API.Market
         // MiningEquipment
 
         // TopPairs
-        
-
 
         #region DataModels
-        #region DATAMODELS_Enums
-        // ENUMS
-        public enum CryptoCompareChartPeriod
+        public class CryptoCompareChartTheme
         {
-            [Description("1 Day")]
-            Day_1D,
-            [Description("1 Week")]
-            Week_1W,
-            [Description("2 Weeks")]
-            Week_2W,
-            [Description("1 Month")]
-            Month_1M,
-            [Description("3 Months")]
-            Month_3M,
-            [Description("6 Months")]
-            Month_6M,
-            [Description("1 Year")]
-            Year_1Y
+            public CryptoCompareTheme_General General { get; set; } = new CryptoCompareTheme_General();
+            public CryptoCompareTheme_Header Header { get; set; } = new CryptoCompareTheme_Header();
+            public CryptoCompareTheme_Followers Followers { get; set; } = new CryptoCompareTheme_Followers();
+            public CryptoCompareTheme_Data Data { get; set; } = new CryptoCompareTheme_Data();
+            public CryptoCompareTheme_Chart Chart { get; set; } = new CryptoCompareTheme_Chart();
+            public CryptoCompareTheme_Trend Trend { get; set; } = new CryptoCompareTheme_Trend();
+            public CryptoCompareTheme_Conversion Conversion { get; set; } = new CryptoCompareTheme_Conversion();
         }
-        public enum CryptoCompareFeedType
+        // THEME CATEGORIES
+        public class CryptoCompareTheme_General
         {
-            CoinTelegraph,
-            CryptoSource,
-            EspacioBit,
-            CoreMediaWaves,
-            CoreMediaBlockchain,
-            CoreMediaSupernet,
-            DashPayMagazine,
-            CoinJoker
+            public string background { get; set; } = "#FFF";
+            public string borderWidth { get; set; } = "1px";
+            public string borderColor { get; set; } = "#e0e6ef";
+            public string borderRadius { get; set; } = "4px";
         }
-        public enum CryptoCompareWidgetType
+        public class CryptoCompareTheme_Header
         {
-            [Description("symbol,market,period")]
-            Chart,
-
-            [Description("symbol,market,feedType")]
-            NewsFeed,
-
-            [Description("symbol,markets_25")]
-            PricesList,
-
-            [Description("symbol,markets_25")]
-            PricesTiles,
-
-            [Description("symbols_5,markets_5")]
-            Tabbed,
-
-            [Description("symbols_5,markets_5")]
-            Horizontal,
-
-            [Description("symbol,markets_25")]
-            Summary,
-
-            [Description("symbol,market")]
-            Historical,
-
-            [Description("symbol,markets_10")]
-            ChartAdvanced,
-
-            [Description("symbol,markets_25")]
-            Converter,
-
-            [Description("symbols_5,market_25")]
-            HeaderV2,
-
-            [Description("symbols_5,markets_5")]
-            HeaderV3
+            public string background { get; set; } = "#f6f9fb";
+            public string color { get; set; } = "#000";
+            public bool displayFollowers { get; set; } = true;
         }
-        #endregion
-        #region DATAMODELS_Public 
-        // PUBLIC MODELS
+        public class CryptoCompareTheme_Followers
+        {
+            public string background { get; set; } = "#FFF";
+            public string color { get; set; } = "#337ab7";
+            public string borderColor { get; set; } = "#EEE";
+            public string counterBorderColor { get; set; } = "#EEE";
+            public string counterColor { get; set; } = "#999";
+        }
+        public class CryptoCompareTheme_Data
+        {
+            public string priceColor { get; set; } = "#000";
+            public string infoLabelColor { get; set; } = "#333";
+            public string infoValueColor { get; set; } = "#333";
+        }
+        public class CryptoCompareTheme_Chart
+        {
+            public bool animation { get; set; } = false;
+            public string fillColor { get; set; } = "rgba(151,187,205,0.2)";
+            public string borderColor { get; set; } = "#444";
+        }
+        public class CryptoCompareTheme_Trend
+        {
+            public string colorUp { get; set; } = "#3d9400";
+            public string colorDown { get; set; } = "#A11B0A";
+            public string colorUnchanged { get; set; } = "#2C4C76";
+        }
+        public class CryptoCompareTheme_Conversion
+        {
+            public string background { get; set; } = "transparent";
+            public string lineHeight { get; set; } = "20px";
+            public string color { get; set; } = "#000";
+        }       
+        // MISC
         public class CryptoCompareCoin
         {
             /// <summary>The internal id, this is used in other calls<para>int</para></summary>
@@ -530,10 +514,125 @@ namespace TwEX_API.Market
             /// <summary>Integer representing the type of response.<para>integar</para></summary>
             public int Type { get; set; }
         }
-        #endregion
-        #region DATAMODELS_Private
-        // PRIVATE MODELS
-        #endregion
         #endregion DataModels
+
+        #region Enums
+        public enum CryptoCompareChartPeriod
+        {
+            [Description("1 Day")]
+            Day_1D,
+            [Description("1 Week")]
+            Week_1W,
+            [Description("2 Weeks")]
+            Week_2W,
+            [Description("1 Month")]
+            Month_1M,
+            [Description("3 Months")]
+            Month_3M,
+            [Description("6 Months")]
+            Month_6M,
+            [Description("1 Year")]
+            Year_1Y
+        }
+        public enum CryptoCompareFeedType
+        {
+            CoinTelegraph,
+            CryptoSource,
+            EspacioBit,
+            CoreMediaWaves,
+            CoreMediaBlockchain,
+            CoreMediaSupernet,
+            DashPayMagazine,
+            CoinJoker
+        }
+        public enum CryptoCompareWidgetType
+        {
+            [Description("symbol,market,period")]
+            Chart,
+
+            [Description("symbol,market,feedType")]
+            NewsFeed,
+
+            [Description("symbol,markets_25")]
+            PricesList,
+
+            [Description("symbol,markets_25")]
+            PricesTiles,
+
+            [Description("symbols_5,markets_5")]
+            Tabbed,
+
+            [Description("symbols_5,markets_5")]
+            Horizontal,
+
+            [Description("symbol,markets_25")]
+            Summary,
+
+            [Description("symbol,market")]
+            Historical,
+
+            [Description("symbol,markets_10")]
+            ChartAdvanced,
+
+            [Description("symbol,markets_25")]
+            Converter,
+
+            [Description("symbols_5,market_25")]
+            HeaderV2,
+
+            [Description("symbols_5,markets_5")]
+            HeaderV3
+        }
+        #endregion
     }
 }
+/*
+public class CryptoCompareChartTheme
+{
+    public class General
+    {
+        public string background { get; set; } = "#FFF";
+        public string borderWidth { get; set; } = "1px";
+        public string borderColor { get; set; } = "#e0e6ef";
+        public string borderRadius { get; set; } = "4px";
+    }
+    public class Header
+    {
+        public string background { get; set; } = "#f6f9fb";
+        public string color { get; set; } = "#000";
+        public bool displayFollowers { get; set; } = true;
+    }
+    public class Followers
+    {
+        public string background { get; set; } = "#FFF";
+        public string color { get; set; } = "#337ab7";
+        public string borderColor { get; set; } = "#EEE";
+        public string counterBorderColor { get; set; } = "#EEE";
+        public string counterColor { get; set; } = "#999";
+    }
+    public class Data
+    {
+        public string priceColor { get; set; } = "#000";
+        public string infoLabelColor { get; set; } = "#333";
+        public string infoValueColor { get; set; } = "#333";
+    }
+    public class Chart
+    {
+        public bool animation { get; set; } = false;
+        public string fillColor { get; set; } = "rgba(151,187,205,0.2)";
+        public string borderColor { get; set; } = "#444";
+    }
+    public class Trend
+    {
+        public string colorUp { get; set; } = "#3d9400";
+        public string colorDown { get; set; } = "#A11B0A";
+        public string colorUnchanged { get; set; } = "#2C4C76";
+    }
+    public class Conversion
+    {
+        public string background { get; set; } = "transparent";
+        public string lineHeight { get; set; } = "20px";
+        public string color { get; set; } = "#000";
+    }
+}
+*/

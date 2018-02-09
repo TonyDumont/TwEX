@@ -336,6 +336,12 @@ namespace TwEX_API.Controls
         private void toolStripButton_OrderTotal_Click(object sender, EventArgs e)
         {
             ExchangeManager.updateOrders();
+            /*
+            CryptoCompare.CryptoCompareChartTheme theme = new CryptoCompare.CryptoCompareChartTheme();
+            
+            string json = JsonConvert.SerializeObject(theme);
+            LogManager.AddLogMessage(Name, "toolStripButton_OrderTotal_Click", json, LogManager.LogMessageType.DEBUG);
+            */
         }
     }
 }

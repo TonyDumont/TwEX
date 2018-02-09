@@ -75,25 +75,26 @@
             // listView
             // 
             this.listView.AllColumns.Add(this.column_Exchange);
+            this.listView.AllColumns.Add(this.column_Balance);
             this.listView.AllColumns.Add(this.column_SymbolIcon);
             this.listView.AllColumns.Add(this.column_Symbol);
-            this.listView.AllColumns.Add(this.column_ExchangeIcon);
-            this.listView.AllColumns.Add(this.column_Balance);
             this.listView.AllColumns.Add(this.column_TotalInBTC);
             this.listView.AllColumns.Add(this.column_TotalInUSD);
+            this.listView.AllColumns.Add(this.column_ExchangeIcon);
             this.listView.CellEditUseWholeCell = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.column_Exchange,
+            this.column_Balance,
             this.column_SymbolIcon,
             this.column_Symbol,
-            this.column_ExchangeIcon,
-            this.column_Balance,
             this.column_TotalInBTC,
-            this.column_TotalInUSD});
+            this.column_TotalInUSD,
+            this.column_ExchangeIcon});
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
+            this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.listView.HideSelection = false;
             this.listView.Location = new System.Drawing.Point(0, 25);
             this.listView.MultiSelect = false;
@@ -124,6 +125,7 @@
             // 
             this.column_SymbolIcon.Text = "";
             this.column_SymbolIcon.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_SymbolIcon.Width = 18;
             // 
             // column_Symbol
             // 
@@ -144,6 +146,7 @@
             // 
             this.column_Balance.AspectName = "Balance";
             this.column_Balance.AspectToStringFormat = "{0:N8}";
+            this.column_Balance.FillsFreeSpace = true;
             this.column_Balance.Text = "Coin Total";
             this.column_Balance.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
