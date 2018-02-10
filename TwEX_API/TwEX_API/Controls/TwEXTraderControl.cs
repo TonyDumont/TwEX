@@ -33,6 +33,7 @@ namespace TwEX_API.Controls
             //toolStripMenuItem_import.Image = ContentManager.GetIcon("Import");
             //toolStripMenuItem_export.Image = ContentManager.GetIcon("Export");
             toolStripMenuItem_PreferenceManager.Image = ContentManager.GetIcon("Options");
+            UpdateUI(true);
         }
         #endregion
 

@@ -115,6 +115,7 @@ namespace TwEX_API.Controls
             {
                 Font = PreferenceManager.GetFormFont(ParentForm);
                 toolStrip.Font = ParentForm.Font;
+                //PreferenceManager.SetControlTheme(this, PreferenceManager.preferences.Theme);
             }
         }
 

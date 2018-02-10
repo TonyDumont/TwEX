@@ -47,13 +47,15 @@ namespace TwEX_API.Controls
             else
             {
                 ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //PreferenceManager.SetControlTheme(this, PreferenceManager.preferences.Theme);
                 tableLayoutPanel.RowStyles[0].SizeType = SizeType.Absolute;
                 tableLayoutPanel.RowStyles[0].Height = 125;
 
                 tableLayoutPanel.RowStyles[1].SizeType = SizeType.Absolute;
                 tableLayoutPanel.RowStyles[1].Height = 300;
 
-                ParentForm.Size = new System.Drawing.Size(775, 525);
+                ParentForm.Size = new System.Drawing.Size(800, 600);
+                //ParentForm.Size = ParentForm.PreferredSize;
             }
         }
         #endregion

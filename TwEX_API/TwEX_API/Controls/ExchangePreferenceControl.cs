@@ -15,13 +15,13 @@ namespace TwEX_API.Controls
         private void ExchangePreferenceEditorControl_Load(object sender, EventArgs e)
         {
             
-            listView.BooleanCheckStateGetter = delegate (Object rowObject) {
+            listView.BooleanCheckStateGetter = delegate (Object rowObject)
+            {
                 return ((ExchangeManager.Exchange)rowObject).Active;
             };
 
-            listView.BooleanCheckStatePutter = delegate (Object rowObject, bool newValue) {
-                //ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
-
+            listView.BooleanCheckStatePutter = delegate (Object rowObject, bool newValue)
+            {
                 ((ExchangeManager.Exchange)rowObject).Active = newValue;
                 //LogManager.AddLogMessage(Name, "CheckPutter", "toogle : " + newValue + " | " + exchange.Active);
                 FormManager.UpdateExchangeManager();

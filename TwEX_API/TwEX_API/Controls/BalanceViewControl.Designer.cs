@@ -34,12 +34,12 @@
             this.toolStripButton_collapse = new System.Windows.Forms.ToolStripButton();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_Exchange = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_Balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_SymbolIcon = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Symbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_ExchangeIcon = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_Balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInBTC = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_ExchangeIcon = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
@@ -121,6 +121,14 @@
             this.column_Exchange.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.column_Exchange.Width = 0;
             // 
+            // column_Balance
+            // 
+            this.column_Balance.AspectName = "Balance";
+            this.column_Balance.AspectToStringFormat = "{0:N8}";
+            this.column_Balance.FillsFreeSpace = true;
+            this.column_Balance.Text = "Coin Total";
+            this.column_Balance.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // column_SymbolIcon
             // 
             this.column_SymbolIcon.Text = "";
@@ -133,22 +141,6 @@
             this.column_Symbol.MinimumWidth = 90;
             this.column_Symbol.Text = "Symbol";
             this.column_Symbol.Width = 90;
-            // 
-            // column_ExchangeIcon
-            // 
-            this.column_ExchangeIcon.AspectName = "";
-            this.column_ExchangeIcon.MinimumWidth = 32;
-            this.column_ExchangeIcon.Text = "";
-            this.column_ExchangeIcon.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.column_ExchangeIcon.Width = 32;
-            // 
-            // column_Balance
-            // 
-            this.column_Balance.AspectName = "Balance";
-            this.column_Balance.AspectToStringFormat = "{0:N8}";
-            this.column_Balance.FillsFreeSpace = true;
-            this.column_Balance.Text = "Coin Total";
-            this.column_Balance.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // column_TotalInBTC
             // 
@@ -164,12 +156,21 @@
             this.column_TotalInUSD.Text = "USD Total";
             this.column_TotalInUSD.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // column_ExchangeIcon
+            // 
+            this.column_ExchangeIcon.AspectName = "";
+            this.column_ExchangeIcon.MinimumWidth = 32;
+            this.column_ExchangeIcon.Text = "";
+            this.column_ExchangeIcon.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_ExchangeIcon.Width = 32;
+            // 
             // BalanceViewControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listView);
             this.Controls.Add(this.toolStrip);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "BalanceViewControl";
             this.Size = new System.Drawing.Size(467, 338);
             this.Load += new System.EventHandler(this.BalanceViewControl_Load);

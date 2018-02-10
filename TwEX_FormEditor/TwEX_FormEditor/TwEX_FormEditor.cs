@@ -57,8 +57,7 @@ namespace TwEX_FormEditor
             ContentManager.InitializeWalletImageList();
             //Task.Factory.StartNew(() => ExchangeManager.InitializeSymbolImageList());
             Task.Factory.StartNew(() => CryptoCompare.Initialize());
-
-            LogManager.AddLogMessage(Name, "TwEX_FormEditor_Load", "Load Complete", LogManager.LogMessageType.LOG);
+            //LogManager.AddLogMessage(Name, "TwEX_FormEditor_Load", "Load Complete", LogManager.LogMessageType.LOG);
         }
         private void TwEX_FormEditor_FormClosing(object sender, FormClosingEventArgs e)
         {

@@ -15,20 +15,11 @@ namespace TwEX_API.Controls
         }
         private void ApplicationPreferenceControl_Load(object sender, EventArgs e)
         {
-            //label_sample.Font = PreferenceManager.preferences.Font;
-            checkBox_font.Checked = PreferenceManager.preferences.UseGlobalFont;
+            checkBox_font.Checked = preferences.UseGlobalFont;
+            checkBox_GridLines.Checked = preferences.ShowGridLines;
+            checkBox_AlternatingColors.Checked = preferences.UseAlternatingBackColors;
             button_font.Enabled = checkBox_font.Checked;
-            button_font.Font = PreferenceManager.preferences.Font;
-            /*
-            if (PreferenceManager.preferences.Theme.type == PreferenceManager.ThemeType.Default)
-            {
-                radioButton_default.Checked = true;
-            }
-            else
-            {
-                radioButton_dark.Checked = true;
-            }
-            */
+            button_font.Font = preferences.Font;
         }
         private void InitializeThemes()
         {
@@ -115,9 +106,9 @@ namespace TwEX_API.Controls
         private void checkBox_font_CheckedChanged(object sender, EventArgs e)
         {
             button_font.Enabled = checkBox_font.Checked;
-            PreferenceManager.preferences.UseGlobalFont = checkBox_font.Checked;
-            PreferenceManager.UpdatePreferenceFile();
-            PreferenceManager.UpdateFontPreferences();
+            preferences.UseGlobalFont = checkBox_font.Checked;
+            UpdatePreferenceFile();
+            UpdateFontPreferences();
         }
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -129,7 +120,22 @@ namespace TwEX_API.Controls
 
             }
         }
-        /*
+        private void checkBox_GridLines_CheckedChanged(object sender, EventArgs e)
+        {
+            preferences.ShowGridLines = checkBox_GridLines.Checked;
+            SetTheme(preferences.Theme.type);
+        }
+        #endregion
+
+        private void checkBox_AlternatingColors_CheckedChanged(object sender, EventArgs e)
+        {
+            preferences.UseAlternatingBackColors = checkBox_AlternatingColors.Checked;
+            SetTheme(preferences.Theme.type);
+        }
+    }
+}
+
+/*
         private void radioButtons_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
@@ -147,6 +153,3 @@ namespace TwEX_API.Controls
             //PreferenceManager.SetTheme();
         }
         */
-        #endregion
-    }
-}

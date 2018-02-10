@@ -38,10 +38,10 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
@@ -57,7 +57,7 @@ namespace TwEX_API.Controls
                     formWidth += col.Width;
                 }
                 
-                if (this.Parent.GetType() == typeof(Form))
+                if (Parent.GetType() == typeof(Form))
                 {
                     ParentForm.Width = formWidth + 50;
                 }

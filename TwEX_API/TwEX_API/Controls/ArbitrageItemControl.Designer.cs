@@ -67,11 +67,13 @@
             // 
             // panel
             // 
+            this.panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tableLayoutPanel.SetColumnSpan(this.panel, 2);
             this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel.Location = new System.Drawing.Point(3, 28);
+            this.panel.Location = new System.Drawing.Point(0, 25);
+            this.panel.Margin = new System.Windows.Forms.Padding(0);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(295, 163);
+            this.panel.Size = new System.Drawing.Size(301, 163);
             this.panel.TabIndex = 0;
             // 
             // contextMenuStrip
@@ -129,18 +131,18 @@
             // 
             this.arbitrageListControl_btc.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.arbitrageListControl_btc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.arbitrageListControl_btc.Location = new System.Drawing.Point(3, 197);
+            this.arbitrageListControl_btc.Location = new System.Drawing.Point(3, 191);
             this.arbitrageListControl_btc.Name = "arbitrageListControl_btc";
-            this.arbitrageListControl_btc.Size = new System.Drawing.Size(144, 224);
+            this.arbitrageListControl_btc.Size = new System.Drawing.Size(144, 230);
             this.arbitrageListControl_btc.TabIndex = 1;
             // 
             // arbitrageListControl_usd
             // 
             this.arbitrageListControl_usd.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.arbitrageListControl_usd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.arbitrageListControl_usd.Location = new System.Drawing.Point(153, 197);
+            this.arbitrageListControl_usd.Location = new System.Drawing.Point(153, 191);
             this.arbitrageListControl_usd.Name = "arbitrageListControl_usd";
-            this.arbitrageListControl_usd.Size = new System.Drawing.Size(145, 224);
+            this.arbitrageListControl_usd.Size = new System.Drawing.Size(145, 230);
             this.arbitrageListControl_usd.TabIndex = 0;
             // 
             // tableLayoutPanel

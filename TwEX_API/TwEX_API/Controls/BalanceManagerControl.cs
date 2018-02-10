@@ -32,17 +32,21 @@ namespace TwEX_API.Controls
             var values = EnumUtils.GetValues<BalanceViewType>();
             foreach (var item in values)
             {
-                LogManager.AddLogMessage(Name, "InitializeViews", item.ToString() + " | " + item.GetHashCode(), LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "InitializeViews", item.ToString() + " | " + item.GetHashCode(), LogManager.LogMessageType.DEBUG);
                 TabPage tabPage = new TabPage()
                 {
                     Name = item.ToString(),
-                    Text = item.ToString()
+                    Text = item.ToString(),
+                    Margin = new Padding(0,0,0,0),
+                    Padding = new Padding(0,0,0,0)
                 };
 
                 BalanceViewControl view = new BalanceViewControl()
                 {
                     Dock = DockStyle.Fill,
-                    view = item
+                    view = item,
+                    Margin = new Padding(0, 0, 0, 0),
+                    Padding = new Padding(0, 0, 0, 0)
                 };
                 view.SetView();
                 tabPage.Controls.Add(view);

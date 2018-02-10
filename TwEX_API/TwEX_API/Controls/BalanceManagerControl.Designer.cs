@@ -31,10 +31,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BalanceManagerControl));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripRadioButton_balance = new TwEX_API.ToolStripRadioButton();
-            this.toolStripRadioButton_exchange = new TwEX_API.ToolStripRadioButton();
-            this.toolStripRadioButton_symbol = new TwEX_API.ToolStripRadioButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripRadioButton_exchange = new TwEX_API.ToolStripRadioButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripRadioButton_symbol = new TwEX_API.ToolStripRadioButton();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,6 +74,11 @@
             this.toolStripRadioButton_balance.Text = "Balance View";
             this.toolStripRadioButton_balance.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
+            // 
             // toolStripRadioButton_exchange
             // 
             this.toolStripRadioButton_exchange.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
@@ -89,6 +94,11 @@
             this.toolStripRadioButton_exchange.Text = "Exchange View";
             this.toolStripRadioButton_exchange.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
             // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 39);
+            // 
             // toolStripRadioButton_symbol
             // 
             this.toolStripRadioButton_symbol.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
@@ -103,16 +113,6 @@
             this.toolStripRadioButton_symbol.Tag = "symbol";
             this.toolStripRadioButton_symbol.Text = "Symbol View";
             this.toolStripRadioButton_symbol.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripDropDownButton_menu
             // 
@@ -156,7 +156,9 @@
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.ItemSize = new System.Drawing.Size(0, 1);
             this.tabControl.Location = new System.Drawing.Point(0, 39);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl.Name = "tabControl";
+            this.tabControl.Padding = new System.Drawing.Point(0, 0);
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(777, 315);
             this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
@@ -168,6 +170,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.toolStrip);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "BalanceManagerControl";
             this.Size = new System.Drawing.Size(777, 354);
             this.Load += new System.EventHandler(this.BalanceManagerControl_Load);

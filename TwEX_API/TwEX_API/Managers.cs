@@ -1872,7 +1872,7 @@ namespace TwEX_API
             if (targetForm == null)
             {
                 Form form = new Form() { Size = new Size(950, 550), Name = formName, Text = formText, Icon = formIcon };
-                SetTheme(preferences.Theme.type, form);
+                //SetTheme(preferences.Theme.type, form);
                 form.Show();
 
                 FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == formName);
@@ -1979,6 +1979,7 @@ namespace TwEX_API
                         AddLogMessage(Name, "OpenForm", "FORM NOT DEFINED!!! : " + name, LogMessageType.DEBUG);
                         break;
                 }
+                SetTheme(preferences.Theme.type, form);
             }
             else
             {
@@ -2069,7 +2070,7 @@ namespace TwEX_API
             if (exchangeManagerControl != null)
             {
                 //AddLogMessage(Name, "UpdateExchangeControlsUI", "Updating Exchanges : " + Exchanges.Where(item => item.Active == true).Count() + " Active", LogMessageType.DEBUG);
-                exchangeManagerControl.UpdateUI(true);
+                exchangeManagerControl.UpdateUI(resize);
             }
             //UpdatePreferenceFile(PreferenceType.Exchange);
         }
@@ -3278,9 +3279,11 @@ namespace TwEX_API
                         Red = Color.DarkRed,
                         Yellow = Color.DarkGoldenrod,
                         FormBackground = ColorTranslator.FromHtml("#333333"),
+                        AlternateBackground = ColorTranslator.FromHtml("#3F3F3F"),
                         Text = ColorTranslator.FromHtml("#eaeaea"),
                         HeaderBackground = ColorTranslator.FromHtml("#444444"),
                         HeaderText = ColorTranslator.FromHtml("#fcfbef"),
+                        //ShowGridLines = false,
                         cryptoCompareChartTheme = new CryptoCompareChartTheme()
                         {
                             General = new CryptoCompareTheme_General()
@@ -3335,8 +3338,66 @@ namespace TwEX_API
                     return new ThemePreference()
                     {
                         type = ThemeType.Stoned,
-                        //BackgroundImageUrl = "https://www.designertileconcepts.com/media/catalog/product/cache/4/image/700x700/9df78eab33525d08d6e5fb8d27136e95/4/y/4yur0120_3.jpg",
-                        BackgroundImageName = type + "Background"
+                        BackgroundImageName = type + "Background",
+                        Green = Color.DarkGreen,
+                        Red = Color.DarkRed,
+                        Yellow = Color.DarkGoldenrod,
+                        FormBackground = ColorTranslator.FromHtml("#EAEAE1"),
+                        Text = ColorTranslator.FromHtml("#1E3F16"),
+                        HeaderBackground = ColorTranslator.FromHtml("#D4D5C7"),
+                        HeaderText = ColorTranslator.FromHtml("#565550"),
+
+                        cryptoCompareChartTheme = new CryptoCompareChartTheme()
+                        {
+                            General = new CryptoCompareTheme_General()
+                            {
+                                //background = "#E8E8E8",
+                                background = "#EAEAE1",
+                                //background = "F4F4F2",
+                                borderWidth = "1px",
+                                borderColor = "#918E84",
+                                borderRadius = "4px 4px 0 0"
+                            },
+                            Header = new CryptoCompareTheme_Header()
+                            {
+                                background = "#D4D5C7",
+                                color = "#565550",
+                                displayFollowers = true
+                            },
+                            Followers = new CryptoCompareTheme_Followers()
+                            {
+                                background = "#EDEBDE",
+                                color = "#918E84",
+                                borderColor = "#EEE",
+                                counterBorderColor = "#EEE",
+                                counterColor = "#7F7D76"
+                            },
+                            Data = new CryptoCompareTheme_Data()
+                            {
+                                priceColor = "#565550",
+                                infoLabelColor = "#333",
+                                infoValueColor = "#333"
+                            },
+                            Chart = new CryptoCompareTheme_Chart()
+                            {
+                                animation = false,
+                                //fillColor = "rgba(233,233,223,1)",
+                                fillColor = "rgba(232,232,218,1)",
+                                borderColor = "#918E84"
+                            },
+                            Trend = new CryptoCompareTheme_Trend()
+                            {
+                                colorUp = "#3d9400",
+                                colorDown = "#A11B0A",
+                                colorUnchanged = "#2C4C76"
+                            },
+                            Conversion = new CryptoCompareTheme_Conversion()
+                            {
+                                background = "transparent",
+                                lineHeight = "20px",
+                                color = "#000"
+                            }
+                        }
                     };
 
                 default:
@@ -3348,8 +3409,6 @@ namespace TwEX_API
         {
             control.BackColor = theme.FormBackground;
             control.ForeColor = theme.Text;
-            
-            
 
             if (theme.BackgroundImageName.Length > 0)
             {
@@ -3358,22 +3417,18 @@ namespace TwEX_API
             }
             else
             {
-                //control.BackgroundImageLayout = ImageLayout.Tile;
                 control.BackgroundImage = null;
             }
             
-
             if (control is FastObjectListView)
             {
                 FastObjectListView listView = control as FastObjectListView;
+                listView.GridLines = preferences.ShowGridLines;
+                listView.UseAlternatingBackColors = preferences.UseAlternatingBackColors;
+                listView.AlternateRowBackColor = theme.AlternateBackground;
+
                 listView.BackColor = theme.FormBackground;
-                
-                //listView.BorderStyle = BorderStyle.Fixed3D;
-                //listView.BackColor = Color.FromArgb(50, theme.FormBackground);
-                //SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-                //listView.BackColor = Color.Transparent;
-                //listView.BackgroundImageTiled = true;
-                //listView.BackgroundImage = ContentManager.GetIcon("WhiteStone");
+                listView.BackgroundImageTiled = true;
                 listView.HeaderUsesThemes = false;
                 var headerstyle = new HeaderFormatStyle();
                 headerstyle.SetBackColor(theme.HeaderBackground);
@@ -3383,13 +3438,26 @@ namespace TwEX_API
                 {
                     item.HeaderFormatStyle = headerstyle;
                 }
+                //listView.Refresh();
             }
-            
+
+            if (control is ToolStrip)
+            {
+                ToolStrip toolstrip = control as ToolStrip;
+                foreach(ToolStripItem item in toolstrip.Items)
+                {
+                    if (item.GetType().Name == "ToolStripDropDownButton")
+                    {
+                        ToolStripDropDownButton button = item as ToolStripDropDownButton;
+                        SetControlTheme(button.DropDown, theme);
+                    }
+                }
+            }
+            // CHILDREN
             foreach (Control subC in control.Controls)
             {
                 SetControlTheme(subC, theme);
             }
-
         }
         public static bool SetTheme(ThemeType type, Form target = null)
         {
@@ -3436,6 +3504,8 @@ namespace TwEX_API
             public Size IconSize { get; set; } = new Size(32, 32);
             public bool UseGlobalFont { get; set; } = false;
             public Font Font { get; set; } = new Font("Times New Roman", 12.0f);
+            public bool ShowGridLines { get; set; } = false;
+            public bool UseAlternatingBackColors { get; set; } = false;
             public ThemePreference Theme { get; set; } = new ThemePreference();
             public BalanceViewType BalanceView { get; set; } = BalanceViewType.balance;
 
@@ -3502,18 +3572,24 @@ namespace TwEX_API
             public Color Red { get; set; } = Color.LightPink;
             public Color Yellow { get; set; } = Color.LightGoldenrodYellow;
 
-            public Color FormBackground { get; set; } = SystemColors.Control;
+            //public Color FormBackground { get; set; } = SystemColors.Control;
+            public Color FormBackground { get; set; } = SystemColors.Window;
+            public Color AlternateBackground { get; set; } = SystemColors.Control;
             public string BackgroundImageName { get; set; } = String.Empty;
             //public Image BackgroundImage { get; set; } = null;
             //public Color Text { get; set; } = Color.Black;
             public Color Text { get; set; } = SystemColors.ControlText;
+            // LISTS
             public Color HeaderBackground { get; set; } = SystemColors.Control;
             public Color HeaderText { get; set; } = SystemColors.ControlText;
+            //public bool ShowGridLines { get; set; } = false;
+
             public string BrowserBackgroundColor
             {
                 get
                 {
-                    return ColorTranslator.ToHtml(FormBackground);
+                    //return ColorTranslator.ToHtml(FormBackground);
+                    return cryptoCompareChartTheme.General.background;
                 }
             }
             public CryptoCompareChartTheme cryptoCompareChartTheme { get; set; } = new CryptoCompareChartTheme();
@@ -3730,50 +3806,6 @@ namespace TwEX_API
 }
 
 /*
-        public static void UpdateTheme(ThemeType type)
-        {
-
-            if (type == ThemeType.Dark)
-            {
-                // DARK MODE
-                preferences.Theme = new ThemePreference()
-                {
-                    type = ThemeType.Dark,
-                    Green = Color.DarkGreen,
-                    Red = Color.DarkRed,
-                    Yellow = Color.DarkGoldenrod,
-                    //BrowserBackground = ColorTranslator.FromHtml("#333333"),
-                    FormBackground = ColorTranslator.FromHtml("#333333"),
-                    Text = ColorTranslator.FromHtml("#eaeaea"),
-                    HeaderBackground = ColorTranslator.FromHtml("#444444"),
-                    HeaderText = ColorTranslator.FromHtml("#fcfbef")
-                };
-            }
-            else
-            {
-                // DEFAULT MODE
-                preferences.Theme = new ThemePreference()
-                {
-                    type = ThemeType.Default
-                };
-            }
-
-            foreach (Form form in Application.OpenForms)
-            {
-                form.BackColor = preferences.Theme.FormBackground;
-                form.ForeColor = preferences.Theme.Text;
-
-                foreach (Control c in form.Controls)
-                {
-                    UpdateColorControls(c);
-                }
-            }
-            FormManager.UpdateControlUIs();
-            UpdatePreferenceFile();
-        }
-        */
-
-/*
         switch (myControl)
         {
             case Button b:
@@ -3807,13 +3839,3 @@ namespace TwEX_API
                 break;
         }
         */
-
-/*
-if (myControl is ContextMenuStrip)
-{
-    myControl.BackColor = preferences.Theme.FormBackground;
-    myControl.ForeColor = preferences.Theme.Text;
-}
-
-// Any other non-standard controls should be implemented here aswell...
-*/
