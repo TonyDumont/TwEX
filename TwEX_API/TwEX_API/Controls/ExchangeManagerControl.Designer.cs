@@ -43,6 +43,7 @@
             this.toolStripButton_History = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_Orders = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel_Exchanges = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton_OrderTotal = new System.Windows.Forms.ToolStripButton();
             this.toolStrip_header2 = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,7 +54,6 @@
             this.toolStripButton_Totals = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.toolStripButton_OrderTotal = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.toolStrip_header.SuspendLayout();
             this.toolStrip_header2.SuspendLayout();
@@ -227,6 +227,18 @@
             this.toolStripLabel_Exchanges.Size = new System.Drawing.Size(72, 22);
             this.toolStripLabel_Exchanges.Text = "# Exchanges";
             // 
+            // toolStripButton_OrderTotal
+            // 
+            this.toolStripButton_OrderTotal.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_OrderTotal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton_OrderTotal.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_OrderTotal.Image")));
+            this.toolStripButton_OrderTotal.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_OrderTotal.Name = "toolStripButton_OrderTotal";
+            this.toolStripButton_OrderTotal.Size = new System.Drawing.Size(85, 22);
+            this.toolStripButton_OrderTotal.Text = "ORDER TOTAL";
+            this.toolStripButton_OrderTotal.ToolTipText = "ORDER TOTAL";
+            this.toolStripButton_OrderTotal.Click += new System.EventHandler(this.toolStripButton_OrderTotal_Click);
+            // 
             // toolStrip_header2
             // 
             this.toolStrip_header2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -326,18 +338,6 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 267);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
-            // toolStripButton_OrderTotal
-            // 
-            this.toolStripButton_OrderTotal.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_OrderTotal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_OrderTotal.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_OrderTotal.Image")));
-            this.toolStripButton_OrderTotal.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_OrderTotal.Name = "toolStripButton_OrderTotal";
-            this.toolStripButton_OrderTotal.Size = new System.Drawing.Size(85, 22);
-            this.toolStripButton_OrderTotal.Text = "ORDER TOTAL";
-            this.toolStripButton_OrderTotal.ToolTipText = "ORDER TOTAL";
-            this.toolStripButton_OrderTotal.Click += new System.EventHandler(this.toolStripButton_OrderTotal_Click);
-            // 
             // ExchangeManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -346,7 +346,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ExchangeManagerControl";
             this.Size = new System.Drawing.Size(484, 267);
-            this.Load += new System.EventHandler(this.ExchangeEditorControl_Load);
+            this.Load += new System.EventHandler(this.ExchangeManagerControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
             this.toolStrip_header.ResumeLayout(false);
             this.toolStrip_header.PerformLayout();

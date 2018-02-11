@@ -61,7 +61,7 @@ namespace TwEX_API
             new ImageFile(){ Name = "EarnGG", Url = "https://earn.gg/img/favicon-32x32.png" },
             new ImageFile(){ Name = "EarnGGManager", Url = "https://earn.gg/img/favicon-32x32.png" },
             new ImageFile(){ Name = "Exchange", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
-            new ImageFile(){ Name = "ExchangeEditor", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
+            //new ImageFile(){ Name = "ExchangeEditor", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
             new ImageFile(){ Name = "ExchangeManager", Url = "http://www.eopcje.pl/wp-content/uploads/2014/12/currency_market.png" },
             new ImageFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" },
             new ImageFile(){ Name = "Export", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/export.png" },

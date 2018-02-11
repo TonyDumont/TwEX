@@ -54,7 +54,7 @@ namespace TwEX_API.Controls
                 tableLayoutPanel.RowStyles[1].SizeType = SizeType.Absolute;
                 tableLayoutPanel.RowStyles[1].Height = 300;
 
-                ParentForm.Size = new System.Drawing.Size(800, 600);
+                ParentForm.Size = new System.Drawing.Size(850, 600);
                 //ParentForm.Size = ParentForm.PreferredSize;
             }
         }

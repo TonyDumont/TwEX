@@ -18,6 +18,7 @@ namespace TwEX_API.Controls
             FormManager.exchangeManagerControl = this;
             InitializeColumns();
         }
+        /*
         private void ExchangeEditorControl_Load(object sender, EventArgs e)
         {
             //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
@@ -28,6 +29,18 @@ namespace TwEX_API.Controls
             toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
             
             UpdateUI(true);
+        }
+        */
+        private void ExchangeManagerControl_Load(object sender, EventArgs e)
+        {
+            //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
+
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+
+            //UpdateUI(true);
         }
         private void InitializeColumns()
         {

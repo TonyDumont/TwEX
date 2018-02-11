@@ -20,7 +20,7 @@ namespace TwEX_API.Controls
             toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
             toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
             toolStripRadioButton_balance.Image = ContentManager.GetIcon("BalanceManager");
-            toolStripRadioButton_exchange.Image = ContentManager.GetIcon("ExchangeEditor");
+            toolStripRadioButton_exchange.Image = ContentManager.GetIcon("Exchange");
             toolStripRadioButton_symbol.Image = ContentManager.GetIcon("Symbol");
             
             toolStripRadioButton_balance.Checked = true;

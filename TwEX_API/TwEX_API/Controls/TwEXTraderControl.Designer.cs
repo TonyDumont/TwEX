@@ -79,7 +79,7 @@
             this.toolStripButton_ExchangeEditor.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_ExchangeEditor.Name = "toolStripButton_ExchangeEditor";
             this.toolStripButton_ExchangeEditor.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButton_ExchangeEditor.Tag = "ExchangeEditor";
+            this.toolStripButton_ExchangeEditor.Tag = "ExchangeManager";
             this.toolStripButton_ExchangeEditor.Text = "Exchange Manager";
             this.toolStripButton_ExchangeEditor.Click += new System.EventHandler(this.toolStripButton_Form_Click);
             // 
@@ -225,6 +225,7 @@
             // 
             // exchangeManagerControl1
             // 
+            this.exchangeManagerControl1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.exchangeManagerControl1.Dock = System.Windows.Forms.DockStyle.Top;
             this.exchangeManagerControl1.Location = new System.Drawing.Point(0, 39);
             this.exchangeManagerControl1.Name = "exchangeManagerControl1";

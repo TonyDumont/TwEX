@@ -13,14 +13,11 @@ namespace TwEX_API.Controls
         }
         private void TwEXTraderControl_Load(object sender, EventArgs e)
         {
-            //toolStripButton_ExchangeEditor.Image = ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.ExchangeManagerIconUrl), 32, 32);
-            toolStripButton_ExchangeEditor.Image = ContentManager.GetIcon("ExchangeEditor");
-            //toolStripButton_Balance.Image = ContentManager.ResizeImage(ContentManager.GetIcon("BalanceManager"), 32, 32);
+            toolStripButton_ExchangeEditor.Image = ContentManager.GetIcon("Exchange");
             toolStripButton_Balance.Image = ContentManager.GetIcon("BalanceManager");
             toolStripButton_Calculator.Image = ContentManager.GetIcon("CoinCalculator");
             toolStripButton_Wallet.Image = ContentManager.GetIcon("WalletManager");
 
-            //toolStripDropDownButton_menu.Image = ContentManager.GetIconByUrl(ContentManager.PreferenceIconUrl);
             toolStripDropDownButton_menu.Image = Properties.Resources.TwEX_RoundIcon.ToBitmap();
 
             toolStripMenuItem_LogManager.Image = ContentManager.GetIcon("LogManager");
@@ -30,10 +27,8 @@ namespace TwEX_API.Controls
             toolStripMenuItem_EarnGG.Image = ContentManager.GetIcon("EarnGGManager");
             toolStripMenuItem_TradingView.Image = ContentManager.GetIcon("TradingView");
 
-            //toolStripMenuItem_import.Image = ContentManager.GetIcon("Import");
-            //toolStripMenuItem_export.Image = ContentManager.GetIcon("Export");
             toolStripMenuItem_PreferenceManager.Image = ContentManager.GetIcon("Options");
-            UpdateUI(true);
+            //UpdateUI(true);
         }
         #endregion
 
