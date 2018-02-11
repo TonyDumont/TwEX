@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using CefSharp;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -9,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -27,6 +29,7 @@ using static TwEX_API.Market.CoinMarketCap;
 using static TwEX_API.Market.CryptoCompare;
 using static TwEX_API.Market.TradingView;
 using static TwEX_API.PreferenceManager;
+//using System.IO.Compression;
 
 namespace TwEX_API
 {
@@ -1784,6 +1787,20 @@ namespace TwEX_API
             }
             return exists;
         }
+        
+        public static bool IsCEFDependanciesLoaded()
+        {
+            var settings = new CefSettings();
+            //settings.BrowserSubprocessPath = @"x86\CefSharp.BrowserSubprocess.exe";
+            
+            Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
+
+            //var browser = new BrowserForm();
+            //Application.Run(browser);
+
+            return true;
+        }
+        
         #endregion
 
         #region Getters
@@ -2015,6 +2032,7 @@ namespace TwEX_API
             UpdateCryptoCompare(resize);
             UpdateEarnGGManager(resize);
             UpdateExchangeManager(resize);
+            UpdateMainControl(resize);
             UpdateTradingViewManager(resize);
             UpdateWalletManager(resize);
             UpdateToolStrip(resize);
@@ -2073,6 +2091,14 @@ namespace TwEX_API
                 exchangeManagerControl.UpdateUI(resize);
             }
             //UpdatePreferenceFile(PreferenceType.Exchange);
+        }
+        public static void UpdateMainControl(bool resize = false)
+        {
+            if (mainControl != null)
+            {
+                mainControl.UpdateUI(resize);
+            }
+            //UpdatePreferenceFile(PreferenceType.TradingView);
         }
         public static void UpdateTradingViewManager(bool resize = false)
         {
@@ -2545,7 +2571,21 @@ namespace TwEX_API
             string targetPath = Path.GetDirectoryName(path);
             WorkDirectory = new Uri(targetPath).LocalPath;
 
-            string iniPath = WorkDirectory + "\\Preferences.ini";
+            string iniPath = WorkDirectory + "\\cef.pak";
+
+            if (File.Exists(iniPath))
+            {
+                //AddLogMessage(Name, "LoadPreferences", "CEF Dependancies Available", LogMessageType.LOG);
+            }
+            else
+            {
+                AddLogMessage(Name, "LoadPreferences", "CEF Dependancies NOT Available - Unzipping Them", LogMessageType.LOG);
+                string zipPath = WorkDirectory + "\\Resources\\cef_extensions.zip";
+                ZipFile.ExtractToDirectory(zipPath, WorkDirectory);              
+                //UpdatePreferenceFile();
+            }
+
+            iniPath = WorkDirectory + "\\Preferences.ini";
 
             if (File.Exists(iniPath))
             {
@@ -3517,7 +3557,7 @@ namespace TwEX_API
 
             // FLAGS
             public ExchangeTimerType TimerFlags { get; set; } = ExchangeTimerType.NONE;
-            public LogMessageType MessageFlags { get; set; } = LogMessageType.NONE;
+            public LogMessageType MessageFlags { get; set; } = LogMessageType.CONSOLE | LogMessageType.DEBUG | LogMessageType.EXCEPTION | LogMessageType.EXCHANGE | LogMessageType.LOG | LogMessageType.OTHER;
             // SNAPSHOTS
             public List<ExchangeBalance> Balances { get; set; } = new List<ExchangeBalance>();
             public List<ExchangeOrder> Orders { get; set; } = new List<ExchangeOrder>();

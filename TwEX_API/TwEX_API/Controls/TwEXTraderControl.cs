@@ -13,6 +13,11 @@ namespace TwEX_API.Controls
         }
         private void TwEXTraderControl_Load(object sender, EventArgs e)
         {
+            InitializeIcons();
+            //UpdateUI(true);
+        }
+        private void InitializeIcons()
+        {
             toolStripButton_ExchangeEditor.Image = ContentManager.GetIcon("Exchange");
             toolStripButton_Balance.Image = ContentManager.GetIcon("BalanceManager");
             toolStripButton_Calculator.Image = ContentManager.GetIcon("CoinCalculator");
@@ -28,7 +33,6 @@ namespace TwEX_API.Controls
             toolStripMenuItem_TradingView.Image = ContentManager.GetIcon("TradingView");
 
             toolStripMenuItem_PreferenceManager.Image = ContentManager.GetIcon("Options");
-            //UpdateUI(true);
         }
         #endregion
 
@@ -36,10 +40,10 @@ namespace TwEX_API.Controls
         delegate bool UpdateUICallback(bool resize = false);
         public bool UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
@@ -72,6 +76,7 @@ namespace TwEX_API.Controls
             {
                 //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
+                InitializeIcons();
             }
         }
         #endregion

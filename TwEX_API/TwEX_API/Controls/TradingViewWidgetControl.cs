@@ -23,7 +23,7 @@ namespace TwEX_API.Controls
         }
         public void InitializeBrowser()
         {
-            //Cef.Initialize(new CefSettings());
+            //Cef.Initialize(new CefSettings(), performDependencyCheck: true, browserProcessHandler: null);
             browser = new ChromiumWebBrowser(String.Empty);
             Controls.Add(browser);
             browser.Dock = DockStyle.Fill;
