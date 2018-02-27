@@ -58,14 +58,25 @@ namespace TwEX_API.Controls
         delegate bool UpdateUICallback(bool resize = false);
         public bool UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
-                List<ExchangeManager.Exchange> list = ExchangeManager.Exchanges.Where(item => item.Active).ToList();
+                List<ExchangeManager.Exchange> list;
+                //List<ExchangeManager.Exchange> list = ExchangeManager.Exchanges.Where(item => item.Active).ToList();
+                
+                if (preferences.ShowOnlyAPIExchanges)
+                {
+                    list = ExchangeManager.Exchanges.Where(item => item.Active && item.HasAPI == true).ToList();
+                }
+                else
+                {
+                    list = ExchangeManager.Exchanges.Where(item => item.Active).ToList();
+                }
+                
                 // HEADER
                 toolStripLabel_Exchanges.Text = list.Count + " Exchanges";
 
@@ -78,23 +89,25 @@ namespace TwEX_API.Controls
                 Decimal totalUSD = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD));
                 toolStripButton_Totals.Text = "Totals : (" + totalUSD.ToString("C") + ") " + totalBTC.ToString("N8");
 
+                
                 // LIST
                 listView.SetObjects(list);
                 listView.Sort(column_TotalInBTC, SortOrder.Descending);
 
+                toolStripButton_API.Image = ContentManager.GetActiveIcon(!preferences.ShowOnlyAPIExchanges);
                 // TIMERS
-                toolStripButton_Tickers.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeManager.ExchangeTimerType.TICKERS) != ExchangeManager.ExchangeTimerType.NONE;
+                toolStripButton_Tickers.Checked = (preferences.TimerFlags & ExchangeManager.ExchangeTimerType.TICKERS) != ExchangeManager.ExchangeTimerType.NONE;
                 toolStripButton_Tickers.Text = "TICKERS (" + ExchangeManager.Tickers.Count + ")";
                 toolStripButton_Tickers.Image = ContentManager.GetActiveIcon(toolStripButton_Tickers.Checked);
 
-                toolStripButton_Balances.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeManager.ExchangeTimerType.BALANCES) != ExchangeManager.ExchangeTimerType.NONE;
+                toolStripButton_Balances.Checked = (preferences.TimerFlags & ExchangeManager.ExchangeTimerType.BALANCES) != ExchangeManager.ExchangeTimerType.NONE;
                 toolStripButton_Balances.Text = "BALANCES (" + ExchangeManager.Balances.Count + ")";
                 toolStripButton_Balances.Image = ContentManager.GetActiveIcon(toolStripButton_Balances.Checked);
 
-                toolStripButton_Orders.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeManager.ExchangeTimerType.ORDERS) != ExchangeManager.ExchangeTimerType.NONE;
+                toolStripButton_Orders.Checked = (preferences.TimerFlags & ExchangeManager.ExchangeTimerType.ORDERS) != ExchangeManager.ExchangeTimerType.NONE;
                 toolStripButton_Orders.Image = ContentManager.GetActiveIcon(toolStripButton_Orders.Checked);
 
-                toolStripButton_History.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeManager.ExchangeTimerType.HISTORY) != ExchangeManager.ExchangeTimerType.NONE;
+                toolStripButton_History.Checked = (preferences.TimerFlags & ExchangeManager.ExchangeTimerType.HISTORY) != ExchangeManager.ExchangeTimerType.NONE;
                 toolStripButton_History.Image = ContentManager.GetActiveIcon(toolStripButton_History.Checked);
                 
                 if (resize)
@@ -115,12 +128,13 @@ namespace TwEX_API.Controls
             }
             else
             {
+                /*
                 ParentForm.Font = GetFormFont(ParentForm);
 
                 toolStrip_header.Font = ParentForm.Font;
                 toolStrip_header2.Font = ParentForm.Font;
                 listView.Font = ParentForm.Font;
-                
+                */
                 Size textSize = TextRenderer.MeasureText("0.00000000", ParentForm.Font);
                 int rowHeight = listView.RowHeightEffective;
                 int padding = rowHeight / 2;
@@ -158,11 +172,18 @@ namespace TwEX_API.Controls
                     listHeight = listView.Top + last.Bounds.Bottom;
                     //listHeight = last.Bounds.Bottom;
                     //LogManager.AddLogMessage(Name, "ResizeUI", listView.Top + " | " + last.Bounds.Bottom + " | " + listHeight);
+                    listHeight += listView.RowHeightEffective;
+                    //listView.Height = listHeight + listView.RowHeightEffective;
+                    ClientSize = new Size(Width, listHeight);
+                    Size = new Size(Width, listHeight);
                 }
-                listHeight += listView.RowHeightEffective;
-                //listView.Height = listHeight + listView.RowHeightEffective;
-                ClientSize = new Size(Width, listHeight);
-                Size = new Size(Width, listHeight);
+                else
+                {
+                    listHeight = toolStrip_header.Height + toolStrip_header2.Height;
+                    ClientSize = new Size(Width, listHeight);
+                    Size = new Size(Width, listHeight);
+                }
+                
 
                 /*
                 if (Parent.GetType() == typeof(Form))
@@ -249,8 +270,30 @@ namespace TwEX_API.Controls
                 toolStripButton_API.Image = Properties.Resources.ConnectionStatus_DISABLED;
             }
         }
+        private void listView_ItemActivate(object sender, EventArgs e)
+        {
+            if (listView.SelectedObject != null)
+            {
+                ExchangeManager.Exchange exchange = listView.SelectedObject as ExchangeManager.Exchange;
+
+                if (ExchangeManager.getExchangeHasAPI(exchange))
+                {
+                    //toolStripButton_API.Image = Properties.Resources.ConnectionStatus_ACTIVE;
+                    FormManager.OpenForm("ExchangeTrading", exchange.Name);
+                }
+                else
+                {
+                    // ALERT
+                    MessageBox.Show("You need to setup your API keys to use this.", "No API For " + exchange.Name);
+                }
+            }
+        }
         private void toolStripButton_API_Click(object sender, EventArgs e)
         {
+            preferences.ShowOnlyAPIExchanges = !preferences.ShowOnlyAPIExchanges;
+            UpdatePreferenceFile();
+            UpdateUI(true);
+            /*
             if (listView.SelectedObject != null)
             {
                 ExchangeManager.Exchange exchange = listView.SelectedObject as ExchangeManager.Exchange;
@@ -269,12 +312,17 @@ namespace TwEX_API.Controls
                 form.Show();
 
             }
+            */
         }
         private void toolStripButton_BTCTotal_Click(object sender, EventArgs e)
         {
             //ExchangeManager.updateBalances();
             UpdateUI(true);
-        }      
+        }
+        private void toolStripButton_OrderTotal_Click(object sender, EventArgs e)
+        {
+            ExchangeManager.updateOrders();
+        }
         private void toolStripButton_Refresh_Click(object sender, EventArgs e)
         {
             ExchangeManager.updateBalances();
@@ -327,34 +375,43 @@ namespace TwEX_API.Controls
         }
         #endregion
 
-        private void listView_ItemActivate(object sender, EventArgs e)
+        private void listView_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (listView.FocusedItem.Bounds.Contains(e.Location) == true)
+                {
+                    if (listView.SelectedObject != null)
+                    {
+                        ExchangeManager.Exchange item = listView.SelectedObject as ExchangeManager.Exchange;
+                        ContextMenuStrip menu = new ContextMenuStrip();
+                        ToolStripMenuItem menuItem = new ToolStripMenuItem() { Text = "Edit " + item.Name + " API" };
+                        menuItem.Click += new EventHandler(EditAPI_Menu_Click);
+                        menu.Items.Add(menuItem);
+                        menu.Show(Cursor.Position);
+                    }
+                }
+            }
+        }
+        private void EditAPI_Menu_Click(object sender, EventArgs e)
         {
             if (listView.SelectedObject != null)
             {
                 ExchangeManager.Exchange exchange = listView.SelectedObject as ExchangeManager.Exchange;
-
-                if (ExchangeManager.getExchangeHasAPI(exchange))
+                Form form = new Form()
                 {
-                    //toolStripButton_API.Image = Properties.Resources.ConnectionStatus_ACTIVE;
-                    FormManager.OpenForm("ExchangeTrading", exchange.Name);
-                }
-                else
-                {
-                    // ALERT
-                    MessageBox.Show("You need to setup your API keys to use this.", "No API For " + exchange.Name);
-                }
+                    Size = new Size(500, 250),
+                    Text = exchange.Name
+                };
+                //Bitmap bitmap = new Bitmap(exchange.Icon);
+                Bitmap bitmap = new Bitmap(ContentManager.GetExchangeIcon(exchange.Name));
+                form.Icon = Icon.FromHandle(bitmap.GetHicon());
+                APIEditorControl control = new APIEditorControl();
+                control.SetApi(ExchangeManager.getExchangeApi(exchange.Name));
+                form.Controls.Add(control);
+                control.Dock = DockStyle.Fill;
+                form.Show();
             }
-        }
-
-        private void toolStripButton_OrderTotal_Click(object sender, EventArgs e)
-        {
-            ExchangeManager.updateOrders();
-            /*
-            CryptoCompare.CryptoCompareChartTheme theme = new CryptoCompare.CryptoCompareChartTheme();
-            
-            string json = JsonConvert.SerializeObject(theme);
-            LogManager.AddLogMessage(Name, "toolStripButton_OrderTotal_Click", json, LogManager.LogMessageType.DEBUG);
-            */
         }
     }
 }

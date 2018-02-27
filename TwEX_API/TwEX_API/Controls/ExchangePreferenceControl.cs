@@ -68,9 +68,11 @@ namespace TwEX_API.Controls
             }
             else
             {
+                /*
                 ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 groupBox.Font = ParentForm.Font;
                 listView.Font = ParentForm.Font;
+    */            
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 Width = column_Name.Width + (listView.RowHeightEffective);
             }

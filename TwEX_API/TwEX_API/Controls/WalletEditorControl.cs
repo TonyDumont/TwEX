@@ -13,6 +13,14 @@ namespace TwEX_API.Controls
         }
         private void WalletEditorControl_Load(object sender, EventArgs e)
         {
+            /*
+            comboBox1.DisplayMember = "Name";
+            comboBox1.ValueMember = "Id";
+
+            comboBox1.Items.Add(new Item("Student 1", 1));
+            comboBox1.Items.Add(new Item("Student 2", 2));
+            comboBox1.Items.Add(new Item("Student 3", 3));
+            */
             UpdateUI(true);
         }
         #endregion

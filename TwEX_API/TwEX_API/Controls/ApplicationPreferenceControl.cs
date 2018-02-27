@@ -71,8 +71,8 @@ namespace TwEX_API.Controls
             }
             else
             {
-                Font = ParentForm.Font;
-                listView.Font = ParentForm.Font;
+                //Font = ParentForm.Font;
+                //listView.Font = ParentForm.Font;
             }
         }
         #endregion
@@ -132,24 +132,10 @@ namespace TwEX_API.Controls
             preferences.UseAlternatingBackColors = checkBox_AlternatingColors.Checked;
             SetTheme(preferences.Theme.type);
         }
+
+        private void toolStripButton_FlushData_Click(object sender, EventArgs e)
+        {
+            FlushHistorys();
+        }
     }
 }
-
-/*
-        private void radioButtons_CheckedChanged(object sender, EventArgs e)
-        {
-            RadioButton radioButton = sender as RadioButton;
- 
-            if (radioButton.Text == "Default")
-            {
-                PreferenceManager.UpdateTheme(PreferenceManager.ThemeType.Default);
-            }
-            else
-            {
-                PreferenceManager.UpdateTheme(PreferenceManager.ThemeType.Dark);
-            }
-            //PreferenceManager.UpdatePreferenceFile();
-            //FormManager.UpdateControlUIs();
-            //PreferenceManager.SetTheme();
-        }
-        */

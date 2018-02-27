@@ -4,7 +4,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using TwEX_API.Market;
 using static TwEX_API.Market.CoinMarketCap;
 
 namespace TwEX_API.Controls
@@ -17,20 +16,25 @@ namespace TwEX_API.Controls
             InitializeComponent();
             FormManager.coinMarketCapControl = this;
             InitializeColumns();
+            InitializeIcons();
         }
         private void CoinMarketCapControl_Load(object sender, EventArgs e)
-        {
-            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
-            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
-            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
-            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
-            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
+        {         
             UpdateUI(true);
         }
         private void InitializeColumns()
         {
             column_name.ImageGetter = new ImageGetterDelegate(aspect_icon);
             column_24hchange.AspectGetter = new AspectGetterDelegate(aspect_24hchange);
+        }
+        private void InitializeIcons()
+        {
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
+            toolStripButton_search.Image = ContentManager.GetIcon("SearchList");
         }
         #endregion
 
@@ -45,8 +49,8 @@ namespace TwEX_API.Controls
             }
             else
             {
-                toolStrip.Font = ParentForm.Font;
-                listView.Font = ParentForm.Font;
+                //toolStrip.Font = ParentForm.Font;
+                //listView.Font = ParentForm.Font;
                 int rowHeight = listView.RowHeightEffective;
                 int formWidth = 0;
 
@@ -67,14 +71,14 @@ namespace TwEX_API.Controls
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 toolStripLabel_details.Text = PreferenceManager.CoinMarketCapPreferences.Tickers.Count + " Coins (" + PreferenceManager.CoinMarketCapPreferences.Tickers.Sum(t => t.market_cap_usd).ToString("C") + ")";
                 listView.SetObjects(PreferenceManager.CoinMarketCapPreferences.Tickers.OrderBy(item => item.rank));
                 toolStripLabel_update.Text = DateTime.Now.ToString();
@@ -122,23 +126,30 @@ namespace TwEX_API.Controls
                         DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
                         {
-                            ParentForm.Font = dialog.Font;
+                            if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                            {
+                                UpdateUI(true);
+                            }
                         }
-                        UpdateUI(true);
+                        //UpdateUI(true);
                         break;
 
                     case "FontIncrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "FontDecrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
                         
                     case "Update":
-                        CoinMarketCap.updateTickers();
+                        updateTickers();
                         UpdateUI();
                         break;
 
@@ -150,8 +161,13 @@ namespace TwEX_API.Controls
         }
         private void toolStripLabel_update_Click(object sender, EventArgs e)
         {
-            CoinMarketCap.updateTickers();
+            updateTickers();
             UpdateUI();
+        }
+        private void toolStripTextBox_search_TextChanged(object sender, EventArgs e)
+        {
+            listView.ModelFilter = TextMatchFilter.Contains(listView, toolStripTextBox_search.Text);
+            toolStripLabel_details.Text = PreferenceManager.CoinMarketCapPreferences.Tickers.Count + " Coins (" + PreferenceManager.CoinMarketCapPreferences.Tickers.Sum(t => t.market_cap_usd).ToString("C") + ")";
         }
         #endregion
 

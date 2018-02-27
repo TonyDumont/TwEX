@@ -21,10 +21,7 @@ namespace TwEX_FormEditor
             {
                 if (InitializePreferences())
                 {
-                    //if (FormManager.IsCEFDependanciesLoaded())
-                    //{
-                        Task.Factory.StartNew(() => ExchangeManager.InitializeExchanges());
-                    //}
+                    Task.Factory.StartNew(() => ExchangeManager.InitializeExchanges());
                 }
                 else
                 {
@@ -34,7 +31,17 @@ namespace TwEX_FormEditor
         }
         private void TwEX_FormEditor_Load(object sender, EventArgs e)
         {
-            Text = "TwEX Trader : Short Armed Trading Tools";
+            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+            {
+                System.Deployment.Application.ApplicationDeployment cd = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
+                string publishVersion = cd.CurrentVersion.ToString();
+                Text = "TwEX Trader : Short Armed Trading Tools Version " + publishVersion;
+            }
+            else
+            {
+                Text = "TwEX Trader : Short Armed Trading Tools";
+            }
+           
             FormPreference preference = FormPreferences.FirstOrDefault(item => item.Name == Name);
             if (preference != null)
             {
@@ -58,7 +65,6 @@ namespace TwEX_FormEditor
             ContentManager.InitializeExchangeIconList();
             ContentManager.InitializeSymbolImageList();
             ContentManager.InitializeWalletImageList();
-            //Task.Factory.StartNew(() => ExchangeManager.InitializeSymbolImageList());
             Task.Factory.StartNew(() => CryptoCompare.Initialize());
             //LogManager.AddLogMessage(Name, "TwEX_FormEditor_Load", "Load Complete", LogManager.LogMessageType.LOG);
         }
@@ -68,8 +74,13 @@ namespace TwEX_FormEditor
         }
         private void TwEX_FormEditor_Shown(object sender, EventArgs e)
         {
-            FormManager.RestoreForms();
-            FormManager.UpdateControlUIs(true);
+            //FormManager.RestoreForms();
+            SetTheme(preferences.Theme.type, this);
+            FormManager.UpdateExchangeManager(true);
+            FormManager.UpdateWalletManager(true);
+            //FormManager.UpdateMainControl(true);
+            twEXTraderControl.UpdateUI(true);
+            //FormManager.UpdateControlUIs(true);
         }
         #endregion
     }

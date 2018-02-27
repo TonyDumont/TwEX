@@ -7,7 +7,9 @@ namespace TwEX_API.Controls
 {
     public partial class ArbitrageManagerControl : UserControl
     {
+        #region Properties
         public static Timer timer = new Timer() { Interval = 60000 };
+        #endregion
 
         #region Initialize
         public ArbitrageManagerControl()
@@ -36,6 +38,8 @@ namespace TwEX_API.Controls
                 toolStripMenuItem_chart.Image = Properties.Resources.ConnectionStatus_ERROR;
             }
 
+            NumericUpDown num = toolStripNumberControl_maxItems.NumericUpDownControl as NumericUpDown;
+            num.Value = PreferenceManager.ArbitragePreferences.maxListCount;
             //Timer timer = new Timer();
             //timer.Interval = (60 * 1000);
             timer.Tick += new EventHandler(timer_Tick);
@@ -54,10 +58,10 @@ namespace TwEX_API.Controls
         delegate void DisposeTimerCallback();
         public void DisposeTimer()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 DisposeTimerCallback d = new DisposeTimerCallback(DisposeTimer);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
@@ -71,10 +75,10 @@ namespace TwEX_API.Controls
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
-            if (this.flowLayoutPanel.InvokeRequired)
+            if (flowLayoutPanel.InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.flowLayoutPanel.Invoke(d, new object[] { resize });
+                flowLayoutPanel.Invoke(d, new object[] { resize });
             }
             else
             {
@@ -91,6 +95,8 @@ namespace TwEX_API.Controls
                         }
                     }
 
+                    toolStripLabel_lastUpdate.Text = "Last Update : " + DateTime.Now;
+
                     if (resize)
                     {
                         ResizeUI();
@@ -106,19 +112,19 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
-                Font = PreferenceManager.GetFormFont(ParentForm);
-                toolStrip.Font = ParentForm.Font;
+                //Font = PreferenceManager.GetFormFont(ParentForm);
+                //toolStrip.Font = ParentForm.Font;
                 //PreferenceManager.SetControlTheme(this, PreferenceManager.preferences.Theme);
             }
         }
-
+        
         delegate void SetWatchlistCallback();
         public void SetWatchlist()
         {
@@ -130,40 +136,29 @@ namespace TwEX_API.Controls
             else
             {
                 flowLayoutPanel.Controls.Clear();
-
-                int rowHeight = toolStrip.Height;
-                int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
-
-                int newHeight = listHeight + (rowHeight * 3);
-
-                if (PreferenceManager.ArbitragePreferences.ShowCharts)
-                {
-                    newHeight += PreferenceManager.ArbitragePreferences.minChartHeight;
-                }
-                else
-                {
-                    //newHeight += rowHeight;
-                }
-                //LogManager.AddLogMessage(Name, "SetWatchList", "rowHeight=" + rowHeight + " | newHeight=" + newHeight + " | " + listHeight);
+                flowLayoutPanel.Visible = false;
 
                 foreach (ExchangeManager.ExchangeTicker ticker in PreferenceManager.ArbitragePreferences.ArbitrageWatchList)
                 {
-                    //ArbitrageItemControl control = new ArbitrageItemControl() { Height = controlHeight };
-                    ArbitrageItemControl control = new ArbitrageItemControl() { Height = newHeight };
+                    //ArbitrageItemControl control = new ArbitrageItemControl();
+                    ArbitragePriceControl control = new ArbitragePriceControl();
                     //LogManager.AddLogMessage(Name, "SetWatchlist", "ticker=" + ticker.symbol + " | " + ticker.market + " | " + ticker.last, LogManager.LogMessageType.DEBUG);
                     control.SetData(ticker.symbol, "USD");
+                    PreferenceManager.SetControlTheme(control, PreferenceManager.preferences.Theme, ParentForm);
                     flowLayoutPanel.Controls.Add(control);
                     
                 }
-                
-                UpdateUI(true);
+                flowLayoutPanel.Visible = true;
+                UpdateUI();
             }
         }
+        
         #endregion
 
         #region EventHandlers
         private void ToggleCharts()
         {
+            LogManager.AddLogMessage(Name, "ToggleCharts", PreferenceManager.ArbitragePreferences.ShowCharts.ToString(), LogManager.LogMessageType.DEBUG);
             if (PreferenceManager.ArbitragePreferences.ShowCharts)
             {
                 // Remove Charts
@@ -213,19 +208,26 @@ namespace TwEX_API.Controls
                         DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
                         {
-                            ParentForm.Font = dialog.Font;
+                            if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                            {
+                                UpdateUI(true);
+                            }
                         }
                         UpdateUI(true);
                         break;
 
                     case "FontIncrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "FontDecrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "Charts":
@@ -243,6 +245,37 @@ namespace TwEX_API.Controls
 
             }
         }
+        private void toolStripNumberControl_maxItems_ValueChanged(object sender, EventArgs e)
+        {
+            NumericUpDown num = toolStripNumberControl_maxItems.NumericUpDownControl as NumericUpDown;
+            int value = Convert.ToInt32(num.Value);
+            if (PreferenceManager.ArbitragePreferences.maxListCount != value)
+            {
+                LogManager.AddLogMessage(Name, "toolStripNumberControl_maxItems_ValueChanged", "sender=" + sender + " | " + e.GetType() + " | " + e.GetHashCode() + " | " + value, LogManager.LogMessageType.DEBUG);
+                PreferenceManager.ArbitragePreferences.maxListCount = Convert.ToInt32(num.Value);
+                PreferenceManager.UpdatePreferenceFile();
+                UpdateUI(true);
+            }
+        }
         #endregion
+
+
     }
 }
+
+/*
+                int rowHeight = toolStrip.Height;
+                int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
+
+                int newHeight = listHeight + (rowHeight * 3);
+
+                if (PreferenceManager.ArbitragePreferences.ShowCharts)
+                {
+                    newHeight += PreferenceManager.ArbitragePreferences.minChartHeight;
+                }
+                else
+                {
+                    //newHeight += rowHeight;
+                }
+                //LogManager.AddLogMessage(Name, "SetWatchList", "rowHeight=" + rowHeight + " | newHeight=" + newHeight + " | " + listHeight);
+                */

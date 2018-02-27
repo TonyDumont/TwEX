@@ -27,9 +27,13 @@ namespace TwEX_API.Controls
             toolStripDropDownButton_widget.Text = PreferenceManager.CryptoComparePreferences.WidgetType.ToString();
             toolStripButton_search.Image = ContentManager.GetIcon("SearchList");
             //PreferenceManager.CryptoComparePreferences.WidgetType = (CryptoCompare.CryptoCompareWidgetType)Enum.Parse(typeof(CryptoCompare.CryptoCompareWidgetType), widgetName);
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
 
             toolStripTextBox_symbol.Text = PreferenceManager.CryptoComparePreferences.Symbol;
-            toolStripTextBox_market.Text = PreferenceManager.CryptoComparePreferences.Market;
+            //toolStripTextBox_market.Text = PreferenceManager.CryptoComparePreferences.Market;
             setWidget();
             panel.Controls.Add(widget);
             ChangeWidget(PreferenceManager.CryptoComparePreferences.WidgetType);
@@ -75,9 +79,9 @@ namespace TwEX_API.Controls
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                listView.Font = ParentForm.Font;
-                toolStrip.Font = ParentForm.Font;
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //listView.Font = ParentForm.Font;
+                //toolStrip.Font = ParentForm.Font;
 
                 Size textSize = TextRenderer.MeasureText("O", ParentForm.Font);
                 
@@ -223,8 +227,6 @@ namespace TwEX_API.Controls
                     toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
                     toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
 
-                    //toolStripDropDownButton_period.Enabled = true;
-                    //toolStripDropDownButton_FeedSource.Enabled = false;
                     toolStripDropDownButton_period.Visible = true;
                     toolStripDropDownButton_FeedSource.Visible = false;
                     break;
@@ -237,8 +239,6 @@ namespace TwEX_API.Controls
                     toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
                     toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
 
-                    //toolStripDropDownButton_period.Enabled = false;
-                    //toolStripDropDownButton_FeedSource.Enabled = true;
                     toolStripDropDownButton_period.Visible = false;
                     toolStripDropDownButton_FeedSource.Visible = true;
                     break;
@@ -253,8 +253,6 @@ namespace TwEX_API.Controls
 
                     toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
 
-                    //toolStripDropDownButton_period.Enabled = false;
-                    //toolStripDropDownButton_FeedSource.Enabled = false;
                     toolStripDropDownButton_period.Visible = false;
                     toolStripDropDownButton_FeedSource.Visible = false;
                     break;
@@ -264,8 +262,6 @@ namespace TwEX_API.Controls
                     toolStripLabel_symbol.Text = "Symbols(5):";
                     toolStripLabel_market.Text = "Markets(5):";
 
-                    //toolStripDropDownButton_period.Enabled = false;
-                    //toolStripDropDownButton_FeedSource.Enabled = false;
                     toolStripDropDownButton_period.Visible = false;
                     toolStripDropDownButton_FeedSource.Visible = false;
                     break;
@@ -277,8 +273,6 @@ namespace TwEX_API.Controls
 
                     toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
 
-                    //toolStripDropDownButton_period.Enabled = false;
-                    //toolStripDropDownButton_FeedSource.Enabled = false;
                     toolStripDropDownButton_period.Visible = false;
                     toolStripDropDownButton_FeedSource.Visible = false;
                     break;
@@ -290,7 +284,7 @@ namespace TwEX_API.Controls
                     toolStripLabel_market.Text = "Market:";
 
                     toolStripTextBox_symbol.Text = getFirstSymbol(toolStripTextBox_symbol.Text);
-                    toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
+                    //toolStripTextBox_market.Text = getFirstSymbol(toolStripTextBox_market.Text);
 
                     //toolStripDropDownButton_period.Enabled = false;
                     //toolStripDropDownButton_FeedSource.Enabled = false;
@@ -351,6 +345,52 @@ namespace TwEX_API.Controls
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CryptoCompare);
             UpdateUI();
         }
+        private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
+            {
+                ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+                //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+                switch (menuItem.Tag.ToString())
+                {
+                    case "Font":
+                        FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                        DialogResult result = dialog.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {
+                            if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                            {
+                                UpdateUI(true);
+                            }
+                        }
+                        UpdateUI(true);
+                        break;
+
+                    case "FontIncrease":
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
+                        break;
+
+                    case "FontDecrease":
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
+                        break;
+                        /*
+                    case "Update":
+                        updateTickers();
+                        UpdateUI();
+                        break;
+                        */
+                    default:
+                        // NOTHING
+                        break;
+                }
+            }
+        }
         private void toolStripDropDownButton_widget_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string widgetName = e.ClickedItem.Tag.ToString();
@@ -370,13 +410,12 @@ namespace TwEX_API.Controls
                 UpdateUI();
             }          
         }
-        #endregion
-
         private void toolStripTextBox_search_TextChanged(object sender, EventArgs e)
         {
             listView.ModelFilter = TextMatchFilter.Contains(listView, toolStripTextBox_search.Text);
             toolStripLabel_title.Text = listView.Items.Count + " Coins";
         }
+        #endregion
     }
 }
 

@@ -74,9 +74,9 @@ namespace TwEX_API.Controls
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                toolStrip.Font = ParentForm.Font;
-                listView.Font = ParentForm.Font;
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //toolStrip.Font = ParentForm.Font;
+                //listView.Font = ParentForm.Font;
 
                 int rowHeight = listView.RowHeightEffective;
                 int padding = rowHeight / 2;
@@ -181,19 +181,26 @@ namespace TwEX_API.Controls
                         DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
                         {
-                            ParentForm.Font = dialog.Font;
+                            if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                            {
+                                UpdateUI(true);
+                            }
                         }
                         UpdateUI(true);
                         break;
 
                     case "FontIncrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "FontDecrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "AddAccount":

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace TwEX_API.Controls
@@ -10,11 +11,11 @@ namespace TwEX_API.Controls
         {
             InitializeComponent();
             FormManager.mainControl = this;
+            InitializeIcons();
         }
         private void TwEXTraderControl_Load(object sender, EventArgs e)
         {
-            InitializeIcons();
-            //UpdateUI(true);
+            
         }
         private void InitializeIcons()
         {
@@ -31,6 +32,10 @@ namespace TwEX_API.Controls
             toolStripMenuItem_CryptoCompare.Image = ContentManager.GetIcon("CryptoCompare");
             toolStripMenuItem_EarnGG.Image = ContentManager.GetIcon("EarnGGManager");
             toolStripMenuItem_TradingView.Image = ContentManager.GetIcon("TradingView");
+
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
 
             toolStripMenuItem_PreferenceManager.Image = ContentManager.GetIcon("Options");
         }
@@ -95,11 +100,51 @@ namespace TwEX_API.Controls
 
             if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
             {
+                //if ()
                 ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
-                //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
-                toolStripDropDownButton_menu.HideDropDown();
-                FormManager.OpenForm(menuItem.Tag.ToString(), menuItem.Text);
 
+                if (!menuItem.Tag.ToString().Contains("Font"))
+                {
+                    //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+                    toolStripDropDownButton_menu.HideDropDown();
+                    FormManager.OpenForm(menuItem.Tag.ToString(), menuItem.Text);
+                }
+                else
+                {
+                    switch (menuItem.Tag.ToString())
+                    {
+                        case "Font":
+                            FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                            DialogResult result = dialog.ShowDialog();
+                            if (result == DialogResult.OK)
+                            {
+                                if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                                {
+                                    UpdateUI(true);
+                                }
+                            }
+                            UpdateUI(true);
+                            break;
+
+                        case "FontIncrease":
+                            if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                            {
+                                UpdateUI(true);
+                            }
+                            break;
+
+                        case "FontDecrease":
+                            if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                            {
+                                UpdateUI(true);
+                            }
+                            break;
+
+                        default:
+                            // NOTHING
+                            break;
+                    }
+                }
             }
         }
         #endregion

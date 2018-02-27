@@ -50,22 +50,9 @@ namespace TwEX_API.Controls
                     if (symbol.Length > 0 && market.Length > 0)
                     {
 
-                        if (PreferenceManager.ArbitragePreferences.ShowCharts)
+                        if (PreferenceManager.ArbitragePreferences.ShowCharts && chart != null)
                         {
-                            toolStrip.Visible = false;
-                            panel.Visible = true;
-                            
-                            if (chart != null)
-                            {
-                                chart.updateBrowser();
-                            }
-                        }
-                        else
-                        {
-                            toolStrip.Visible = true;
-                            panel.Visible = false;
-                            toolStripLabel_symbol.Text = symbol.ToUpper();
-                            toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
+                            chart.updateBrowser();
                         }
 
                         arbitrageListControl_btc.UpdateUI(resize);
@@ -77,7 +64,7 @@ namespace TwEX_API.Controls
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
@@ -94,16 +81,27 @@ namespace TwEX_API.Controls
             }
             else
             {
-                toolStrip.Font = ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                
+                //toolStrip.Font = ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 Width = PreferenceManager.ArbitragePreferences.minChartWidth;  
                 int rowHeight = toolStrip.Height;
                 int listHeight = PreferenceManager.ArbitragePreferences.maxListCount * rowHeight;
                 int newHeight = listHeight + (rowHeight * 3) + (rowHeight / 4);
-                
+
                 if (PreferenceManager.ArbitragePreferences.ShowCharts)
                 {
-                    newHeight = newHeight + (rowHeight * 3);
+                    toolStrip.Visible = false;
+                    panel.Visible = true;
+                    newHeight = newHeight + PreferenceManager.ArbitragePreferences.minChartHeight + (rowHeight / 4);
                 }
+                else
+                {
+                    toolStrip.Visible = true;
+                    panel.Visible = false;
+                    toolStripLabel_symbol.Text = symbol.ToUpper();
+                    toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
+                }
+                
                 //LogManager.AddLogMessage(Name, "ResizeUI", "tsHeight=" + toolStrip.Height + " | " + listHeight + " | " + newHeight, LogManager.LogMessageType.DEBUG);
                 ClientSize = new Size(Width, newHeight);
                 Size = new Size(Width, newHeight);
@@ -113,14 +111,13 @@ namespace TwEX_API.Controls
         delegate void SetDataCallback(string symbol, string market);
         public void SetData(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 SetDataCallback d = new SetDataCallback(SetData);
-                this.Invoke(d, new object[] { symbol, market });
+                Invoke(d, new object[] { symbol, market });
             }
             else
-            {
-                
+            {            
                 symbol = newSymbol;
                 market = newMarket;
 
@@ -128,7 +125,7 @@ namespace TwEX_API.Controls
                 arbitrageListControl_usd.SetProperties("USD", symbol);
                 //LogManager.AddLogMessage(this.Name, "SetData", symbol + " | " + market, LogManager.LogMessageType.DEBUG);
                 chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
-                UpdateUI(true);
+                UpdateUI();
             }
         }
         #endregion

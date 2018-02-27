@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using static TwEX_API.ExchangeManager;
 using BrightIdeasSoftware;
 using static TwEX_API.Market.CryptoCompare;
+using System.Drawing;
+using static System.Windows.Forms.ImageList;
 
 namespace TwEX_API.Controls
 {
@@ -104,12 +106,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                toolStrip.Font = ParentForm.Font;
-
-                //toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
-
+                Visible = false;
                 int rowHeight = listView.RowHeightEffective;
                 //int formWidth = 0;
 
@@ -145,8 +142,8 @@ namespace TwEX_API.Controls
                 else
                 {
                     //toolStripButton_collapse.Enabled = false;
-                }
-                
+                };
+                Visible = true;
             }
         }
 
@@ -174,6 +171,13 @@ namespace TwEX_API.Controls
 
                         listView.RebuildColumns();
                         toolStripButton_collapse.Visible = true;
+                        listView.BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
+                        //listView.BackgroundImage = null;
+                        //listView.BackColor = Color.LightGray;
+                        BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
+                        
+                        //BackgroundImage = null;
+                        //BackColor = Color.LightGray;
                         //listView.SetObjects(list);
                         //listView.Sort(column_Symbol, SortOrder.Ascending);
                         break;
@@ -190,6 +194,8 @@ namespace TwEX_API.Controls
 
                         listView.RebuildColumns();
                         toolStripButton_collapse.Visible = true;
+                        listView.BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
+                        BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
                         //listView.SetObjects(list);
                         //listView.Sort(column_Exchange, SortOrder.Ascending);
                         break;
@@ -206,6 +212,8 @@ namespace TwEX_API.Controls
 
                         listView.RebuildColumns();
                         toolStripButton_collapse.Visible = false;
+                        listView.BackColor = PreferenceManager.preferences.Theme.FormBackground;
+                        BackColor = PreferenceManager.preferences.Theme.FormBackground;
                         //listView.SetObjects(list);
                         //listView.Sort(column_TotalInBTC, SortOrder.Descending);
                         break;
@@ -277,7 +285,19 @@ namespace TwEX_API.Controls
 
                     //listView.HasCollapsibleGroups = true;
                     //LogManager.AddLogMessage(Name, "aboutToCreateGroups", "groups.count=" + e.Groups.Count, LogManager.LogMessageType.OTHER);
+
+                    /*
+                    ImageCollection images = ContentManager.ExchangeIconList.Images;
+                    foreach (var image in ContentManager.WalletIconList.Images)
+                    {
+                        var newItem = new ImageCollection();
+                        images.Add(image);
+                    }
+                    */
+                    //images.AddRange(ContentManager.WalletIconList.Images);
                     listView.GroupImageList = ContentManager.ExchangeIconList;
+
+                    //listView.GroupImageList.Images.AddRange(ContentManager.ExchangeIconList);
 
                     foreach (OLVGroup group in e.Groups)
                     {

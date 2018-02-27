@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
+using static TwEX_API.LogManager;
 
 namespace TwEX_API.Exchange
 {
@@ -746,7 +747,7 @@ namespace TwEX_API.Exchange
             try
             {
                 string url = "https://poloniex.com/tradingApi";
-                string param = "command=buy&currencyPair=" + market + "_" + symbol + "&rate=" + rate + "&amount=" + amount + "&nonce=" + ExchangeManager.GetNonce();
+                string param = "command=buy&currencyPair=" + market + "_" + symbol + "&rate=" + rate + "&amount=" + amount + "&nonce=" + GetNonce();
 
                 if (option != PoloniexOrderOption.None)
                 {
@@ -846,9 +847,11 @@ namespace TwEX_API.Exchange
         // INITIALIZE
         public static void InitializeExchange()
         {
-            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            AddLogMessage(Name, "InitializeExchange", "Initialized", LogMessageType.EXCHANGE);
+            updateExchangeBalanceList(true);
             //updateExchangeTickerList();
         }
+        /*
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
@@ -861,67 +864,76 @@ namespace TwEX_API.Exchange
 
             return list;
         }
+        */
         // UPDATERS
-        public async static void updateExchangeBalanceList()
+        public async static void updateExchangeBalanceList(bool clear = false)
         {
             List<PoloniexBalance> list = await getCompleteBalanceList();
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
-            
-            foreach (PoloniexBalance balance in list)
+            ExchangeTicker btcTicker = getExchangeTicker(Name, "BTC", USDSymbol);
+
+            if (list.Count > 0)
             {
-                if (balance.total > 0)
+                if (clear)
                 {
-                    if (balance.symbol != "BTC" && balance.symbol != USDSymbol)
+                    ClearBalances(Name);
+                }
+
+                foreach (PoloniexBalance balance in list)
+                {
+                    if (balance.total > 0)
                     {
-                        // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
-
-                        if (ticker != null)
+                        if (balance.symbol != "BTC" && balance.symbol != USDSymbol)
                         {
-                            //Decimal orders = balance.Balance - balance.Available;
-                            if (balance.onOrders > 0)
-                            {
-                                balance.TotalInBTCOrders = balance.onOrders * ticker.last;
-                            }
+                            // GET TICKER FOR PAIR IN BTC MARKET
+                            ExchangeTicker ticker = getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
 
-                            balance.TotalInBTC = balance.total * ticker.last;
-                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                            if (ticker != null)
+                            {
+                                //Decimal orders = balance.Balance - balance.Available;
+                                if (balance.onOrders > 0)
+                                {
+                                    balance.TotalInBTCOrders = balance.onOrders * ticker.last;
+                                }
+
+                                balance.TotalInBTC = balance.total * ticker.last;
+                                balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                            }
+                            else
+                            {
+                                AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.symbol.ToUpper());
+                            }
                         }
                         else
                         {
-                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.symbol.ToUpper());
-                        }
-                    }
-                    else
-                    {
-                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
-                        if (balance.symbol == "BTC")
-                        {
-                            if (balance.onOrders > 0)
-                            {
-                                balance.TotalInBTCOrders = balance.onOrders;
-                            }
-
-                            balance.TotalInBTC = balance.total;
-                            balance.TotalInUSD = btcTicker.last * balance.total;
-                        }
-                        else if (balance.symbol == USDSymbol)
-                        {
-                            if (btcTicker.last > 0)
+                            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+                            if (balance.symbol == "BTC")
                             {
                                 if (balance.onOrders > 0)
                                 {
-                                    balance.TotalInBTCOrders = balance.onOrders / btcTicker.last;
+                                    balance.TotalInBTCOrders = balance.onOrders;
                                 }
 
-                                balance.TotalInBTC = balance.total / btcTicker.last;
+                                balance.TotalInBTC = balance.total;
+                                balance.TotalInUSD = btcTicker.last * balance.total;
                             }
-                            balance.TotalInUSD = balance.total;
+                            else if (balance.symbol == USDSymbol)
+                            {
+                                if (btcTicker.last > 0)
+                                {
+                                    if (balance.onOrders > 0)
+                                    {
+                                        balance.TotalInBTCOrders = balance.onOrders / btcTicker.last;
+                                    }
+
+                                    balance.TotalInBTC = balance.total / btcTicker.last;
+                                }
+                                balance.TotalInUSD = balance.total;
+                            }
                         }
+                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
+                        processBalance(balance.GetExchangeBalance());
                     }
-                    //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
-                    ExchangeManager.processBalance(balance.GetExchangeBalance());
-                }     
+                }
             }
         }
         public async static void updateExchangeOrderList()
@@ -975,7 +987,7 @@ namespace TwEX_API.Exchange
 
             foreach (PoloniexTicker ticker in list)
             {
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                processTicker(ticker.GetExchangeTicker());
             }
         }
         public async static void updateExchangeTransactionList()
@@ -1017,6 +1029,13 @@ namespace TwEX_API.Exchange
             }
             LastUpdate = DateTime.Now;
             LastMessage = message;
+        }
+        // ORDERS
+        public static bool CreateOrder(ExchangeOrderType type, string symbol, string market, decimal rate, decimal amount)
+        {
+            AddLogMessage(Name, "CreateOrder", type + " | " + symbol + " | " + market + " | " + rate + " | " + amount, LogMessageType.DEBUG);
+
+            return true;
         }
         #endregion ExchangeManager
 

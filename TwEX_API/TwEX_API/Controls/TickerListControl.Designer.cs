@@ -29,32 +29,25 @@
         private void InitializeComponent()
         {
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_symbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_market = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_last = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_change = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_volume = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.toolStrip.SuspendLayout();
+            this.toolStrip_footer = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
+            this.toolStrip_footer.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip
             // 
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel_title});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(504, 25);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip1";
-            // 
-            // toolStripLabel_title
-            // 
-            this.toolStripLabel_title.Name = "toolStripLabel_title";
-            this.toolStripLabel_title.Size = new System.Drawing.Size(53, 22);
-            this.toolStripLabel_title.Text = "0 Tickers";
             // 
             // listView
             // 
@@ -85,7 +78,7 @@
             this.listView.ShowFilterMenuOnRightClick = false;
             this.listView.ShowGroups = false;
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(504, 324);
+            this.listView.Size = new System.Drawing.Size(504, 299);
             this.listView.SortGroupItemsByPrimaryColumn = false;
             this.listView.TabIndex = 4;
             this.listView.UseCellFormatEvents = true;
@@ -135,18 +128,36 @@
             this.column_volume.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.column_volume.Width = 100;
             // 
+            // toolStrip_footer
+            // 
+            this.toolStrip_footer.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.toolStrip_footer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel_title});
+            this.toolStrip_footer.Location = new System.Drawing.Point(0, 324);
+            this.toolStrip_footer.Name = "toolStrip_footer";
+            this.toolStrip_footer.Size = new System.Drawing.Size(504, 25);
+            this.toolStrip_footer.TabIndex = 5;
+            this.toolStrip_footer.Text = "toolStrip1";
+            // 
+            // toolStripLabel_title
+            // 
+            this.toolStripLabel_title.Name = "toolStripLabel_title";
+            this.toolStripLabel_title.Size = new System.Drawing.Size(53, 22);
+            this.toolStripLabel_title.Text = "0 Tickers";
+            // 
             // TickerListControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listView);
+            this.Controls.Add(this.toolStrip_footer);
             this.Controls.Add(this.toolStrip);
             this.Name = "TickerListControl";
             this.Size = new System.Drawing.Size(504, 349);
             this.Load += new System.EventHandler(this.TickerListControl_Load);
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
+            this.toolStrip_footer.ResumeLayout(false);
+            this.toolStrip_footer.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -155,12 +166,13 @@
         #endregion
 
         private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel_title;
         private BrightIdeasSoftware.FastObjectListView listView;
         private BrightIdeasSoftware.OLVColumn column_symbol;
         private BrightIdeasSoftware.OLVColumn column_market;
         private BrightIdeasSoftware.OLVColumn column_last;
         private BrightIdeasSoftware.OLVColumn column_change;
         private BrightIdeasSoftware.OLVColumn column_volume;
+        private System.Windows.Forms.ToolStrip toolStrip_footer;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_title;
     }
 }

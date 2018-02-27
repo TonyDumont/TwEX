@@ -10,9 +10,8 @@ namespace TwEX_API.Controls
     public partial class OrdersListControl : UserControl
     {
         #region Properties
-        private string ExchangeName = String.Empty;
+        private ExchangeManager.Exchange Exchange;
         public bool OpenOrders = false;
-        //public int PreferredWidth = 0;
         #endregion
 
         #region Initialize
@@ -27,34 +26,27 @@ namespace TwEX_API.Controls
         }
         private void InitializeColumns()
         {
-
-            //column_Icon.ImageGetter = new ImageGetterDelegate(aspect_Icon);
-            //column_Symbol.ImageGetter = new ImageGetterDelegate(aspect_Icon);
             column_symbol.ImageGetter = new ImageGetterDelegate(aspect_symbol);
             column_market.ImageGetter = new ImageGetterDelegate(aspect_market);
-            //column_Status.ImageGetter = new ImageGetterDelegate(aspect_Status);
-            //column_Tickers.AspectGetter = new AspectGetterDelegate(aspect_TickerCount);
             column_amount.AspectGetter = new AspectGetterDelegate(aspect_amount);
             column_rate.AspectGetter = new AspectGetterDelegate(aspect_rate);
             column_total.AspectGetter = new AspectGetterDelegate(aspect_total);
-            //column_TotalInBTC.AspectGetter = new AspectGetterDelegate(aspect_TotalInBTC);
-            //column_TotalInUSD.AspectGetter = new AspectGetterDelegate(aspect_TotalInUSD);
-            
         }
         #endregion
 
         #region Delegates
-        delegate bool SetExchangeCallback(string exchange);
-        public bool SetExchange(string exchange)
+        delegate bool SetExchangeCallback(ExchangeManager.Exchange exchange);
+        public bool SetExchange(ExchangeManager.Exchange exchange)
         {
             if (InvokeRequired)
             {
                 SetExchangeCallback d = new SetExchangeCallback(SetExchange);
-                Invoke(d, new object[] { });
+                Invoke(d, new object[] { exchange });
             }
             else
             {
-                ExchangeName = exchange;
+                Exchange = exchange;
+                //ExchangeName = exchange;
                 UpdateUI(true);
             }
             return true;
@@ -70,7 +62,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                listView.SetObjects(ExchangeManager.Orders.Where(item => item.exchange == ExchangeName && item.open == OpenOrders).OrderByDescending(item => item.date));
+                listView.SetObjects(ExchangeManager.Orders.Where(item => item.exchange == Exchange.Name && item.open == OpenOrders).OrderByDescending(item => item.date));
 
                 if (resize)
                 {
@@ -90,8 +82,8 @@ namespace TwEX_API.Controls
             }
             else
             {
-                Font = PreferenceManager.preferences.Font;
-                listView.Font = Font;
+                //Font = PreferenceManager.preferences.Font;
+                //listView.Font = Font;
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);

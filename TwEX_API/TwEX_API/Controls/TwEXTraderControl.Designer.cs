@@ -30,13 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TwEXTraderControl));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton_ExchangeEditor = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_Wallet = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton_Balance = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton_Calculator = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton_Wallet = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton_ExchangeEditor = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripSeparator_1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_LogManager = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,8 +47,12 @@
             this.toolStripMenuItem_TradingView = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator_3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_PreferenceManager = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.exchangeManagerControl1 = new TwEX_API.Controls.ExchangeManagerControl();
+            this.exchangeManagerControl = new TwEX_API.Controls.ExchangeManagerControl();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,51 +61,18 @@
             this.toolStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton_ExchangeEditor,
-            this.toolStripSeparator1,
-            this.toolStripButton_Wallet,
-            this.toolStripSeparator2,
             this.toolStripButton_Balance,
-            this.toolStripSeparator3,
+            this.toolStripSeparator1,
             this.toolStripButton_Calculator,
+            this.toolStripSeparator2,
+            this.toolStripButton_Wallet,
+            this.toolStripButton_ExchangeEditor,
             this.toolStripDropDownButton_menu,
             this.toolStripSeparator7});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(494, 39);
             this.toolStrip.TabIndex = 5;
-            // 
-            // toolStripButton_ExchangeEditor
-            // 
-            this.toolStripButton_ExchangeEditor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_ExchangeEditor.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_ExchangeEditor.Image")));
-            this.toolStripButton_ExchangeEditor.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_ExchangeEditor.Name = "toolStripButton_ExchangeEditor";
-            this.toolStripButton_ExchangeEditor.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButton_ExchangeEditor.Tag = "ExchangeManager";
-            this.toolStripButton_ExchangeEditor.Text = "Exchange Manager";
-            this.toolStripButton_ExchangeEditor.Click += new System.EventHandler(this.toolStripButton_Form_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripButton_Wallet
-            // 
-            this.toolStripButton_Wallet.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_Wallet.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Wallet.Image")));
-            this.toolStripButton_Wallet.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_Wallet.Name = "toolStripButton_Wallet";
-            this.toolStripButton_Wallet.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButton_Wallet.Tag = "WalletManager";
-            this.toolStripButton_Wallet.Text = "Wallet Manager";
-            this.toolStripButton_Wallet.Click += new System.EventHandler(this.toolStripButton_Form_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripButton_Balance
             // 
@@ -115,10 +85,10 @@
             this.toolStripButton_Balance.Text = "Balance Manager";
             this.toolStripButton_Balance.Click += new System.EventHandler(this.toolStripButton_Form_Click);
             // 
-            // toolStripSeparator3
+            // toolStripSeparator1
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 39);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripButton_Calculator
             // 
@@ -130,6 +100,35 @@
             this.toolStripButton_Calculator.Tag = "CoinCalculator";
             this.toolStripButton_Calculator.Text = "Coin Calculator";
             this.toolStripButton_Calculator.Click += new System.EventHandler(this.toolStripButton_Form_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 39);
+            // 
+            // toolStripButton_Wallet
+            // 
+            this.toolStripButton_Wallet.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_Wallet.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Wallet.Image")));
+            this.toolStripButton_Wallet.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_Wallet.Name = "toolStripButton_Wallet";
+            this.toolStripButton_Wallet.Size = new System.Drawing.Size(36, 36);
+            this.toolStripButton_Wallet.Tag = "WalletManager";
+            this.toolStripButton_Wallet.Text = "Wallet Manager";
+            this.toolStripButton_Wallet.Visible = false;
+            this.toolStripButton_Wallet.Click += new System.EventHandler(this.toolStripButton_Form_Click);
+            // 
+            // toolStripButton_ExchangeEditor
+            // 
+            this.toolStripButton_ExchangeEditor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_ExchangeEditor.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_ExchangeEditor.Image")));
+            this.toolStripButton_ExchangeEditor.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_ExchangeEditor.Name = "toolStripButton_ExchangeEditor";
+            this.toolStripButton_ExchangeEditor.Size = new System.Drawing.Size(36, 36);
+            this.toolStripButton_ExchangeEditor.Tag = "ExchangeManager";
+            this.toolStripButton_ExchangeEditor.Text = "Exchange Manager";
+            this.toolStripButton_ExchangeEditor.Visible = false;
+            this.toolStripButton_ExchangeEditor.Click += new System.EventHandler(this.toolStripButton_Form_Click);
             // 
             // toolStripDropDownButton_menu
             // 
@@ -145,7 +144,11 @@
             this.toolStripMenuItem_EarnGG,
             this.toolStripMenuItem_TradingView,
             this.toolStripSeparator_3,
-            this.toolStripMenuItem_PreferenceManager});
+            this.toolStripMenuItem_PreferenceManager,
+            this.toolStripSeparator3,
+            this.toolStripMenuItem_font,
+            this.toolStripMenuItem_fontIncrease,
+            this.toolStripMenuItem_fontDecrease});
             this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
             this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
@@ -217,26 +220,52 @@
             this.toolStripMenuItem_PreferenceManager.Tag = "PreferenceManager";
             this.toolStripMenuItem_PreferenceManager.Text = "Preference Manager";
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(186, 6);
+            // 
+            // toolStripMenuItem_font
+            // 
+            this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem_font.Tag = "Font";
+            this.toolStripMenuItem_font.Text = "Font";
+            // 
+            // toolStripMenuItem_fontIncrease
+            // 
+            this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
+            this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
+            // 
+            // toolStripMenuItem_fontDecrease
+            // 
+            this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
+            this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
+            // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(6, 39);
             // 
-            // exchangeManagerControl1
+            // exchangeManagerControl
             // 
-            this.exchangeManagerControl1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.exchangeManagerControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.exchangeManagerControl1.Location = new System.Drawing.Point(0, 39);
-            this.exchangeManagerControl1.Name = "exchangeManagerControl1";
-            this.exchangeManagerControl1.Size = new System.Drawing.Size(494, 254);
-            this.exchangeManagerControl1.TabIndex = 6;
+            this.exchangeManagerControl.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.exchangeManagerControl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.exchangeManagerControl.Location = new System.Drawing.Point(0, 39);
+            this.exchangeManagerControl.Name = "exchangeManagerControl";
+            this.exchangeManagerControl.Size = new System.Drawing.Size(494, 254);
+            this.exchangeManagerControl.TabIndex = 6;
             // 
             // TwEXTraderControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.exchangeManagerControl1);
+            this.Controls.Add(this.exchangeManagerControl);
             this.Controls.Add(this.toolStrip);
             this.Name = "TwEXTraderControl";
             this.Size = new System.Drawing.Size(494, 484);
@@ -256,7 +285,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButton_Wallet;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton toolStripButton_Balance;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton toolStripButton_Calculator;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_menu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator_1;
@@ -270,6 +298,10 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator_3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_PreferenceManager;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private ExchangeManagerControl exchangeManagerControl1;
+        private ExchangeManagerControl exchangeManagerControl;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
     }
 }

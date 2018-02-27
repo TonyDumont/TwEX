@@ -39,6 +39,9 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_details = new System.Windows.Forms.ToolStripLabel();
             this.toolStripLabel_update = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripTextBox_search = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripButton_search = new System.Windows.Forms.ToolStripButton();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_rank = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_symbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -58,7 +61,10 @@
             this.toolStripDropDownButton_menu,
             this.toolStripSeparator1,
             this.toolStripLabel_details,
-            this.toolStripLabel_update});
+            this.toolStripLabel_update,
+            this.toolStripSeparator2,
+            this.toolStripTextBox_search,
+            this.toolStripButton_search});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(679, 25);
@@ -67,7 +73,6 @@
             // 
             // toolStripDropDownButton_menu
             // 
-            this.toolStripDropDownButton_menu.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripDropDownButton_menu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_font,
@@ -85,39 +90,38 @@
             // toolStripMenuItem_font
             // 
             this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
-            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_font.Tag = "Font";
             this.toolStripMenuItem_font.Text = "Font";
             // 
             // toolStripMenuItem_fontIncrease
             // 
             this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
-            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
             this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
             // 
             // toolStripMenuItem_fontDecrease
             // 
             this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
-            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
             this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(145, 6);
             // 
             // toolStripMenuItem_update
             // 
             this.toolStripMenuItem_update.Name = "toolStripMenuItem_update";
-            this.toolStripMenuItem_update.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_update.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_update.Tag = "Update";
             this.toolStripMenuItem_update.Text = "Refresh All";
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
@@ -134,6 +138,28 @@
             this.toolStripLabel_update.Size = new System.Drawing.Size(69, 22);
             this.toolStripLabel_update.Text = "Last Update";
             this.toolStripLabel_update.Click += new System.EventHandler(this.toolStripLabel_update_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripTextBox_search
+            // 
+            this.toolStripTextBox_search.Name = "toolStripTextBox_search";
+            this.toolStripTextBox_search.Size = new System.Drawing.Size(100, 25);
+            this.toolStripTextBox_search.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolStripTextBox_search.TextChanged += new System.EventHandler(this.toolStripTextBox_search_TextChanged);
+            // 
+            // toolStripButton_search
+            // 
+            this.toolStripButton_search.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_search.Enabled = false;
+            this.toolStripButton_search.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_search.Image")));
+            this.toolStripButton_search.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_search.Name = "toolStripButton_search";
+            this.toolStripButton_search.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_search.Text = "SEARCH";
             // 
             // listView
             // 
@@ -281,5 +307,8 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_update;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBox_search;
+        private System.Windows.Forms.ToolStripButton toolStripButton_search;
     }
 }

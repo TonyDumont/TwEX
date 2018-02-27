@@ -574,6 +574,7 @@ namespace TwEX_API.Market
             [Description("Earnings This Week|exchange")]
             earnings_this_week
         }
+        
         public enum TradingViewSymbolOverviewInterval
         {
             [Description("1d")]
@@ -594,6 +595,7 @@ namespace TwEX_API.Market
             [Description("max")]
             max_max
         }
+        
         public enum TradingViewWidgetType
         {
             /// <summary>Advanced Chart Widget is a free and powerful charting solution that easily embeds into any website. Simply adjust the settings and click Apply to see a preview, then copy the embed code and paste it into your site code. You can personalize the chart by modifying the default symbol, watchlist, adding tools for technical analysis and a lot more. You can even add news, hotlists, or an economic calendar to make the widget into an entire analytics platform.
@@ -876,7 +878,7 @@ namespace TwEX_API.Market
 
             public int width { get; set; } = 1000;
             public int height { get; set; } = 400;
-            public Boolean autosize { get; set; } = true;
+            public Boolean autosize { get; set; } = false;
 
             public Boolean chartOnly { get; set; } = false;
 
@@ -887,6 +889,14 @@ namespace TwEX_API.Market
             public string trendLineColor { get; set; } = "#4bafe9";
 
             public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>();
+            /*
+            public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>()
+            {
+                new TradingViewSymbolOverview(){ symbol = "BTC", market = "USD", exchange = TradingViewCryptoExchange.Coinbase, interval = TradingViewSymbolOverviewInterval.day_1d, tabName = "BTC"},
+                new TradingViewSymbolOverview(){ symbol = "LTC", market = "USD", exchange = TradingViewCryptoExchange.Coinbase, interval = TradingViewSymbolOverviewInterval.day_1d, tabName = "LTC" },
+                new TradingViewSymbolOverview(){ symbol = "ETH", market = "USD", exchange = TradingViewCryptoExchange.Coinbase, interval = TradingViewSymbolOverviewInterval.day_1d, tabName = "ETH" }
+            };
+            */
         }
         public class TradingViewTickerParameters
         {

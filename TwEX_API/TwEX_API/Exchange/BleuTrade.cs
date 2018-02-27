@@ -811,6 +811,7 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            updateExchangeBalanceList(true);
             //updateExchangeTickerList();
         }
         // GETTERS
@@ -874,41 +875,49 @@ namespace TwEX_API.Exchange
             return list;
         }
         // UPDATERS
-        public static void updateExchangeBalanceList()
+        public static void updateExchangeBalanceList(bool clear = false)
         {
             List<BleuTradeBalance> list = getBalanceList();
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker("CryptoCompare", "BTC", "USD");
+            ExchangeTicker btcTicker = getExchangeTicker("CryptoCompare", "BTC", "USD");
             //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "btclast=" + btcTicker.last, LogManager.LogMessageType.DEBUG);
-            foreach (BleuTradeBalance balance in list)
+            if (list.Count > 0)
             {
-                if (balance.Currency != "BTC")
+                if (clear)
                 {
-                    ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Currency.ToUpper(), "BTC");
-                    if (ticker != null)
+                    ClearBalances(Name);
+                }
+
+                foreach (BleuTradeBalance balance in list)
+                {
+                    if (balance.Currency != "BTC")
+                    {
+                        ExchangeTicker ticker = getExchangeTicker(Name, balance.Currency.ToUpper(), "BTC");
+                        if (ticker != null)
+                        {
+                            Decimal orders = balance.Balance - balance.Available;
+                            if (orders > 0)
+                            {
+                                balance.TotalInBTCOrders = orders * ticker.last;
+                            }
+
+                            balance.TotalInBTC = balance.Balance * ticker.last;
+                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                        }
+                    }
+                    else
                     {
                         Decimal orders = balance.Balance - balance.Available;
                         if (orders > 0)
                         {
-                            balance.TotalInBTCOrders = orders * ticker.last;
+                            balance.TotalInBTCOrders = orders;
                         }
 
-                        balance.TotalInBTC = balance.Balance * ticker.last;
+                        balance.TotalInBTC = balance.Balance;
                         balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                     }
-                }
-                else
-                {
-                    Decimal orders = balance.Balance - balance.Available;
-                    if (orders > 0)
-                    {
-                        balance.TotalInBTCOrders = orders;
-                    }
 
-                    balance.TotalInBTC = balance.Balance;
-                    balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                    processBalance(balance.GetExchangeBalance());
                 }
-
-                ExchangeManager.processBalance(balance.GetExchangeBalance());
             }
         }
         public static void updateExchangeOrderList()

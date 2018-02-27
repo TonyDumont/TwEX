@@ -79,8 +79,8 @@ namespace TwEX_API.Controls
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                listView.Font = ParentForm.Font;
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //listView.Font = ParentForm.Font;
 
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 Width = column_Name.Width + (listView.RowHeightEffective * 2);
@@ -133,25 +133,30 @@ namespace TwEX_API.Controls
         {
             TypeListItem item = listView.SelectedObject as TypeListItem;
             //LogManager.AddLogMessage(Name, "export_Menu_Click", item.Name, LogManager.LogMessageType.DEBUG);
-            PreferenceType type = (PreferenceType)Enum.Parse(typeof(PreferenceType), item.Name);
-            ExportPreferences(type);
+            if (item.Name != "Application")
+            {
+                PreferenceType type = (PreferenceType)Enum.Parse(typeof(PreferenceType), item.Name);
+                ExportPreferences(type);
+            }
+            else
+            {
+                ExportPreferences(PreferenceType.None);
+            }
         }
         private void import_Menu_Click(object sender, EventArgs e)
         {
             TypeListItem item = listView.SelectedObject as TypeListItem;
             //LogManager.AddLogMessage(Name, "import_Menu_Click", item.Name, LogManager.LogMessageType.DEBUG);
-            PreferenceType type = (PreferenceType)Enum.Parse(typeof(PreferenceType), item.Name);
-            ImportPreferences(type);
+            if (item.Name != "Application")
+            {
+                PreferenceType type = (PreferenceType)Enum.Parse(typeof(PreferenceType), item.Name);
+                ImportPreferences(type);
+            }
+            else
+            {
+                ImportPreferences(PreferenceType.None);
+            }
         }
         #endregion
-        /*
-        #region DataModels
-        private class ListItem
-        {
-            public string Name { get; set; }
-            public PreferenceManager.PreferenceType type { get; set; }
-        }
-        #endregion
-    */
     }
 }

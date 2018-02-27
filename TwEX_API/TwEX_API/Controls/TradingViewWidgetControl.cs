@@ -386,7 +386,7 @@ namespace TwEX_API.Controls
                 }
 
                 builder.Append("],");
-                LogManager.AddLogMessage(this.Name, "GetSymbolOverviewString", builder.ToString(), LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(this.Name, "GetSymbolOverviewString", builder.ToString(), LogManager.LogMessageType.DEBUG);
                 return builder.ToString();
             }
             else
@@ -718,6 +718,7 @@ namespace TwEX_API.Controls
                         "\"underLineColor\": \"" + parameters.underLineColor + "\"," +
                         "\"trendLineColor\": \"" + parameters.trendLineColor + "\"," +
                         GetSizePercentString(parameters.autosize, parameters.width, parameters.height, true) +
+                        //GetSizePercentString(parameters.autosize, Parent.Width, Parent.Height, true) +
                         "\"locale\": \"" + parameters.locale + "\"" +
                     "});" +
                     "</script>" +
@@ -836,7 +837,7 @@ namespace TwEX_API.Controls
                 {
                     string html =
                     GetBrowserHeader() +
-                    GetCopyrightString() +
+                    //GetCopyrightString() +
                     "<script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-screener.js\">" +
                     "{" +
                     GetSizePercentString(parameters.autosize, parameters.width, parameters.height) +

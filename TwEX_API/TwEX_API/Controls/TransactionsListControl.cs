@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static TwEX_API.ExchangeManager;
 using BrightIdeasSoftware;
@@ -15,7 +10,8 @@ namespace TwEX_API.Controls
     public partial class TransactionsListControl : UserControl
     {
         #region Properties
-        private string ExchangeName = String.Empty;
+        private ExchangeManager.Exchange Exchange;
+        //private string ExchangeName = String.Empty;
         public ExchangeTransactionType type = ExchangeTransactionType.deposit;
         //public bool OpenOrders = false;
         //public int PreferredWidth = 0;
@@ -51,17 +47,18 @@ namespace TwEX_API.Controls
         #endregion
 
         #region Delegates
-        delegate bool SetExchangeCallback(string exchange);
-        public bool SetExchange(string exchange)
+        delegate bool SetExchangeCallback(ExchangeManager.Exchange exchange);
+        public bool SetExchange(ExchangeManager.Exchange exchange)
         {
             if (InvokeRequired)
             {
                 SetExchangeCallback d = new SetExchangeCallback(SetExchange);
-                Invoke(d, new object[] { });
+                Invoke(d, new object[] { exchange });
             }
             else
             {
-                ExchangeName = exchange;
+                Exchange = exchange;
+                //ExchangeName = exchange;
                 UpdateUI(true);
             }
             return true;
@@ -77,7 +74,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                listView.SetObjects(Transactions.Where(item => item.type == type && item.exchange == ExchangeName));
+                listView.SetObjects(Transactions.Where(item => item.type == type && item.exchange == Exchange.Name).OrderByDescending(item => item.datetime));
 
                 if (resize)
                 {
@@ -98,8 +95,8 @@ namespace TwEX_API.Controls
             else
             {
                 
-                Font = PreferenceManager.preferences.Font;
-                listView.Font = Font;
+                //Font = PreferenceManager.preferences.Font;
+                //listView.Font = Font;
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);

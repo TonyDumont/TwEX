@@ -27,7 +27,7 @@ namespace TwEX_API.Wallet
                 var jsonObject = JObject.Parse(response.Content);
                 AddressBalanceEndpoint balance = jsonObject.ToObject<AddressBalanceEndpoint>();
                 Decimal value = balance.balance / 100000000;
-                //LogManager.AddLogMessage(Name, "getTicker", "balance=" + balance.balance + " | " + symbol + " | " + value, LogManager.LogMessageType.OTHER);
+                //LogManager.AddLogMessage(Name, "getTicker", "balance=" + balance.balance + " | " + symbol + " | " + value + " | " + address, LogManager.LogMessageType.OTHER);
                 return value;
             }
             catch (Exception ex)

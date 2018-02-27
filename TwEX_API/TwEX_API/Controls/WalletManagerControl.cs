@@ -75,10 +75,10 @@ namespace TwEX_API.Controls
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                toolStrip.Font = ParentForm.Font;
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //toolStrip.Font = ParentForm.Font;
                 //toolStrip_footer.Font = ParentForm.Font;
-                listView.Font = ParentForm.Font;
+                //listView.Font = ParentForm.Font;
                 //LogManager.AddLogMessage(Name, "ResizeUI", "RESIZING", LogManager.LogMessageType.DEBUG);
                 Size textSize = TextRenderer.MeasureText("0.00000000", ParentForm.Font);
                 int rowHeight = listView.RowHeightEffective;

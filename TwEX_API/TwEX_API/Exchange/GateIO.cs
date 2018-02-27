@@ -975,9 +975,11 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            updateExchangeBalanceList(true);
             //updateExchangeTickerList();
         }
         // GETTERS
+        /*
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
@@ -989,65 +991,74 @@ namespace TwEX_API.Exchange
             }
             return list;
         }
+        */
         // UPDATERS
-        public static void updateExchangeBalanceList()
+        public static void updateExchangeBalanceList(bool clear = false)
         {
             List<GateIOBalance> list = getBalances();
             ExchangeTicker btcTicker = getExchangeTicker(Name, "BTC", USDSymbol);
 
-            foreach (GateIOBalance balance in list)
+            if (list.Count > 0)
             {
-                if (balance.total > 0)
+                if (clear)
                 {
-                    if (balance.symbol != "BTC" && balance.symbol != USDSymbol)
+                    ClearBalances(Name);
+                }
+
+                foreach (GateIOBalance balance in list)
+                {
+                    if (balance.total > 0)
                     {
-                        // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
-
-                        if (ticker != null)
+                        if (balance.symbol != "BTC" && balance.symbol != USDSymbol)
                         {
-                            //Decimal orders = balance. .Balance - balance.Available;
-                            if (balance.locked > 0)
-                            {
-                                balance.TotalInBTCOrders = balance.locked * ticker.last;
-                            }
+                            // GET TICKER FOR PAIR IN BTC MARKET
+                            ExchangeTicker ticker = getExchangeTicker(Name, balance.symbol.ToUpper(), "BTC");
 
-                            balance.TotalInBTC = balance.total * ticker.last;
-                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                            if (ticker != null)
+                            {
+                                //Decimal orders = balance. .Balance - balance.Available;
+                                if (balance.locked > 0)
+                                {
+                                    balance.TotalInBTCOrders = balance.locked * ticker.last;
+                                }
+
+                                balance.TotalInBTC = balance.total * ticker.last;
+                                balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
+                            }
+                            else
+                            {
+                                LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.symbol.ToUpper());
+                            }
                         }
                         else
                         {
-                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.symbol.ToUpper());
-                        }
-                    }
-                    else
-                    {
-                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
-                        if (balance.symbol == "BTC")
-                        {
-                            if (balance.locked > 0)
-                            {
-                                balance.TotalInBTCOrders = balance.locked;
-                            }
-
-                            balance.TotalInBTC = balance.total;
-                            balance.TotalInUSD = btcTicker.last * balance.total;
-                        }
-                        else if (balance.symbol == USDSymbol)
-                        {
-                            if (btcTicker.last > 0)
+                            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+                            if (balance.symbol == "BTC")
                             {
                                 if (balance.locked > 0)
                                 {
-                                    balance.TotalInBTCOrders = balance.locked / btcTicker.last;
+                                    balance.TotalInBTCOrders = balance.locked;
                                 }
 
-                                balance.TotalInBTC = balance.total / btcTicker.last;
+                                balance.TotalInBTC = balance.total;
+                                balance.TotalInUSD = btcTicker.last * balance.total;
                             }
-                            balance.TotalInUSD = balance.total;
+                            else if (balance.symbol == USDSymbol)
+                            {
+                                if (btcTicker.last > 0)
+                                {
+                                    if (balance.locked > 0)
+                                    {
+                                        balance.TotalInBTCOrders = balance.locked / btcTicker.last;
+                                    }
+
+                                    balance.TotalInBTC = balance.total / btcTicker.last;
+                                }
+                                balance.TotalInUSD = balance.total;
+                            }
                         }
+                        processBalance(balance.GetExchangeBalance());
                     }
-                    ExchangeManager.processBalance(balance.GetExchangeBalance());
                 }
             }
         }

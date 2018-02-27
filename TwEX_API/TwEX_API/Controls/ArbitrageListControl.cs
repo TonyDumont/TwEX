@@ -34,10 +34,10 @@ namespace TwEX_API.Controls
         delegate void SetPropertiesCallback(string newMarket, string newSymbol);
         public void SetProperties(string newMarket, string newSymbol)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 SetPropertiesCallback d = new SetPropertiesCallback(SetProperties);
-                this.Invoke(d, new object[] { newMarket, newSymbol });
+                Invoke(d, new object[] { newMarket, newSymbol });
             }
             else
             {
@@ -85,10 +85,12 @@ namespace TwEX_API.Controls
 
                             Decimal spread = high - low;
                             listView.SetObjects(list);
+                            /*
                             if (list.Count > PreferenceManager.ArbitragePreferences.maxListCount)
                             {
                                 PreferenceManager.ArbitragePreferences.maxListCount = list.Count;
                             }
+                            */
                             //arbitrageItem.SetListCount(listView.Items.Count);
 
                             toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
@@ -127,7 +129,7 @@ namespace TwEX_API.Controls
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
@@ -144,11 +146,11 @@ namespace TwEX_API.Controls
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                toolStrip_btc.Font = ParentForm.Font;
-                toolStrip_usd.Font = ParentForm.Font;
-                toolStripLabel_symbol.Font = ParentForm.Font;
-                
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //toolStrip_btc.Font = ParentForm.Font;
+                //toolStrip_usd.Font = ParentForm.Font;
+                //toolStripLabel_symbol.Font = ParentForm.Font;
+                /*
                 int rowHeight = toolStrip_usd.Height;
 
                 //int listHeight = ExchangeManager.Exchanges.Where(exchange => exchange.Active).Count() * rowHeight;
@@ -157,7 +159,7 @@ namespace TwEX_API.Controls
                 int newHeight = rowHeight + listHeight;
                 ClientSize = new Size(Width, newHeight);
                 Size = new Size(Width, newHeight);
-                
+                */
             }
         }
         #endregion

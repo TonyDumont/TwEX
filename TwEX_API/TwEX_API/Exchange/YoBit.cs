@@ -30,6 +30,8 @@ namespace TwEX_API.Exchange
         public static BlockingCollection<YoBitBalance> Balances = new BlockingCollection<YoBitBalance>();
         public static BlockingCollection<YoBitInfo> Pairs = new BlockingCollection<YoBitInfo>();
         public static BlockingCollection<YoBitTicker> Tickers = new BlockingCollection<YoBitTicker>();
+
+        private static List<string> PairFilterList = new List<string>(){"btc","usd"};
         // STATUS
         public static int ErrorCount { get; set; } = 0;
         public static DateTime LastUpdate { get; set; } = DateTime.Now;
@@ -64,6 +66,12 @@ namespace TwEX_API.Exchange
                     string[] pairs = info.pair.Split('_');
                     info.symbol = pairs[0];
                     info.market = pairs[1];
+                    /*
+                    if (info.market != "rur" || info.market != "waves" || info.market != "yob2x")
+                    {
+                        list.Add(info);
+                    }
+                    */
                     list.Add(info);
                 }
                 UpdateStatus(true, "Loaded " + list.Count + " Pairs");
@@ -138,7 +146,7 @@ namespace TwEX_API.Exchange
         /// <para>Required : pairs - ARRAY of STRING (sym_mkt)</para>
         /// <para>Optional : none</para>
         /// </summary>
-        /*
+        
         public static List<YoBitTicker> getTickerList(List<YoBitInfo> pairs)
         {
             List<YoBitTicker> list = new List<YoBitTicker>();
@@ -148,9 +156,9 @@ namespace TwEX_API.Exchange
             {
                 string reqString = getPairsString(pairs);
                 //LogManager.AddLogMessage(Name, "getTickerList", pairs ,LogManager.LogMessageType.DEBUG); 
-                //LogManager.AddLogMessage(Name, "getTickerList", "reqString=" + reqString, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "getTickerList", "reqString=" + "/3/ticker/" + reqString, LogManager.LogMessageType.DEBUG);
                 var request = new RestRequest("/3/ticker/" + reqString, Method.GET);
-                
+                //LogManager.AddLogMessage(Name, "getTickerList", "request=" + request., LogManager.LogMessageType.DEBUG);
                 var response = client.Execute(request);
                 responseString = response.Content;
                 //LogManager.AddLogMessage(Name, "getTicker", "tickerResponse.Content=" + response.Content, LogManager.LogMessageType.DEBUG);
@@ -174,10 +182,10 @@ namespace TwEX_API.Exchange
                 UpdateStatus(false, LogManager.StripHTML(responseString));
             }   
             
-            LogManager.AddLogMessage(Name, "getTickerList", "DISABLED", LogManager.LogMessageType.OTHER);
+            //LogManager.AddLogMessage(Name, "getTickerList", "DISABLED", LogManager.LogMessageType.OTHER);
             return list;
         }
-        */
+        
         /// <summary>trades
         /// <para>Method returns information about the last transactions of selected pairs.</para>
         /// <para>Required : pairs - ARRAY of STRING (sym_mkt)</para>
@@ -310,11 +318,11 @@ namespace TwEX_API.Exchange
         public static async Task<List<YoBitBalance>> getBalanceList()
         {
             List<YoBitBalance> list = new List<YoBitBalance>();
-            /*
+            
             string responseString = string.Empty;
             try
             {
-                string req = "method=getInfo&nonce=" + ExchangeManager.GetNonce();
+                string req = "method=getInfo&nonce=" + GetNonce();
                 responseString = await SendPrivateApiRequestAsync(req);
                 responseString = responseString.Replace("return", "results");
                 //LogManager.AddLogMessage(Name, "getInfo", "result=" + result, LogManager.LogMessageType.DEBUG);
@@ -325,18 +333,22 @@ namespace TwEX_API.Exchange
                 {
                     //LogManager.AddLogMessage("YoBitControl", "GetBalances", "Succeeded - get RESULTS : " + balancejsonData.GetValue("results"), LogManager.LogMessageType.DEBUG);
                     var results = JObject.Parse(balancejsonData.GetValue("results").ToString());
-                    var funds = JObject.Parse(results.GetValue("funds").ToString());
+                    //var funds = JObject.Parse(results.GetValue("funds").ToString());
                     var orders = JObject.Parse(results.GetValue("funds_incl_orders").ToString());
 
                     foreach (var o in orders)
                     {
                         //LogManager.AddLogMessage("YoBitControl", "GetBalances", "get ORDERS : " + o.Key + " | " + o.Value);
-                        YoBitBalance newBalance = new YoBitBalance();
-                        newBalance.Currency = o.Key;
-                        newBalance.Balance = Convert.ToDecimal(o.Value);
+                        YoBitBalance newBalance = new YoBitBalance()
+                        {
+                            Currency = o.Key,
+                            Balance = Convert.ToDecimal(o.Value)
+                        };
+                        //newBalance.Currency = o.Key;
+                        //newBalance.Balance = Convert.ToDecimal(o.Value);
                         list.Add(newBalance);
                     }
-
+                    /*
                     foreach (var f in funds)
                     {
                         //LogManager.AddLogMessage("YoBitControl", "GetBalances", "get FUNDS : " + f.Key + " | " + f.Value);
@@ -359,6 +371,7 @@ namespace TwEX_API.Exchange
                             LogManager.AddLogMessage(Name, "GetBalances", "NOT IN BList already (WHY???) : " + f.Key + " | " + f.Value, LogManager.LogMessageType.DEBUG);
                         }
                     }
+                    */
                     UpdateStatus(true, "Updated Balances");
                 }
                 else
@@ -372,8 +385,8 @@ namespace TwEX_API.Exchange
                 LogManager.AddLogMessage(Name, "getBalances", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 UpdateStatus(false, responseString);
             }
-            */
-            LogManager.AddLogMessage(Name, "getBalanceList", "DISABLED", LogManager.LogMessageType.OTHER);
+            
+            //LogManager.AddLogMessage(Name, "getBalanceList", "DISABLED", LogManager.LogMessageType.OTHER);
             return list;
         }
         /// <summary>ActiveOrders
@@ -514,18 +527,38 @@ namespace TwEX_API.Exchange
         // INITIALIZE
         public async static void InitializeExchange()
         {
+            
+            Pairs = new BlockingCollection<YoBitInfo>(new ConcurrentQueue<YoBitInfo>(getInfoList()));
+            /*
+            foreach(YoBitInfo info in Pairs)
+            {
+                LogManager.AddLogMessage(Name, "InitializeExchange", info.symbol + " | " + info.market, LogManager.LogMessageType.EXCHANGE);
+            }
+            */
+            Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
+            /*
+            if (Balances.Count > 0)
+            {
+
+                foreach (YoBitBalance balance in Balances)
+                {
+                    LogManager.AddLogMessage(Name, "InitializeExchange", balance.Currency + " | " + balance.Balance, LogManager.LogMessageType.EXCHANGE);
+
+                }
+            }
+            */
             //Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
-            //Pairs = new BlockingCollection<YoBitInfo>(new ConcurrentQueue<YoBitInfo>(getInfoList()));
-            //Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
-            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized - TEMP DISABLED", LogManager.LogMessageType.EXCHANGE);
+            updateExchangeBalanceList(true);
+            LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized - " + Pairs.Count + " Pairs / " + Balances.Count + " Balances", LogManager.LogMessageType.EXCHANGE);
         }
         // GETTERS
-        
+        /*
         public static List<ExchangeTicker> getExchangeTickerList()
         {
             List<ExchangeTicker> list = new List<ExchangeTicker>();
-            /*
+
             // GET ALL THE PAIRS
+            
             List<YoBitInfo> infoList = getInfoList();
             var marketList = infoList.Select(p => p.market).Distinct();
             // SEPERATE INTO MARKETS TO BUILD REQUEST STRING
@@ -584,81 +617,88 @@ namespace TwEX_API.Exchange
                 }
                 
             }
-            */
+            
             //LogManager.AddLogMessage(Name, "getExchangeTickerList", marketList.Count() + " markets found for " + Name, LogManager.LogMessageType.DEBUG);
             LogManager.AddLogMessage(Name, "getExchangeTickerList", "DISABLED", LogManager.LogMessageType.OTHER);
 
             return list;
         }
-        
+        */
         // UPDATERS
-        public async static void updateExchangeBalanceList()
+        public async static void updateExchangeBalanceList(bool clear = false)
         {
-            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "DISABLED", LogManager.LogMessageType.OTHER);
-            /*
+            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "DISABLED", LogManager.LogMessageType.OTHER);
+            
             //List<YoBitBalance> list = await getBalanceList();
             Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
-            ExchangeTicker btcTicker = ExchangeManager.getExchangeTicker(Name, "BTC", USDSymbol);
+            ExchangeTicker btcTicker = getExchangeTicker(Name, "BTC", USDSymbol);
 
-            foreach (YoBitBalance balance in Balances)
+            if (Balances.Count > 0)
             {
-                if (balance.Balance > 0)
+                if (clear)
                 {
-                    if (balance.Currency != "BTC" && balance.Currency != USDSymbol)
+                    ClearBalances(Name);
+                }
+
+                foreach (YoBitBalance balance in Balances)
+                {
+                    if (balance.Balance > 0)
                     {
-                        // GET TICKER FOR PAIR IN BTC MARKET
-                        ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Currency.ToUpper(), "BTC");
+                        if (balance.Currency != "BTC" && balance.Currency != USDSymbol)
+                        {
+                            // GET TICKER FOR PAIR IN BTC MARKET
+                            ExchangeTicker ticker = ExchangeManager.getExchangeTicker(Name, balance.Currency.ToUpper(), "BTC");
 
-                        if (ticker != null)
-                        {
-                            Decimal orders = balance.Balance - balance.Available;
-                            if (orders > 0)
-                            {
-                                balance.TotalInBTCOrders = orders * ticker.last;
-                            }
-
-                            balance.TotalInBTC = balance.Balance * ticker.last;
-                            balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
-                        }
-                        else
-                        {
-                            LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.Currency.ToUpper());
-                        }
-                    }
-                    else
-                    {
-                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
-                        if (balance.Currency == "BTC")
-                        {
-                            Decimal orders = balance.Balance - balance.Available;
-                            if (orders > 0)
-                            {
-                                balance.TotalInBTCOrders = orders;
-                            }
-
-                            balance.TotalInBTC = balance.Balance;
-                            balance.TotalInUSD = btcTicker.last * balance.Balance;
-                        }
-                        else if (balance.Currency == USDSymbol)
-                        {
-                            if (btcTicker.last > 0)
+                            if (ticker != null)
                             {
                                 Decimal orders = balance.Balance - balance.Available;
                                 if (orders > 0)
                                 {
-                                    balance.TotalInBTCOrders = orders / btcTicker.last;
+                                    balance.TotalInBTCOrders = orders * ticker.last;
                                 }
 
-                                balance.TotalInBTC = balance.Balance / btcTicker.last;
+                                balance.TotalInBTC = balance.Balance * ticker.last;
+                                balance.TotalInUSD = btcTicker.last * balance.TotalInBTC;
                             }
-                            balance.TotalInUSD = balance.Balance;
+                            else
+                            {
+                                LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "EXCHANGE TICKER WAS NULL : " + Name + " | " + balance.Currency.ToUpper());
+                            }
                         }
+                        else
+                        {
+                            //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", "CHECKING CURRENCY :" + balance.Currency, LogManager.LogMessageType.DEBUG);
+                            if (balance.Currency == "BTC")
+                            {
+                                Decimal orders = balance.Balance - balance.Available;
+                                if (orders > 0)
+                                {
+                                    balance.TotalInBTCOrders = orders;
+                                }
+
+                                balance.TotalInBTC = balance.Balance;
+                                balance.TotalInUSD = btcTicker.last * balance.Balance;
+                            }
+                            else if (balance.Currency == USDSymbol)
+                            {
+                                if (btcTicker.last > 0)
+                                {
+                                    Decimal orders = balance.Balance - balance.Available;
+                                    if (orders > 0)
+                                    {
+                                        balance.TotalInBTCOrders = orders / btcTicker.last;
+                                    }
+
+                                    balance.TotalInBTC = balance.Balance / btcTicker.last;
+                                }
+                                balance.TotalInUSD = balance.Balance;
+                            }
+                        }
+                        //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
+                        processBalance(balance.GetExchangeBalance());
                     }
-                    //LogManager.AddLogMessage(Name, "updateExchangeBalanceList", balance.Currency + " | " + balance.Balance + " | " + balance.TotalInBTC + " | " + balance.TotalInUSD, LogManager.LogMessageType.DEBUG);
-                    ExchangeManager.processBalance(balance.GetExchangeBalance());
                 }
-            }  
-            */
+            }
         }
         public static void updateExchangeOrderList()
         {
@@ -717,14 +757,20 @@ namespace TwEX_API.Exchange
         }
         public static void updateExchangeTickerList()
         {
-            LogManager.AddLogMessage(Name, "updateExchangeTickerList", "THIS FUNCTION DISABLED UNTIL A SOLUTION IS FOUND ON PAIR REQUESTS", LogManager.LogMessageType.OTHER);
-            /*
-            Tickers = new BlockingCollection<YoBitTicker>(new ConcurrentQueue<YoBitTicker>(getTickerList(getWatchlistPairs())));
+            //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "THIS FUNCTION DISABLED UNTIL A SOLUTION IS FOUND ON PAIR REQUESTS", LogManager.LogMessageType.OTHER);
+            List<YoBitInfo> pairList = new List<YoBitInfo>();
+            foreach(YoBitBalance balance in Balances)
+            {
+                //pairList.AddRange(Pairs.Where(pair => pair.symbol == balance.Currency && pair.market = "btc"));
+                pairList.AddRange(Pairs.Where(pair => pair.symbol == balance.Currency && PairFilterList.Contains(pair.market)));
+            }
+            //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "Pairs Count : " + pairList.Count, LogManager.LogMessageType.OTHER);
+            Tickers = new BlockingCollection<YoBitTicker>(new ConcurrentQueue<YoBitTicker>(getTickerList(pairList)));
             foreach (YoBitTicker ticker in Tickers)
             {
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                processTicker(ticker.GetExchangeTicker());
             }
-            */
+            //LogManager.AddLogMessage(Name, "updateExchangeTickerList", "Tickers Count : " + Tickers.Count, LogManager.LogMessageType.OTHER);
         }
         public static void updateExchangeTransactionList()
         {

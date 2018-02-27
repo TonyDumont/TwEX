@@ -9,7 +9,6 @@ namespace TwEX_API.Controls
     {
         #region Properties
         private ExchangeManager.Exchange Exchange;
-        //private string symbol = String.Empty;
         private CryptoCompareWidgetControl cryptoCompare = new CryptoCompareWidgetControl()
         {
             Dock = DockStyle.Fill,
@@ -82,8 +81,8 @@ namespace TwEX_API.Controls
             {
                 //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 
-                Font = PreferenceManager.preferences.Font;
-                toolStrip.Font = Font;
+                //Font = PreferenceManager.preferences.Font;
+                //toolStrip.Font = Font;
                 //listView.Font = Font;
                 /*
                 Size textSize = TextRenderer.MeasureText("0.00000000", Font);
@@ -202,27 +201,28 @@ namespace TwEX_API.Controls
         #endregion
 
         #region Setters
-        delegate bool SetExchangeCallback(string exchange);
-        public bool SetExchange(string exchange)
+        delegate bool SetExchangeCallback(ExchangeManager.Exchange exchange);
+        public bool SetExchange(ExchangeManager.Exchange exchange)
         {
             if (InvokeRequired)
             {
                 SetExchangeCallback d = new SetExchangeCallback(SetExchange);
-                Invoke(d, new object[] { });
+                Invoke(d, new object[] { exchange });
             }
             else
             {
-                Exchange = ExchangeManager.getExchange(exchange);
+                Exchange = exchange;
                 toolStripLabel_symbol.Text = Exchange.CurrentTicker.symbol;
                 toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(Exchange.CurrentTicker.symbol);
                 toolStripLabel_market.Text = Exchange.CurrentTicker.market;
                 toolStripLabel_market.Image = ContentManager.GetSymbolIcon(Exchange.CurrentTicker.market);
                 cryptoCompare.setAdvancedChart(Exchange.CurrentTicker.symbol, "USD,BTC");
+
                 if (Exchange.TradingView.Length > 0)
                 {
                     Exchange.AdvancedChartParameters.exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), Exchange.TradingView);
                     Exchange.AdvancedChartParameters.symbol = Exchange.CurrentTicker.symbol;
-                    Exchange.AdvancedChartParameters.symbol = Exchange.CurrentTicker.market;
+                    Exchange.AdvancedChartParameters.market = Exchange.CurrentTicker.market;
                     toolStripRadioButton_TradingView.Visible = true;
                 }
                 else

@@ -57,11 +57,11 @@ namespace TwEX_API.Controls
             if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
-                listView.Font = ParentForm.Font;
+                //listView.Font = ParentForm.Font;
 
                 column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 Width = column_Name.Width + (listView.RowHeightEffective * 3);
@@ -121,7 +121,7 @@ namespace TwEX_API.Controls
         {
             FormPreference preference = listView.SelectedObject as FormPreference;
             LogManager.AddLogMessage(Name, "reset_Menu_Click", preference.Name, LogManager.LogMessageType.DEBUG);
-            ResetForm(preference);
+            FormManager.ResetForm(preference);
             //PreferenceManager.ExportPreferences(item.type);
         }
         /*

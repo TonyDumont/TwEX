@@ -12,6 +12,7 @@ namespace TwEX_API.Controls
     {
         #region Properties
         private List<CalculatorItem> symbolList = new List<CalculatorItem>();
+        private string sort = "Symbol";
         #endregion
 
         #region Initialize
@@ -31,11 +32,12 @@ namespace TwEX_API.Controls
 
             Size iconSize = PreferenceManager.preferences.IconSize;
 
-            //pictureBox_usd.Size = PreferenceManager.preferences.IconSize;
-            pictureBox_usd.Image = ContentManager.GetIcon("USDSymbol");
+            pictureBox_usd.Size = PreferenceManager.preferences.IconSize;
+            pictureBox_symbol.Size = PreferenceManager.preferences.IconSize;
+            pictureBox_usd.Image = ContentManager.ResizeImage(ContentManager.GetIcon("USDSymbol"), iconSize.Width, iconSize.Height);
             //label_usd.Image = ContentManager.ResizeImage(ContentManager.GetIcon("USD"), iconSize.Width, iconSize.Height);
             label_symbol.Text = PreferenceManager.preferences.CalculatorSymbol;
-            pictureBox_symbol.Image = ContentManager.GetSymbolIcon(PreferenceManager.preferences.CalculatorSymbol);
+            pictureBox_symbol.Image = ContentManager.ResizeImage(ContentManager.GetSymbolIcon(PreferenceManager.preferences.CalculatorSymbol), iconSize.Width, iconSize.Height);
             //label_symbol.Image = ContentManager.ResizeImage(ContentManager.GetSymbolIcon(PreferenceManager.preferences.CalculatorSymbol), iconSize.Width, iconSize.Height);
 
             UpdateUI(true);
@@ -63,16 +65,23 @@ namespace TwEX_API.Controls
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
                 try
                 {
-                    listView.SetObjects(symbolList);
+                    if (sort == "Symbol")
+                    {
+                        listView.SetObjects(symbolList.OrderBy(item => item.symbol));
+                    }
+                    else
+                    {
+                        listView.SetObjects(symbolList.OrderBy(item => item.value));
+                    }
 
                     if (resize)
                     {
@@ -88,16 +97,17 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                toolStrip.Font = ParentForm.Font;
-                toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //toolStrip.Font = ParentForm.Font;
+                //toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
+                toolStrip_footer.ImageScalingSize = PreferenceManager.preferences.IconSize;
 
                 column_symbol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 column_symbol.Width = column_symbol.Width + (listView.RowHeightEffective * 3); 
@@ -159,7 +169,7 @@ namespace TwEX_API.Controls
                 CalculatorItem item = listView.SelectedObject as CalculatorItem;
                 numericUpDown_symbol.Value = item.value;
                 label_symbol.Text = item.symbol;
-                pictureBox_symbol.Image = ContentManager.GetSymbolIcon(item.symbol);
+                pictureBox_symbol.Image = ContentManager.ResizeImage(ContentManager.GetSymbolIcon(item.symbol), PreferenceManager.preferences.IconSize.Width, PreferenceManager.preferences.IconSize.Height);
             }
             else
             {
@@ -233,29 +243,45 @@ namespace TwEX_API.Controls
                         DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
                         {
-                            ParentForm.Font = dialog.Font;
+                            if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                            {
+                                UpdateUI(true);
+                            }
                         }
-                        UpdateUI(true);
+                        //UpdateUI(true);
                         break;
 
                     case "FontIncrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "FontDecrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
-                        /*
-                    case "Charts":
-                        ToggleCharts();
+
+                    case "RemoveAll":
+                        //ToggleCharts();
+                        PreferenceManager.preferences.SymbolWatchList.Clear();
+                        PreferenceManager.UpdatePreferenceFile();
+                        InitializeSymbolList();
                         break;
                         
-                    case "Update":
+                    case "SortSymbol":
+                        sort = "Symbol";
                         UpdateUI();
                         break;
-                        */
+
+                    case "SortValue":
+                        sort = "Value";
+                        UpdateUI();
+                        break;
+
                     default:
                         // NOTHING
                         break;
@@ -264,6 +290,13 @@ namespace TwEX_API.Controls
             }
         }
         #endregion
+        /*
+        private void toolStripDropDownButton_sort_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            toolStripDropDownButton_sort.Text = e.ClickedItem.Text;
+            UpdateUI();
+        }
+        */
     }
 
     public class CalculatorItem

@@ -23,7 +23,7 @@ namespace TwEX_API.Controls
             {
                 if (type.ToString() != "NONE")
                 {
-                    ToolStripButton button = new ToolStripButton() { Text = type.ToString(), DisplayStyle = ToolStripItemDisplayStyle.ImageAndText };
+                    ToolStripButton button = new ToolStripButton() { Text = type.ToString(), DisplayStyle = ToolStripItemDisplayStyle.ImageAndText, Alignment = ToolStripItemAlignment.Right };
                     button.Click += toolStripButton_Click;
 
                     string colorName = EnumUtils.GetDescription<LogMessageType>(type);
@@ -36,7 +36,7 @@ namespace TwEX_API.Controls
                     button.Image = bmp;
 
                     toolStrip.Items.Add(button);
-                    toolStrip.Items.Add(new ToolStripSeparator());
+                    toolStrip.Items.Add(new ToolStripSeparator() { Alignment = ToolStripItemAlignment.Right });
                 }
             }
 
@@ -54,10 +54,10 @@ namespace TwEX_API.Controls
         delegate void UpdateUICallback(bool resize = false);
         public void UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
@@ -66,11 +66,11 @@ namespace TwEX_API.Controls
                     if (item.GetType() == typeof(ToolStripButton))
                     {
                         ToolStripButton button = item as ToolStripButton;
-                        button.Checked = LogManager.getMessageTypeActive(button.Text);
+                        button.Checked = getMessageTypeActive(button.Text);
                     }
                 }
 
-                listView.SetObjects((from m in LogManager.MessageList where (m.type & PreferenceManager.preferences.MessageFlags) > 0 select m).OrderByDescending(t => t.TimeStamp));
+                listView.SetObjects((from m in MessageList where (m.type & PreferenceManager.preferences.MessageFlags) > 0 select m).OrderByDescending(t => t.TimeStamp));
 
                 if (resize)
                 {
@@ -82,15 +82,15 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
-                this.Invoke(d, new object[] { });
+                Invoke(d, new object[] { });
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                toolStrip.Font = ParentForm.Font;
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //toolStrip.Font = ParentForm.Font;
 
                 int rowHeight = listView.RowHeightEffective;
                 int iconSize = rowHeight - 2;
@@ -143,19 +143,26 @@ namespace TwEX_API.Controls
                         DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
                         {
-                            ParentForm.Font = dialog.Font;
+                            if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                            {
+                                UpdateUI(true);
+                            }
                         }
                         UpdateUI(true);
                         break;
 
                     case "FontIncrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "FontDecrease":
-                        ParentForm.Font = new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style);
-                        UpdateUI(true);
+                        if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                        {
+                            UpdateUI(true);
+                        }
                         break;
 
                     case "CopyAll": 
@@ -176,11 +183,5 @@ namespace TwEX_API.Controls
             }
         }
         #endregion
-        /*
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            ContentManager.SaveIcons();
-        }
-        */
     }
 }

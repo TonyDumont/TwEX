@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using static TwEX_API.ExchangeManager;
 using static TwEX_API.Market.TradingView;
+using System.Drawing;
 
 namespace TwEX_API.Controls
 {
@@ -12,6 +13,9 @@ namespace TwEX_API.Controls
     {
         #region Properties
         public static List<ExchangeManager.Exchange> exchanges = new List<ExchangeManager.Exchange>();
+        private TradingViewWidgetControl overviewsWidget = new TradingViewWidgetControl() { Dock = DockStyle.Fill };
+        private TradingViewWidgetControl marketsWidget = new TradingViewWidgetControl() { Dock = DockStyle.Fill };
+        private Size pageSize = new Size(1200, 600);
         #endregion
 
         #region Initialize
@@ -19,20 +23,22 @@ namespace TwEX_API.Controls
         {
             InitializeComponent();
             FormManager.tradingViewManagerControl = this;
+            InitializeIcons();
         }
         private void TradingViewManagerControl_Load(object sender, EventArgs e)
         {
             toolStripTextBox_symbol.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol;
             toolStripTextBox_market.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.market;
-            toolStripDropDownButton_options.Image = ContentManager.GetIcon("Options");
             toolStripDropDownButton_style.Text = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style.ToString();
 
+            toolStripDropDownButton_currency.Text = PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.displayCurrency.ToString();
+            toolStripDropDownButton_view.Text = PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.defaultColumn.ToString();
 
+            tabPage_overviews.Controls.Add(overviewsWidget);
+            tabPage_markets.Controls.Add(marketsWidget);
 
-            toolStripRadioButton_full.Image = ContentManager.GetSymbolIcon(PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol);
-            toolStripRadioButton_btc.Image = ContentManager.GetSymbolIcon("BTC");
-            toolStripRadioButton_usd.Image = ContentManager.GetIcon("USDSymbol");
-            toolStripRadioButton_custom.Image = ContentManager.GetIcon("CustomView");
+            marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
+            UpdateToolbar();
 
             UpdateStyleMenu();
             UpdateExchangeMenus();
@@ -41,6 +47,20 @@ namespace TwEX_API.Controls
             SetFullView();
             SetCustomView();
             UpdateUI(true);
+        }
+        private void InitializeIcons()
+        {          
+            toolStripDropDownButton_options.Image = ContentManager.GetIcon("Options");            
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+
+            toolStripRadioButton_full.Image = ContentManager.GetSymbolIcon(PreferenceManager.TradingViewPreferences.AdvancedChartParameters.symbol);
+            toolStripRadioButton_btc.Image = ContentManager.GetSymbolIcon("BTC");
+            toolStripRadioButton_usd.Image = ContentManager.GetIcon("USDSymbol");
+            toolStripRadioButton_custom.Image = ContentManager.GetIcon("CustomView");
+            toolStripRadioButton_overviews.Image = ContentManager.GetIcon("SymbolOverview");
+            toolStripRadioButton_markets.Image = ContentManager.GetIcon("Exchange");
         }
         #endregion
 
@@ -68,17 +88,18 @@ namespace TwEX_API.Controls
         delegate void ResizeUICallback();
         public void ResizeUI()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 ResizeUICallback d = new ResizeUICallback(ResizeUI);
                 Invoke(d, new object[] { });
             }
             else
             {
-                ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 //Font = ParentForm.Font;
-                toolStrip.Font = ParentForm.Font;
-
+                //toolStrip.Font = ParentForm.Font;
+                toolStrip.ImageScalingSize = PreferenceManager.preferences.IconSize;
+                /*
                 foreach (ToolStripItem item in toolStrip.Items)
                 {
                     if (item.GetType() != typeof(ToolStripSeparator))
@@ -88,8 +109,23 @@ namespace TwEX_API.Controls
                         item.Font = ParentForm.Font;
                     }
                 }
+                */
                 //column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 //Width = column_Name.Width + (listView.RowHeightEffective);
+            }
+        }
+
+        delegate void UpdateOverviewsCallback();
+        public void UpdateOverviews()
+        {
+            if (InvokeRequired)
+            {
+                UpdateOverviewsCallback d = new UpdateOverviewsCallback(UpdateOverviews);
+                Invoke(d, new object[] { });
+            }
+            else
+            {
+                overviewsWidget.setSymbolOverview(PreferenceManager.TradingViewPreferences.SymbolOverviewParameters);
             }
         }
         #endregion
@@ -104,7 +140,9 @@ namespace TwEX_API.Controls
                 {
                     ToolStripMenuItem menuItem = item as ToolStripMenuItem;
 
-                    if (menuItem.Tag.ToString() != "theme" && menuItem.Tag.ToString() != "style")
+
+
+                    if (menuItem.Tag.ToString() != "theme" && menuItem.Tag.ToString() != "style" && !menuItem.Tag.ToString().Contains("Font") && !menuItem.Tag.ToString().Contains("Edit"))
                     {
                         PropertyInfo pi = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.GetType().GetProperty(menuItem.Tag.ToString());
                         menuItem.Checked = (bool)(pi.GetValue(PreferenceManager.TradingViewPreferences.AdvancedChartParameters, null));
@@ -180,9 +218,44 @@ namespace TwEX_API.Controls
 
             }
         }
+
+        private void UpdateToolbar()
+        {
+            if (tabControl.SelectedIndex < 3)
+            {
+                SetChartControlVisability(true);
+            }
+            else
+            {
+                SetChartControlVisability(false);
+            }
+
+            if (tabControl.SelectedIndex != 5)
+            {
+                toolStripLabel_view.Visible = false;
+                toolStripDropDownButton_currency.Visible = false;
+                toolStripDropDownButton_view.Visible = false;
+            }
+            else
+            {
+                toolStripLabel_view.Visible = true;
+                toolStripDropDownButton_currency.Visible = true;
+                toolStripDropDownButton_view.Visible = true;
+            }
+        }
         #endregion
 
         #region Setters
+        private void SetChartControlVisability(bool visible)
+        {
+            foreach(ToolStripItem item in toolStrip.Items)
+            {
+                if (item.Alignment == ToolStripItemAlignment.Right && item.Name != "toolStripDropDownButton_options")
+                {
+                    item.Visible = visible;
+                }
+            }
+        }
         private void SetCustomView()
         {
             tabPage_custom.Controls.Clear();
@@ -271,6 +344,7 @@ namespace TwEX_API.Controls
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
             widget.setAdvancedChart(PreferenceManager.TradingViewPreferences.AdvancedChartParameters);
             tabPage_full.Controls.Add(widget);
+            //LogManager.AddLogMessage(Name, "SetFullView", Size.Width + " | " + Size.Height + " || " + tabControl.Width + " | " + tabControl.Height + " || " + widget.Width + " | " + widget.Height + " || " + ParentForm.Width + " | " + ParentForm.Height + " || " + ParentForm.ClientSize.Width + " | " + ParentForm.ClientSize.Height, LogManager.LogMessageType.DEBUG);
             SetBTCView();
             SetUSDView();
         }
@@ -343,7 +417,7 @@ namespace TwEX_API.Controls
 
             }
             tabPage_btc.Controls.Add(btcTable);
-        }
+        }     
         private void SetUSDView()
         {
             // USD
@@ -551,7 +625,61 @@ namespace TwEX_API.Controls
                         UpdateUI(true);
                         break;
                 }
-                
+
+                case "Font":
+                    FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                    DialogResult result = dialog.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                        {
+                            UpdateUI(true);
+                        }
+                    }
+                    UpdateUI(true);
+                    break;
+
+                case "FontIncrease":
+                    if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                    {
+                        UpdateUI(true);
+                    }
+                    break;
+
+                case "FontDecrease":
+                    if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                    {
+                        UpdateUI(true);
+                    }
+                    break;
+
+                case "EditOverviewList":
+                    LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "EDIT OVERVIEWS", LogManager.LogMessageType.OTHER);
+
+                    Form form = new Form()
+                    {
+                        Text = "Edit TradingView Overviews List",
+                        Width = 950,
+                        Height = 600
+                    };
+
+                    TradingViewOverviewsListEditorControl control = new TradingViewOverviewsListEditorControl()
+                    {
+                        Dock = DockStyle.Fill
+                    };
+                    control.tradingViewManagerControl = this;
+                    form.Controls.Add(control);
+                    PreferenceManager.SetTheme(PreferenceManager.preferences.Theme.type, form);
+
+                    form.Show();
+                    /*
+                    if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                    {
+                        UpdateUI(true);
+                    }
+                    */
+                    break;
+
                 default:
                     {
                         LogManager.AddLogMessage(Name, "toolStripDropDownButton_options_DropDownItemClicked", "NOTDEFINED : " + propertyName, LogManager.LogMessageType.OTHER);
@@ -565,19 +693,6 @@ namespace TwEX_API.Controls
             //LogManager.AddLogMessage(Name, "toolStripDropDownButton_style_DropDownItemClicked", e.ClickedItem.Text + " | " + e.ClickedItem.Tag, LogManager.LogMessageType.DEBUG);
             toolStripDropDownButton_style.Text = e.ClickedItem.Text;
             UpdateOptionsMenu();
-            /*
-            foreach(ToolStripMenuItem item in toolStripMenuItem_BarStyle.DropDownItems)
-            {
-                if (item.Text == e.ClickedItem.Text)
-                {
-                    item.Checked = true;
-                }
-                else
-                {
-                    item.Checked = false;
-                }
-            }
-            */
             PreferenceManager.TradingViewPreferences.AdvancedChartParameters.style = (TradingViewChartStyle)Enum.Parse(typeof(TradingViewChartStyle), e.ClickedItem.Text);
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
             SetFullView();
@@ -588,33 +703,42 @@ namespace TwEX_API.Controls
             int index = Convert.ToInt16(button.Tag);
             //LogManager.AddLogMessage(Name, "toolStripRadioButton_Click", sender.ToString() + " | " + index, LogManager.LogMessageType.DEBUG);
             tabControl.SelectedIndex = index;
-
+            UpdateToolbar();
+        }
+        private void TradingViewManagerControl_SizeChanged(object sender, EventArgs e)
+        {
+            //LogManager.AddLogMessage(Name, "TradingViewManagerControl_SizeChanged", tabControl.ClientSize.Width + " | " + tabControl.ClientSize.Height, LogManager.LogMessageType.DEBUG);
+            int pageWidth = tabControl.ClientSize.Width - 50;
+            int pageHeight = tabControl.ClientSize.Height - 50;
+            pageSize = new Size(pageWidth, pageHeight);
+            //LogManager.AddLogMessage(Name, "TradingViewManagerControl_SizeChanged", pageSize.Width + " | " + pageSize.Height, LogManager.LogMessageType.DEBUG);
+            //PreferenceManager.TradingViewPreferences.SymbolOverviewParameters = new TradingViewSymbolOverviewParameters();
+            PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.width = pageSize.Width;
+            PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.height = pageSize.Height;
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+            //LogManager.AddLogMessage(Name, "TradingViewManagerControl_Resize", pageSize.Width + " | " + pageSize.Height, LogManager.LogMessageType.DEBUG);
+            overviewsWidget.setSymbolOverview(PreferenceManager.TradingViewPreferences.SymbolOverviewParameters);
         }
         #endregion
+
+        private void toolStripDropDownButton_view_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            LogManager.AddLogMessage(Name, "toolStripDropDownButton_view_DropDownItemClicked", sender.ToString() + " | " + e.ClickedItem.Tag, LogManager.LogMessageType.DEBUG);
+            toolStripDropDownButton_view.Text = e.ClickedItem.Tag.ToString();
+            TradingViewCryptocurrencyMarketDefaultColumn view = (TradingViewCryptocurrencyMarketDefaultColumn)Enum.Parse(typeof(TradingViewCryptocurrencyMarketDefaultColumn), e.ClickedItem.Tag.ToString());
+            PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.defaultColumn = view;
+            marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+        }
+
+        private void toolStripDropDownButton_currency_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            LogManager.AddLogMessage(Name, "toolStripDropDownButton_currency_DropDownItemClicked", sender.ToString() + " | " + e.ClickedItem.Text, LogManager.LogMessageType.DEBUG);
+            toolStripDropDownButton_currency.Text = e.ClickedItem.Text;
+            TradingViewCryptocurrencyMarketDisplayCurrency type = (TradingViewCryptocurrencyMarketDisplayCurrency)Enum.Parse(typeof(TradingViewCryptocurrencyMarketDisplayCurrency), e.ClickedItem.Text);
+            PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.displayCurrency = type;
+            marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+        }
     }
 }
-
-
-//widget.Name = "tv_full";
-/*
-TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
-{
-    symbol = PreferenceManager.TradingViewPreferences. .symbol,
-    market = PreferenceManager.preferences.TradingViewPreferences.market,
-    exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), PreferenceManager.preferences.TradingViewPreferences.exchange, true),
-    withdateranges = true,
-    hide_side_toolbar = true,
-    ShowWatchlist = true,
-    details = true,
-    WatchList = TradingView.GetWatchListBySymbol(PreferenceManager.preferences.TradingViewPreferences.symbol),
-    stocktwits = true,
-    headlines = true,
-    calendar = true,
-    hide_top_toolbar = true,
-    hotlist = true
-    //ShowIndicators = true
-};
-
-widget.setAdvancedChart(parameters);
-*/
-//PreferenceManager.TradingViewPreferences.parameters.WatchList = TradingView.GetWatchListBySymbol(PreferenceManager.preferences.TradingViewPreferences.symbol),

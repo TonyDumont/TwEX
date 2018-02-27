@@ -37,8 +37,6 @@
             this.column_TotalInBTC = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton_timer = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,6 +44,8 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_add = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton_timer = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
             this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
@@ -149,23 +149,6 @@
             this.toolStrip.Size = new System.Drawing.Size(812, 25);
             this.toolStrip.TabIndex = 5;
             // 
-            // toolStripButton_timer
-            // 
-            this.toolStripButton_timer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_timer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_timer.Image")));
-            this.toolStripButton_timer.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_timer.Name = "toolStripButton_timer";
-            this.toolStripButton_timer.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_timer.Tag = "WALLETS";
-            this.toolStripButton_timer.Text = "TIMER";
-            this.toolStripButton_timer.ToolTipText = "TIMER";
-            this.toolStripButton_timer.Click += new System.EventHandler(this.toolStripButton_timer_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolStripDropDownButton_menu
             // 
             this.toolStripDropDownButton_menu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -189,6 +172,7 @@
             this.toolStripMenuItem_font.Size = new System.Drawing.Size(153, 22);
             this.toolStripMenuItem_font.Tag = "Font";
             this.toolStripMenuItem_font.Text = "Font";
+            this.toolStripMenuItem_font.Visible = false;
             // 
             // toolStripMenuItem_fontIncrease
             // 
@@ -196,6 +180,7 @@
             this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(153, 22);
             this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
             this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
+            this.toolStripMenuItem_fontIncrease.Visible = false;
             // 
             // toolStripMenuItem_fontDecrease
             // 
@@ -203,11 +188,13 @@
             this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(153, 22);
             this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
             this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
+            this.toolStripMenuItem_fontDecrease.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(150, 6);
+            this.toolStripSeparator5.Visible = false;
             // 
             // toolStripMenuItem_add
             // 
@@ -222,6 +209,23 @@
             this.toolStripMenuItem_update.Size = new System.Drawing.Size(153, 22);
             this.toolStripMenuItem_update.Tag = "UpdateWallets";
             this.toolStripMenuItem_update.Text = "Update Wallets";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButton_timer
+            // 
+            this.toolStripButton_timer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_timer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_timer.Image")));
+            this.toolStripButton_timer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_timer.Name = "toolStripButton_timer";
+            this.toolStripButton_timer.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_timer.Tag = "WALLETS";
+            this.toolStripButton_timer.Text = "TIMER";
+            this.toolStripButton_timer.ToolTipText = "TIMER";
+            this.toolStripButton_timer.Click += new System.EventHandler(this.toolStripButton_timer_Click);
             // 
             // toolStripSeparator4
             // 

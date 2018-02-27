@@ -104,11 +104,11 @@ namespace TwEX_Console
 
                         // IMPORT/EXPORT
                         case ConsoleKey.I:
-                            PreferenceManager.ImportPreferences();
+                            //PreferenceManager.ImportPreferences();
                             break;
 
                         case ConsoleKey.P:
-                            PreferenceManager.ExportPreferences();
+                            //PreferenceManager.ExportPreferences();
                             break;
 
                         default:

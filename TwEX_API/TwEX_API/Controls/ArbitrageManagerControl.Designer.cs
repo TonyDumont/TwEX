@@ -40,8 +40,12 @@
             this.toolStripMenuItem_update = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripTextBox_symbol = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripButton_addSymbol = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton_addSymbol = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel_lastUpdate = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripNumberControl_maxItems = new TwEX_API.ToolStripNumberControl();
+            this.toolStripLabel_max = new System.Windows.Forms.ToolStripLabel();
             this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -53,10 +57,14 @@
             this.toolStripSeparator2,
             this.toolStripTextBox_symbol,
             this.toolStripSeparator3,
-            this.toolStripButton_addSymbol});
+            this.toolStripButton_addSymbol,
+            this.toolStripLabel_lastUpdate,
+            this.toolStripSeparator4,
+            this.toolStripNumberControl_maxItems,
+            this.toolStripLabel_max});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(550, 25);
+            this.toolStrip.Size = new System.Drawing.Size(550, 26);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -74,7 +82,7 @@
             this.toolStripDropDownButton_menu.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_menu.Image")));
             this.toolStripDropDownButton_menu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton_menu.Name = "toolStripDropDownButton_menu";
-            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(29, 22);
+            this.toolStripDropDownButton_menu.Size = new System.Drawing.Size(29, 23);
             this.toolStripDropDownButton_menu.Text = "OPTIONS";
             this.toolStripDropDownButton_menu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripDropDownButton_menu_DropDownItemClicked);
             // 
@@ -126,13 +134,18 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 26);
             // 
             // toolStripTextBox_symbol
             // 
             this.toolStripTextBox_symbol.Name = "toolStripTextBox_symbol";
-            this.toolStripTextBox_symbol.Size = new System.Drawing.Size(65, 25);
+            this.toolStripTextBox_symbol.Size = new System.Drawing.Size(65, 26);
             this.toolStripTextBox_symbol.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 26);
             // 
             // toolStripButton_addSymbol
             // 
@@ -140,21 +153,44 @@
             this.toolStripButton_addSymbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_addSymbol.Image")));
             this.toolStripButton_addSymbol.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_addSymbol.Name = "toolStripButton_addSymbol";
-            this.toolStripButton_addSymbol.Size = new System.Drawing.Size(76, 22);
+            this.toolStripButton_addSymbol.Size = new System.Drawing.Size(76, 23);
             this.toolStripButton_addSymbol.Text = "Add Symbol";
             this.toolStripButton_addSymbol.Click += new System.EventHandler(this.toolStripButton_addSymbol_Click);
             // 
-            // toolStripSeparator3
+            // toolStripLabel_lastUpdate
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            this.toolStripLabel_lastUpdate.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel_lastUpdate.Name = "toolStripLabel_lastUpdate";
+            this.toolStripLabel_lastUpdate.Size = new System.Drawing.Size(75, 23);
+            this.toolStripLabel_lastUpdate.Text = "Last Update :";
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 26);
+            // 
+            // toolStripNumberControl_maxItems
+            // 
+            this.toolStripNumberControl_maxItems.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripNumberControl_maxItems.Name = "toolStripNumberControl_maxItems";
+            this.toolStripNumberControl_maxItems.Size = new System.Drawing.Size(41, 23);
+            this.toolStripNumberControl_maxItems.Text = "8";
+            this.toolStripNumberControl_maxItems.ValueChanged += new System.EventHandler(this.toolStripNumberControl_maxItems_ValueChanged);
+            // 
+            // toolStripLabel_max
+            // 
+            this.toolStripLabel_max.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel_max.Name = "toolStripLabel_max";
+            this.toolStripLabel_max.Size = new System.Drawing.Size(67, 23);
+            this.toolStripLabel_max.Text = "Max Items :";
             // 
             // flowLayoutPanel
             // 
             this.flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel.Location = new System.Drawing.Point(0, 25);
+            this.flowLayoutPanel.Location = new System.Drawing.Point(0, 26);
             this.flowLayoutPanel.Name = "flowLayoutPanel";
-            this.flowLayoutPanel.Size = new System.Drawing.Size(550, 325);
+            this.flowLayoutPanel.Size = new System.Drawing.Size(550, 324);
             this.flowLayoutPanel.TabIndex = 1;
             // 
             // ArbitrageManagerControl
@@ -189,5 +225,9 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_chart;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_lastUpdate;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private ToolStripNumberControl toolStripNumberControl_maxItems;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_max;
     }
 }

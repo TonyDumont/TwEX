@@ -54,7 +54,7 @@ namespace TwEX_API.Controls
             {
 
                 int rowHeight = button_load.Height;
-                listView.Font = ParentForm.Font;
+                //listView.Font = ParentForm.Font;
                 //LogManager.AddLogMessage(Name, "ResizeUI", "RESIZING", LogManager.LogMessageType.DEBUG); 
                 int listWidth = 0;
                 int listHeight = 0;
