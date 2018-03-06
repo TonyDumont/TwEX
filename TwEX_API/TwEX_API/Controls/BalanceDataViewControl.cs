@@ -1,35 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Data;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using static TwEX_API.ExchangeManager;
+using BrightIdeasSoftware;
 using static TwEX_API.Market.CryptoCompare;
+using System.Collections.ObjectModel;
 
 namespace TwEX_API.Controls
 {
-    public partial class BalanceViewControl : UserControl
+    public partial class BalanceDataViewControl : UserControl
     {
         #region Properties
         public BalanceViewType view = BalanceViewType.balance;
         public BalanceManagerControl manager;
-        private bool initialized = false;
+        //private bool initialized = false;
         private bool collapsed = false;
+
+        private ObservableCollection<ExchangeBalance> BalanceList = new ObservableCollection<ExchangeBalance>();
+        //private BindingList<ExchangeBalance> BalanceList = new BindingList<ExchangeBalance>();
         #endregion
 
         #region Initialize
-        public BalanceViewControl()
+        public BalanceDataViewControl()
         {
             InitializeComponent();
             InitializeColumns();
-            SetView();
+            
         }
-        private void BalanceViewControl_Load(object sender, EventArgs e)
+
+        private void BalanceDataViewControl_Load(object sender, EventArgs e)
         {
             toolStripButton_collapse.Image = ContentManager.GetIcon("UpDown");
-            listView.GroupExpandingCollapsing += ListView_GroupExpandingCollapsing;
-            UpdateUI(true);
+            //column_SymbolIcon.ImageGetter = new ImageGetterDelegate(aspect_symbolIcon);
+            //column_Balance.ImageGetter = new ImageGetterDelegate(aspect_symbolIcon);
+            //column_ExchangeIcon.ImageGetter = new ImageGetterDelegate(aspect_exchangeIcon);
+            //listView.DataSource = BalanceList;
+            SetView();
+            //listView.SetObjects(BalanceList);
         }
         private void InitializeColumns()
         {
@@ -49,32 +62,46 @@ namespace TwEX_API.Controls
                 Invoke(d, new object[] { resize });
             }
             else
-            { 
+            {
                 try
                 {
                     List<ExchangeBalance> list = Balances.Where(item => item.Balance > 0).ToList();
                     List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
                     list.AddRange(wallets);
 
-                    var roots = list.Select(b => b.Symbol).Distinct();
+                    //var roots = list.Select(b => b.Symbol).Distinct();
 
+                    foreach(ExchangeBalance balance in list)
+                    {
+                        ExchangeBalance listItem = BalanceList.FirstOrDefault(item => item.Exchange == balance.Exchange && item.Symbol == balance.Symbol);
+
+                        if (listItem != null)
+                        {
+                            // update
+                            listItem.Balance = balance.Balance;
+                            listItem.OnOrders = balance.OnOrders;
+                            listItem.TotalInBTC = balance.TotalInBTC;
+                            listItem.TotalInBTCOrders = balance.TotalInBTCOrders;
+                            listItem.TotalInUSD = balance.TotalInUSD;
+                        }
+                        else
+                        {
+                            BalanceList.Add(balance);
+                        }
+                    }
+                    //listView.setO
+                    //listView.DataSource = list;
+                    listView.DataSource = BalanceList;
                     //toolStripLabel_totals.Text = roots.Count() + " Coins | " + list.Sum(b => b.TotalInBTC).ToString("N8") + " | " + list.Sum(b => b.TotalInUSD).ToString("C");
                     //toolStripLabel_CoinCount.Text = roots.Count() + " Coins | " + list.Sum(b => b.TotalInBTC).ToString("N8") + " | " + list.Sum(b => b.TotalInUSD).ToString("C");
                     //LogManager.AddLogMessage(Name, "UpdateUI", "LISTVIEW COUNT=" + listView.Items.Count, LogManager.LogMessageType.DEBUG);
+                    /*
                     if (listView.Items.Count > 0)
                     {
                         listView.RefreshObjects(list);
-                        /*
-                        foreach (ExchangeBalance balance in list)
-                        {
-                            //listView.olv
-                            //var listItem = listView.Objects.G)
-                        }
-                        */
                         //listView.Refresh();
                         //listView.Refresh();
                         //listView.RedrawItems(0, listView.Items.Count, true);
-                        /*
                         if (!initialized)
                         {
                             switch (view)
@@ -102,9 +129,8 @@ namespace TwEX_API.Controls
                             listView.BuildList();
                             initialized = true;
                         }
-                        
+
                         UpdateGroups();
-                        */
                         //LogManager.AddLogMessage(Name, "UpdateUI", "REFRESHED=" + listView.Items.Count, LogManager.LogMessageType.DEBUG);
                     }
                     else
@@ -134,8 +160,8 @@ namespace TwEX_API.Controls
                         }
                         //ResizeUI();
                     }
+                    */
 
-                    
 
 
                     if (resize)
@@ -146,7 +172,7 @@ namespace TwEX_API.Controls
                 catch (Exception ex)
                 {
                     LogManager.AddLogMessage(Name, "UpdateUI", ex.Message, LogManager.LogMessageType.EXCEPTION);
-                }           
+                }
             }
         }
 
@@ -219,7 +245,7 @@ namespace TwEX_API.Controls
                         column_ExchangeIcon.IsVisible = true;
                         column_Balance.IsVisible = true;
 
-                        listView.RebuildColumns();
+                        //listView.RebuildColumns();
                         toolStripButton_collapse.Visible = true;
                         listView.BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
                         //listView.BackgroundImage = null;
@@ -234,7 +260,7 @@ namespace TwEX_API.Controls
                         //groups = true;
                         //collapsed = false;
                         //toggleCollapsed();    
-                        
+
                         break;
 
                     case BalanceViewType.exchange:
@@ -247,7 +273,7 @@ namespace TwEX_API.Controls
                         column_ExchangeIcon.IsVisible = false;
                         column_Balance.IsVisible = true;
 
-                        listView.RebuildColumns();
+                        //listView.RebuildColumns();
                         toolStripButton_collapse.Visible = true;
                         listView.BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
                         BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
@@ -268,19 +294,19 @@ namespace TwEX_API.Controls
                         column_ExchangeIcon.IsVisible = true;
                         column_Balance.IsVisible = true;
 
-                        listView.RebuildColumns();
+                        //listView.RebuildColumns();
                         toolStripButton_collapse.Visible = false;
                         listView.BackColor = PreferenceManager.preferences.Theme.FormBackground;
                         BackColor = PreferenceManager.preferences.Theme.FormBackground;
                         //listView.SetObjects(list);
                         //listView.Sort(column_TotalInBTC, SortOrder.Descending);
 
-                            //groups = true;
-                            //collapsed = false;
-                            //toggleCollapsed();
+                        //groups = true;
+                        //collapsed = false;
+                        //toggleCollapsed();
 
-                            //groups = false;
-                        
+                        //groups = false;
+
                         break;
 
                     default:
@@ -290,7 +316,7 @@ namespace TwEX_API.Controls
                 }
                 UpdateUI(true);
             }
-        } 
+        }
         #endregion
 
         #region Getters
@@ -369,7 +395,7 @@ namespace TwEX_API.Controls
                     // DO NOTHING
                     break;
             }
-        }      
+        }
         public object aspect_symbolIcon(object rowObject)
         {
             try
@@ -533,25 +559,25 @@ namespace TwEX_API.Controls
                 //if (view == BalanceViewType.exchange)
                 manager.SetChart(view, e.Group.Key.ToString());
             }
-        }      
+        }
         private void toolStripButton_toggleGroup_Click(object sender, EventArgs e)
         {
             toggleCollapsed();
-        }     
+        }
         private void toggleCollapsed()
         {
             //if (listView.OLVGroups != null)
             //{
-                //LogManager.AddLogMessage(Name, "toggleCollapsed", collapsed + " | " + listView.OLVGroups.Count, LogManager.LogMessageType.DEBUG);
-                collapsed = !collapsed;
-                //LogManager.AddLogMessage(Name, "toggleCollapsed2", collapsed + " | " + listView.OLVGroups.Count, LogManager.LogMessageType.DEBUG);
-                for (int i = 0; i < listView.OLVGroups.Count; i++)
-                {
-                    OLVGroup grp = listView.OLVGroups[i];
-                    //LogManager.AddLogMessage(Name, "toggleCollapsed", grp.Header + " | " + grp.Collapsed);
-                    grp.Collapsed = collapsed;
-                }
-                //UpdateUI(true);
+            //LogManager.AddLogMessage(Name, "toggleCollapsed", collapsed + " | " + listView.OLVGroups.Count, LogManager.LogMessageType.DEBUG);
+            collapsed = !collapsed;
+            //LogManager.AddLogMessage(Name, "toggleCollapsed2", collapsed + " | " + listView.OLVGroups.Count, LogManager.LogMessageType.DEBUG);
+            for (int i = 0; i < listView.OLVGroups.Count; i++)
+            {
+                OLVGroup grp = listView.OLVGroups[i];
+                //LogManager.AddLogMessage(Name, "toggleCollapsed", grp.Header + " | " + grp.Collapsed);
+                grp.Collapsed = collapsed;
+            }
+            //UpdateUI(true);
             //}
         }
         /*

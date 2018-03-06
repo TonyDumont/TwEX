@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -740,6 +738,8 @@ namespace TwEX_API.Exchange
 
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //InitializeExchangeBalanceList();
             //updateExchangeTickerList();
         }
@@ -842,10 +842,15 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public static void updateExchangeOrderList()
+        public static void updateExchangeOrderList(bool clear = false)
         {
             List<ExchangeOrder> list = new List<ExchangeOrder>();
             List<BittrexOpenOrder> openorders = getOpenOrdersList();
+
+            if(clear)
+            {
+                ClearOrders(Name);
+            }
 
             foreach (BittrexOpenOrder order in openorders)
             {

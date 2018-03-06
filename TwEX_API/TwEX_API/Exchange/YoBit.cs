@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
@@ -178,7 +179,8 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getTickerList EX", LogManager.StripHTML(responseString) + " | " + ex.Message, LogManager.LogMessageType.LOG);
+                //LogManager.AddLogMessage(Name, "getTickerList", responseString, LogManager.LogMessageType.EXCEPTION);
+                LogManager.AddLogMessage(Name, "getTickerList", LogManager.StripHTML(responseString) + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 UpdateStatus(false, LogManager.StripHTML(responseString));
             }   
             
@@ -399,10 +401,79 @@ namespace TwEX_API.Exchange
             List<YoBitOrder> list = new List<YoBitOrder>();
             try
             {
-                string req = "method=ActiveOrders&nonce=" + ExchangeManager.GetNonce() + "&pair=btg_btc";
+                //string req = "method=ActiveOrders&nonce=" + GetNonce() + "&pair=btg_btc";                
+                List<ExchangeBalance> balances = ExchangeManager.Balances.Where(item => item.Exchange == Name).ToList();
+
+                foreach (ExchangeBalance balance in balances)
+                {
+                    if (balance.Symbol.ToLower() != "btc")
+                    {
+                        string pairs = "&pair=" + balance.Symbol.ToLower() + "_" + "btc";
+                        string req = "method=ActiveOrders&nonce=" + GetNonce() + pairs;
+                        //string req = "method=ActiveOrders&nonce=" + GetNonce() + pairs;
+                        //string req = "method=ActiveOrders&nonce=" + GetNonce();
+                        string result = await SendPrivateApiRequestAsync(req);
+                        result = result.Replace("return", "results");
+                        //LogManager.AddLogMessage(Name, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                        var jsonObject = JObject.Parse(result);
+                        int isSuccess = Convert.ToInt32(jsonObject["success"]);
+
+                        if (isSuccess > 0)
+                        {
+                            var results = JObject.Parse(jsonObject["results"].ToString());
+                            foreach (var item in results)
+                            {
+                                //LogManager.AddLogMessage(Name, "getOpenOrdersList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
+                                YoBitOrder order = results[item.Key].ToObject<YoBitOrder>();
+                                order.orderId = item.Key;
+                                string[] spairs = order.pair.Split('_');
+                                order.symbol = spairs[0];
+                                order.market = spairs[1];
+                                list.Add(order);
+                            }
+                        }
+                    }
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
+            }
+            return list;
+        }
+        /*
+        public static async Task<List<YoBitOrder>> getOpenOrdersList()
+        {
+            List<YoBitOrder> list = new List<YoBitOrder>();
+            try
+            {
+                //string req = "method=ActiveOrders&nonce=" + GetNonce() + "&pair=btg_btc";
+                List<ExchangeBalance> balances = ExchangeManager.Balances.Where(item => item.Exchange == Name).ToList();
+                string pairs = "&pair=";
+                int index = 1;
+
+                foreach (ExchangeBalance balance in balances)
+                {
+                    if (balance.Symbol.ToLower() != "btc")
+                    {
+                        pairs += balance.Symbol.ToLower() + "_" + "btc";
+                        if (index < balances.Count)
+                        {
+                            pairs += "-";
+
+                        }
+                    }
+                    index++;
+                    //LogManager.AddLogMessage(Name, "getOpenOrdersList", balance.Symbol + " | " + balance.OnOrders, LogManager.LogMessageType.DEBUG);
+                }
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", pairs, LogManager.LogMessageType.DEBUG);
+                //string req = "method=ActiveOrders&nonce=" + GetNonce() + "&pair=btg_btc";
+                string req = "method=ActiveOrders&nonce=" + GetNonce() + pairs;
+                //string req = "method=ActiveOrders&nonce=" + GetNonce();
                 string result = await SendPrivateApiRequestAsync(req);
                 result = result.Replace("return", "results");
-                //LogManager.AddLogMessage(Name, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
+                LogManager.AddLogMessage(Name, "getOpenOrdersList", "result=" + result, LogManager.LogMessageType.DEBUG);
                 var jsonObject = JObject.Parse(result);
                 int isSuccess = Convert.ToInt32(jsonObject["success"]);
 
@@ -414,12 +485,13 @@ namespace TwEX_API.Exchange
                         //LogManager.AddLogMessage(Name, "getOpenOrdersList", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
                         YoBitOrder order = results[item.Key].ToObject<YoBitOrder>();       
                         order.orderId = item.Key;
-                        string[] pairs = order.pair.Split('_');
-                        order.symbol = pairs[0];
-                        order.market = pairs[1];
+                        string[] spairs = order.pair.Split('_');
+                        order.symbol = spairs[0];
+                        order.market = spairs[1];
                         list.Add(order);
                     }
                 }
+                
             }
             catch (Exception ex)
             {
@@ -427,6 +499,7 @@ namespace TwEX_API.Exchange
             }
             return list;
         }
+        */
         /// <summary>OrderInfo
         /// <para>Method returns detailed information about the chosen order</para>
         /// <para>Required : order ID (value: numeral)</para>
@@ -529,26 +602,14 @@ namespace TwEX_API.Exchange
         {
             
             Pairs = new BlockingCollection<YoBitInfo>(new ConcurrentQueue<YoBitInfo>(getInfoList()));
-            /*
-            foreach(YoBitInfo info in Pairs)
-            {
-                LogManager.AddLogMessage(Name, "InitializeExchange", info.symbol + " | " + info.market, LogManager.LogMessageType.EXCHANGE);
-            }
-            */
+            Thread.Sleep(1000);
+
             Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
-            /*
-            if (Balances.Count > 0)
-            {
 
-                foreach (YoBitBalance balance in Balances)
-                {
-                    LogManager.AddLogMessage(Name, "InitializeExchange", balance.Currency + " | " + balance.Balance, LogManager.LogMessageType.EXCHANGE);
-
-                }
-            }
-            */
-            //Balances = new BlockingCollection<YoBitBalance>(new ConcurrentQueue<YoBitBalance>(await getBalanceList()));
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
+
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized - " + Pairs.Count + " Pairs / " + Balances.Count + " Balances", LogManager.LogMessageType.EXCHANGE);
         }
         // GETTERS
@@ -700,60 +761,25 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public static void updateExchangeOrderList()
+        public async static void updateExchangeOrderList(bool clear = false)
         {
-            /*
+            
             List<ExchangeOrder> list = new List<ExchangeOrder>();
-            List<BittrexOpenOrder> openorders = getOpenOrdersList();
+            List<YoBitOrder> openorders = await getOpenOrdersList();
 
-            foreach (BittrexOpenOrder order in openorders)
+            if(clear)
+            {
+                ClearOrders(Name);
+            }
+            
+            foreach (YoBitOrder order in openorders)
             {
                 //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
-                string[] orderTypeSplit = order.OrderType.Split('_');
-                string[] pairSplit = order.Exchange.Split('-');
-
-                ExchangeOrder eOrder = new ExchangeOrder()
-                {
-                    exchange = Name,
-                    id = order.OrderUuid,
-                    type = orderTypeSplit[1].ToLower(),
-                    rate = order.Limit,
-                    amount = order.Quantity,
-                    total = order.Price,
-                    market = pairSplit[0],
-                    symbol = pairSplit[1],
-                    date = order.Opened,
-                    open = true
-                };
+                ExchangeOrder eOrder = order.GetExchangeOrder();
+                eOrder.open = true;
                 processOrder(eOrder);
-            }
-
-            Thread.Sleep(1000);
-
-            List<BittrexOrderHistoryItem> trades = getOrderHistoryList();
-            foreach (BittrexOrderHistoryItem trade in trades)
-            {
-                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
-                string[] orderTypeSplit = trade.OrderType.Split('_');
-                string[] pairSplit = trade.Exchange.Split('-');
-
-                ExchangeOrder eOrder = new ExchangeOrder()
-                {
-                    exchange = Name,
-                    id = trade.OrderUuid,
-                    type = orderTypeSplit[1].ToLower(),
-                    rate = trade.Limit,
-                    amount = trade.Quantity,
-                    total = trade.Price,
-                    market = pairSplit[0],
-                    symbol = pairSplit[1],
-                    date = trade.TimeStamp,
-                    open = false
-                };
-                processOrder(eOrder);
-            }
+            }           
             //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
-            */
         }
         public static void updateExchangeTickerList()
         {
@@ -1034,13 +1060,13 @@ namespace TwEX_API.Exchange
             public string type { get; set; }
 
             [Description("remains to buy or to sell")]
-            public Decimal amount { get; set; }
+            public Double amount { get; set; }
 
             [Description("price of buying or selling")]
-            public Decimal rate { get; set; }
+            public Double rate { get; set; }
 
             [Description("order creation time")]
-            public string timestamp_created { get; set; }
+            public long timestamp_created { get; set; }
 
             [Description("0 - active, 1 - fulfilled and closed, 2 - cancelled, 3 - cancelled after partially fulfilled")]
             public int status { get; set; }
@@ -1055,6 +1081,26 @@ namespace TwEX_API.Exchange
             // OrderInfo
             [Description("starting amout at order creation")]
             public Decimal start_amount { get; set; }
+
+            public bool open { get; set; }
+
+            public ExchangeOrder GetExchangeOrder()
+            {
+                return new ExchangeOrder()
+                {
+                    exchange = Name,
+                    id = orderId,
+                    type = type,
+                    rate = rate,
+                    amount = amount,
+                    total = amount * rate,
+                    market = market,
+                    symbol = symbol,
+                    //date = order.timestamp_created,
+                    date = DateTimeOffset.FromUnixTimeSeconds(timestamp_created).UtcDateTime.ToLocalTime(),
+                    open = true
+                };
+            }
         }
         #endregion
         #endregion DataModels

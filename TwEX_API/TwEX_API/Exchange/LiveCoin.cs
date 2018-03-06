@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -516,7 +517,7 @@ namespace TwEX_API.Exchange
                 //string requestUrl = Api_privateUrl + "exchange/client_orders&currencyPair=XMR/BTC";
                 //requestUrl += "&openClosed=" + LiveCoinOrderOpenClosedType.CLOSED;
                 //string parameterString = getParameterString(parameters);
-                //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", parameterString);
+                //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", requestUrl);
                 //string response = getApiPrivateRequest(requestUrl, "");
                 string response = getApiPrivateRequest(requestUrl, "");
                 //LogManager.AddLogMessage(Name, "getOrdersByCurrencyPairList", response);
@@ -639,7 +640,10 @@ namespace TwEX_API.Exchange
         public static void InitializeExchange()
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
+            //Thread.Sleep(1000);
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //updateExchangeTickerList();
         }
         /*
@@ -725,14 +729,18 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public static void updateExchangeOrderList()
+        public static void updateExchangeOrderList(bool clear = false)
         {
             List<ExchangeOrder> list = new List<ExchangeOrder>();
-
             List<LiveCoinTradeOrder> openorders = getOrdersByCurrencyPairList(new LiveCoinClientOrderParameters());
+            if (clear)
+            {
+                ClearOrders(Name);
+            }
+
             foreach (LiveCoinTradeOrder order in openorders)
             {
-                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.side + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.side + " | " + order.type + " | " + order.currencyPair, LogManager.LogMessageType.DEBUG);
                 string[] typeSplit = order.type.Split('_');
                 string[] pairSplit = order.currencyPair.Split('/');
                 //string market = order.symbol.Substring(order.symbol.Length)
@@ -740,10 +748,11 @@ namespace TwEX_API.Exchange
                 bool open = false;
                 if (order.orderStatus == "OPEN")
                 {
+                    //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.currencyPair, LogManager.LogMessageType.DEBUG);
                     open = true;
                 }
                 //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "OPEN : " + order.issueTime, LogManager.LogMessageType.DEBUG);
-                
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.side + " | " + order.type + " | " + order.currencyPair, LogManager.LogMessageType.DEBUG);
                 ExchangeOrder eOrder = new ExchangeOrder()
                 {
                     exchange = Name,
@@ -757,6 +766,7 @@ namespace TwEX_API.Exchange
                     date = DateTimeOffset.FromUnixTimeMilliseconds(order.issueTime).UtcDateTime.ToLocalTime(),
                     open = open
                 };
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", eOrder.symbol + " | " + eOrder.market + " | " + eOrder.type + " | " + order.currencyPair, LogManager.LogMessageType.DEBUG);
                 processOrder(eOrder);
             }
             
@@ -781,6 +791,7 @@ namespace TwEX_API.Exchange
                 };
                 processOrder(eOrder); 
             }
+            
             //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         public static void updateExchangeTickerList()
@@ -1021,23 +1032,11 @@ namespace TwEX_API.Exchange
                 };
             }
         }
-        /*
-        public class LiveCoinTradeOrder
-        {
-            public int datetime { get; set; }
-            public string id { get; set; }
-            public string clientorderid { get; set; }
-            public string type { get; set; }
-            public string symbol { get; set; }
-            public double price { get; set; }
-            public double quantity { get; set; }
-            public double commission { get; set; }
-        }
-        */
         public class LiveCoinTradeOrder
         {
             public string id { get; set; }
             public double quantity { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public double price { get; set; }
             // CLOSED
             public string clientOrderId { get; set; }

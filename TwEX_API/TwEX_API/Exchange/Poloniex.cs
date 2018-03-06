@@ -849,6 +849,8 @@ namespace TwEX_API.Exchange
         {
             AddLogMessage(Name, "InitializeExchange", "Initialized", LogMessageType.EXCHANGE);
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //updateExchangeTickerList();
         }
         /*
@@ -936,12 +938,23 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public async static void updateExchangeOrderList()
+        public async static void updateExchangeOrderList(bool clear = false)
         {
             List<PoloniexOpenOrder> list = await getOpenOrdersList("all", "all");
+
+            if (clear)
+            {
+                ClearOrders(Name);
+            }
+
             foreach (PoloniexOpenOrder order in list)
             {
-                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                /*
+                if (order.symbol == "LTC")
+                {
+                    AddLogMessage(Name, "updateExchangeOrderList", "OPEN:" + order.symbol + " | " + order.market + " | " + order.type + " | " + order.orderNumber, LogManager.LogMessageType.DEBUG);
+                }
+                */
                 ExchangeOrder eOrder = new ExchangeOrder()
                 {
                     exchange = Name,
@@ -964,6 +977,12 @@ namespace TwEX_API.Exchange
             foreach (PoloniexTradeHistory trade in trades)
             {
                 //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.symbol + " | " + trade.market + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                /*
+                if (trade.symbol == "LTC")
+                {
+                    AddLogMessage(Name, "updateExchangeOrderList", "TRADE:" + trade.symbol + " | " + trade.market + " | " + trade.type + " | " + trade.orderNumber, LogManager.LogMessageType.DEBUG);
+                }
+                */
                 ExchangeOrder eOrder = new ExchangeOrder()
                 {
                     exchange = Name,

@@ -590,6 +590,8 @@ namespace TwEX_API.Exchange
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //updateExchangeTickerList();
         }
         // GETTERS
@@ -691,10 +693,15 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public static void updateExchangeOrderList()
+        public static void updateExchangeOrderList(bool clear = false)
         {
             List<ExchangeOrder> list = new List<ExchangeOrder>();
             List<CCEXOrder> openorders = getOpenOrdersList();
+
+            if (clear)
+            {
+                ClearOrders(Name);
+            }
 
             foreach (CCEXOrder order in openorders)
             {

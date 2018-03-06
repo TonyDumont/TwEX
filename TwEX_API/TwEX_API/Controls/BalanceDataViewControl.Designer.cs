@@ -1,6 +1,6 @@
 ﻿namespace TwEX_API.Controls
 {
-    partial class BalanceViewControl
+    partial class BalanceDataViewControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,11 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BalanceViewControl));
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripButton_collapse = new System.Windows.Forms.ToolStripButton();
-            this.listView = new BrightIdeasSoftware.FastObjectListView();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BalanceDataViewControl));
+            this.listView = new BrightIdeasSoftware.FastDataListView();
             this.column_Exchange = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_SymbolIcon = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -40,37 +37,12 @@
             this.column_TotalInBTC = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_ExchangeIcon = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.toolStrip.SuspendLayout();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton_collapse = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // toolStrip
-            // 
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel_totals,
-            this.toolStripButton_collapse});
-            this.toolStrip.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(467, 25);
-            this.toolStrip.TabIndex = 0;
-            this.toolStrip.Text = "toolStrip1";
-            // 
-            // toolStripLabel_totals
-            // 
-            this.toolStripLabel_totals.Name = "toolStripLabel_totals";
-            this.toolStripLabel_totals.Size = new System.Drawing.Size(47, 22);
-            this.toolStripLabel_totals.Text = "TOTALS";
-            // 
-            // toolStripButton_collapse
-            // 
-            this.toolStripButton_collapse.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_collapse.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_collapse.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_collapse.Image")));
-            this.toolStripButton_collapse.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_collapse.Name = "toolStripButton_collapse";
-            this.toolStripButton_collapse.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_collapse.Text = "Expand/Collapse";
-            this.toolStripButton_collapse.Click += new System.EventHandler(this.toolStripButton_toggleGroup_Click);
             // 
             // listView
             // 
@@ -91,6 +63,7 @@
             this.column_TotalInUSD,
             this.column_ExchangeIcon});
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.listView.DataSource = null;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
@@ -102,16 +75,14 @@
             this.listView.ShowGroups = false;
             this.listView.ShowImagesOnSubItems = true;
             this.listView.ShowItemCountOnGroups = true;
-            this.listView.Size = new System.Drawing.Size(467, 313);
+            this.listView.Size = new System.Drawing.Size(410, 320);
             this.listView.SortGroupItemsByPrimaryColumn = false;
-            this.listView.TabIndex = 6;
+            this.listView.TabIndex = 7;
             this.listView.UseCellFormatEvents = true;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.UseFiltering = true;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
-            this.listView.AboutToCreateGroups += new System.EventHandler<BrightIdeasSoftware.CreateGroupsEventArgs>(this.aboutToCreateGroups);
-            this.listView.GroupStateChanged += new System.EventHandler<BrightIdeasSoftware.GroupStateChangedEventArgs>(this.listView_GroupStateChanged);
             // 
             // column_Exchange
             // 
@@ -165,19 +136,45 @@
             this.column_ExchangeIcon.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.column_ExchangeIcon.Width = 32;
             // 
-            // BalanceViewControl
+            // toolStrip
+            // 
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel_totals,
+            this.toolStripButton_collapse});
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(410, 25);
+            this.toolStrip.TabIndex = 8;
+            this.toolStrip.Text = "toolStrip1";
+            // 
+            // toolStripLabel_totals
+            // 
+            this.toolStripLabel_totals.Name = "toolStripLabel_totals";
+            this.toolStripLabel_totals.Size = new System.Drawing.Size(47, 22);
+            this.toolStripLabel_totals.Text = "TOTALS";
+            // 
+            // toolStripButton_collapse
+            // 
+            this.toolStripButton_collapse.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_collapse.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_collapse.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_collapse.Image")));
+            this.toolStripButton_collapse.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_collapse.Name = "toolStripButton_collapse";
+            this.toolStripButton_collapse.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_collapse.Text = "Expand/Collapse";
+            // 
+            // BalanceDataViewControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listView);
             this.Controls.Add(this.toolStrip);
-            this.Margin = new System.Windows.Forms.Padding(0);
-            this.Name = "BalanceViewControl";
-            this.Size = new System.Drawing.Size(467, 338);
-            this.Load += new System.EventHandler(this.BalanceViewControl_Load);
+            this.Name = "BalanceDataViewControl";
+            this.Size = new System.Drawing.Size(410, 345);
+            this.Load += new System.EventHandler(this.BalanceDataViewControl_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -185,16 +182,16 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel_totals;
-        private BrightIdeasSoftware.FastObjectListView listView;
+        private BrightIdeasSoftware.FastDataListView listView;
         private BrightIdeasSoftware.OLVColumn column_Exchange;
+        private BrightIdeasSoftware.OLVColumn column_Balance;
         private BrightIdeasSoftware.OLVColumn column_SymbolIcon;
         private BrightIdeasSoftware.OLVColumn column_Symbol;
-        private BrightIdeasSoftware.OLVColumn column_ExchangeIcon;
-        private BrightIdeasSoftware.OLVColumn column_Balance;
         private BrightIdeasSoftware.OLVColumn column_TotalInBTC;
         private BrightIdeasSoftware.OLVColumn column_TotalInUSD;
+        private BrightIdeasSoftware.OLVColumn column_ExchangeIcon;
+        private System.Windows.Forms.ToolStrip toolStrip;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_totals;
         private System.Windows.Forms.ToolStripButton toolStripButton_collapse;
     }
 }

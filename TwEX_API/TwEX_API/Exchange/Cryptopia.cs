@@ -451,6 +451,7 @@ namespace TwEX_API.Exchange
                     var postData = new
                     {
                         Market = "'" + symbol.ToUpper() + "/" + market.ToUpper() + "'",
+                        //Market = "'" + market.ToUpper() + "/" + symbol.ToUpper() + "'",
                         //Count = Count
                         Count
                     };
@@ -709,6 +710,8 @@ namespace TwEX_API.Exchange
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //updateExchangeTickerList();
         }
         // GETTERS
@@ -807,10 +810,15 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public async static void updateExchangeOrderList()
+        public async static void updateExchangeOrderList(bool clear = false)
         {
             List<ExchangeOrder> list = new List<ExchangeOrder>();
             List<CryptopiaOrder> openorders = await getOpenOrdersList();
+
+            if (clear)
+            {
+                ClearOrders(Name);
+            }
 
             foreach (CryptopiaOrder order in openorders)
             {
@@ -825,8 +833,8 @@ namespace TwEX_API.Exchange
                     rate = order.Rate,
                     amount = order.Amount,
                     total = order.Total,
-                    market = pairSplit[0],
-                    symbol = pairSplit[1],
+                    market = pairSplit[1],
+                    symbol = pairSplit[0],
                     date = order.TimeStamp,
                     open = true
                 };
@@ -849,11 +857,12 @@ namespace TwEX_API.Exchange
                     rate = trade.Rate,
                     amount = trade.Amount,
                     total = trade.Total,
-                    market = pairSplit[0],
-                    symbol = pairSplit[1],
+                    market = pairSplit[1],
+                    symbol = pairSplit[0],
                     date = trade.TimeStamp,
                     open = false
                 };
+                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", eOrder.symbol + " | " + eOrder.rate + " | " + Convert.ToDecimal(eOrder.rate), LogManager.LogMessageType.DEBUG);
                 processOrder(eOrder);
             }          
             //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
@@ -863,7 +872,7 @@ namespace TwEX_API.Exchange
             List<CryptopiaMarket> list = getMarketList();
             foreach (CryptopiaMarket ticker in list)
             {
-                ExchangeManager.processTicker(ticker.GetExchangeTicker());
+                processTicker(ticker.GetExchangeTicker());
             }
         }
         public async static void updateExchangeTransactionList()
@@ -1075,9 +1084,9 @@ namespace TwEX_API.Exchange
             public int TradePairId { get; set; }
             public string Market { get; set; }
             public string Type { get; set; }
-            public double Rate { get; set; }
-            public double Amount { get; set; }
-            public double Total { get; set; }
+            public Double Rate { get; set; }
+            public Double Amount { get; set; }
+            public Double Total { get; set; }
             public string Remaining { get; set; }
             public DateTime TimeStamp { get; set; }
             // TRADE HISTORY

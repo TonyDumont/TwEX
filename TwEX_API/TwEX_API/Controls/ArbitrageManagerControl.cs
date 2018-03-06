@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace TwEX_API.Controls
@@ -140,8 +139,8 @@ namespace TwEX_API.Controls
 
                 foreach (ExchangeManager.ExchangeTicker ticker in PreferenceManager.ArbitragePreferences.ArbitrageWatchList)
                 {
-                    //ArbitrageItemControl control = new ArbitrageItemControl();
-                    ArbitragePriceControl control = new ArbitragePriceControl();
+                    ArbitrageItemControl control = new ArbitrageItemControl();
+                    //ArbitragePriceControl control = new ArbitragePriceControl();
                     //LogManager.AddLogMessage(Name, "SetWatchlist", "ticker=" + ticker.symbol + " | " + ticker.market + " | " + ticker.last, LogManager.LogMessageType.DEBUG);
                     control.SetData(ticker.symbol, "USD");
                     PreferenceManager.SetControlTheme(control, PreferenceManager.preferences.Theme, ParentForm);

@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static TwEX_API.ExchangeManager;
 
@@ -357,6 +358,8 @@ namespace TwEX_API.Exchange
             // GET PRODUCTS
             Products = new BlockingCollection<GDAXProduct>(new ConcurrentQueue<GDAXProduct>(getProductList()));
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //updateExchangeTickerList();
         }
         /*
@@ -445,35 +448,43 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public async static void updateExchangeOrderList()
+        public async static void updateExchangeOrderList(bool clear = false)
         {
             List<ExchangeOrder> list = new List<ExchangeOrder>();
             List<GDAXOrder> orders = await getOrdersList();
-            
-            foreach (GDAXOrder order in orders)
+
+            if (orders.Count > 0)
             {
-                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
-                string[] pairSplit = order.product_id.Split('-');
-                bool open = false;
-                if (order.status == "open")
+                if (clear)
                 {
-                    open = true;
+                    ClearOrders(Name);
                 }
 
-                ExchangeOrder eOrder = new ExchangeOrder()
+                foreach (GDAXOrder order in orders)
                 {
-                    exchange = Name,
-                    id = order.id,
-                    type = order.side,
-                    rate = order.price,
-                    amount = order.size,
-                    total = order.price * order.size,
-                    market = pairSplit[1],
-                    symbol = pairSplit[0],
-                    date = order.created_at,
-                    open = open
-                };
-                processOrder(eOrder);
+                    //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                    string[] pairSplit = order.product_id.Split('-');
+                    bool open = false;
+                    if (order.status == "open")
+                    {
+                        open = true;
+                    }
+
+                    ExchangeOrder eOrder = new ExchangeOrder()
+                    {
+                        exchange = Name,
+                        id = order.id,
+                        type = order.side,
+                        rate = order.price,
+                        amount = order.size,
+                        total = order.price * order.size,
+                        market = pairSplit[1],
+                        symbol = pairSplit[0],
+                        date = order.created_at,
+                        open = open
+                    };
+                    processOrder(eOrder);
+                }
             }
             /*
             Thread.Sleep(1000);

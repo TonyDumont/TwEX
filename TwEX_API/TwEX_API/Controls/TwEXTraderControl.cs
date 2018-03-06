@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using static TwEX_API.ContentManager;
 
 namespace TwEX_API.Controls
 {
@@ -12,10 +14,11 @@ namespace TwEX_API.Controls
             InitializeComponent();
             FormManager.mainControl = this;
             InitializeIcons();
+            
         }
         private void TwEXTraderControl_Load(object sender, EventArgs e)
         {
-            
+            InitializeWebsitesMenu();
         }
         private void InitializeIcons()
         {
@@ -25,6 +28,7 @@ namespace TwEX_API.Controls
             toolStripButton_Wallet.Image = ContentManager.GetIcon("WalletManager");
 
             toolStripDropDownButton_menu.Image = Properties.Resources.TwEX_RoundIcon.ToBitmap();
+            toolStripDropDownButton_websites.Image = ContentManager.GetIcon("Website");
 
             toolStripMenuItem_LogManager.Image = ContentManager.GetIcon("LogManager");
             toolStripMenuItem_ArbitrageManager.Image = ContentManager.GetIcon("ArbitrageManager");
@@ -38,6 +42,69 @@ namespace TwEX_API.Controls
             toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
 
             toolStripMenuItem_PreferenceManager.Image = ContentManager.GetIcon("Options");
+        }
+        private void InitializeWebsitesMenu()
+        {
+            toolStripDropDownButton_websites.DropDown.Items.Clear();
+
+            var roots = WebsiteUrlList.Select(website => website.Category).Distinct();
+
+            foreach (var item in roots)
+            {
+                //LogManager.AddLogMessage(Name, "InitializeWebsitesMenu", "item=" + item, LogManager.LogMessageType.DEBUG);
+                ToolStripMenuItem menuItem = new ToolStripMenuItem()
+                {
+                    Text = item,
+                    Image = GetIcon(item)
+                };
+                toolStripDropDownButton_websites.DropDown.Items.Add(menuItem);
+                //List<Website> websites = WebsiteUrlList.Select(url => url.Category == menuItem.Text);
+                var websites = WebsiteUrlList.Where(url => url.Category == menuItem.Text);
+
+                foreach (var website in websites)
+                {
+                    //LogManager.AddLogMessage(Name, "InitializeWebsitesMenu", website.Name + " | " + website.Url, LogManager.LogMessageType.DEBUG);
+                    ToolStripMenuItem subItem = new ToolStripMenuItem()
+                    {
+                        Text = website.Name,
+                        Tag = website.Url,
+                        Image = GetWebsiteIcon(website.Name)
+                    };
+                    subItem.Click += WebsiteItem_Click;
+                    menuItem.DropDown.Items.Add(subItem);
+                }
+                //List<Website> websites = new List<Website>();
+                //websites = WebsiteUrlList.Where(url => url.Category == menuItem.Text);
+            }
+
+            ToolStripMenuItem exchangeMenuItem = new ToolStripMenuItem()
+            {
+                Text = "Exchanges",
+                Image = GetIcon("Exchange")
+            };
+            toolStripDropDownButton_websites.DropDown.Items.Add(exchangeMenuItem);
+
+            foreach(ExchangeManager.Exchange exchange in ExchangeManager.Exchanges)
+            {
+                //LogManager.AddLogMessage(Name, "InitializeWebsitesMenu", "exchange=" + exchange.Name + " | " + exchange.Url, LogManager.LogMessageType.DEBUG);
+                ToolStripMenuItem subItem = new ToolStripMenuItem()
+                {
+                    Text = exchange.Name,
+                    Tag = exchange.Url,
+                    Image = GetExchangeIcon(exchange.Name)
+                };
+                subItem.Click += WebsiteItem_Click;
+                exchangeMenuItem.DropDown.Items.Add(subItem);
+            }
+        }
+
+        private void WebsiteItem_Click(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            //LogManager.AddLogMessage(Name, "WebsiteItem_Click", item.Text + " | " + item.Tag, LogManager.LogMessageType.DEBUG);
+            FormManager.OpenUrl(item.Tag.ToString());
+
         }
         #endregion
 
@@ -134,6 +201,7 @@ namespace TwEX_API.Controls
                             break;
 
                         case "FontDecrease":
+                            
                             if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
                             {
                                 UpdateUI(true);

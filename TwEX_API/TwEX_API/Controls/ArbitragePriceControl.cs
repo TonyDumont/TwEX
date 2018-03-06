@@ -115,28 +115,23 @@ namespace TwEX_API.Controls
                     }
 
                     Decimal spread = high - low;
-                    listView_btc.SetObjects(list);
-
+                    
                     toolStripLabel_btc_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
-                    //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
-                    /*
-                    if (market.Contains("USD"))
+
+                    if (listView_btc.Items.Count > 0)
                     {
-                        // SPREAD IS IN USD
-                        //LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN USD - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
-                        toolStripLabel_usd.Text = spread.ToString("C");
-                        toolStripLabel_btc.Text = CoinMarketCap.GetMarketCapBTCAmount("USDT", spread).ToString("N8");
-                        toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "USDT", spread).ToString("N8");
+                        //listView_btc.RefreshObjects(list);
+                        listView_btc.BuildList();
+                        //listView_btc.UpdateObjects(iEnumerable);
                     }
                     else
                     {
-                    */
-                        // SPREAD IS IN BTC
-                        //LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN BTC - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
-                        toolStripLabel_btc_usd.Text = CoinMarketCap.GetMarketCapUSDAmount("BTC", spread).ToString("C");
-                        toolStripLabel_btc_btc.Text = spread.ToString("N8");
-                        toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "BTC", spread).ToString("N8");
-                    //}
+                        listView_btc.SetObjects(list);
+                    }
+                    //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
+                    toolStripLabel_btc_usd.Text = CoinMarketCap.GetMarketCapUSDAmount("BTC", spread).ToString("C");
+                    toolStripLabel_btc_btc.Text = spread.ToString("N8");
+                    toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "BTC", spread).ToString("N8");
                 }
 
                 if (list.Sum(item => item.last) > 0)
@@ -176,11 +171,21 @@ namespace TwEX_API.Controls
                     }
 
                     Decimal spread = high - low;
-                    listView_usd.SetObjects(list);
+                    
 
                     toolStripLabel_usd_symbol.Text = CoinMarketCap.GetMarketCapBTCAmount(symbol, spread).ToString("N8");
                     //LogManager.AddLogMessage(Name, "UpdateUI", "symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
-                    
+                    if (listView_usd.Items.Count > 0)
+                    {
+                        //listView_usd.RefreshObjects(list);
+                        listView_usd.BuildList();
+                    }
+                    else
+                    {
+                        listView_usd.SetObjects(list);
+                    }
+
+
                     if (market.Contains("USD"))
                     {
                         // SPREAD IS IN USD
@@ -189,17 +194,6 @@ namespace TwEX_API.Controls
                         toolStripLabel_usd_btc.Text = CoinMarketCap.GetMarketCapBTCAmount("USDT", spread).ToString("N8");
                         toolStripLabel_usd_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "USDT", spread).ToString("N8");
                     }
-                    /*
-                    else
-                    {
-                    
-                    // SPREAD IS IN BTC
-                    //LogManager.AddLogMessage(Name, "UpdateUI", "SPREAD IN BTC - symbol=" + symbol + " | " + market + " | " + high + " | " + low + " | " + spread);
-                    toolStripLabel_btc_usd.Text = CoinMarketCap.GetMarketCapUSDAmount("BTC", spread).ToString("C");
-                    toolStripLabel_btc_btc.Text = spread.ToString("N8");
-                    toolStripLabel_symbol.Text = CoinMarketCap.GetMarketCapCoinAmount(symbol, "BTC", spread).ToString("N8");
-                    //}
-                    */
                 }
 
                 if (list.Sum(item => item.last) > 0)

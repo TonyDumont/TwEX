@@ -41,6 +41,7 @@ namespace TwEX_API
         public static ImageList IconList = new ImageList();
         public static ImageList SymbolIconList = new ImageList();
         public static ImageList WalletIconList = new ImageList();
+        public static ImageList WebsiteIconList = new ImageList();
         public static List<Image> Images = new List<Image>();
         // URL LISTS
         public static List<ImageFile> IconUrlList = new List<ImageFile>()
@@ -74,23 +75,27 @@ namespace TwEX_API
             new ImageFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
             new ImageFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
 
+            new ImageFile(){ Name = "News", Url = "http://www.pvhc.net/img26/donmopohvevbwznnxhio.png" },
             new ImageFile(){ Name = "Options", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
+            new ImageFile(){ Name = "Orders", Url = "https://cdn3.iconfinder.com/data/icons/dollar-shopping/512/prices-512.png" },
             new ImageFile(){ Name = "PreferenceManager", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             //new ImageFile(){ Name = "Refresh", Url = "https://cdn0.iconfinder.com/data/icons/huge-basic-icons/512/Refresh.png" },
             new ImageFile(){ Name = "Refresh", Url = "http://download.easyicon.net/png/1072711/128/" },
             new ImageFile(){ Name = "Remove", Url = "http://files.softicons.com/download/system-icons/ikons-icons-by-studiotwentyeight/png/256/Delete.png"},
+            new ImageFile(){ Name = "Research", Url = "https://cdn4.iconfinder.com/data/icons/startup-general/512/explore-512.png" },
             new ImageFile(){ Name = "SearchList", Url = "http://icons.iconarchive.com/icons/icons8/windows-8/512/Programming-Search-Property-icon.png"},
             new ImageFile(){ Name = "Symbol", Url = "https://cdn2.iconfinder.com/data/icons/bitcoin-and-mining/44/trade-512.png" },
             new ImageFile(){ Name = "SymbolOverview", Url= "https://cdn0.iconfinder.com/data/icons/seo-and-internet-marketing/70/SEO_and_Internet_Marketing-02-512.png"},
             //new ImageFile(){ Name = "TradingView", Url = "https://www.tradingview.com/favicon.ico" },
             new ImageFile(){ Name = "TradingView", Url = "http://www.patternsmart.com/cart//image/data/tradingview.png" },
             new ImageFile(){ Name = "TwEX_FormEditor", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
-            //new ImageFile(){ Name = "UpDown", Url = "https://cdn1.iconfinder.com/data/icons/touch-gestures-3/96/Scroll-512.png"},
-            new ImageFile(){ Name = "UpDown", Url = "http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons/3d-glossy-green-orbs-icons-arrows/103269-3d-glossy-green-orb-icon-arrows-two-ways-up-down.png"},
+            new ImageFile(){ Name = "Unknown", Url = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Unknown_toxicity_icon.svg/554px-Unknown_toxicity_icon.svg.png"},
+            new ImageFile(){ Name = "UpDown", Url = "http://files.softicons.com/download/toolbar-icons/vista-arrow-icons-by-icons-land/png/256x256/UpDown1Yellow.png"},
             new ImageFile(){ Name = "Up", Url = "https://cdn1.iconfinder.com/data/icons/basic-shaded-ui/256/up-512.png" },
             new ImageFile(){ Name = "USDSymbol", Url = "http://www.tirosagol.com/wp-content/uploads/moneyTAG.jpg"},
             new ImageFile(){ Name = "Wallet", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
             new ImageFile(){ Name = "WalletManager", Url = "https://cdn.iconscout.com/public/images/icon/premium/png-512/wallet-3a62a21639a59921-512x512.png" },
+            new ImageFile(){ Name = "Website", Url = "https://www.nopcommerce.com/images/thumbs/0003896_400.png" },
             new ImageFile(){ Name = "Withdrawal", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_withdraw_expenses-256.png" },
 
             // IMAGES
@@ -106,6 +111,22 @@ namespace TwEX_API
             //new ImageFile(){ Name = "WhiteStone", Url = "https://www.designertileconcepts.com/media/catalog/product/cache/4/image/700x700/9df78eab33525d08d6e5fb8d27136e95/4/y/4yur0120_3.jpg" }
             //new ImageFile(){ Name = "WhiteStone", Url = "http://1.bp.blogspot.com/-A6jxRCVEt54/UxbiNL3VV7I/AAAAAAAAFSM/S9aEW1ntIg8/s1600/Smooth_stucco_white_paint_dirty_plaster_wall_texture_seamless_tileable.jpg" }
         };
+        public static List<Website> WebsiteUrlList = new List<Website>()
+        {
+            new Website() { Name = "AltCoinToday", Url = "https://altcointoday.com/", IconUrl = "https://altcointoday.com/wp-content/uploads/2016/05/Favicon.png", Category = "News"},
+            new Website() { Name = "CoinDesk", Url = "https://www.coindesk.com/", IconUrl = "https://media.coindesk.com/uploads/2017/05/cropped-coindesk-new-favicon-32x32.png", Category = "News"},
+            new Website() { Name = "CoinTelegraph", Url = "https://cointelegraph.com/", IconUrl = "https://cointelegraph.com/apple-icon-57x57.png?v1", Category = "News"},
+            new Website() { Name = "Investopedia", Url = "https://www.investopedia.com/", IconUrl = "https://i.investopedia.com/public/img/apple-touch-icon.png", Category = "News"},
+            new Website() { Name = "WeissCryptocurrencyRatings", Url = "https://weisscryptocurrencyratings.com/", IconUrl = "https://weisscryptocurrencyratings.com/wp-content/themes/w17wcy/img/favicon.ico?1516656547", Category = "News"},
+
+            new Website() { Name = "BitInfoCharts", Url = "https://bitinfocharts.com/", IconUrl = "https://bitinfocharts.com/favicon.png", Category = "Research"},
+            new Website() { Name = "CoinMarketCap", Url = "https://coinmarketcap.com/", IconUrl = "https://s2.coinmarketcap.com/static/cloud/img/CoinMarketCap.png", Category = "Research"},
+            new Website() { Name = "CryptoCompare", Url = "https://www.cryptocompare.com/", IconUrl = "https://www.cryptocompare.com/media/20562/favicon.png?v=2", Category = "Research"},
+            new Website() { Name = "CryptoWatch", Url = "https://cryptowat.ch/", IconUrl = "https://static.cryptowat.ch/static/images/favicon.png", Category = "Research"},
+            new Website() { Name = "FiatLeak", Url = "http://fiatleak.com/", IconUrl = "http://fiatleak.com/favicon.ico", Category = "Research"},
+            new Website() { Name = "GoldMoney", Url = "https://www.goldmoney.com/", IconUrl = "https://www.goldmoney.com/favicon-32x32.png", Category = "Research"},
+            new Website() { Name = "TradingView", Url = "https://www.tradingview.com/", IconUrl = "https://s-new.tradingview.com/static/images/favicon/apple-touch-icon-57x57.e45984d96a9f.png", Category = "Research"},
+        };
         public static List<ImageFile> WalletIconUrlList = new List<ImageFile>()
         {
             new ImageFile(){ Name = "Armory", Url = "https://pbs.twimg.com/profile_images/378800000443755723/365662ad79083b1cf8d1975741bb8d2b_400x400.png" },
@@ -117,6 +138,16 @@ namespace TwEX_API
         #endregion
 
         #region Initialize
+        public static Boolean Initialize()
+        {
+            InitializeIconList();
+            InitializeImages();
+            InitializeExchangeIconList();
+            InitializeSymbolImageList();
+            InitializeWalletImageList();
+            InitializeWebsiteIconList();
+            return true;
+        }
         public static Boolean InitializeExchangeIconList()
         {
             ExchangeIconList.Images.Clear();
@@ -158,8 +189,7 @@ namespace TwEX_API
             }
             AddLogMessage(Name, "InitializeExchangeIconList", "Exchange Icons Initialized " + ExchangeIconList.Images.Count + " Icons", LogMessageType.LOG);
             return true;
-        }
-        
+        }     
         public static Boolean InitializeIconList()
         {
             IconList.Images.Clear();
@@ -201,7 +231,48 @@ namespace TwEX_API
             AddLogMessage(Name, "InitializeIconList", "Icon List Initialized " + IconList.Images.Count + " Icons", LogMessageType.LOG);
             return true;
         }
-        
+        public static Boolean InitializeWebsiteIconList()
+        {
+            WebsiteIconList.Images.Clear();
+            //string path = @"c:\\Windows\\Loader\\Applications\\symbols\\";
+            string path = DataDirectory + "\\websites\\";
+            string[] filter = { ".png" };
+
+            WebsiteIconList.ImageSize = preferences.IconSize;
+
+            if (Directory.Exists(path))
+            {
+                // LOAD ITEMS
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                FileInfo[] fileInfo = directoryInfo.GetFiles();
+                ArrayList arrayList = new ArrayList();
+
+                foreach (FileInfo fi in fileInfo)
+                {
+                    foreach (string s in filter)
+                    {
+                        if (s == fi.Extension)
+                        {
+                            string icon = fi.Name.Split('.')[0];
+                            Image img = Image.FromFile(fi.FullName);
+                            WebsiteIconList.Images.Add(icon, img);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // CREATE FOLDER
+                Directory.CreateDirectory(path);
+                foreach (Website website in WebsiteUrlList)
+                {
+                    //AddLogMessage(Name, "SaveIcons", icon.Name + " | " + icon.Url, LogMessageType.DEBUG);
+                    GetWebsiteIcon(website.Name);
+                }
+            }
+            AddLogMessage(Name, "InitializeWebsiteIconList", "Website Icons Initialized " + WebsiteIconList.Images.Count + " Icons", LogMessageType.LOG);
+            return true;
+        }
         public static Boolean InitializeImages()
         {
             Images.Clear();
@@ -248,7 +319,7 @@ namespace TwEX_API
         {
             SymbolIconList.Images.Clear();
             //string path = @"c:\\Windows\\Loader\\Applications\\symbols\\";
-            string path = PreferenceManager.DataDirectory + "\\symbols\\";
+            string path = DataDirectory + "\\symbols\\";
             string[] filter = { ".png" };
 
             SymbolIconList.ImageSize = preferences.IconSize;
@@ -409,9 +480,9 @@ namespace TwEX_API
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "GetIconByUrl", ex.Message, LogMessageType.EXCEPTION);
+                AddLogMessage(Name, "GetIconByUrl", ex.Message, LogMessageType.EXCEPTION);
             }
-            return (Image)icon;
+            return icon;
         }
         
         public static Image GetActiveIcon(bool active)
@@ -468,7 +539,7 @@ namespace TwEX_API
         
         public static Image GetIcon(string name)
         {
-            Image image = Properties.Resources.ConnectionStatus_DISABLED;
+            Image image = Properties.Resources.Blank;
             // check imagelist for exist
             if (IconList.Images.ContainsKey(name))
             {
@@ -552,7 +623,8 @@ namespace TwEX_API
 
         public static Image GetSymbolIcon(string symbol)
         {
-            Image image = Properties.Resources.ConnectionStatus_DISABLED;
+            Image image = GetIcon("Unknown");
+
             // check imagelist for exist
             if (symbol != null)
             {
@@ -589,11 +661,13 @@ namespace TwEX_API
                             }
                             else
                             {
+                                image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
                                 return image;
                             }
                         }
                         else
                         {
+                            image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
                             return image;
                         }
                     }
@@ -601,12 +675,16 @@ namespace TwEX_API
                     {
                         AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
                         // USE GENERIC ICON
+                        image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
                         return image;
                     }
                 }
             }
             else
             {
+                AddLogMessage(Name, "GetSymbolIcon", symbol + " | IsNULL", LogMessageType.DEBUG);
+                // USE GENERIC ICON
+                image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
                 return image;
             }
         }
@@ -645,7 +723,41 @@ namespace TwEX_API
                 }
             }
         }
-        
+        public static Image GetWebsiteIcon(string name)
+        {
+            Image image = Properties.Resources.Blank;
+
+            if (WebsiteIconList.Images.ContainsKey(name))
+            {
+                return WebsiteIconList.Images[name];
+            }
+            else
+            {
+                try
+                {
+                    //ImageFile website = WebsiteUrlList.FirstOrDefault(item => item.Name == name);
+                    Website website = WebsiteUrlList.FirstOrDefault(item => item.Name == name);
+
+                    if (website != null)
+                    {
+                        Image icon = GetIconByUrl(website.IconUrl);
+                        WebsiteIconList.Images.Add(name, icon);
+                        icon.Save(DataDirectory + "\\websites\\" + name + ".png", ImageFormat.Png);
+                        return icon;
+                    }
+                    else
+                    {
+                        return image;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AddLogMessage(Name, "GetWebsiteIcon", name + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    // USE GENERIC ICON
+                    return image;
+                }
+            }
+        }
         /*
         private Bitmap GetColorIcon(Color color, int width, int height)
         {
@@ -707,6 +819,13 @@ namespace TwEX_API
         {
             public string Name { get; set; }
             public string Url { get; set; }
+        }
+        public class Website
+        {
+            public string Name { get; set; }
+            public string Url { get; set; }
+            public string IconUrl { get; set; }
+            public string Category { get; set; }
         }
         #endregion
     }
@@ -870,6 +989,7 @@ namespace TwEX_API
                 
                 case 50:
                 case 55:
+                    //AddLogMessage(Name, "TimerTick", "Updating Exchange Data : " + preferences.TimerFlags, LogMessageType.EXCHANGE);
                     bool hasBalanceType = (preferences.TimerFlags & ExchangeTimerType.BALANCES) != ExchangeTimerType.NONE;
                     if (hasBalanceType)
                     {
@@ -1330,6 +1450,11 @@ namespace TwEX_API
             Balances = new BlockingCollection<ExchangeBalance>(new ConcurrentQueue<ExchangeBalance>(Balances.Where(balance => balance.Exchange != exchangeName)));
             return true;
         }
+        public static bool ClearOrders(string exchangeName)
+        {
+            Orders = new BlockingCollection<ExchangeOrder>(new ConcurrentQueue<ExchangeOrder>(Orders.Where(order => order.exchange != exchangeName)));
+            return true;
+        }
         public static void processBalance(ExchangeBalance balance)
         {
             //ExchangeBalance listItem = balanceList.FirstOrDefault(b => b.Exchange == balance.Exchange && b.Symbol == balance.Symbol);
@@ -1359,11 +1484,17 @@ namespace TwEX_API
         }
         public static void processOrder(ExchangeOrder order)
         {
-            ExchangeOrder listItem = Orders.FirstOrDefault(item => item.id == order.id && item.exchange == order.exchange);
-
+            ExchangeOrder listItem = Orders.FirstOrDefault(item => item.id == order.id && item.exchange == order.exchange && item.symbol == order.symbol && item.market == order.market);
+            /*
+            if (order.open == true)
+            {
+                AddLogMessage(Name, "processOrder", "OPEN ORDER : " + order.symbol + " for " + order.exchange, LogMessageType.DEBUG);
+            }
+            */
             if (listItem != null)
             {
                 // UPDATE
+                //AddLogMessage(Name, "processOrder", "UPDATING OPEN ORDER : " + order.symbol + " for " + order.exchange + " | " + listItem.open, LogMessageType.DEBUG);
                 listItem.amount = order.amount;
                 listItem.total = order.total;
                 listItem.open = order.open;
@@ -1372,6 +1503,7 @@ namespace TwEX_API
             else
             {
                 Orders.Add(order);
+                //AddLogMessage(Name, "processOrder", "ADDING OPEN ORDER : " + order.symbol + " for " + order.exchange + " | " + order.open, LogMessageType.DEBUG);
                 //AddLogMessage(Name, "processOrder", "Added " + order.symbol + " for " + order.exchange, LogMessageType.DEBUG);
             }
             // UI UPDATE
@@ -1500,8 +1632,8 @@ namespace TwEX_API
                 AddLogMessage(Name, "updateBalanceList", "EXCEPTION!!! : " + ex.Message);
             }
 
-            //updateControls();
-            FormManager.UpdateForms();
+            FormManager.UpdateBalanceManager();
+            FormManager.UpdateExchangeManager();
         }
 
         /// <summary>Updates ORDERS COLLECTION for an exchange or ALL if no name specified</summary>
@@ -1576,6 +1708,7 @@ namespace TwEX_API
 
             //updateControls();
             //FormManager.UpdateForms();
+            FormManager.UpdateBalanceManager();
         }
 
         /// <summary>Updates TICKER COLLECTION for an exchange or does ALL if no name specified</summary>
@@ -1629,7 +1762,11 @@ namespace TwEX_API
             }
 
             //updateControls();
-            FormManager.UpdateForms();
+            //FormManager.UpdateForms();
+            FormManager.UpdateBalanceManager();
+            FormManager.UpdateArbitrageManager();
+            FormManager.UpdateExchangeManager();
+            FormManager.UpdateWalletManager();
         }
 
         /// <summary>Updates TRANSACTIONS COLLECTION for an exchange or does ALL if no name specified</summary>
@@ -1804,6 +1941,7 @@ namespace TwEX_API
             balance = 0,
             exchange = 1,
             symbol = 2,
+            orders = 3
         }
 
         [Flags]
@@ -1843,6 +1981,7 @@ namespace TwEX_API
         public static TwEXTraderControl mainControl;
 
         public static ArbitrageManagerControl arbitrageManagerControl;
+        public static BalanceManagerControl balanceManagerControl;
         public static CoinMarketCapControl coinMarketCapControl;
         public static CryptoCompareControl cryptoCompareControl;
         public static EarnGGManagerControl earnGGManagerControl;
@@ -2085,6 +2224,10 @@ namespace TwEX_API
             }
             UpdateToolStrip();
         }
+        public static void OpenUrl(string url)
+        {
+            System.Diagnostics.Process.Start(url);
+        }
         public static void ResetForm(FormPreference preference)
         {
             AddLogMessage(Name, "ResetForm", preference.Name + " | " + preference.Location + " | " + preference.Size + " | " + preference.Open);
@@ -2134,20 +2277,22 @@ namespace TwEX_API
             UpdateWalletManager(resize);
             UpdateToolStrip(resize);
         }
+        /*
         public static void UpdateForms()
         {
             foreach(Form form in Application.OpenForms)
             {
-                /*
+                
                 type.InvokeMember("InitializeExchange",
                                 BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
                                 null,
                                 type,
                                 null));
-                                */
+                                
                 //form.Refresh();
             }
         }
+        */
         public static void UpdateArbitrageManager(bool resize = false)
         {
             if (arbitrageManagerControl != null)
@@ -2156,6 +2301,13 @@ namespace TwEX_API
                 arbitrageManagerControl.UpdateUI(resize);
             }
             //UpdatePreferenceFile(PreferenceType.Arbitrage);
+        }
+        public static void UpdateBalanceManager(bool resize = false)
+        {
+            if (balanceManagerControl != null)
+            {
+                balanceManagerControl.UpdateUI(resize);
+            }
         }
         public static void UpdateCoinMarketCap(bool resize = false)
         {
@@ -3067,7 +3219,7 @@ namespace TwEX_API
 
                                 case PreferenceType.Form:
                                     FormPreferences = JsonConvert.DeserializeObject<List<FormPreference>>(text.ToString());
-                                    FormManager.UpdateForms();
+                                    //FormManager.UpdateForms();
                                     break;
 
                                 case PreferenceType.TradingView:
@@ -3658,13 +3810,14 @@ namespace TwEX_API
         {
             public Size IconSize { get; set; } = new Size(32, 32);
             public bool UseGlobalFont { get; set; } = false;
-            //public Font Font { get; set; } = new Font("Times New Roman", 12.0f);
             public Font Font { get; set; } = SystemFonts.MessageBoxFont;
             
             public bool ShowGridLines { get; set; } = false;
             public bool UseAlternatingBackColors { get; set; } = false;
             public ThemePreference Theme { get; set; } = new ThemePreference();
             public BalanceViewType BalanceView { get; set; } = BalanceViewType.balance;
+
+            //public int BalanceSplitDistance { get; set; } = 0;
 
             public bool ShowOnlyAPIExchanges { get; set; } = false;
             public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();

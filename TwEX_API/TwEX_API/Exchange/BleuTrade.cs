@@ -357,7 +357,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "GetBalance", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "GetBalance", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -401,7 +401,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getBalanceList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getBalanceList", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 UpdateStatus(false, responseString);
             }
             return list;
@@ -441,7 +441,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getDepositAddress", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getDepositAddress", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -481,7 +481,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getDepositHistoryList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getDepositHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -558,7 +558,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getOrder", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOrder", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 return null;
             }
         }
@@ -593,7 +593,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage("BittrexControl", "getOrderHistoryList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage("BittrexControl", "getOrderHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -636,7 +636,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getOrdersList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getOrdersList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -676,7 +676,7 @@ namespace TwEX_API.Exchange
             }
             catch (Exception ex)
             {
-                LogManager.AddLogMessage(Name, "getWithdrawHistoryList", "EXCEPTION!!! : " + ex.Message);
+                LogManager.AddLogMessage(Name, "getWithdrawHistoryList", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
             return list;
         }
@@ -812,9 +812,12 @@ namespace TwEX_API.Exchange
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //updateExchangeTickerList();
         }
         // GETTERS
+        /*
         public static List<ExchangeBalance> getExchangeBalanceList()
         {
             List<ExchangeBalance> list = new List<ExchangeBalance>();
@@ -874,6 +877,7 @@ namespace TwEX_API.Exchange
             }
             return list;
         }
+        */
         // UPDATERS
         public static void updateExchangeBalanceList(bool clear = false)
         {
@@ -920,37 +924,43 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public static void updateExchangeOrderList()
+        public static void updateExchangeOrderList(bool clear = false)
         {
-            List<ExchangeOrder> list = new List<ExchangeOrder>();
-            
+            List<ExchangeOrder> list = new List<ExchangeOrder>();          
             List<BleuTradeOrder> trades = getOrdersList("all", "all");
-            foreach (BleuTradeOrder trade in trades)
+            if (trades.Count > 0)
             {
-                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
-                string[] pairSplit = trade.Exchange.Split('_');
-                bool open = false;
-                if (trade.Status == "OPEN")
+                if (clear)
                 {
-                    open = true;
+                    ClearOrders(Name);
                 }
 
-                ExchangeOrder eOrder = new ExchangeOrder()
+                foreach (BleuTradeOrder trade in trades)
                 {
-                    exchange = Name,
-                    id = trade.OrderId,
-                    type = trade.Type.ToLower(),
-                    rate = trade.Price,
-                    amount = trade.Quantity,
-                    total = trade.Quantity * trade.Price,
-                    market = pairSplit[1],
-                    symbol = pairSplit[0],
-                    date = trade.Created,
-                    open = open
-                };
-                processOrder(eOrder);
+                    //LogManager.AddLogMessage(Name, "updateExchangeOrderList", trade.Exchange + " | " + trade. + " | " + trade.type, LogManager.LogMessageType.DEBUG);
+                    string[] pairSplit = trade.Exchange.Split('_');
+                    bool open = false;
+                    if (trade.Status == "OPEN")
+                    {
+                        open = true;
+                    }
+
+                    ExchangeOrder eOrder = new ExchangeOrder()
+                    {
+                        exchange = Name,
+                        id = trade.OrderId,
+                        type = trade.Type.ToLower(),
+                        rate = trade.Price,
+                        amount = trade.Quantity,
+                        total = trade.Quantity * trade.Price,
+                        market = pairSplit[1],
+                        symbol = pairSplit[0],
+                        date = trade.Created,
+                        open = open
+                    };
+                    processOrder(eOrder);
+                }
             }
-            
             //LogManager.AddLogMessage(Name, "updateExchangeOrderList", "COUNT=" + Orders.Count, LogManager.LogMessageType.DEBUG);
         }
         public static void updateExchangeTickerList()

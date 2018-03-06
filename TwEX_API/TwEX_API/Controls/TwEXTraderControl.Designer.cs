@@ -53,6 +53,7 @@
             this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.exchangeManagerControl = new TwEX_API.Controls.ExchangeManagerControl();
+            this.toolStripDropDownButton_websites = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,7 +69,8 @@
             this.toolStripButton_Wallet,
             this.toolStripButton_ExchangeEditor,
             this.toolStripDropDownButton_menu,
-            this.toolStripSeparator7});
+            this.toolStripSeparator7,
+            this.toolStripDropDownButton_websites});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(494, 39);
@@ -261,6 +263,16 @@
             this.exchangeManagerControl.Size = new System.Drawing.Size(494, 254);
             this.exchangeManagerControl.TabIndex = 6;
             // 
+            // toolStripDropDownButton_websites
+            // 
+            this.toolStripDropDownButton_websites.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripDropDownButton_websites.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton_websites.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton_websites.Image")));
+            this.toolStripDropDownButton_websites.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton_websites.Name = "toolStripDropDownButton_websites";
+            this.toolStripDropDownButton_websites.Size = new System.Drawing.Size(45, 36);
+            this.toolStripDropDownButton_websites.Text = "Websites";
+            // 
             // TwEXTraderControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -303,5 +315,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_websites;
     }
 }

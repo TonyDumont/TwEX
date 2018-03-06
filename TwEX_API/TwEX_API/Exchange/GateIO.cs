@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Exchange
@@ -976,6 +977,8 @@ namespace TwEX_API.Exchange
         {
             LogManager.AddLogMessage(Name, "InitializeExchange", "Initialized", LogManager.LogMessageType.EXCHANGE);
             updateExchangeBalanceList(true);
+            Thread.Sleep(1000);
+            updateExchangeOrderList(true);
             //updateExchangeTickerList();
         }
         // GETTERS
@@ -1062,29 +1065,37 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-        public static void updateExchangeOrderList()
+        public static void updateExchangeOrderList(bool clear = false)
         {
             List<ExchangeOrder> list = new List<ExchangeOrder>();
             List<GateIOOrder> openorders = getOpenOrders();
 
-            foreach (GateIOOrder order in openorders)
+            if (openorders.Count > 0)
             {
-                //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
-                string[] pairSplit = order.currencyPair.Split('_');
-                ExchangeOrder eOrder = new ExchangeOrder()
+                if (clear)
                 {
-                    exchange = Name,
-                    id = order.orderNumber,
-                    type = order.type,
-                    rate = order.rate,
-                    amount = order.amount,
-                    total = order.total,
-                    market = pairSplit[1].ToUpper(),
-                    symbol = pairSplit[0].ToUpper(),
-                    date = DateTimeOffset.FromUnixTimeSeconds(order.timestamp).UtcDateTime.ToLocalTime(),
-                    open = true
-                };
-                processOrder(eOrder);
+                    ClearOrders(Name);
+                }
+
+                foreach (GateIOOrder order in openorders)
+                {
+                    //LogManager.AddLogMessage(Name, "updateExchangeOrderList", order.symbol + " | " + order.market + " | " + order.type, LogManager.LogMessageType.DEBUG);
+                    string[] pairSplit = order.currencyPair.Split('_');
+                    ExchangeOrder eOrder = new ExchangeOrder()
+                    {
+                        exchange = Name,
+                        id = order.orderNumber,
+                        type = order.type,
+                        rate = order.rate,
+                        amount = order.amount,
+                        total = order.total,
+                        market = pairSplit[1].ToUpper(),
+                        symbol = pairSplit[0].ToUpper(),
+                        date = DateTimeOffset.FromUnixTimeSeconds(order.timestamp).UtcDateTime.ToLocalTime(),
+                        open = true
+                    };
+                    processOrder(eOrder);
+                }
             }
             // NO METHOD TO RETRIEVE TRADES WITHOUT SPECIFYING PAIR - THIS EXCHANGE SUCKS
             /*

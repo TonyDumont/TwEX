@@ -60,11 +60,8 @@ namespace TwEX_FormEditor
             FontChanged += delegate { UpdateFormPreferences(this, true); };
             FormClosing += delegate { UpdateFormPreferences(this, false); };
 
-            ContentManager.InitializeIconList();
-            ContentManager.InitializeImages();
-            ContentManager.InitializeExchangeIconList();
-            ContentManager.InitializeSymbolImageList();
-            ContentManager.InitializeWalletImageList();
+            ContentManager.Initialize();
+
             Task.Factory.StartNew(() => CryptoCompare.Initialize());
             //LogManager.AddLogMessage(Name, "TwEX_FormEditor_Load", "Load Complete", LogManager.LogMessageType.LOG);
         }
