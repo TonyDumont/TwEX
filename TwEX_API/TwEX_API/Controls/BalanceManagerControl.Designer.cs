@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BalanceManagerControl));
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
@@ -39,18 +38,16 @@
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint5 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 70.42D);
             System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BalanceManagerControl));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripRadioButton_balance = new TwEX_API.ToolStripRadioButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripRadioButton_exchange = new TwEX_API.ToolStripRadioButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripRadioButton_symbol = new TwEX_API.ToolStripRadioButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripRadioButton_orders = new TwEX_API.ToolStripRadioButton();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
@@ -59,6 +56,11 @@
             this.toolStripLabel_usd = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_btc = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripRadioButton_balance = new TwEX_API.ToolStripRadioButton();
+            this.toolStripRadioButton_exchange = new TwEX_API.ToolStripRadioButton();
+            this.toolStripRadioButton_symbol = new TwEX_API.ToolStripRadioButton();
+            this.toolStripRadioButton_fork = new TwEX_API.ToolStripRadioButton();
+            this.toolStripRadioButton_orders = new TwEX_API.ToolStripRadioButton();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -78,6 +80,8 @@
             this.toolStripSeparator4,
             this.toolStripRadioButton_symbol,
             this.toolStripDropDownButton_menu,
+            this.toolStripSeparator5,
+            this.toolStripRadioButton_fork,
             this.toolStripSeparator2,
             this.toolStripRadioButton_orders});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
@@ -86,60 +90,21 @@
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip1";
             // 
-            // toolStripRadioButton_balance
-            // 
-            this.toolStripRadioButton_balance.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
-            this.toolStripRadioButton_balance.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
-            this.toolStripRadioButton_balance.CheckOnClick = true;
-            this.toolStripRadioButton_balance.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRadioButton_balance.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_balance.Image")));
-            this.toolStripRadioButton_balance.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripRadioButton_balance.Name = "toolStripRadioButton_balance";
-            this.toolStripRadioButton_balance.RadioButtonGroupId = 0;
-            this.toolStripRadioButton_balance.Size = new System.Drawing.Size(36, 36);
-            this.toolStripRadioButton_balance.Tag = "balance";
-            this.toolStripRadioButton_balance.Text = "Balance View";
-            this.toolStripRadioButton_balance.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripRadioButton_exchange
-            // 
-            this.toolStripRadioButton_exchange.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
-            this.toolStripRadioButton_exchange.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
-            this.toolStripRadioButton_exchange.CheckOnClick = true;
-            this.toolStripRadioButton_exchange.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRadioButton_exchange.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_exchange.Image")));
-            this.toolStripRadioButton_exchange.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripRadioButton_exchange.Name = "toolStripRadioButton_exchange";
-            this.toolStripRadioButton_exchange.RadioButtonGroupId = 0;
-            this.toolStripRadioButton_exchange.Size = new System.Drawing.Size(36, 36);
-            this.toolStripRadioButton_exchange.Tag = "exchange";
-            this.toolStripRadioButton_exchange.Text = "Exchange View";
-            this.toolStripRadioButton_exchange.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 39);
             // 
-            // toolStripRadioButton_symbol
+            // toolStripSeparator5
             // 
-            this.toolStripRadioButton_symbol.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
-            this.toolStripRadioButton_symbol.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
-            this.toolStripRadioButton_symbol.CheckOnClick = true;
-            this.toolStripRadioButton_symbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRadioButton_symbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_symbol.Image")));
-            this.toolStripRadioButton_symbol.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripRadioButton_symbol.Name = "toolStripRadioButton_symbol";
-            this.toolStripRadioButton_symbol.RadioButtonGroupId = 0;
-            this.toolStripRadioButton_symbol.Size = new System.Drawing.Size(36, 36);
-            this.toolStripRadioButton_symbol.Tag = "symbol";
-            this.toolStripRadioButton_symbol.Text = "Symbol View";
-            this.toolStripRadioButton_symbol.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
+            this.toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripDropDownButton_menu
             // 
@@ -182,22 +147,6 @@
             this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripRadioButton_orders
-            // 
-            this.toolStripRadioButton_orders.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripRadioButton_orders.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
-            this.toolStripRadioButton_orders.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
-            this.toolStripRadioButton_orders.CheckOnClick = true;
-            this.toolStripRadioButton_orders.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRadioButton_orders.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_orders.Image")));
-            this.toolStripRadioButton_orders.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripRadioButton_orders.Name = "toolStripRadioButton_orders";
-            this.toolStripRadioButton_orders.RadioButtonGroupId = 0;
-            this.toolStripRadioButton_orders.Size = new System.Drawing.Size(36, 36);
-            this.toolStripRadioButton_orders.Tag = "orders";
-            this.toolStripRadioButton_orders.Text = "Orders View";
-            this.toolStripRadioButton_orders.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
             // 
             // tabControl
             // 
@@ -351,6 +300,83 @@
             this.toolStripLabel_btc.Size = new System.Drawing.Size(27, 22);
             this.toolStripLabel_btc.Text = "BTC";
             // 
+            // toolStripRadioButton_balance
+            // 
+            this.toolStripRadioButton_balance.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
+            this.toolStripRadioButton_balance.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            this.toolStripRadioButton_balance.CheckOnClick = true;
+            this.toolStripRadioButton_balance.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRadioButton_balance.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_balance.Image")));
+            this.toolStripRadioButton_balance.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRadioButton_balance.Name = "toolStripRadioButton_balance";
+            this.toolStripRadioButton_balance.RadioButtonGroupId = 0;
+            this.toolStripRadioButton_balance.Size = new System.Drawing.Size(36, 36);
+            this.toolStripRadioButton_balance.Tag = "balance";
+            this.toolStripRadioButton_balance.Text = "Balance View";
+            this.toolStripRadioButton_balance.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
+            // 
+            // toolStripRadioButton_exchange
+            // 
+            this.toolStripRadioButton_exchange.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
+            this.toolStripRadioButton_exchange.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            this.toolStripRadioButton_exchange.CheckOnClick = true;
+            this.toolStripRadioButton_exchange.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRadioButton_exchange.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_exchange.Image")));
+            this.toolStripRadioButton_exchange.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRadioButton_exchange.Name = "toolStripRadioButton_exchange";
+            this.toolStripRadioButton_exchange.RadioButtonGroupId = 0;
+            this.toolStripRadioButton_exchange.Size = new System.Drawing.Size(36, 36);
+            this.toolStripRadioButton_exchange.Tag = "exchange";
+            this.toolStripRadioButton_exchange.Text = "Exchange View";
+            this.toolStripRadioButton_exchange.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
+            // 
+            // toolStripRadioButton_symbol
+            // 
+            this.toolStripRadioButton_symbol.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
+            this.toolStripRadioButton_symbol.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            this.toolStripRadioButton_symbol.CheckOnClick = true;
+            this.toolStripRadioButton_symbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRadioButton_symbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_symbol.Image")));
+            this.toolStripRadioButton_symbol.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRadioButton_symbol.Name = "toolStripRadioButton_symbol";
+            this.toolStripRadioButton_symbol.RadioButtonGroupId = 0;
+            this.toolStripRadioButton_symbol.Size = new System.Drawing.Size(36, 36);
+            this.toolStripRadioButton_symbol.Tag = "symbol";
+            this.toolStripRadioButton_symbol.Text = "Symbol View";
+            this.toolStripRadioButton_symbol.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
+            // 
+            // toolStripRadioButton_fork
+            // 
+            this.toolStripRadioButton_fork.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripRadioButton_fork.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
+            this.toolStripRadioButton_fork.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            this.toolStripRadioButton_fork.CheckOnClick = true;
+            this.toolStripRadioButton_fork.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRadioButton_fork.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_fork.Image")));
+            this.toolStripRadioButton_fork.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRadioButton_fork.Name = "toolStripRadioButton_fork";
+            this.toolStripRadioButton_fork.RadioButtonGroupId = 0;
+            this.toolStripRadioButton_fork.Size = new System.Drawing.Size(36, 36);
+            this.toolStripRadioButton_fork.Tag = "forks";
+            this.toolStripRadioButton_fork.Text = "Forks View";
+            this.toolStripRadioButton_fork.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
+            // 
+            // toolStripRadioButton_orders
+            // 
+            this.toolStripRadioButton_orders.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripRadioButton_orders.CheckedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(113)))), ((int)(((byte)(179)))));
+            this.toolStripRadioButton_orders.CheckedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            this.toolStripRadioButton_orders.CheckOnClick = true;
+            this.toolStripRadioButton_orders.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRadioButton_orders.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRadioButton_orders.Image")));
+            this.toolStripRadioButton_orders.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRadioButton_orders.Name = "toolStripRadioButton_orders";
+            this.toolStripRadioButton_orders.RadioButtonGroupId = 0;
+            this.toolStripRadioButton_orders.Size = new System.Drawing.Size(36, 36);
+            this.toolStripRadioButton_orders.Tag = "orders";
+            this.toolStripRadioButton_orders.Text = "Orders View";
+            this.toolStripRadioButton_orders.Click += new System.EventHandler(this.toolStripRadioButton_view_Click);
+            // 
             // BalanceManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -397,5 +423,7 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel_usd;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_btc;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private ToolStripRadioButton toolStripRadioButton_fork;
     }
 }

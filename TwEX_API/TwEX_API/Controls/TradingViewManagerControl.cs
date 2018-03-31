@@ -37,12 +37,22 @@ namespace TwEX_API.Controls
             tabPage_overviews.Controls.Add(overviewsWidget);
             tabPage_markets.Controls.Add(marketsWidget);
 
+            if (PreferenceManager.TradingViewPreferences.CurrentWatchList.Length > 0)
+            {
+                toolStripDropDownButton_watchlists.Text = PreferenceManager.TradingViewPreferences.CurrentWatchList;
+            }
+            else
+            {
+                toolStripDropDownButton_watchlists.Text = "Select Watchlist";
+            }
+
             marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
             UpdateToolbar();
 
             UpdateStyleMenu();
             UpdateExchangeMenus();
             UpdateOptionsMenu();
+            UpdateWatchlists();
 
             SetFullView();
             SetCustomView();
@@ -125,7 +135,46 @@ namespace TwEX_API.Controls
             }
             else
             {
+
+                //overviewsWidget.setSymbolOverview(PreferenceManager.TradingViewPreferences.SymbolOverviewParameters);
+                PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols = PreferenceManager.TradingViewPreferences.GetCurrentWatchList();
                 overviewsWidget.setSymbolOverview(PreferenceManager.TradingViewPreferences.SymbolOverviewParameters);
+                SetCustomView();
+            }
+        }
+
+        delegate void UpdateWatchlistsCallback();
+        public void UpdateWatchlists()
+        {
+            if (InvokeRequired)
+            {
+                UpdateWatchlistsCallback d = new UpdateWatchlistsCallback(UpdateWatchlists);
+                Invoke(d, new object[] { });
+            }
+            else
+            {
+                //overviewsWidget.setSymbolOverview(PreferenceManager.TradingViewPreferences.SymbolOverviewParameters);
+                toolStripDropDownButton_watchlists.DropDown.Items.Clear();
+                if (PreferenceManager.TradingViewPreferences.WatchLists.Count > 0)
+                {
+                    foreach(TradingViewSymbolList listItem in PreferenceManager.TradingViewPreferences.WatchLists)
+                    {
+                        ToolStripMenuItem menuItem = new ToolStripMenuItem() { Text = listItem.Name };
+                        toolStripDropDownButton_watchlists.DropDown.Items.Add(menuItem);
+                        menuItem.Click += WatchlistItem_Click;
+                    }
+
+                    ToolStripMenuItem editItem = new ToolStripMenuItem() { Text = "Edit Watchlists" };
+                    toolStripDropDownButton_watchlists.DropDown.Items.Add(editItem);
+                    editItem.Click += EditWatchlistItem_Click;
+                }
+                else
+                {
+                    toolStripDropDownButton_watchlists.Text = "Edit Watchlists";
+                    ToolStripMenuItem editItem = new ToolStripMenuItem() { Text = "Edit Watchlists" };
+                    toolStripDropDownButton_watchlists.DropDown.Items.Add(editItem);
+                    editItem.Click += EditWatchlistItem_Click;
+                }
             }
         }
         #endregion
@@ -242,6 +291,15 @@ namespace TwEX_API.Controls
                 toolStripDropDownButton_currency.Visible = true;
                 toolStripDropDownButton_view.Visible = true;
             }
+
+            if (tabControl.SelectedIndex > 2 && tabControl.SelectedIndex < 5)
+            {
+                toolStripDropDownButton_watchlists.Visible = true;
+            }
+            else
+            {
+                toolStripDropDownButton_watchlists.Visible = false;
+            }
         }
         #endregion
 
@@ -258,12 +316,20 @@ namespace TwEX_API.Controls
         }
         private void SetCustomView()
         {
+            
             tabPage_custom.Controls.Clear();
-            /*
+            
             TableLayoutPanel table = new TableLayoutPanel() { Dock = DockStyle.Fill };
 
-            int columnCount = GetTableCount("column", PreferenceManager.TradingViewPreferences.WatchList.Count);
-            int rowCount = GetTableCount("row", PreferenceManager.TradingViewPreferences.WatchList.Count);
+            //int columnCount = GetTableCount("column", PreferenceManager.TradingViewPreferences.WatchList.Count);
+            //int rowCount = GetTableCount("row", PreferenceManager.TradingViewPreferences.WatchList.Count);
+
+            //int columnCount = GetTableCount("column", PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.Count);
+            //int rowCount = GetTableCount("row", PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.Count);
+            List<TradingViewSymbolOverview> list = PreferenceManager.TradingViewPreferences.GetCurrentWatchList();
+
+            int columnCount = GetTableCount("column", list.Count);
+            int rowCount = GetTableCount("row", list.Count);
 
             table.ColumnCount = columnCount;
             table.RowCount = rowCount;
@@ -281,15 +347,17 @@ namespace TwEX_API.Controls
             int currentColumn = 0;
             int currentRow = 0;
 
-            foreach (ExchangeTicker item in PreferenceManager.TradingViewPreferences.WatchList)
+            foreach (TradingViewSymbolOverview item in list)
             {
-                TradingViewWidgetControl chartWidget = new TradingViewWidgetControl();
-                TradingViewAdvancedChartParameters parameters = new TradingView.TradingViewAdvancedChartParameters()
+                TradingViewWidgetControl chartWidget = new TradingViewWidgetControl() { Dock = DockStyle.Fill };
+                TradingViewAdvancedChartParameters parameters = new TradingViewAdvancedChartParameters()
                 {
                     symbol = item.symbol,
                     market = item.market,
-                    exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), item.exchange, true),
-                    hide_top_toolbar = true
+                    //exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), item.exchange.ToString(), true),
+                    exchange = item.exchange,
+                    withdateranges = true
+                    //hide_top_toolbar = true
                 };
                 chartWidget.setAdvancedChart(parameters);
                 table.Controls.Add(chartWidget, currentColumn, currentRow);
@@ -305,7 +373,7 @@ namespace TwEX_API.Controls
                 }
             }
             tabPage_custom.Controls.Add(table);
-            */
+            
         }
         private void SetExchangeMenu()
         {
@@ -396,6 +464,7 @@ namespace TwEX_API.Controls
                     market = "BTC",
                     exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), exchange.TradingView, true),
                     hide_top_toolbar = true,
+                    withdateranges = true,
                     theme = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme
                 };
                 chartWidget.setAdvancedChart(parameters);
@@ -461,6 +530,7 @@ namespace TwEX_API.Controls
                     market = exchange.USDSymbol,
                     exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), exchange.TradingView, true),
                     hide_top_toolbar = true,
+                    withdateranges = true,
                     theme = PreferenceManager.TradingViewPreferences.AdvancedChartParameters.theme
                 };
                 chartWidget.setAdvancedChart(parameters);
@@ -481,6 +551,10 @@ namespace TwEX_API.Controls
                 }
             }
             tabPage_usd.Controls.Add(table);
+        }
+        private void SetCurrentWatchlist()
+        {
+
         }
         #endregion
 
@@ -544,8 +618,32 @@ namespace TwEX_API.Controls
 
         }
         #endregion
-        
+
         #region EventHandler
+        private void EditWatchlistItem_Click(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
+            //ToolStripMenuItem item = sender as ToolStripMenuItem;
+            //LogManager.AddLogMessage(Name, "WatchlistItem_Click", item.Text, LogManager.LogMessageType.DEBUG);
+            //toolStripDropDownButton_watchlists.Text = item.Text;
+            //FormManager.OpenUrl(item.Tag.ToString());
+            Form form = new Form()
+            {
+                Text = "Edit TradingView Watchlists",
+                Width = 1280,
+                Height = 600
+            };
+
+            TradingViewOverviewsListEditorControl control = new TradingViewOverviewsListEditorControl()
+            {
+                Dock = DockStyle.Fill
+            };
+            control.tradingViewManagerControl = this;
+            form.Controls.Add(control);
+            PreferenceManager.SetTheme(PreferenceManager.preferences.Theme.type, form);
+
+            form.Show();
+        }
         private void toolStripDropDownButton_exchange_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             toolStripDropDownButton_exchange.Image = e.ClickedItem.Image;
@@ -570,6 +668,15 @@ namespace TwEX_API.Controls
             }
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
             SetFullView();
+        }
+        private void toolStripDropDownButton_currency_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            //LogManager.AddLogMessage(Name, "toolStripDropDownButton_currency_DropDownItemClicked", sender.ToString() + " | " + e.ClickedItem.Text, LogManager.LogMessageType.DEBUG);
+            toolStripDropDownButton_currency.Text = e.ClickedItem.Text;
+            TradingViewCryptocurrencyMarketDisplayCurrency type = (TradingViewCryptocurrencyMarketDisplayCurrency)Enum.Parse(typeof(TradingViewCryptocurrencyMarketDisplayCurrency), e.ClickedItem.Text);
+            PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.displayCurrency = type;
+            marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
         }
         private void toolStripDropDownButton_options_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
@@ -697,6 +804,15 @@ namespace TwEX_API.Controls
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
             SetFullView();
         }
+        private void toolStripDropDownButton_view_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            LogManager.AddLogMessage(Name, "toolStripDropDownButton_view_DropDownItemClicked", sender.ToString() + " | " + e.ClickedItem.Tag, LogManager.LogMessageType.DEBUG);
+            toolStripDropDownButton_view.Text = e.ClickedItem.Tag.ToString();
+            TradingViewCryptocurrencyMarketDefaultColumn view = (TradingViewCryptocurrencyMarketDefaultColumn)Enum.Parse(typeof(TradingViewCryptocurrencyMarketDefaultColumn), e.ClickedItem.Tag.ToString());
+            PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.defaultColumn = view;
+            marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+        }
         private void toolStripRadioButton_Click(object sender, EventArgs e)
         {
             ToolStripRadioButton button = sender as ToolStripRadioButton;
@@ -719,26 +835,75 @@ namespace TwEX_API.Controls
             //LogManager.AddLogMessage(Name, "TradingViewManagerControl_Resize", pageSize.Width + " | " + pageSize.Height, LogManager.LogMessageType.DEBUG);
             overviewsWidget.setSymbolOverview(PreferenceManager.TradingViewPreferences.SymbolOverviewParameters);
         }
+        private void WatchlistItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            //LogManager.AddLogMessage(Name, "WatchlistItem_Click", item.Text, LogManager.LogMessageType.DEBUG);
+            toolStripDropDownButton_watchlists.Text = item.Text;
+            PreferenceManager.TradingViewPreferences.CurrentWatchList = item.Text;
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+            UpdateOverviews();
+        }
         #endregion
-
-        private void toolStripDropDownButton_view_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            LogManager.AddLogMessage(Name, "toolStripDropDownButton_view_DropDownItemClicked", sender.ToString() + " | " + e.ClickedItem.Tag, LogManager.LogMessageType.DEBUG);
-            toolStripDropDownButton_view.Text = e.ClickedItem.Tag.ToString();
-            TradingViewCryptocurrencyMarketDefaultColumn view = (TradingViewCryptocurrencyMarketDefaultColumn)Enum.Parse(typeof(TradingViewCryptocurrencyMarketDefaultColumn), e.ClickedItem.Tag.ToString());
-            PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.defaultColumn = view;
-            marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
-            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
-        }
-
-        private void toolStripDropDownButton_currency_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            LogManager.AddLogMessage(Name, "toolStripDropDownButton_currency_DropDownItemClicked", sender.ToString() + " | " + e.ClickedItem.Text, LogManager.LogMessageType.DEBUG);
-            toolStripDropDownButton_currency.Text = e.ClickedItem.Text;
-            TradingViewCryptocurrencyMarketDisplayCurrency type = (TradingViewCryptocurrencyMarketDisplayCurrency)Enum.Parse(typeof(TradingViewCryptocurrencyMarketDisplayCurrency), e.ClickedItem.Text);
-            PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters.displayCurrency = type;
-            marketsWidget.setCryptocurrencyMarket(PreferenceManager.TradingViewPreferences.CryptocurrencyMarketParameters);
-            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
-        }
     }
 }
+
+
+/*
+private void toolStripDropDownButton_watchlists_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+{
+    //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", e.GetType() + " | " + e.ClickedItem.GetType(), LogManager.LogMessageType.DEBUG);
+
+    if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
+    {
+        //if ()
+        ToolStripMenuItem menuItem = e.ClickedItem as ToolStripMenuItem;
+
+        if (!menuItem.Tag.ToString().Contains("Font"))
+        {
+            //LogManager.AddLogMessage(Name, "toolStripDropDownButton_menu_DropDownItemClicked", menuItem.Tag.ToString() + " | " + menuItem.Text, LogManager.LogMessageType.DEBUG);
+            toolStripDropDownButton_menu.HideDropDown();
+            FormManager.OpenForm(menuItem.Tag.ToString(), menuItem.Text);
+        }
+        else
+        {
+            switch (menuItem.Tag.ToString())
+            {
+                case "Font":
+                    FontDialog dialog = new FontDialog() { Font = ParentForm.Font };
+                    DialogResult result = dialog.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        if (PreferenceManager.SetFormFont(ParentForm, dialog.Font))
+                        {
+                            UpdateUI(true);
+                        }
+                    }
+                    UpdateUI(true);
+                    break;
+
+                case "FontIncrease":
+                    if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size + 1, ParentForm.Font.Style)))
+                    {
+                        UpdateUI(true);
+                    }
+                    break;
+
+                case "FontDecrease":
+
+                    if (PreferenceManager.SetFormFont(ParentForm, new Font(ParentForm.Font.FontFamily, ParentForm.Font.Size - 1, ParentForm.Font.Style)))
+                    {
+                        UpdateUI(true);
+                    }
+                    break;
+
+                default:
+                    // NOTHING
+                    break;
+            }
+        }
+
+    }
+
+}
+*/

@@ -1,73 +1,40 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using static TwEX_API.Market.TradingView;
+using static TwEX_API.ExchangeManager;
+using static TwEX_API.PreferenceManager;
 
 namespace TwEX_API.Controls
 {
-    public partial class TradingViewOverviewsListEditorControl : UserControl
+    public partial class ArbitrageWatchListEditorControl : UserControl
     {
         #region Properties
-        public TradingViewManagerControl tradingViewManagerControl;
+        //public ArbitrageWatchListEditorControl arbitrageWatchListControl;
+        public ArbitrageManagerControl arbitrageManagerControl;
         #endregion
 
         #region Initialize
-        public TradingViewOverviewsListEditorControl()
+        public ArbitrageWatchListEditorControl()
         {
             InitializeComponent();
             InitializeIcons();
-            InitializeExchangeMenu();
-            InitializeTimespanMenu();
         }
-        private void TradingViewOverviewsListEditorControl_Load(object sender, EventArgs e)
+        private void ArbitrageWatchListEditorControl_Load(object sender, EventArgs e)
         {
             splitContainer.SplitterDistance = (int)(splitContainer.ClientSize.Height * 0.70);
-            UpdateUI();
-        }
-        private void InitializeExchangeMenu()
-        {
-            var values = EnumUtils.GetValues<TradingViewCryptoExchange>();
-            toolStripDropDownButton_exchange.DropDownItems.Clear();
-
-            foreach (TradingViewCryptoExchange type in values)
-            {
-                //LogManager.AddLogMessage(Name, "InitializeExchangeMenu", "type=" + type.ToString(), LogManager.LogMessageType.DEBUG);
-                if (type.ToString() != "none")
-                {
-                    ToolStripMenuItem menuItem = new ToolStripMenuItem()
-                    {
-                        Text = type.ToString(),
-                        //Tag = type.GetHashCode(),
-                        //Checked = isSelected
-                    };
-                    toolStripDropDownButton_exchange.DropDownItems.Add(menuItem);
-                }
-            }
+            UpdateUI(true);
         }
         private void InitializeIcons()
         {
             toolStripButton_addSymbol.Image = ContentManager.GetIcon("Add");
             toolStripButton_addList.Image = ContentManager.GetIcon("Add");
         }
-        private void InitializeTimespanMenu()
-        {
-            var list = EnumUtils.GetAllDescriptions<TradingViewSymbolOverviewInterval>();
-            foreach (var item in list)
-            {
-                LogManager.AddLogMessage(Name, "InitializeTimespanMenu", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
-                ToolStripMenuItem menuItem = new ToolStripMenuItem()
-                {
-                    Text = item.Value,
-                    Tag = item.Key
-                };
-                toolStripDropDownButton_timespan.DropDownItems.Add(menuItem);
-            }
-        }
         private void updateOverviews()
         {
-            if (tradingViewManagerControl != null)
+            if (arbitrageManagerControl != null)
             {
-                tradingViewManagerControl.UpdateOverviews();
+                //tradingViewManagerControl.UpdateOverviews();
+                arbitrageManagerControl.UpdateOverviews();
             }
         }
         #endregion
@@ -83,9 +50,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                listView_lists.SetObjects(PreferenceManager.TradingViewPreferences.WatchLists);
-                //listView_symbols.SetObjects(PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols);
-                //groupBox.Text = listView.Items.Count + " Exchanges";
+                listView_lists.SetObjects(ArbitragePreferences.WatchLists);
 
                 if (resize)
                 {
@@ -104,13 +69,7 @@ namespace TwEX_API.Controls
             }
             else
             {
-                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                //Font = ParentForm.Font;
-                //toolStrip.Font = ParentForm.Font;
                 Width = PreferredSize.Width;
-                
-                //column_Name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                //Width = column_Name.Width + (listView.RowHeightEffective);
             }
         }
         #endregion
@@ -126,7 +85,7 @@ namespace TwEX_API.Controls
                     {
 
                         //CalculatorItem item = listView.SelectedObject as CalculatorItem;
-                        TradingViewSymbolList item = listView_lists.SelectedObject as TradingViewSymbolList;
+                        ArbitrageWatchList item = listView_lists.SelectedObject as ArbitrageWatchList;
                         ContextMenuStrip menu = new ContextMenuStrip();
                         ToolStripMenuItem menuItem = new ToolStripMenuItem()
                         {
@@ -145,7 +104,7 @@ namespace TwEX_API.Controls
         {
             if (listView_lists.SelectedObject != null)
             {
-                TradingViewSymbolList item = listView_lists.SelectedObject as TradingViewSymbolList;
+                ArbitrageWatchList item = listView_lists.SelectedObject as ArbitrageWatchList;
                 listView_symbols.SetObjects(item.Items);
             }
         }
@@ -159,12 +118,12 @@ namespace TwEX_API.Controls
                     {
 
                         //CalculatorItem item = listView.SelectedObject as CalculatorItem;
-                        TradingViewSymbolOverview item = listView_symbols.SelectedObject as TradingViewSymbolOverview;
+                        ExchangeTicker item = listView_symbols.SelectedObject as ExchangeTicker;
                         ContextMenuStrip menu = new ContextMenuStrip();
                         ToolStripMenuItem menuItem = new ToolStripMenuItem()
                         {
-                            Text = "Remove " + item.tabName,
-                            Tag = item.tabName
+                            Text = "Remove " + item.symbol + "/" + item.market,
+                            Tag = item.symbol + "_" + item.market
                         };
                         menuItem.Click += new EventHandler(RemoveSymbolItem_Menu_Click);
                         menu.Items.Add(menuItem);
@@ -179,7 +138,7 @@ namespace TwEX_API.Controls
             ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
             //LogManager.AddLogMessage(Name, "RemoveItem_Menu_Click", "Removing " + menuItem.Text + " From List", LogManager.LogMessageType.DEBUG);          
             //TradingViewSymbolList listItem = PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.FirstOrDefault(item => item.tabName == menuItem.Tag.ToString());
-            TradingViewSymbolList listItem = PreferenceManager.TradingViewPreferences.WatchLists.FirstOrDefault(item => item.Name == menuItem.Tag.ToString());
+            ArbitrageWatchList listItem = ArbitragePreferences.WatchLists.FirstOrDefault(item => item.Name == menuItem.Tag.ToString());
 
             if (listItem != null)
             {
@@ -187,12 +146,12 @@ namespace TwEX_API.Controls
                 DialogResult result = MessageBox.Show("Remove " + listItem.Name + "?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
-                    PreferenceManager.TradingViewPreferences.WatchLists.Remove(listItem);
-                    PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+                    ArbitragePreferences.WatchLists.Remove(listItem);
+                    UpdatePreferenceFile(PreferenceType.Arbitrage);
                     listView_symbols.Clear();
                     updateOverviews();
                     UpdateUI();
-                } 
+                }
             }
 
         }
@@ -202,60 +161,48 @@ namespace TwEX_API.Controls
 
             if (listView_lists.SelectedObject != null)
             {
-                TradingViewSymbolList watchlistItem = listView_lists.SelectedObject as TradingViewSymbolList;
-                TradingViewSymbolOverview listItem = watchlistItem.Items.FirstOrDefault(item => item.tabName == menuItem.Tag.ToString());
+                ArbitrageWatchList watchlistItem = listView_lists.SelectedObject as ArbitrageWatchList;
+                string[] pairs = menuItem.Tag.ToString().Split('_');
+                ExchangeTicker listItem = watchlistItem.Items.FirstOrDefault(item => item.symbol == pairs[0] && item.market == pairs[1]);
                 if (listItem != null)
                 {
-                    DialogResult result = MessageBox.Show("Remove " + listItem.tabName + "?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    DialogResult result = MessageBox.Show("Remove " + menuItem.Tag.ToString() + "?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result == DialogResult.Yes)
                     {
                         //PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.Remove(listItem);
                         watchlistItem.Items.Remove(listItem);
-                        PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+                        UpdatePreferenceFile(PreferenceType.Arbitrage);
                         listView_symbols.SetObjects(watchlistItem.Items);
+                        
+
                         updateOverviews();
                         //UpdateUI();
-                        /*
-                        PreferenceManager.TradingViewPreferences.WatchLists.Remove(listItem);
-                        PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
-                        listView_symbols.Clear();
-                        updateOverviews();
-                        UpdateUI();
-                        */
                     }
 
-                    
+
                 }
             }
             //LogManager.AddLogMessage(Name, "RemoveItem_Menu_Click", "Removing " + sender.ToString() + " From List" + " | " + menuItem.Tag.ToString(), LogManager.LogMessageType.DEBUG);          
-            //TradingViewSymbolOverview listItem = PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.FirstOrDefault(item => item.tabName == menuItem.Tag.ToString());
-            //TradingViewSymbolOverview listItem = PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.FirstOrDefault(item => item.tabName == menuItem.Tag.ToString());
-            /*
-            if (listItem != null)
-            {
-                PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.Remove(listItem);
-                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
-                updateOverviews();
-                UpdateUI();
-            }
-            */
         }
         private void toolStripButton_addList_Click(object sender, EventArgs e)
         {
             if (toolStripTextBox_listName.Text.Length > 0)
             {
-                TradingViewSymbolList listItem = PreferenceManager.TradingViewPreferences.WatchLists.FirstOrDefault(item => item.Name == toolStripTextBox_listName.Text);
+                ArbitrageWatchList listItem = ArbitragePreferences.WatchLists.FirstOrDefault(item => item.Name == toolStripTextBox_listName.Text);
                 if (listItem == null)
                 {
-                    TradingViewSymbolList list = new TradingViewSymbolList() { Name = toolStripTextBox_listName.Text };
+                    ArbitrageWatchList list = new ArbitrageWatchList() { Name = toolStripTextBox_listName.Text };
                     toolStripTextBox_listName.Text = String.Empty;
-                    PreferenceManager.TradingViewPreferences.WatchLists.Add(list);
-                    PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
-                    tradingViewManagerControl.UpdateWatchlists();
+                    ArbitragePreferences.WatchLists.Add(list);
+                    UpdatePreferenceFile(PreferenceType.Arbitrage);
+                    //tradingViewManagerControl.UpdateWatchlists(); --> CHANGE TO ARBITRAGE
+                    arbitrageManagerControl.UpdateWatchlists();
+                    //arbitrageManagerControl.UpdateWatchlists();
                     UpdateUI();
                 }
             }
         }
+
         private void toolStripButton_addSymbol_Click(object sender, EventArgs e)
         {
             //LogManager.AddLogMessage(Name, "toolStripButton_add_Click", sender.ToString(), LogManager.LogMessageType.DEBUG);
@@ -264,39 +211,43 @@ namespace TwEX_API.Controls
                 //TradingViewSymbolOverview listItem = PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.FirstOrDefault(item => item.tabName == toolStripTextBox_tabName.Text);
                 if (listView_lists.SelectedObject != null)
                 {
-                    TradingViewSymbolList symbolList = listView_lists.SelectedObject as TradingViewSymbolList;
-                    TradingViewSymbolOverview listItem = symbolList.Items.FirstOrDefault(item => item.tabName == toolStripTextBox_tabName.Text);
+                    ArbitrageWatchList symbolList = listView_lists.SelectedObject as ArbitrageWatchList;
+
+                    ExchangeTicker listItem = symbolList.Items.FirstOrDefault(item => item.symbol == toolStripTextBox_symbol.Text.ToUpper() && item.market == toolStripTextBox_market.Text.ToUpper());
 
                     if (listItem != null)
                     {
-                        MessageBox.Show("Already a Tab with this name.", "Duplicate");
+                        MessageBox.Show("Already an Item with this name.", "Duplicate");
                     }
                     else
                     {
-                        TradingViewSymbolOverview item = new TradingViewSymbolOverview()
+                        ExchangeTicker item = new ExchangeTicker()
                         {
                             symbol = toolStripTextBox_symbol.Text.ToUpper(),
                             market = toolStripTextBox_market.Text.ToUpper(),
-                            exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), toolStripDropDownButton_exchange.Text, true),
-                            interval = (TradingViewSymbolOverviewInterval)Enum.Parse(typeof(TradingViewSymbolOverviewInterval), toolStripDropDownButton_timespan.Text, true),
-                            tabName = toolStripTextBox_tabName.Text
+                            //exchange = (TradingViewCryptoExchange)Enum.Parse(typeof(TradingViewCryptoExchange), toolStripDropDownButton_exchange.Text, true),
+                            //interval = (TradingViewSymbolOverviewInterval)Enum.Parse(typeof(TradingViewSymbolOverviewInterval), toolStripDropDownButton_timespan.Text, true),
+                            //tabName = toolStripTextBox_tabName.Text
                         };
                         //LogManager.AddLogMessage(Name, "toolStripButton_add_Click", item.symbol + " | " + item.market + " | " + item.exchange + " | " + item.interval + " | " + item.tabName);
                         //PreferenceManager.TradingViewPreferences.SymbolOverviewParameters.symbols.Add(item);
                         symbolList.Items.Add(item);
-                        
+
                         updateOverviews();
                         listView_symbols.SetObjects(symbolList.Items);
                         //UpdateUI();
-                        PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.TradingView);
+                        UpdatePreferenceFile(PreferenceType.Arbitrage);
+                        ParentForm.Focus();
+                        //Focus();
                     }
-                }      
+                }
             }
             catch (Exception ex)
             {
                 LogManager.AddLogMessage(Name, "toolStripButton_add_Click", ex.Message, LogManager.LogMessageType.EXCEPTION);
             }
         }
+        /*
         private void toolStripDropDownButton_exchange_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             toolStripDropDownButton_exchange.Text = e.ClickedItem.Text;
@@ -305,6 +256,8 @@ namespace TwEX_API.Controls
         {
             toolStripDropDownButton_timespan.Text = e.ClickedItem.Tag.ToString();
         }
+        */
         #endregion
+
     }
 }

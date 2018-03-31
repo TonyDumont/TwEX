@@ -52,8 +52,8 @@
             this.toolStripMenuItem_fontIncrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.exchangeManagerControl = new TwEX_API.Controls.ExchangeManagerControl();
             this.toolStripDropDownButton_websites = new System.Windows.Forms.ToolStripDropDownButton();
+            this.exchangeManagerControl = new TwEX_API.Controls.ExchangeManagerControl();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -202,6 +202,7 @@
             this.toolStripMenuItem_EarnGG.Size = new System.Drawing.Size(189, 22);
             this.toolStripMenuItem_EarnGG.Tag = "EarnGGManager";
             this.toolStripMenuItem_EarnGG.Text = "EarnGG Manager";
+            this.toolStripMenuItem_EarnGG.Visible = false;
             // 
             // toolStripMenuItem_TradingView
             // 
@@ -254,15 +255,6 @@
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(6, 39);
             // 
-            // exchangeManagerControl
-            // 
-            this.exchangeManagerControl.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.exchangeManagerControl.Dock = System.Windows.Forms.DockStyle.Top;
-            this.exchangeManagerControl.Location = new System.Drawing.Point(0, 39);
-            this.exchangeManagerControl.Name = "exchangeManagerControl";
-            this.exchangeManagerControl.Size = new System.Drawing.Size(494, 254);
-            this.exchangeManagerControl.TabIndex = 6;
-            // 
             // toolStripDropDownButton_websites
             // 
             this.toolStripDropDownButton_websites.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -272,6 +264,15 @@
             this.toolStripDropDownButton_websites.Name = "toolStripDropDownButton_websites";
             this.toolStripDropDownButton_websites.Size = new System.Drawing.Size(45, 36);
             this.toolStripDropDownButton_websites.Text = "Websites";
+            // 
+            // exchangeManagerControl
+            // 
+            this.exchangeManagerControl.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.exchangeManagerControl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.exchangeManagerControl.Location = new System.Drawing.Point(0, 39);
+            this.exchangeManagerControl.Name = "exchangeManagerControl";
+            this.exchangeManagerControl.Size = new System.Drawing.Size(494, 254);
+            this.exchangeManagerControl.TabIndex = 6;
             // 
             // TwEXTraderControl
             // 

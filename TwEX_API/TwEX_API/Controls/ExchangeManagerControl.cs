@@ -82,14 +82,14 @@ namespace TwEX_API.Controls
 
                 Decimal orderBTC = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTCOrders));
                 Decimal orderUSD = CoinMarketCap.getUSDValue("BTC", orderBTC);
-                string orderString = "Orders : (" + orderUSD.ToString("C") + ") " + orderBTC.ToString("N8");
-                toolStripButton_OrderTotal.Text = orderString;
+                string orderString = "Orders : " + orderBTC.ToString("N8") + " (" + orderUSD.ToString("C") + ")";
+                toolStripButton_OrderTotals.Text = orderString;
 
                 Decimal totalBTC = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInBTC));
                 Decimal totalUSD = list.Sum(exchange => exchange.BalanceList.Sum(balance => balance.TotalInUSD));
-                toolStripButton_Totals.Text = "Totals : (" + totalUSD.ToString("C") + ") " + totalBTC.ToString("N8");
+                toolStripButton_Totals.Text = "Totals : " + totalBTC.ToString("N8") + " (" + totalUSD.ToString("C") + ")";
 
-                
+
                 // LIST
                 listView.SetObjects(list);
                 listView.Sort(column_TotalInBTC, SortOrder.Descending);
@@ -235,7 +235,14 @@ namespace TwEX_API.Controls
         public object aspect_TotalInBTCOrders(object rowObject)
         {
             ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
-            return exchange.TotalInBTCOrders.ToString("N8");
+            if (exchange.TotalInBTCOrders > 0)
+            {
+                return exchange.TotalInBTCOrders.ToString("N8");
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
         public object aspect_TotalInBTC(object rowObject)
         {

@@ -15,17 +15,12 @@ namespace TwEX_API.Controls
             InitializeComponent();
             earnGGManagerControl = this;
             InitializeColumns();
+            InitializeIcons();
         }
         private void EarnGGManagerControl_Load(object sender, EventArgs e)
         {
             //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
-
-            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
-            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
-            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
-            toolStripMenuItem_AddAccount.Image = ContentManager.GetIcon("AddWallet");
-            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
+            toggleView();
             UpdateUI(true);
         }
         private void InitializeColumns()
@@ -34,16 +29,27 @@ namespace TwEX_API.Controls
             column_balance.AspectGetter = new AspectGetterDelegate(aspect_balance);
             column_lastLogin.AspectGetter = new AspectGetterDelegate(aspect_lastLogin);
         }
+        private void InitializeIcons()
+        {
+            toolStripButton_toggleHeight.Image = ContentManager.GetIcon("Down");
+            toolStripDropDownButton_menu.Image = ContentManager.GetIcon("Options");
+
+            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            toolStripMenuItem_AddAccount.Image = ContentManager.GetIcon("AddWallet");
+            toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
+        }
         #endregion
 
         #region Delegates
         delegate bool UpdateUICallback(bool resize = false);
         public bool UpdateUI(bool resize = false)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 UpdateUICallback d = new UpdateUICallback(UpdateUI);
-                this.Invoke(d, new object[] { resize });
+                Invoke(d, new object[] { resize });
             }
             else
             {
@@ -74,19 +80,16 @@ namespace TwEX_API.Controls
             }
             else
             {
-                //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
-                //toolStrip.Font = ParentForm.Font;
-                //listView.Font = ParentForm.Font;
-
                 int rowHeight = listView.RowHeightEffective;
                 int padding = rowHeight / 2;
                 int iconSize = rowHeight - 2;
 
-                //int listWidth = 0;
                 int listHeight = 0;
 
                 column_email.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                column_email.Width += padding;
                 column_balance.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                column_balance.Width += padding;
                 /*
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
@@ -168,6 +171,22 @@ namespace TwEX_API.Controls
             PreferenceManager.toggleTimerPreference(type);
             UpdateUI();
         }
+        private void toolStripButton_toggleHeight_Click(object sender, EventArgs e)
+        {
+            PreferenceManager.EarnGGPreferences.collapsed = !PreferenceManager.EarnGGPreferences.collapsed;
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.EarnGG);
+            toggleView();
+            /*
+            if (PreferenceManager.EarnGGPreferences.collapsed)
+            {
+                
+            }
+            else
+            {
+                
+            }
+            */
+        }
         private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (e.ClickedItem.GetType() == typeof(ToolStripMenuItem))
@@ -219,6 +238,19 @@ namespace TwEX_API.Controls
                         break;
                 }
 
+            }
+        }
+        private void toggleView()
+        {
+            if (PreferenceManager.EarnGGPreferences.collapsed)
+            {
+                Height = toolStrip.Height;
+                toolStripButton_toggleHeight.Image = ContentManager.GetIcon("Up");
+            }
+            else
+            {
+                Height = toolStrip.Height + (toolStrip.Height * PreferenceManager.EarnGGPreferences.EarnGGAccounts.Count);
+                toolStripButton_toggleHeight.Image = ContentManager.GetIcon("Down");
             }
         }
         #endregion

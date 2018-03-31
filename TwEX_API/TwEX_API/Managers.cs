@@ -28,6 +28,7 @@ using static TwEX_API.Market.CoinMarketCap;
 using static TwEX_API.Market.CryptoCompare;
 using static TwEX_API.Market.TradingView;
 using static TwEX_API.PreferenceManager;
+using static TwEX_API.WalletManager;
 
 namespace TwEX_API
 {
@@ -55,10 +56,13 @@ namespace TwEX_API
             new ImageFile(){ Name = "BlockCypher", Url = "https://www.blockcypher.com/images/favicon-192x192.png" },
             new ImageFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
             new ImageFile(){ Name = "ChartView", Url = "https://cdn1.iconfinder.com/data/icons/web-design-seo/512/26-512.png" },
+            new ImageFile(){ Name = "ClipboardLoad", Url = "https://cdn4.iconfinder.com/data/icons/symbol-duo-common-1/32/paste-add-512.png" },
             new ImageFile(){ Name = "CoinCalculator", Url = "http://files.softicons.com/download/system-icons/web0.2ama-icons-by-chrfb/png/256x256/Calculator.png" },
             new ImageFile(){ Name = "CoinMarketCap", Url = "https://images-na.ssl-images-amazon.com/images/I/61G3KF2yniL.png" },
+            //new ImageFile(){ Name = "CoinNinja", Url = "https://siliconangle.com/blog/2014/12/18/last-minute-bitcoin-enthusiast-gift-guide-for-2014/" },
+            new ImageFile(){ Name = "CoinNinja", Url = "http://www.findmycoins.ninja/static/spoon/favicon.99b870f29bcd.png" },
             new ImageFile(){ Name = "CryptoCompare", Url = "https://www.cryptocompare.com/media/20562/favicon.png?v=2" },
-            new ImageFile(){ Name = "CustomView", Url ="http://cdn.mysitemyway.com/icons-watermarks/simple-black/bfa/bfa_table/bfa_table_simple-black_512x512.png" },
+            new ImageFile(){ Name = "CustomView", Url ="https://cdn0.iconfinder.com/data/icons/miscellaneous-5-black/64/gridview_big_grid_snap_eye-512.png" },
             new ImageFile(){ Name = "Deposit", Url = "https://cdn2.iconfinder.com/data/icons/inverticons-stroke-vol-2/32/money_finance_coins_economy_gold_cash_deposit_income-512.png" },
             new ImageFile(){ Name = "Down", Url = "https://cdn1.iconfinder.com/data/icons/basic-shaded-ui/256/down-512.png" },
             new ImageFile(){ Name = "EarnGG", Url = "https://earn.gg/img/favicon-32x32.png" },
@@ -71,6 +75,8 @@ namespace TwEX_API
             new ImageFile(){ Name = "Font", Url = "https://cdn0.iconfinder.com/data/icons/exempli_gratia/256/z_File_FONT.png" },
             new ImageFile(){ Name = "FontDecrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-smaller.png" },
             new ImageFile(){ Name = "FontIncrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png" },
+            //new ImageFile(){ Name = "Fork", Url = "https://i.pinimg.com/originals/89/38/85/893885b2204d5ec2af653f9ee90a6ec7.png" },
+            new ImageFile(){ Name = "Fork", Url = "https://www.crypto-economy.net/wp-content/uploads/2017/04/Bitcoin-Hard-Fork.png" },
             new ImageFile(){ Name = "Form", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new ImageFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
             new ImageFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
@@ -114,9 +120,11 @@ namespace TwEX_API
         public static List<Website> WebsiteUrlList = new List<Website>()
         {
             new Website() { Name = "AltCoinToday", Url = "https://altcointoday.com/", IconUrl = "https://altcointoday.com/wp-content/uploads/2016/05/Favicon.png", Category = "News"},
+            new Website() { Name = "CCN", Url = "https://www.ccn.com/", IconUrl = "https://248qms3nhmvl15d4ne1i4pxl-wpengine.netdna-ssl.com/wp-content/uploads/fbrfg/favicon-32x32.png?v=8j6Rkk2EwR", Category = "News"},
             new Website() { Name = "CoinDesk", Url = "https://www.coindesk.com/", IconUrl = "https://media.coindesk.com/uploads/2017/05/cropped-coindesk-new-favicon-32x32.png", Category = "News"},
             new Website() { Name = "CoinTelegraph", Url = "https://cointelegraph.com/", IconUrl = "https://cointelegraph.com/apple-icon-57x57.png?v1", Category = "News"},
             new Website() { Name = "Investopedia", Url = "https://www.investopedia.com/", IconUrl = "https://i.investopedia.com/public/img/apple-touch-icon.png", Category = "News"},
+            new Website() { Name = "NewsBTC", Url = "https://www.newsbtc.com/", IconUrl = "https://www.newsbtc.com/wp-content/themes/newsbtc2018/favicon.ico", Category = "News"},
             new Website() { Name = "WeissCryptocurrencyRatings", Url = "https://weisscryptocurrencyratings.com/", IconUrl = "https://weisscryptocurrencyratings.com/wp-content/themes/w17wcy/img/favicon.ico?1516656547", Category = "News"},
 
             new Website() { Name = "BitInfoCharts", Url = "https://bitinfocharts.com/", IconUrl = "https://bitinfocharts.com/favicon.png", Category = "Research"},
@@ -131,9 +139,10 @@ namespace TwEX_API
         {
             new ImageFile(){ Name = "Armory", Url = "https://pbs.twimg.com/profile_images/378800000443755723/365662ad79083b1cf8d1975741bb8d2b_400x400.png" },
             new ImageFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
+            new ImageFile(){ Name = "CounterWallet", Url = "https://cdn-images-1.medium.com/max/250/1*tmaViKNbk3IDgYJbFGcbEw.png" },
             new ImageFile(){ Name = "Electrum", Url = "http://icons.iconarchive.com/icons/alecive/flatwoken/512/Apps-Electrum-icon.png"},
-            new ImageFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" }
-
+            new ImageFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" },
+            new ImageFile(){ Name = "Ledger", Url = "http://bitcoin2140.com/wp-content/uploads/2017/08/wallets-icons-360x360-ledger@2x.png" }
         };
         #endregion
 
@@ -349,6 +358,13 @@ namespace TwEX_API
                 // CREATE FOLDER
                 Directory.CreateDirectory(path);
             }
+
+            if (SymbolIconList.Images.ContainsKey("USD"))
+            {
+                SymbolIconList.Images.RemoveByKey("USD");
+            }
+
+            SymbolIconList.Images.Add("USD", GetIcon("USDSymbol"));
             AddLogMessage(Name, "InitializeIconList", "Symbol Icon List Initialized " + SymbolIconList.Images.Count + " Icons", LogMessageType.LOG);
             return true;
         }
@@ -637,39 +653,54 @@ namespace TwEX_API
                     // set it up for later
                     try
                     {
-                        CryptoCompareCoin coin = CryptoComparePreferences.CoinList.FirstOrDefault(listItem => listItem.Name == symbol);
+                        //if (symbol != "USD")
+                        //{
+                            CryptoCompareCoin coin = CryptoComparePreferences.CoinList.FirstOrDefault(listItem => listItem.Name == symbol);
 
-                        if (coin != null)
-                        {
-                            if (coin.ImageUrl.Length > 0)
+                            if (coin != null)
                             {
-                                string url = "https://www.cryptocompare.com" + coin.ImageUrl;
-                                WebClient wc = new WebClient();
-                                byte[] bytes = wc.DownloadData(url);
-                                MemoryStream ms = new MemoryStream(bytes);
-                                Image img = Image.FromStream(ms);
-
-                                if (symbol.Contains("*"))
+                                if (coin.ImageUrl.Length > 0)
                                 {
-                                    symbol = symbol.Replace("*", "");
+                                    string url = "https://www.cryptocompare.com" + coin.ImageUrl;
+                                    WebClient wc = new WebClient();
+                                    byte[] bytes = wc.DownloadData(url);
+                                    MemoryStream ms = new MemoryStream(bytes);
+                                    Image img = Image.FromStream(ms);
+
+                                    if (symbol.Contains("*"))
+                                    {
+                                        symbol = symbol.Replace("*", "");
+                                    }
+
+                                    SymbolIconList.Images.Add(symbol.ToUpper(), img);
+                                    img.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+
+                                    return img;
                                 }
-
-                                SymbolIconList.Images.Add(symbol.ToUpper(), img);
-                                img.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
-
-                                return img;
+                                else
+                                {
+                                    image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+                                    return image;
+                                }
                             }
+
                             else
                             {
                                 image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
                                 return image;
                             }
-                        }
+                        //}
+                        /*
                         else
                         {
-                            image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
-                            return image;
+                            // SET USD
+                            Image usdIcon = GetIcon("USD");
+                            SymbolIconList.Images.Add("USD", usdIcon);
+                            usdIcon.Save(DataDirectory + "\\symbols\\" + "USD.png", ImageFormat.Png);
+                            return usdIcon;
                         }
+                        */
+
                     }
                     catch (Exception ex)
                     {
@@ -956,7 +987,7 @@ namespace TwEX_API
                     if (hasWalletType)
                     {
                         //LogManager.AddLogMessage(Name, "TimerTick", "Updating All Wallets", LogManager.LogMessageType.DEBUG);
-                        Task.Factory.StartNew(() => WalletManager.UpdateWallets());
+                        Task.Factory.StartNew(() => UpdateWallets());
                     }
                     /*
                     bool hasHistoryType = (preferences.TimerFlags & ExchangeTimerType.HISTORY) != ExchangeTimerType.NONE;
@@ -1718,6 +1749,8 @@ namespace TwEX_API
 
             try
             {
+                Task.Factory.StartNew(() => CoinMarketCap.updateTickers());
+
                 if (exchangeName.Length > 0)
                 {
                     Type type = getExchangeType(exchangeName);
@@ -1878,6 +1911,8 @@ namespace TwEX_API
             public Decimal TotalInBTC { get; set; } = 0;
             public Decimal TotalInBTCOrders { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
+
+            public bool IsFork { get; set; } = false;
         }
         public class ExchangeOrder
         {
@@ -1941,7 +1976,8 @@ namespace TwEX_API
             balance = 0,
             exchange = 1,
             symbol = 2,
-            orders = 3
+            orders = 3,
+            forks = 4
         }
 
         [Flags]
@@ -2130,7 +2166,7 @@ namespace TwEX_API
                     AddLogMessage(Name, "toolStripButton_Form_Click", "PREFERENCE NOT FOUND ADDING : " + formName + " | " + formText, LogMessageType.DEBUG);
                     UpdateFormPreferences(form, true);
                 }
-
+                //form.WindowState = FormWindowState.Normal;
                 form.LocationChanged += delegate { UpdateFormPreferences(form, true); };
                 form.SizeChanged += delegate { UpdateFormPreferences(form, true); };
                 form.FontChanged += delegate { UpdateFormPreferences(form, true); };
@@ -2298,7 +2334,8 @@ namespace TwEX_API
             if (arbitrageManagerControl != null)
             {
                 //arbitrageManagerControl.SetWatchlist();
-                arbitrageManagerControl.UpdateUI(resize);
+                //arbitrageManagerControl.UpdateUI(resize);
+                arbitrageManagerControl.SetWatchlist();
             }
             //UpdatePreferenceFile(PreferenceType.Arbitrage);
         }
@@ -2308,15 +2345,14 @@ namespace TwEX_API
             {
                 balanceManagerControl.UpdateUI(resize);
             }
-        }
+        }       
         public static void UpdateCoinMarketCap(bool resize = false)
         {
             if (coinMarketCapControl != null)
             {
                 coinMarketCapControl.UpdateUI(resize);
             }
-            //UpdatePreferenceFile(PreferenceType.CoinMarketCap);
-        }
+        }     
         public static void UpdateCryptoCompare(bool resize = false)
         {
             if (cryptoCompareControl != null)
@@ -2854,7 +2890,7 @@ namespace TwEX_API
                 string text = File.ReadAllText(iniPath);
                 string json = Decrypt(text);
                 ArbitragePreferences = JsonConvert.DeserializeObject<ArbitragePreference>(json);
-                AddLogMessage(Name, "LoadPreferences", ArbitragePreferences.ArbitrageWatchList.Count + " Arbitrage Preferences Loaded", LogMessageType.LOG);
+                AddLogMessage(Name, "LoadPreferences", ArbitragePreferences.WatchLists.Count + " Arbitrage Preferences Loaded", LogMessageType.LOG);
             }
             else
             {
@@ -2951,7 +2987,7 @@ namespace TwEX_API
                 string text = File.ReadAllText(iniPath);
                 string json = Decrypt(text);
                 TradingViewPreferences = JsonConvert.DeserializeObject<TradingViewPreference>(json);
-                AddLogMessage(Name, "LoadPreferences", TradingViewPreferences.WatchList.Count + " TradingView Watchlist Item(s)", LogMessageType.LOG);
+                //AddLogMessage(Name, "LoadPreferences", TradingViewPreferences.WatchList.Count + " TradingView Watchlist Item(s)", LogMessageType.LOG);
             }
             else
             {
@@ -3256,9 +3292,12 @@ namespace TwEX_API
         }
         #endregion
 
+        /*
         #region ArbitrageWatchList
-        public static void AddArbitrageWatchListItem(string symbol, string market)
+        
+        public static bool AddArbitrageWatchListItem(string symbol, string market)
         {
+            
             ExchangeTicker listItem = ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
             if (listItem == null)
             {
@@ -3267,23 +3306,28 @@ namespace TwEX_API
                     market = market,
                     symbol = symbol
                 };
-                //newItem.market = market;
-                //newItem.symbol = symbol;
                 ArbitragePreferences.ArbitrageWatchList.Add(newItem);
                 FormManager.UpdateArbitrageManager();
             }
+            
+            return true;
         }
-        public static void RemoveWatchlistItem(string market, string symbol)
+        
+        public static bool RemoveWatchlistItem(string market, string symbol)
         {
+            
             ExchangeTicker listItem = ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
             if (listItem != null)
             {
                 ArbitragePreferences.ArbitrageWatchList.Remove(listItem);
                 FormManager.UpdateArbitrageManager();
             }
+            
+            return true;
         }
         public static void MoveWatchlistItem(string market, string symbol, string direction)
         {
+            
             //ExchangePrice listItem = symbolPriceLists.Find(item => item.market == market && item.symbol == symbol);
             int index = ArbitragePreferences.ArbitrageWatchList.FindIndex(item => item.market == market && item.symbol == symbol);
 
@@ -3307,9 +3351,11 @@ namespace TwEX_API
                 }
                 FormManager.UpdateArbitrageManager();
             }
-
+            
         }
+        
         #endregion
+        */
 
         #region SymbolWatchList
         public static void AddSymbolToWatchlist(string symbol)
@@ -3585,6 +3631,8 @@ namespace TwEX_API
                         Red = Color.DarkRed,
                         Yellow = Color.DarkGoldenrod,
                         FormBackground = ColorTranslator.FromHtml("#333333"),
+                        //ListBackgroundColor = ColorTranslator.FromHtml("#d3d3d3"),
+                        ListBackgroundColor = ColorTranslator.FromHtml("#333333"),
                         AlternateBackground = ColorTranslator.FromHtml("#3F3F3F"),
                         Text = ColorTranslator.FromHtml("#eaeaea"),
                         HeaderBackground = ColorTranslator.FromHtml("#444444"),
@@ -3649,6 +3697,7 @@ namespace TwEX_API
                         //Red = Color.DarkRed,
                         //Yellow = Color.DarkGoldenrod,
                         FormBackground = ColorTranslator.FromHtml("#EAEAE1"),
+                        ListBackgroundColor = ColorTranslator.FromHtml("#EAEAE1"),
                         Text = ColorTranslator.FromHtml("#1E3F16"),
                         HeaderBackground = ColorTranslator.FromHtml("#D4D5C7"),
                         HeaderText = ColorTranslator.FromHtml("#565550"),
@@ -3713,6 +3762,7 @@ namespace TwEX_API
         }
         public static void SetControlTheme(Control control, ThemePreference theme, Form form)
         {
+            //control.Visible = false;
             control.BackColor = theme.FormBackground;
             control.ForeColor = theme.Text;
             control.Font = GetFormFont(form);
@@ -3730,11 +3780,12 @@ namespace TwEX_API
             if (control is FastObjectListView)
             {
                 FastObjectListView listView = control as FastObjectListView;
+                listView.BackgroundImage = null;
                 listView.GridLines = preferences.ShowGridLines;
                 listView.UseAlternatingBackColors = preferences.UseAlternatingBackColors;
                 listView.AlternateRowBackColor = theme.AlternateBackground;
 
-                listView.BackColor = theme.FormBackground;
+                listView.BackColor = theme.ListBackgroundColor;
                 listView.BackgroundImageTiled = true;
                 listView.HeaderUsesThemes = false;
                 var headerstyle = new HeaderFormatStyle();
@@ -3760,6 +3811,7 @@ namespace TwEX_API
                     }
                 }
             }
+            //control.Visible = true;
             // CHILDREN
             foreach (Control subC in control.Controls)
             {
@@ -3843,13 +3895,92 @@ namespace TwEX_API
         // CUSTOM PREFERENCES
         public class ArbitragePreference
         {
-            public bool ShowCharts { get; set; } = true;
-            public int minChartWidth = 300;
-            public int minChartHeight = 265;
-            public int maxListCount = 8;
+            //public bool ShowCharts { get; set; } = true;
+            //public bool ShowLists { get; set; } = true;
+            public int minChartWidth { get; set; } = 300;
+            public int minChartHeight { get; set; } = 265;
+            public int maxListCount { get; set; } = 8;
+            public string market { get; set; } = "USD";
+            public CryptoCompareChartPeriod ChartPeriod { get; set; } = CryptoCompareChartPeriod.Day_1D;
+            /*
             public List<ExchangeTicker> ArbitrageWatchList { get; set; } = new List<ExchangeTicker>();
+            public List<ExchangeTicker> GetWatchList()
+            {
+                List<ExchangeTicker> list = new List<ExchangeTicker>();
+                foreach(ExchangeTicker ticker in ArbitrageWatchList)
+                {
+                    CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
+                    if (priceItem != null)
+                    {
+                        ticker.last = priceItem.price_btc;
+                    }
+                    list.Add(ticker);
+                }
+
+                return list.OrderByDescending(item => item.last).ToList();
+            }
+            */
+            public string CurrentWatchList { get; set; } = string.Empty;
+            //public ArbitrageWatchList currentWatchList { get; set; } = new ArbitrageWatchList();
+            public List<ArbitrageWatchList> WatchLists { get; set; } = new List<ArbitrageWatchList>();
+            public ArbitrageWatchList GetCurrentWatchList()
+            {
+                //List<ExchangeTicker> list = new List<ExchangeTicker>();
+                ArbitrageWatchList watchlist = new ArbitrageWatchList();
+
+                if (CurrentWatchList.Length > 0)
+                {
+                    watchlist = WatchLists.FirstOrDefault(item => item.Name == CurrentWatchList);
+                    if (watchlist != null)
+                    {
+                        //list = listItem.Items;
+                        foreach (ExchangeTicker ticker in watchlist.Items)
+                        {
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
+                            if (priceItem != null)
+                            {
+                                ticker.last = priceItem.price_btc;
+                            }
+                            //list.Add(ticker);
+                        }
+                    }
+                }
+                //return list.OrderByDescending(item => item.last).ToList();
+                return watchlist;
+            }
+            /*
+            public List<ExchangeTicker> GetCurrentWatchList()
+            {
+                List<ExchangeTicker> list = new List<ExchangeTicker>();
+                if (CurrentWatchList.Length > 0)
+                {
+                    ArbitrageWatchList listItem = WatchLists.FirstOrDefault(item => item.Name == CurrentWatchList);
+                    if (listItem != null)
+                    {
+                        //list = listItem.Items;
+                        foreach (ExchangeTicker ticker in listItem.Items)
+                        {
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
+                            if (priceItem != null)
+                            {
+                                ticker.last = priceItem.price_btc;
+                            }
+                            list.Add(ticker);
+                        }
+                    }
+                }
+                return list.OrderByDescending(item => item.last).ToList();
+            }
+            */
         }
         
+        public class ArbitrageWatchList
+        {
+            public string Name { get; set; } = "";
+            public bool ShowCharts { get; set; } = true;
+            public bool ShowLists { get; set; } = true;
+            public List<ExchangeTicker> Items { get; set; } = new List<ExchangeTicker>();
+        }
         public class CoinMarketCapPreference
         {
             public List<CoinMarketCapTicker> Tickers = new List<CoinMarketCapTicker>();
@@ -3867,6 +3998,7 @@ namespace TwEX_API
         }
         public class EarnGGPreference
         {
+            public bool collapsed { get; set; } = true;
             public List<EarnGG.EarnGGAccount> EarnGGAccounts { get; set; } = new List<EarnGG.EarnGGAccount>();
         }
         public class ExchangePreference
@@ -3891,6 +4023,7 @@ namespace TwEX_API
 
             //public Color FormBackground { get; set; } = SystemColors.Control;
             public Color FormBackground { get; set; } = SystemColors.Window;
+            public Color ListBackgroundColor { get; set; } = SystemColors.Window;
             public Color AlternateBackground { get; set; } = SystemColors.Control;
             public string BackgroundImageName { get; set; } = String.Empty;
             //public Image BackgroundImage { get; set; } = null;
@@ -3913,30 +4046,32 @@ namespace TwEX_API
         }
         public class TradingViewPreference
         {
-            //public TradingViewAdvancedChartParameters parameters { get; set; } = new TradingViewAdvancedChartParameters();
             public TradingViewAdvancedChartParameters AdvancedChartParameters { get; set; } = new TradingViewAdvancedChartParameters();
             public TradingViewCryptocurrencyMarketParameters CryptocurrencyMarketParameters { get; set; } = new TradingViewCryptocurrencyMarketParameters();
             public TradingViewSymbolOverviewParameters SymbolOverviewParameters { get; set; } = new TradingViewSymbolOverviewParameters();
 
-            //public TradingViewAdvancedChartParameters CustomParameters { get; set; } = new TradingViewAdvancedChartParameters();
-            public List<ExchangeTicker> WatchList { get; set; } = new List<ExchangeTicker>();
-            /*
-            public List<ExchangeTicker> WatchList { get; set; } = new List<ExchangeTicker>()
+            public string CurrentWatchList { get; set; } = string.Empty;
+            public List<TradingViewSymbolList> WatchLists { get; set; } = new List<TradingViewSymbolList>();
+            //public List<ExchangeTicker> WatchList { get; set; } = new List<ExchangeTicker>();
+
+            public List<TradingViewSymbolOverview> GetCurrentWatchList()
             {
-                new ExchangeTicker() { symbol="BTC", market="USDT", exchange="POLONIEX" },
-                new ExchangeTicker() { symbol="BCH", market="USDT", exchange="POLONIEX" },
-                new ExchangeTicker() { symbol="DASH", market="USDT", exchange="POLONIEX" },
-                new ExchangeTicker() { symbol="ETH", market="USDT", exchange="POLONIEX" },
-                new ExchangeTicker() { symbol="ZEC", market="USDT", exchange="POLONIEX" },
-                new ExchangeTicker() { symbol="XMR", market="USDT", exchange="POLONIEX" },
-                new ExchangeTicker() { symbol="LTC", market="USDT", exchange="POLONIEX" },
-                new ExchangeTicker() { symbol="ETC", market="USDT", exchange="POLONIEX" }
-            };
-            */
+                List<TradingViewSymbolOverview> list = new List<TradingViewSymbolOverview>();
+                if (CurrentWatchList.Length > 0)
+                {
+                    TradingViewSymbolList symbolList = WatchLists.FirstOrDefault(item => item.Name == CurrentWatchList);
+                    if (symbolList != null)
+                    {
+                        list = symbolList.Items;
+                    }
+                }
+                return list;
+            }
         }
         public class WalletPreference
         {
-            public List<WalletManager.WalletBalance> Wallets { get; set; } = new List<WalletManager.WalletBalance>();
+            public List<Fork> Forks { get; set; } = new List<Fork>();
+            public List<WalletBalance> Wallets { get; set; } = new List<WalletBalance>();
         }
 
         public class TypeListItem
@@ -4008,23 +4143,49 @@ namespace TwEX_API
         #endregion
 
         #region Getters
-            /*
-        public static Bitmap GetWalletIcon(string walletName)
+        /*
+    public static Bitmap GetWalletIcon(string walletName)
+    {
+        switch (walletName)
         {
-            switch (walletName)
-            {
-                case "BlockIO":
-                    return ContentManager.GetIconByUrl(ContentManager.BlockIOIconUrl);
+            case "BlockIO":
+                return ContentManager.GetIconByUrl(ContentManager.BlockIOIconUrl);
 
-                case "Exodus":
-                    //return ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.BalanceIconUrl), 32, 32);
-                    return ContentManager.GetIconByUrl(ContentManager.ExodusIconUrl);
+            case "Exodus":
+                //return ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.BalanceIconUrl), 32, 32);
+                return ContentManager.GetIconByUrl(ContentManager.ExodusIconUrl);
 
-                default:
-                    return new Bitmap(ContentManager.GetIcon("WalletManager"));
-            }
+            default:
+                return new Bitmap(ContentManager.GetIcon("WalletManager"));
         }
-        */
+    }
+    */
+        public static List<ExchangeBalance> GetForkBalances()
+        {
+            List<ExchangeBalance> list = new List<ExchangeBalance>();
+
+            foreach (Fork fork in WalletPreferences.Forks)
+            {
+                //if (fork.balance.expected > 0)
+                //{
+                WalletBalance wallet = WalletPreferences.Wallets.FirstOrDefault(item => item.Name == fork.id);
+
+                ExchangeBalance balance = new ExchangeBalance()
+                {
+                    Balance = Convert.ToDecimal(fork.balance.expected),
+                    Exchange = wallet.WalletName,
+                    Name = fork.id,
+                    Symbol = fork.ticker.ToUpper(),
+                    TotalInBTC = fork.TotalInBTC,
+                    TotalInUSD = fork.TotalInUSD,
+                    IsFork = true
+                };
+                list.Add(balance);
+                //}
+            }
+
+            return list;
+        }
         public static List<ExchangeBalance> GetWalletBalances()
         {
             List<ExchangeBalance> list = new List<ExchangeBalance>();
@@ -4037,6 +4198,7 @@ namespace TwEX_API
                     {
                         Balance = wallet.Balance,
                         Exchange = wallet.WalletName,
+                        Name = wallet.Name,
                         Symbol = wallet.Symbol,
                         TotalInBTC = wallet.TotalInBTC,
                         TotalInUSD = wallet.TotalInUSD
@@ -4048,7 +4210,7 @@ namespace TwEX_API
             return list;
         }
         #endregion
-        
+
         #region Updaters
         /*
         public static void UpdateUI()
@@ -4059,15 +4221,29 @@ namespace TwEX_API
             }
         }
         */
+        public static bool UpdateForks()
+        {
+            foreach (Fork fork in WalletPreferences.Forks)
+            {
+                fork.TotalInBTC = GetMarketCapBTCAmount(fork.ticker.ToUpper(), Convert.ToDecimal(fork.balance.expected));
+                fork.TotalInUSD = GetMarketCapUSDAmount(fork.ticker.ToUpper(), Convert.ToDecimal(fork.balance.expected));
+
+                //Thread.Sleep(2000);
+            }
+            UpdatePreferenceFile(PreferenceType.Wallet);
+            FormManager.UpdateBalanceManager();
+            return true;
+        }
         public static bool UpdateWallets()
         {
             foreach (WalletBalance balance in WalletPreferences.Wallets)
             {
                 if (balance.Api.Length > 0)
                 {
-                    switch (balance.WalletName)
+                    switch (balance.Api)
                     {
                         case "BlockIO":
+                            //AddLogMessage(Name, "updateWallets", "BlockIO : " + balance.Symbol, LogMessageType.DEBUG);
                             balance.Balance = BlockIO.getBalance(balance.Api);
                             /*
                             if (balance.Symbol != "BTC")
@@ -4081,11 +4257,34 @@ namespace TwEX_API
                             */
                             balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
                             balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
-                            break;                     
+                            break;
+
+                        case "BlockCypher":
+                            //AddLogMessage(Name, "updateWallets", "BlockCypher : " + balance.Symbol, LogMessageType.DEBUG);
+                            if (balance.Symbol.ToUpper() == "BTC" || balance.Symbol.ToUpper() == "LTC" || balance.Symbol.ToUpper() == "DOGE" || balance.Symbol.ToUpper() == "ETH" || balance.Symbol.ToUpper() == "DASH")
+                            {
+                                balance.Balance = BlockCypher.getBalance(balance.Symbol, balance.Address);
+                                //AddLogMessage(Name, "UpdateWallets", "balance=" + balance.Balance, LogMessageType.DEBUG);
+                                balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
+                                balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
+                            }
+                            break;
+
+                        case "BlockTrail":
+                            //AddLogMessage(Name, "updateWallets", "BlockTrail : " + balance.Symbol, LogMessageType.DEBUG);
+                            if (balance.Symbol.ToUpper() == "BTC" || balance.Symbol.ToUpper() == "BCC" || balance.Symbol.ToUpper() == "BCH")
+                            {
+                                balance.Balance = BlockTrail.getBalance(balance.Symbol, balance.Address);
+                                //AddLogMessage(Name, "UpdateWallets", "balance=" + balance.Balance, LogMessageType.DEBUG);
+                                balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
+                                balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
+                            }
+                            break;
 
                         default:
-                            //AddLogMessage(Name, "updateWallets", balance.WalletName + " Is GENERIC wallet", LogMessageType.DEBUG);
+                            //AddLogMessage(Name, "updateWallets", balance.Api + " API NOT DEFINED", LogMessageType.DEBUG);
                             // GENERIC - USE BlockCypher for BTC / LTC / DOGE
+                            /*
                             if (balance.Symbol.ToUpper() == "BTC" || balance.Symbol.ToUpper() == "LTC" || balance.Symbol.ToUpper() == "DOGE")
                             {              
                                 balance.Balance = BlockCypher.getBalance(balance.Symbol, balance.Address);
@@ -4093,7 +4292,7 @@ namespace TwEX_API
                                 balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
                                 balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
                             }
-
+                            */
                             break;
                     }
                     Thread.Sleep(2000);
@@ -4113,13 +4312,43 @@ namespace TwEX_API
         #endregion
 
         #region DataModels
+        public class ForkBalance
+        {
+            public float expected { get; set; }
+            public object actual { get; set; }
+        }
+
+        public class Fork
+        {
+            public string id { get; set; }
+            public string name { get; set; }
+            public string ticker { get; set; }
+            public string addr { get; set; }
+            public string addr_explorer_url { get; set; }
+            public ForkBalance balance { get; set; }
+            public List<object> utxo { get; set; }
+
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+        }
+
+        public class ForkImport
+        {
+            public string addr { get; set; }
+            public bool error { get; set; }
+            public int balance { get; set; }
+            public List<Fork> forks { get; set; }
+        }
+
         public class WalletBalance
         {
             public string Api { get; set; }
             public string Symbol { get; set; }
             public string Name { get; set; }
+            public string CoinName { get; set; }
             public string WalletName { get; set; }
             public string Address { get; set; }
+            public bool IsForkBalance { get; set; } = false;
             public Decimal Balance { get; set; } = 0;
             public Decimal TotalInBTC { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;

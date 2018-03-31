@@ -20,13 +20,22 @@ namespace TwEX_API.Wallet
         public static decimal getBalance(string symbol, string address)
         {
             try
-            {              
+            {
                 var request = new RestRequest("/" + symbol.ToLower() + "/main/addrs/" + address + "/balance", Method.GET);
                 var response = client.Execute(request);
                 //LogManager.AddLogMessage(Name, "getTicker", "response.Content=" + response.Content, LogManager.LogMessageType.OTHER);
                 var jsonObject = JObject.Parse(response.Content);
                 AddressBalanceEndpoint balance = jsonObject.ToObject<AddressBalanceEndpoint>();
-                Decimal value = balance.balance / 100000000;
+                Decimal value = 0;
+
+                if (symbol != "ETH")
+                {
+                    value = balance.balance / 100000000;
+                }
+                else
+                {
+                    value = balance.balance / 1000000000000000000;
+                }
                 //LogManager.AddLogMessage(Name, "getTicker", "balance=" + balance.balance + " | " + symbol + " | " + value + " | " + address, LogManager.LogMessageType.OTHER);
                 return value;
             }

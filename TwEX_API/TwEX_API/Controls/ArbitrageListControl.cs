@@ -19,14 +19,25 @@ namespace TwEX_API.Controls
         public ArbitrageListControl()
         {
             InitializeComponent();
+            InitializeColumns();
+            
         }
         private void ArbitrageListControl_Load(object sender, EventArgs e)
         {
-            column_icon.ImageGetter = new ImageGetterDelegate(aspect_icon);
+            InitializeIcons();
+        }
+        private void InitializeColumns()
+        {
             column_price.AspectGetter = new AspectGetterDelegate(aspect_price);
+            column_icon.ImageGetter = new ImageGetterDelegate(aspect_icon);
+        }
+        private void InitializeIcons()
+        {
+            
             toolStripLabel_btc.Image = ContentManager.GetSymbolIcon("BTC");
             toolStripLabel_usd.Image = ContentManager.GetSymbolIcon("USDT");
             toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
+            
         }
         #endregion
 

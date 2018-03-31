@@ -61,6 +61,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                /*
                 try
                 {
                     if (symbol.Length > 0 && market.Length > 0)
@@ -86,6 +87,7 @@ namespace TwEX_API.Controls
                 {
                     //LogManager.AddLogMessage(Name, "UpdateUI", symbol + " | " + market + " | " + ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
+                */
             }
         }
 
@@ -217,6 +219,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                /*
                 Visible = false;
                 //toolStrip.Font = ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 Width = PreferenceManager.ArbitragePreferences.minChartWidth;
@@ -242,6 +245,7 @@ namespace TwEX_API.Controls
                 ClientSize = new Size(Width, newHeight);
                 Size = new Size(Width, newHeight);
                 Visible = true;
+                */
             }
         }
 
@@ -318,6 +322,7 @@ namespace TwEX_API.Controls
         #region EventHandlers
         private void contextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
+            /*
             ToolStripItem item = e.ClickedItem;
 
             switch (item.Tag.ToString())
@@ -343,7 +348,7 @@ namespace TwEX_API.Controls
                     //icon = Properties.Resources.CardRoom_Unknown;
                     break;
             }
-
+            */
         }
         #endregion
     }

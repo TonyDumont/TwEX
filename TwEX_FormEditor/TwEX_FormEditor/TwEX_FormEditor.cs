@@ -54,7 +54,7 @@ namespace TwEX_FormEditor
                 //LogManager.AddLogMessage(Name, "toolStripButton_Form_Click", "NOT FOUND ADDING : " + form.Name + " | " + form.Location);
                 UpdateFormPreferences(this, true);
             }
-
+            
             LocationChanged += delegate { UpdateFormPreferences(this, true); };
             SizeChanged += delegate { UpdateFormPreferences(this, true); };
             FontChanged += delegate { UpdateFormPreferences(this, true); };
@@ -78,6 +78,8 @@ namespace TwEX_FormEditor
             //FormManager.UpdateMainControl(true);
             twEXTraderControl.UpdateUI(true);
             //FormManager.UpdateControlUIs(true);
+            WindowState = FormWindowState.Normal;
+            Visible = true;
         }
         #endregion
     }

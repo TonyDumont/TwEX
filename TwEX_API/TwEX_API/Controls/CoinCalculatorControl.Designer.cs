@@ -37,6 +37,7 @@
             this.label_symbol = new System.Windows.Forms.Label();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_symbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_price = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_value = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pictureBox_usd = new System.Windows.Forms.PictureBox();
             this.pictureBox_symbol = new System.Windows.Forms.PictureBox();
@@ -49,13 +50,13 @@
             this.toolStripMenuItem_fontDecrease = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_removeAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton_AddSymbol = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSpringTextBox_symbol = new TwEX_API.ToolStripSpringTextBox();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_symbol = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_value = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton_AddSymbol = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSpringTextBox_symbol = new TwEX_API.ToolStripSpringTextBox();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_usd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_symbol)).BeginInit();
@@ -132,8 +133,8 @@
             524288});
             this.numericUpDown_symbol.Location = new System.Drawing.Point(3, 29);
             this.numericUpDown_symbol.Maximum = new decimal(new int[] {
-            1000000,
-            0,
+            1215752192,
+            23,
             0,
             0});
             this.numericUpDown_symbol.Name = "numericUpDown_symbol";
@@ -155,10 +156,12 @@
             // listView
             // 
             this.listView.AllColumns.Add(this.column_symbol);
+            this.listView.AllColumns.Add(this.column_price);
             this.listView.AllColumns.Add(this.column_value);
             this.listView.CellEditUseWholeCell = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.column_symbol,
+            this.column_price,
             this.column_value});
             this.tableLayoutPanel.SetColumnSpan(this.listView, 3);
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
@@ -187,6 +190,11 @@
             this.column_symbol.AspectName = "symbol";
             this.column_symbol.Text = "Symbol";
             this.column_symbol.Width = 50;
+            // 
+            // column_price
+            // 
+            this.column_price.Text = "Price";
+            this.column_price.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // column_value
             // 
@@ -294,36 +302,6 @@
             this.toolStripMenuItem_removeAll.Tag = "RemoveAll";
             this.toolStripMenuItem_removeAll.Text = "Remove All Symbols";
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButton_AddSymbol
-            // 
-            this.toolStripButton_AddSymbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_AddSymbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_AddSymbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_AddSymbol.Image")));
-            this.toolStripButton_AddSymbol.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_AddSymbol.Name = "toolStripButton_AddSymbol";
-            this.toolStripButton_AddSymbol.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_AddSymbol.Text = "Add Symbol";
-            this.toolStripButton_AddSymbol.Click += new System.EventHandler(this.toolStripButton_AddSymbol_Click);
-            // 
-            // toolStripSpringTextBox_symbol
-            // 
-            this.toolStripSpringTextBox_symbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSpringTextBox_symbol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.toolStripSpringTextBox_symbol.Name = "toolStripSpringTextBox_symbol";
-            this.toolStripSpringTextBox_symbol.Size = new System.Drawing.Size(254, 25);
-            this.toolStripSpringTextBox_symbol.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -342,6 +320,36 @@
             this.toolStripMenuItem_value.Size = new System.Drawing.Size(182, 22);
             this.toolStripMenuItem_value.Tag = "SortValue";
             this.toolStripMenuItem_value.Text = "Sort By Value";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButton_AddSymbol
+            // 
+            this.toolStripButton_AddSymbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_AddSymbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_AddSymbol.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_AddSymbol.Image")));
+            this.toolStripButton_AddSymbol.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_AddSymbol.Name = "toolStripButton_AddSymbol";
+            this.toolStripButton_AddSymbol.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_AddSymbol.Text = "Add Symbol";
+            this.toolStripButton_AddSymbol.Click += new System.EventHandler(this.toolStripButton_AddSymbol_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSpringTextBox_symbol
+            // 
+            this.toolStripSpringTextBox_symbol.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSpringTextBox_symbol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.toolStripSpringTextBox_symbol.Name = "toolStripSpringTextBox_symbol";
+            this.toolStripSpringTextBox_symbol.Size = new System.Drawing.Size(254, 25);
+            this.toolStripSpringTextBox_symbol.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // CoinCalculatorControl
             // 
@@ -394,5 +402,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_symbol;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_value;
+        private BrightIdeasSoftware.OLVColumn column_price;
     }
 }

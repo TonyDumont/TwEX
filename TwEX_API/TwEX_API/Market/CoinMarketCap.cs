@@ -207,6 +207,8 @@ namespace TwEX_API.Market
             {
                 //PreferenceManager.CoinMarketCapPreferences.Tickers = new BlockingCollection<CoinMarketCapTicker>(new ConcurrentQueue<CoinMarketCapTicker>(getTickerList(0, 5000)));
                 PreferenceManager.CoinMarketCapPreferences.Tickers = getTickerList(0, 5000);
+                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.CoinMarketCap);
+                FormManager.UpdateCoinMarketCap();
                 //PreferenceManager.preferences.CoinMarketCapTickers = tickers;
                 //PreferenceManager.UpdatePreferencesFile();
 

@@ -24,8 +24,7 @@ namespace TwEX_API.Controls
             foreach(var item in list)
             {
                 //LogManager.AddLogMessage(thisClassName, "TradingViewWidgetEditorControl_Load", item.Key + " | " + item.Value, LogManager.LogMessageType.DEBUG);
-                ToolStripMenuItem menuItem = new ToolStripMenuItem();
-                menuItem.Text = item.Key.ToString();
+                ToolStripMenuItem menuItem = new ToolStripMenuItem() { Text = item.Key.ToString() };
                 toolStripDropDownButton_widget.DropDownItems.Add(menuItem);
             }
         }
@@ -34,6 +33,7 @@ namespace TwEX_API.Controls
         #region Handlers
         private void toolStripDropDownButton_widget_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
+            /*
             string widgetName = e.ClickedItem.Text;
             toolStripDropDownButton_widget.Text = widgetName;
             widgetType = (TradingViewWidgetType)Enum.Parse(typeof(TradingViewWidgetType), widgetName);
@@ -87,14 +87,12 @@ namespace TwEX_API.Controls
                     TradingViewMarketOverviewTabItem methItem = new TradingViewMarketOverviewTabItem() { s = "COINBASE:ETHUSD", d = "eth desc" };
                     TradingViewMarketOverviewTabItem mltcItem = new TradingViewMarketOverviewTabItem() { s = "COINBASE:LTCUSD", d = "ltc desc" };
 
-                    TradingViewMarketOverviewTab mtab1 = new TradingViewMarketOverviewTab();
-                    mtab1.title = "tab1";
+                    TradingViewMarketOverviewTab mtab1 = new TradingViewMarketOverviewTab() { title = "tab1" };
                     mtab1.symbols.Add(mbtcItem);
                     mtab1.symbols.Add(methItem);
                     mtab1.symbols.Add(mltcItem);
 
-                    TradingViewMarketOverviewTab mtab2 = new TradingViewMarketOverviewTab();
-                    mtab2.title = "tab2";
+                    TradingViewMarketOverviewTab mtab2 = new TradingViewMarketOverviewTab() { title = "tab2" };
                     mtab2.symbols.Add(mbtcItem);
                     mtab2.symbols.Add(methItem);
                     mtab2.symbols.Add(mltcItem);
@@ -111,14 +109,12 @@ namespace TwEX_API.Controls
                     TradingViewMarketQuotesTabItem ethItem = new TradingViewMarketQuotesTabItem() { name = "COINBASE:ETHUSD", displayName = "eth desc" };
                     TradingViewMarketQuotesTabItem ltcItem = new TradingViewMarketQuotesTabItem() { name = "COINBASE:LTCUSD", displayName = "ltc desc" };
 
-                    TradingViewMarketQuotesTab tab1 = new TradingViewMarketQuotesTab();
-                    tab1.name = "tab1";
+                    TradingViewMarketQuotesTab tab1 = new TradingViewMarketQuotesTab() { name = "tab1" };
                     tab1.symbols.Add(btcItem);
                     tab1.symbols.Add(ethItem);
                     tab1.symbols.Add(ltcItem);
 
-                    TradingViewMarketQuotesTab tab2 = new TradingViewMarketQuotesTab();
-                    tab2.name = "tab2";
+                    TradingViewMarketQuotesTab tab2 = new TradingViewMarketQuotesTab() { name = "tab2" };
                     tab2.symbols.Add(btcItem);
                     tab2.symbols.Add(ethItem);
                     tab2.symbols.Add(ltcItem);
@@ -159,6 +155,7 @@ namespace TwEX_API.Controls
                     LogManager.AddLogMessage(Name, "toolStripDropDownButton_widget_DropDownItemClicked", "type NOT DEFINED : " + widgetType, LogManager.LogMessageType.DEBUG);
                     break;
             }
+            */
         }
         #endregion Handlers
     }

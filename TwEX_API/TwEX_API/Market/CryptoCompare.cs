@@ -310,6 +310,10 @@ namespace TwEX_API.Market
             public CryptoCompareTheme_Chart Chart { get; set; } = new CryptoCompareTheme_Chart();
             public CryptoCompareTheme_Trend Trend { get; set; } = new CryptoCompareTheme_Trend();
             public CryptoCompareTheme_Conversion Conversion { get; set; } = new CryptoCompareTheme_Conversion();
+            public CryptoCompareChartTheme ShallowCopy()
+            {
+                return (CryptoCompareChartTheme)MemberwiseClone();
+            }
         }
         // THEME CATEGORIES
         public class CryptoCompareTheme_General

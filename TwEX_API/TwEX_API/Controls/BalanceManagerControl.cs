@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static TwEX_API.ExchangeManager;
 using static TwEX_API.LogManager;
+using static TwEX_API.WalletManager;
 
 namespace TwEX_API.Controls
 {
@@ -31,7 +32,7 @@ namespace TwEX_API.Controls
             toolStripRadioButton_balance.Checked = true;
             SetTabButton();
             
-            UpdateUI(true);
+            //UpdateUI(true);
         }
         private void InitializeIcons()
         {
@@ -43,6 +44,7 @@ namespace TwEX_API.Controls
             toolStripRadioButton_exchange.Image = ContentManager.GetIcon("Exchange");
             toolStripRadioButton_symbol.Image = ContentManager.GetIcon("Symbol");
             toolStripRadioButton_orders.Image = ContentManager.GetIcon("Orders");
+            toolStripRadioButton_fork.Image = ContentManager.GetIcon("Fork");
         }
         private void InitializeViews()
         {
@@ -51,53 +53,84 @@ namespace TwEX_API.Controls
             foreach (var item in values)
             {
                 //LogManager.AddLogMessage(Name, "InitializeViews", item.ToString() + " | " + item.GetHashCode(), LogManager.LogMessageType.DEBUG);
-                if (item.ToString() != "orders")
+                switch (item)
                 {
-                    TabPage tabPage = new TabPage()
-                    {
-                        Name = item.ToString(),
-                        Text = item.ToString(),
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0)
-                    };
+                    case BalanceViewType.balance:
+                    case BalanceViewType.exchange:
+                    case BalanceViewType.symbol:
+                        TabPage tabPage = new TabPage()
+                        {
+                            Name = item.ToString(),
+                            Text = item.ToString(),
+                            Margin = new Padding(0, 0, 0, 0),
+                            Padding = new Padding(0, 0, 0, 0)
+                        };
 
-                    BalanceViewControl view = new BalanceViewControl()
-                    //BalanceDataViewControl view = new BalanceDataViewControl()
-                    {
-                        Dock = DockStyle.Fill,
-                        view = item,
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0),
-                        manager = this
-                    };
-                    view.SetView();
-                    tabPage.Controls.Add(view);
-                    tabControl.TabPages.Add(tabPage);
-                }
-                else
-                {
-                    TabPage tabPage = new TabPage()
-                    {
-                        Name = item.ToString(),
-                        Text = item.ToString(),
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0)
-                    };
+                        BalanceViewControl view = new BalanceViewControl()
+                        //BalanceDataViewControl view = new BalanceDataViewControl()
+                        {
+                            Dock = DockStyle.Fill,
+                            view = item,
+                            Margin = new Padding(0, 0, 0, 0),
+                            Padding = new Padding(0, 0, 0, 0),
+                            manager = this
+                        };
+                        view.SetView();
+                        tabPage.Controls.Add(view);
+                        tabControl.TabPages.Add(tabPage);
+                        break;
 
-                    OrderViewControl view = new OrderViewControl()
-                    {
-                        Dock = DockStyle.Fill,
-                        //view = item,
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0),
-                        //manager = this
-                    };
-                    //view.SetView();
-                    view.UpdateUI(true);
-                    tabPage.Controls.Add(view);
-                    tabControl.TabPages.Add(tabPage);
-                    
+                    case BalanceViewType.orders:
+                        TabPage orderTabPage = new TabPage()
+                        {
+                            Name = item.ToString(),
+                            Text = item.ToString(),
+                            Margin = new Padding(0, 0, 0, 0),
+                            Padding = new Padding(0, 0, 0, 0)
+                        };
+
+                        OrderViewControl orderview = new OrderViewControl()
+                        {
+                            Dock = DockStyle.Fill,
+                            //view = item,
+                            Margin = new Padding(0, 0, 0, 0),
+                            Padding = new Padding(0, 0, 0, 0),
+                            //manager = this
+                        };
+                        //view.SetView();
+                        orderview.UpdateUI(true);
+                        orderTabPage.Controls.Add(orderview);
+                        tabControl.TabPages.Add(orderTabPage);
+                        break;
+
+                    case BalanceViewType.forks:
+                        TabPage forkTabPage = new TabPage()
+                        {
+                            Name = item.ToString(),
+                            Text = item.ToString(),
+                            Margin = new Padding(0, 0, 0, 0),
+                            Padding = new Padding(0, 0, 0, 0)
+                        };
+
+                        ForkListControl forkview = new ForkListControl()
+                        {
+                            Dock = DockStyle.Fill,
+                            //view = item,
+                            Margin = new Padding(0, 0, 0, 0),
+                            Padding = new Padding(0, 0, 0, 0),
+                            //manager = this
+                        };
+                        //view.SetView();
+                        forkview.UpdateUI(true);
+                        forkTabPage.Controls.Add(forkview);
+                        tabControl.TabPages.Add(forkTabPage);
+                        break;
+
+                    default:
+                        //AddLogMessage(Name, "SetView", "VIEW NOT DEFINED!!! : " + PreferenceManager.preferences.BalanceView, LogMessageType.DEBUG);
+                        break;
                 }
+                
             }
             //SetView(true);
         }
@@ -113,7 +146,7 @@ namespace TwEX_API.Controls
             List<string> symbols = new List<string>();
             List<decimal> totals = new List<decimal>();
 
-            foreach (ExchangeBalance balance in list)
+            foreach (ExchangeBalance balance in list.OrderByDescending(item => item.TotalInBTC))
             {
                 symbols.Add(balance.Symbol);
                 totals.Add(balance.TotalInUSD);
@@ -171,6 +204,43 @@ namespace TwEX_API.Controls
             chart.Series["Default"].Font = PreferenceManager.GetFormFont(ParentForm);
             chart.Titles[0].Font = chart.Series["Default"].Font;
             chart.Titles[0].Text = exchanges.Count + " EXCHANGES BY PERCENTAGE (" + list.Sum(balance => balance.TotalInUSD).ToString("C") + ")";
+            chart.Series["Default"].Points.DataBindXY(xValues, yValues);
+            chart.Series["Default"].ChartType = SeriesChartType.Pie;
+            chart.Series["Default"]["PieLabelStyle"] = "Outside";
+            chart.Series["Default"]["PieDrawingStyle"] = "SoftEdge";
+
+            chart.Series[0].ToolTip = "Percent: #PERCENT";
+            chart.Series[0].ToolTip = "#VALX" + " : " + "#PERCENT" + " (" + "#VALY{$#,##0.00}" + ")";
+            chart.Series[0].LabelToolTip = "#VALY{$#,##0.00}";
+            chart.Series[0].Label = "#VALX" + " (" + "#PERCENT" + ")";
+
+            chart.ChartAreas[0].Area3DStyle.Enable3D = true;
+            chart.ChartAreas[0].Area3DStyle.Inclination = 0;
+        }
+        private void SetForksChart()
+        {
+            List<Fork> list = PreferenceManager.WalletPreferences.Forks.Where(item => item.TotalInBTC > 0).ToList();
+            //List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
+            //list.AddRange(wallets);
+
+            var roots = list.Select(fork => fork.id).Distinct();
+
+            List<string> wallets = new List<string>();
+            List<decimal> totals = new List<decimal>();
+
+            foreach (string wallet in roots)
+            {
+                //LogManager.AddLogMessage(Name, "InitializeChart", exchange, LogManager.LogMessageType.DEBUG);
+                wallets.Add(wallet);
+                totals.Add(list.Where(balance => balance.id == wallet).Sum(balance => balance.TotalInBTC));
+            }
+
+            decimal[] yValues = totals.ToArray();
+            string[] xValues = wallets.ToArray();
+
+            chart.Series["Default"].Font = PreferenceManager.GetFormFont(ParentForm);
+            chart.Titles[0].Font = chart.Series["Default"].Font;
+            chart.Titles[0].Text = wallets.Count + " WALLETS BY PERCENTAGE (" + list.Sum(balance => balance.TotalInBTC).ToString("N8") + ")";
             chart.Series["Default"].Points.DataBindXY(xValues, yValues);
             chart.Series["Default"].ChartType = SeriesChartType.Pie;
             chart.Series["Default"]["PieLabelStyle"] = "Outside";
@@ -252,7 +322,7 @@ namespace TwEX_API.Controls
             List<string> exchanges = new List<string>();
             List<decimal> totals = new List<decimal>();
 
-            foreach (ExchangeBalance balance in list)
+            foreach (ExchangeBalance balance in list.OrderByDescending(item => item.TotalInBTC))
             {
                 exchanges.Add(balance.Exchange);
                 totals.Add(balance.TotalInUSD);
@@ -297,7 +367,7 @@ namespace TwEX_API.Controls
             List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
             list.AddRange(wallets);
 
-            var roots = list.Select(b => b.Symbol).Distinct();
+            var roots = list.OrderByDescending(item => item.TotalInBTC).Select(b => b.Symbol).Distinct();
 
             List<string> symbols = new List<string>();
             List<decimal> totals = new List<decimal>();
@@ -366,6 +436,10 @@ namespace TwEX_API.Controls
                     toolStripRadioButton_orders.Checked = true;
                     break;
 
+                case BalanceViewType.forks:
+                    toolStripRadioButton_fork.Checked = true;
+                    break;
+
                 default:
 
                     break;
@@ -373,65 +447,57 @@ namespace TwEX_API.Controls
         }
         private void SetView(bool resize = false)
         {
-            switch (PreferenceManager.preferences.BalanceView)
+            //tabControl.SelectedIndex = PreferenceManager.preferences.BalanceView.GetHashCode();
+            try
             {
-                case BalanceViewType.balance:
-                    SetSymbolsChart();
-                    BalanceViewControl balancecontrol = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
-                    balancecontrol.UpdateUI(resize);
-                    break;
+                //LogManager.AddLogMessage(Name, "SetView", "index:" + tabControl.SelectedIndex, LogMessageType.DEBUG);
+                switch (PreferenceManager.preferences.BalanceView)
+                {
+                    case BalanceViewType.balance:
+                        //tabControl.SelectedIndex = 0;
+                        SetSymbolsChart();
+                        BalanceViewControl balancecontrol = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
+                        balancecontrol.UpdateUI(resize);
+                        break;
 
-                case BalanceViewType.exchange:
-                    SetExchangesChart();
-                    BalanceViewControl exchangecontrol = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
-                    exchangecontrol.UpdateUI(resize);
-                    break;
+                    case BalanceViewType.exchange:
+                        //tabControl.SelectedIndex = 1;
+                        SetExchangesChart();
+                        BalanceViewControl exchangecontrol = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
+                        exchangecontrol.UpdateUI(resize);
+                        break;
 
-                case BalanceViewType.symbol:
-                    SetSymbolsChart();
-                    BalanceViewControl symbolcontrol = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
-                    symbolcontrol.UpdateUI(resize);
-                    break;
+                    case BalanceViewType.symbol:
+                        //tabControl.SelectedIndex = 2;
+                        SetSymbolsChart();
+                        BalanceViewControl symbolcontrol = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
+                        symbolcontrol.UpdateUI(resize);
+                        break;
 
-                case BalanceViewType.orders:
-                    SetOrdersChart();
-                    OrderViewControl orderscontrol = tabControl.SelectedTab.Controls[0] as OrderViewControl;
-                    orderscontrol.UpdateUI(resize);
-                    break;
+                    case BalanceViewType.orders:
+                        //tabControl.SelectedIndex = 3;
+                        //SetOrdersChart();
+                        OrderViewControl orderscontrol = tabControl.SelectedTab.Controls[0] as OrderViewControl;
+                        orderscontrol.UpdateUI(resize);
+                        break;
 
-                default:
-                    AddLogMessage(Name, "SetView", "VIEW NOT DEFINED!!! : " + PreferenceManager.preferences.BalanceView, LogMessageType.DEBUG);
-                    break;
+                    case BalanceViewType.forks:
+                        //tabControl.SelectedIndex = 4;
+                        //SetForksChart();
+                        ForkListControl forkcontrol = tabControl.SelectedTab.Controls[0] as ForkListControl;
+                        forkcontrol.UpdateUI(resize);
+                        break;
+
+                    default:
+                        AddLogMessage(Name, "SetView", "VIEW NOT DEFINED!!! : " + PreferenceManager.preferences.BalanceView, LogMessageType.DEBUG);
+                        break;
+                }
             }
-
-            /*
-                    string view = PreferenceManager.preferences.BalanceView.ToString();
-                    //LogManager.AddLogMessage(Name, "UpdateUI", "tabIndex==" + view + " | " + tabControl.SelectedIndex, LogManager.LogMessageType.DEBUG);
-                    //LogManager.AddLogMessage(Name, "UpdateUI", "view=" + view + " | " + tabControl.SelectedIndex, LogManager.LogMessageType.DEBUG);
-
-
-
-                    if (view != "orders")
-                    {
-                        if (tabControl.SelectedIndex != 1 || tabControl.SelectedIndex != 3)
-                        {
-                            SetSymbolsChart();
-                        }
-                        else
-                        {
-                            SetExchangesChart();
-                        }
-
-                        BalanceViewControl control = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
-                        control.UpdateUI(resize);
-                    }
-                    else
-                    {
-                        //LogManager.AddLogMessage(Name, "UpdateUI", "view=" + view, LogManager.LogMessageType.DEBUG);
-                        OrderViewControl control = tabControl.SelectedTab.Controls[0] as OrderViewControl;
-                        control.UpdateUI(resize);
-                    }
-                    */
+            catch (Exception ex)
+            {
+                AddLogMessage(Name, "SetView", ex.Message, LogMessageType.EXCEPTION);
+            }
+            
         }
         #endregion
 
@@ -448,6 +514,7 @@ namespace TwEX_API.Controls
             {
                 try
                 {
+                    
                     List<ExchangeBalance> list = Balances.Where(item => item.Balance > 0).ToList();
                     List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
                     list.AddRange(wallets);
@@ -457,7 +524,13 @@ namespace TwEX_API.Controls
                     toolStripLabel_btc.Text = list.Sum(b => b.TotalInBTC).ToString("N8");
                     toolStripLabel_usd.Text = list.Sum(b => b.TotalInUSD).ToString("C");
 
+                    //AddLogMessage(Name, "UpdateUI", PreferenceManager.preferences.BalanceView.GetHashCode().ToString() + " | " + tabControl.TabPages.Count, LogMessageType.DEBUG);
+                    //if (tabControl.TabPages.Count > 0)
+                    //{
                     tabControl.SelectedIndex = PreferenceManager.preferences.BalanceView.GetHashCode();
+                    //tabControl.SelectedIndex = 1;
+                    //}
+                    //tabControl.SelectedIndex = PreferenceManager.preferences.BalanceView.GetHashCode();
                     //tabControl.SelectedIndex = 0;
                     SetView(resize);
                     
@@ -468,7 +541,7 @@ namespace TwEX_API.Controls
                 }
                 catch (Exception ex)
                 {
-                    AddLogMessage(Name, "UpdateUI", ex.Message, LogMessageType.EXCEPTION);
+                    AddLogMessage(Name, "UpdateUI", "EXCEPTION : " + ex.Message, LogMessageType.EXCEPTION);
                 }
             }
         }
@@ -518,6 +591,10 @@ namespace TwEX_API.Controls
 
                         case BalanceViewType.orders:
                             SetOrdersChart();
+                            break;
+
+                        case BalanceViewType.forks:
+                            SetForksChart();
                             break;
 
                         default:
@@ -589,24 +666,80 @@ namespace TwEX_API.Controls
 }
 
 /*
-        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
-        {
+                if (item.ToString() != "orders" || item.ToString() != "forks")
+                {
+                    TabPage tabPage = new TabPage()
+                    {
+                        Name = item.ToString(),
+                        Text = item.ToString(),
+                        Margin = new Padding(0, 0, 0, 0),
+                        Padding = new Padding(0, 0, 0, 0)
+                    };
 
-        }
-        */
-/*
-        private void splitContainer_SplitterMoving(object sender, SplitterCancelEventArgs e)
-        {
-            LogManager.AddLogMessage(Name, "splitContainer_SplitterMoving", "MOVING=" + PreferenceManager.preferences.BalanceSplitDistance + " | " + splitContainer.SplitterDistance, LogManager.LogMessageType.DEBUG);
-        }
-        */
+                    BalanceViewControl view = new BalanceViewControl()
+                    //BalanceDataViewControl view = new BalanceDataViewControl()
+                    {
+                        Dock = DockStyle.Fill,
+                        view = item,
+                        Margin = new Padding(0, 0, 0, 0),
+                        Padding = new Padding(0, 0, 0, 0),
+                        manager = this
+                    };
+                    view.SetView();
+                    tabPage.Controls.Add(view);
+                    tabControl.TabPages.Add(tabPage);
+                }
+                else
+                {
+                    TabPage tabPage = new TabPage()
+                    {
+                        Name = item.ToString(),
+                        Text = item.ToString(),
+                        Margin = new Padding(0, 0, 0, 0),
+                        Padding = new Padding(0, 0, 0, 0)
+                    };
+
+                    OrderViewControl view = new OrderViewControl()
+                    {
+                        Dock = DockStyle.Fill,
+                        //view = item,
+                        Margin = new Padding(0, 0, 0, 0),
+                        Padding = new Padding(0, 0, 0, 0),
+                        //manager = this
+                    };
+                    //view.SetView();
+                    view.UpdateUI(true);
+                    tabPage.Controls.Add(view);
+                    tabControl.TabPages.Add(tabPage);
+                    
+                }
+                */
 
 /*
-        LogManager.AddLogMessage(Name, "BalanceManagerControl_Load", "load distance=" + PreferenceManager.preferences.BalanceSplitDistance);
-        if (PreferenceManager.preferences.BalanceSplitDistance == 0)
-        {
-            PreferenceManager.preferences.BalanceSplitDistance = (int)(splitContainer.ClientSize.Height * 0.75);
-            //PreferenceManager.UpdatePreferenceFile();
-        }
-        loaded = true;
-        */
+                string view = PreferenceManager.preferences.BalanceView.ToString();
+                //LogManager.AddLogMessage(Name, "UpdateUI", "tabIndex==" + view + " | " + tabControl.SelectedIndex, LogManager.LogMessageType.DEBUG);
+                //LogManager.AddLogMessage(Name, "UpdateUI", "view=" + view + " | " + tabControl.SelectedIndex, LogManager.LogMessageType.DEBUG);
+
+
+
+                if (view != "orders")
+                {
+                    if (tabControl.SelectedIndex != 1 || tabControl.SelectedIndex != 3)
+                    {
+                        SetSymbolsChart();
+                    }
+                    else
+                    {
+                        SetExchangesChart();
+                    }
+
+                    BalanceViewControl control = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
+                    control.UpdateUI(resize);
+                }
+                else
+                {
+                    //LogManager.AddLogMessage(Name, "UpdateUI", "view=" + view, LogManager.LogMessageType.DEBUG);
+                    OrderViewControl control = tabControl.SelectedTab.Controls[0] as OrderViewControl;
+                    control.UpdateUI(resize);
+                }
+                */

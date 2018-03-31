@@ -32,8 +32,8 @@
             this.column_WalletName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_Name = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_Symbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_Symbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInBTC = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -48,7 +48,11 @@
             this.toolStripButton_timer = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton_collapse = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel_usd = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel_btc = new System.Windows.Forms.ToolStripLabel();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -63,15 +67,15 @@
             // listView
             // 
             this.listView.AllColumns.Add(this.column_Name);
-            this.listView.AllColumns.Add(this.column_Symbol);
             this.listView.AllColumns.Add(this.column_Balance);
+            this.listView.AllColumns.Add(this.column_Symbol);
             this.listView.AllColumns.Add(this.column_TotalInBTC);
             this.listView.AllColumns.Add(this.column_TotalInUSD);
             this.listView.CellEditUseWholeCell = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.column_Name,
-            this.column_Symbol,
             this.column_Balance,
+            this.column_Symbol,
             this.column_TotalInBTC,
             this.column_TotalInUSD});
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
@@ -79,7 +83,6 @@
             this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
-            this.listView.HasCollapsibleGroups = false;
             this.listView.HideSelection = false;
             this.listView.IsSearchOnSortColumn = false;
             this.listView.LabelWrap = false;
@@ -91,7 +94,6 @@
             this.listView.ShowFilterMenuOnRightClick = false;
             this.listView.ShowGroups = false;
             this.listView.Size = new System.Drawing.Size(812, 316);
-            this.listView.SortGroupItemsByPrimaryColumn = false;
             this.listView.TabIndex = 4;
             this.listView.UseCellFormatEvents = true;
             this.listView.UseCompatibleStateImageBehavior = false;
@@ -99,7 +101,9 @@
             this.listView.UseOverlays = false;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.VirtualMode = true;
+            this.listView.AboutToCreateGroups += new System.EventHandler<BrightIdeasSoftware.CreateGroupsEventArgs>(this.aboutToCreateGroups);
             this.listView.ItemActivate += new System.EventHandler(this.listView_ItemActivate);
+            this.listView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView_MouseClick);
             // 
             // column_Name
             // 
@@ -107,19 +111,19 @@
             this.column_Name.FillsFreeSpace = true;
             this.column_Name.Text = "Name";
             // 
-            // column_Symbol
-            // 
-            this.column_Symbol.AspectName = "";
-            this.column_Symbol.Text = "";
-            this.column_Symbol.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.column_Symbol.Width = 25;
-            // 
             // column_Balance
             // 
             this.column_Balance.AspectName = "Balance";
             this.column_Balance.AspectToStringFormat = "{0:N8}";
             this.column_Balance.Text = "Balance";
             this.column_Balance.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // column_Symbol
+            // 
+            this.column_Symbol.AspectName = "";
+            this.column_Symbol.Text = "";
+            this.column_Symbol.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_Symbol.Width = 25;
             // 
             // column_TotalInBTC
             // 
@@ -143,7 +147,11 @@
             this.toolStripButton_timer,
             this.toolStripSeparator4,
             this.toolStripLabel_title,
-            this.toolStripLabel_totals});
+            this.toolStripButton_collapse,
+            this.toolStripSeparator3,
+            this.toolStripLabel_usd,
+            this.toolStripSeparator2,
+            this.toolStripLabel_btc});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(812, 25);
@@ -238,12 +246,42 @@
             this.toolStripLabel_title.Size = new System.Drawing.Size(55, 22);
             this.toolStripLabel_title.Text = "# Wallets";
             // 
-            // toolStripLabel_totals
+            // toolStripButton_collapse
             // 
-            this.toolStripLabel_totals.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel_totals.Name = "toolStripLabel_totals";
-            this.toolStripLabel_totals.Size = new System.Drawing.Size(47, 22);
-            this.toolStripLabel_totals.Text = "TOTALS";
+            this.toolStripButton_collapse.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_collapse.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_collapse.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_collapse.Image")));
+            this.toolStripButton_collapse.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_collapse.Name = "toolStripButton_collapse";
+            this.toolStripButton_collapse.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_collapse.Text = "Expand/Collapse";
+            this.toolStripButton_collapse.Click += new System.EventHandler(this.toolStripButton_toggleGroup_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel_usd
+            // 
+            this.toolStripLabel_usd.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel_usd.Name = "toolStripLabel_usd";
+            this.toolStripLabel_usd.Size = new System.Drawing.Size(29, 22);
+            this.toolStripLabel_usd.Text = "USD";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel_btc
+            // 
+            this.toolStripLabel_btc.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel_btc.Name = "toolStripLabel_btc";
+            this.toolStripLabel_btc.Size = new System.Drawing.Size(27, 22);
+            this.toolStripLabel_btc.Text = "BTC";
             // 
             // WalletManagerControl
             // 
@@ -273,7 +311,7 @@
         private BrightIdeasSoftware.OLVColumn column_TotalInUSD;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripButton_timer;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel_totals;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_usd;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_title;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_menu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
@@ -284,5 +322,9 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_add;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_update;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_btc;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton toolStripButton_collapse;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

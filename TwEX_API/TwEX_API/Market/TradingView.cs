@@ -889,6 +889,7 @@ namespace TwEX_API.Market
             public string trendLineColor { get; set; } = "#4bafe9";
 
             public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>();
+            
             /*
             public List<TradingViewSymbolOverview> symbols { get; set; } = new List<TradingViewSymbolOverview>()
             {
@@ -939,6 +940,11 @@ namespace TwEX_API.Market
             {
                 return exchange.ToString().ToUpper() + ":" + symbol.ToUpper() + market.ToUpper() + "|" + EnumUtils.GetDescription(interval);
             }
+        }
+        public class TradingViewSymbolList
+        {
+            public string Name { get; set; }
+            public List<TradingViewSymbolOverview> Items { get; set; } = new List<TradingViewSymbolOverview>();
         }
         public class TradingViewTicker
         {

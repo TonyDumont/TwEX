@@ -39,13 +39,14 @@ namespace TwEX_API.Controls
             label_symbol.Text = PreferenceManager.preferences.CalculatorSymbol;
             pictureBox_symbol.Image = ContentManager.ResizeImage(ContentManager.GetSymbolIcon(PreferenceManager.preferences.CalculatorSymbol), iconSize.Width, iconSize.Height);
             //label_symbol.Image = ContentManager.ResizeImage(ContentManager.GetSymbolIcon(PreferenceManager.preferences.CalculatorSymbol), iconSize.Width, iconSize.Height);
-
+            numericUpDown_symbol.Maximum = Decimal.MaxValue;
             UpdateUI(true);
         }
         private void InitializeColumns()
         {
             column_symbol.ImageGetter = new ImageGetterDelegate(aspect_icon);
             column_value.AspectGetter = new AspectGetterDelegate(aspect_value);
+            column_price.AspectGetter = new AspectGetterDelegate(aspect_price);
         }
         private void InitializeSymbolList()
         {
@@ -110,7 +111,10 @@ namespace TwEX_API.Controls
                 toolStrip_footer.ImageScalingSize = PreferenceManager.preferences.IconSize;
 
                 column_symbol.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_symbol.Width = column_symbol.Width + (listView.RowHeightEffective * 3); 
+                column_price.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+                column_symbol.Width = column_symbol.Width + listView.RowHeightEffective;
+                column_price.Width = column_symbol.Width + listView.RowHeightEffective;
             }
         }
         #endregion
@@ -132,19 +136,39 @@ namespace TwEX_API.Controls
             }
             
         }
+        /*
         public object aspect_symbol(object rowObject)
         {
             CalculatorItem listItem = (CalculatorItem)rowObject;
 
             CoinMarketCapTicker priceItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
             Decimal total = 0;
+            string price = "";
 
             if (priceItem != null)
             {
                 total = numericUpDown_usd.Value / priceItem.price_usd;
                 listItem.value = total;
+                price = priceItem.price_usd.ToString("C");
             }
-            return listItem.symbol;
+            return listItem.symbol + " (" + price + ")";
+        }
+        */
+        public object aspect_price(object rowObject)
+        {
+            CalculatorItem listItem = (CalculatorItem)rowObject;
+
+            CoinMarketCapTicker priceItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == listItem.symbol);
+            Decimal total = 0;
+            string price = "";
+
+            if (priceItem != null)
+            {
+                total = numericUpDown_usd.Value / priceItem.price_usd;
+                listItem.value = total;
+                price = priceItem.price_usd.ToString("C");
+            }
+            return price;
         }
         public object aspect_value(object rowObject)
         {
@@ -290,13 +314,6 @@ namespace TwEX_API.Controls
             }
         }
         #endregion
-        /*
-        private void toolStripDropDownButton_sort_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            toolStripDropDownButton_sort.Text = e.ClickedItem.Text;
-            UpdateUI();
-        }
-        */
     }
 
     public class CalculatorItem

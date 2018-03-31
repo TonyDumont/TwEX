@@ -75,9 +75,11 @@ namespace TwEX_API.Controls
                 textBox_Symbol.Text = wallet.Symbol;
                 textBox_Symbol.Enabled = false;
 
-                textBox_Api.Text = wallet.Api;
+                //textBox_Api.Text = wallet.Api;
+                comboBox_api.Text = wallet.Api;
                 textBox_Name.Text = wallet.Name;
-                textBox_WalletName.Text = wallet.WalletName;
+                //textBox_WalletName.Text = wallet.WalletName;
+                comboBox_wallet.Text = wallet.WalletName;
                 numericUpDown_Balance.Value = wallet.Balance;
 
                 UpdateUI(true);
@@ -88,14 +90,22 @@ namespace TwEX_API.Controls
         #region EventHandler
         private void button_save_Click(object sender, EventArgs e)
         {
+            string api = string.Empty;
+
+            if (comboBox_api.Text.Contains(' '))
+            {
+                string[] split = comboBox_api.Text.Split(' ');
+                api = split[0];
+            }
+
             WalletManager.WalletBalance wallet = new WalletManager.WalletBalance()
             {
-                Api = textBox_Api.Text,
+                Api = api,
                 Address = textBox_Address.Text,
                 Balance = numericUpDown_Balance.Value,
                 Name = textBox_Name.Text,
                 Symbol = textBox_Symbol.Text,
-                WalletName = textBox_WalletName.Text
+                WalletName = comboBox_wallet.Text
             };
 
             WalletManager.WalletBalance listItem = PreferenceManager.WalletPreferences.Wallets.FirstOrDefault(b => b.Address == wallet.Address && b.Symbol == wallet.Symbol);
@@ -111,12 +121,12 @@ namespace TwEX_API.Controls
                 listItem.Name = wallet.Name;
                 listItem.WalletName = wallet.WalletName;
             }
-            //PreferenceManager.UpdatePreferenceSnapshots();
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Wallet);
-            //WalletManager.UpdateUI();
             FormManager.UpdateWalletManager();
             ParentForm.Close();
         }
         #endregion
+        
+
     }
 }

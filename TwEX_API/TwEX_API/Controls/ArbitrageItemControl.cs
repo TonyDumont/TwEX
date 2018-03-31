@@ -15,6 +15,7 @@ namespace TwEX_API.Controls
         };
         public string market { get; set; } = String.Empty;
         public string symbol { get; set; } = String.Empty;
+        public ArbitrageManagerControl manager;
         #endregion
 
         #region Initialize
@@ -23,10 +24,9 @@ namespace TwEX_API.Controls
             InitializeComponent();
         }
         private void ArbitrageItemControl_Load(object sender, EventArgs e)
-        {            
+        {         
             panel.Height = PreferenceManager.ArbitragePreferences.minChartHeight;
             panel.Controls.Add(chart);
-            UpdateUI(true);
         }
         private void timer_Tick(object sender, EventArgs e)
         {
@@ -49,14 +49,16 @@ namespace TwEX_API.Controls
                 {
                     if (symbol.Length > 0 && market.Length > 0)
                     {
-
-                        if (PreferenceManager.ArbitragePreferences.ShowCharts && chart != null)
+                        if (manager.WatchList.ShowCharts && chart != null)
                         {
                             chart.updateBrowser();
                         }
 
-                        arbitrageListControl_btc.UpdateUI(resize);
-                        arbitrageListControl_usd.UpdateUI(resize);
+                        if (manager.WatchList.ShowLists)
+                        {
+                            arbitrageListControl_btc.UpdateUI(resize);
+                            arbitrageListControl_usd.UpdateUI(resize);
+                        }
 
                         if (resize)
                         {
@@ -81,18 +83,29 @@ namespace TwEX_API.Controls
             }
             else
             {
-                
-                //toolStrip.Font = ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
+                Visible = false;
                 Width = PreferenceManager.ArbitragePreferences.minChartWidth;  
                 int rowHeight = toolStrip.Height;
-                int listHeight = PreferenceManager.ArbitragePreferences.maxListCount * rowHeight;
-                int newHeight = listHeight + (rowHeight * 3) + (rowHeight / 4);
 
-                if (PreferenceManager.ArbitragePreferences.ShowCharts)
+                int listHeight = 0;
+
+                if (manager.WatchList.ShowLists)
+                {
+                    arbitrageListControl_btc.Visible = true;
+                    arbitrageListControl_usd.Visible = true;
+                    listHeight = (PreferenceManager.ArbitragePreferences.maxListCount * rowHeight) + (rowHeight * 3) + (rowHeight / 4);
+                }
+                else
+                {
+                    arbitrageListControl_btc.Visible = false;
+                    arbitrageListControl_usd.Visible = false;
+                }
+
+                if (manager.WatchList.ShowCharts)
                 {
                     toolStrip.Visible = false;
                     panel.Visible = true;
-                    newHeight = newHeight + PreferenceManager.ArbitragePreferences.minChartHeight + (rowHeight / 4);
+                    listHeight = listHeight + PreferenceManager.ArbitragePreferences.minChartHeight + (rowHeight / 4);
                 }
                 else
                 {
@@ -101,20 +114,19 @@ namespace TwEX_API.Controls
                     toolStripLabel_symbol.Text = symbol.ToUpper();
                     toolStripLabel_symbol.Image = ContentManager.GetSymbolIcon(symbol);
                 }
-                
-                //LogManager.AddLogMessage(Name, "ResizeUI", "tsHeight=" + toolStrip.Height + " | " + listHeight + " | " + newHeight, LogManager.LogMessageType.DEBUG);
-                ClientSize = new Size(Width, newHeight);
-                Size = new Size(Width, newHeight);
+                ClientSize = new Size(Width, listHeight);
+                Size = new Size(Width, listHeight);
+                Visible = true;
             }
         }
 
-        delegate void SetDataCallback(string symbol, string market);
-        public void SetData(string newSymbol, string newMarket)
+        delegate void SetDataCallback(string symbol, string market, bool resize = false);
+        public void SetData(string newSymbol, string newMarket, bool resize = false)
         {
             if (InvokeRequired)
             {
                 SetDataCallback d = new SetDataCallback(SetData);
-                Invoke(d, new object[] { symbol, market });
+                Invoke(d, new object[] { symbol, market, resize });
             }
             else
             {            
@@ -123,42 +135,9 @@ namespace TwEX_API.Controls
 
                 arbitrageListControl_btc.SetProperties("BTC", symbol);
                 arbitrageListControl_usd.SetProperties("USD", symbol);
-                //LogManager.AddLogMessage(this.Name, "SetData", symbol + " | " + market, LogManager.LogMessageType.DEBUG);
-                chart.setChart(symbol, market, Market.CryptoCompare.CryptoCompareChartPeriod.Day_1D);
-                UpdateUI();
+                chart.setChart(symbol, market, PreferenceManager.ArbitragePreferences.ChartPeriod);
+                UpdateUI(resize);
             }
-        }
-        #endregion
-
-        #region EventHandlers
-        private void contextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            ToolStripItem item = e.ClickedItem;
-
-            switch (item.Tag.ToString())
-            {
-                case "up":
-                    PreferenceManager.MoveWatchlistItem(market, symbol, "up");
-                    break;
-
-                case "down":
-                    PreferenceManager.MoveWatchlistItem(market, symbol, "down");
-                    break;
-
-                case "refresh":
-                    //PreferenceManager.RemoveWatchlistItem(market, symbol);
-                    UpdateUI();
-                    break;
-
-                case "remove":
-                    PreferenceManager.RemoveWatchlistItem(market, symbol);
-                    break;
-
-                default:
-                    //icon = Properties.Resources.CardRoom_Unknown;
-                    break;
-            }
-            
         }
         #endregion
     }

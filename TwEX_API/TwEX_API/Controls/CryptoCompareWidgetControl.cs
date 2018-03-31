@@ -6,6 +6,8 @@ using TwEX_API.Market;
 using static TwEX_API.Market.CryptoCompare;
 using System.Text;
 using Newtonsoft.Json;
+using static TwEX_API.Market.CoinMarketCap;
+using System.Linq;
 
 namespace TwEX_API.Controls
 {
@@ -117,6 +119,7 @@ namespace TwEX_API.Controls
                     "</div>" +
                     "</body></html>";
 
+            //LogManager.AddLogMessage(Name, "getHtmlString", html, LogManager.LogMessageType.DEBUG);
             return html;
         }
         private string getUrl()
@@ -124,12 +127,12 @@ namespace TwEX_API.Controls
             string url = string.Empty;
             switch (widgetType)
             {
-                case CryptoCompare.CryptoCompareWidgetType.Chart:
+                case CryptoCompareWidgetType.Chart:
                     if (period != CryptoCompareChartPeriod.Day_1D)
                     {
                         //string description = EnumUtils.GetDescription(period);
                         string[] periodSplit = period.ToString().Split('_');
-                        url = "var theUrl=baseUrl+'serve/v1/coin/chart?fsym=" + symbol + "&tsym=" + market + "&period=" + periodSplit[1] + "';";
+                        url = "var theUrl=baseUrl+'serve/v2/coin/chart?fsym=" + symbol + "&tsym=" + market + "&period=" + periodSplit[1] + "';";
                     }
                     else
                     {
@@ -137,47 +140,47 @@ namespace TwEX_API.Controls
                     }
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.NewsFeed:
+                case CryptoCompareWidgetType.NewsFeed:
                     url = "var theUrl=baseUrl+'serve/v1/coin/feed?fsym=" + symbol + "&tsym=" + market + "&feedType=" + feedType + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.PricesList:
+                case CryptoCompareWidgetType.PricesList:
                     url = "var theUrl=baseUrl+'serve/v1/coin/list?fsym=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.PricesTiles:
+                case CryptoCompareWidgetType.PricesTiles:
                     url = "var theUrl=baseUrl+'serve/v1/coin/tiles?fsym=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.Tabbed:
+                case CryptoCompareWidgetType.Tabbed:
                     url = "var theUrl=baseUrl+'serve/v1/coin/multi?fsyms=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.Horizontal:
+                case CryptoCompareWidgetType.Horizontal:
                     url = "var theUrl=baseUrl+'serve/v1/coin/header?fsym=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.Summary:
+                case CryptoCompareWidgetType.Summary:
                     url = "var theUrl=baseUrl+'serve/v1/coin/summary?fsym=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.Historical:
+                case CryptoCompareWidgetType.Historical:
                     url = "var theUrl=baseUrl+'serve/v1/coin/histo_week?fsym=" + symbol + "&tsym=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.ChartAdvanced:
+                case CryptoCompareWidgetType.ChartAdvanced:
                     url = "var theUrl=baseUrl+'serve/v3/coin/chart?fsym=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.Converter:
+                case CryptoCompareWidgetType.Converter:
                     url = "var theUrl=baseUrl+'serve/v1/coin/converter?fsym=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.HeaderV2:
+                case CryptoCompareWidgetType.HeaderV2:
                     url = "var theUrl=baseUrl+'serve/v2/coin/header?fsyms=" + symbol + "&tsyms=" + market + "';";
                     break;
 
-                case CryptoCompare.CryptoCompareWidgetType.HeaderV3:
+                case CryptoCompareWidgetType.HeaderV3:
                     url = "var theUrl=baseUrl+'serve/v3/coin/header?fsyms=" + symbol + "&tsyms=" + market + "';";
                     break;
 
@@ -193,10 +196,50 @@ namespace TwEX_API.Controls
             builder.Append("var cccTheme = ");
 
             //CryptoCompare.CryptoCompareChartTheme theme = new CryptoCompare.CryptoCompareChartTheme();
-
+            //CryptoCompareChartTheme theme = PreferenceManager.preferences.Theme.cryptoCompareChartTheme.ShallowCopy();
             string json = JsonConvert.SerializeObject(PreferenceManager.preferences.Theme.cryptoCompareChartTheme);
+            CryptoCompareChartTheme theme = JsonConvert.DeserializeObject<CryptoCompareChartTheme>(json);
+            CoinMarketCapTicker priceItem = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == symbol);
+
+            if (PreferenceManager.ArbitragePreferences.ChartPeriod == CryptoCompareChartPeriod.Day_1D)
+            {
+                if (priceItem != null)
+                {
+                    //LogManager.AddLogMessage(Name, "", symbol + " | " + market + " | 1h=" + priceItem.percent_change_1h + " | " + priceItem.percent_change_24h + " | " + priceItem.percent_change_7d, LogManager.LogMessageType.DEBUG);
+
+                    if (priceItem.percent_change_24h > 0)
+                    {
+                        theme.Chart.borderColor = theme.Trend.colorUp;
+                    }
+                    else if (priceItem.percent_change_24h < 0)
+                    {
+                        theme.Chart.borderColor = theme.Trend.colorDown;
+                    }
+
+                };
+            }else if (PreferenceManager.ArbitragePreferences.ChartPeriod == CryptoCompareChartPeriod.Week_1W)
+            {
+                if (priceItem != null)
+                {
+                    //LogManager.AddLogMessage(Name, "", symbol + " | " + market + " | 1h=" + priceItem.percent_change_1h + " | " + priceItem.percent_change_24h + " | " + priceItem.percent_change_7d, LogManager.LogMessageType.DEBUG);
+
+                    if (priceItem.percent_change_7d > 0)
+                    {
+                        theme.Chart.borderColor = theme.Trend.colorUp;
+                    }
+                    else if (priceItem.percent_change_7d < 0)
+                    {
+                        theme.Chart.borderColor = theme.Trend.colorDown;
+                    }
+
+                };
+            }
+
+            string themeData = JsonConvert.SerializeObject(theme);
+            //string json = JsonConvert.SerializeObject(theme);
+            //string json = JsonConvert.SerializeObject(PreferenceManager.preferences.Theme.cryptoCompareChartTheme);
             //LogManager.AddLogMessage(Name, "toolStripButton_OrderTotal_Click", json, LogManager.LogMessageType.DEBUG);
-            builder.Append(json);
+            builder.Append(themeData);
             builder.Append(";");
             return builder.ToString();
             /*
@@ -254,10 +297,10 @@ namespace TwEX_API.Controls
         delegate void setChartCallback(string newSymbol, string newMarket, CryptoCompareChartPeriod newPeriod);
         public void setChart(string newSymbol, string newMarket, CryptoCompareChartPeriod newPeriod)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setChartCallback d = new setChartCallback(setChart);
-                this.Invoke(d, new object[] { newSymbol, newMarket, newPeriod });
+                Invoke(d, new object[] { newSymbol, newMarket, newPeriod });
             }
             else
             {
@@ -271,7 +314,7 @@ namespace TwEX_API.Controls
                 }
                 catch (Exception ex)
                 {
-                    LogManager.AddLogMessage(this.Name, "setChartWidget", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                    LogManager.AddLogMessage(Name, "setChartWidget", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
             }
         }
@@ -280,10 +323,10 @@ namespace TwEX_API.Controls
         delegate void setNewsFeedCallback(string newSymbol, string newMarket, CryptoCompareFeedType newFeedType);
         public void setNewsFeed(string newSymbol, string newMarket, CryptoCompareFeedType newFeedType)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setNewsFeedCallback d = new setNewsFeedCallback(setNewsFeed);
-                this.Invoke(d, new object[] { newSymbol, newMarket, newFeedType });
+                Invoke(d, new object[] { newSymbol, newMarket, newFeedType });
             }
             else
             {
@@ -297,7 +340,7 @@ namespace TwEX_API.Controls
                 }
                 catch (Exception ex)
                 {
-                    LogManager.AddLogMessage(this.Name, "setNewsFeed", ex.Message, LogManager.LogMessageType.EXCEPTION);
+                    LogManager.AddLogMessage(Name, "setNewsFeed", ex.Message, LogManager.LogMessageType.EXCEPTION);
                 }
             }
         }
@@ -331,10 +374,10 @@ namespace TwEX_API.Controls
         delegate void setPricesTilesCallback(string newSymbol, string newMarket);
         public void setPricesTiles(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setPricesTilesCallback d = new setPricesTilesCallback(setPricesTiles);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -356,10 +399,10 @@ namespace TwEX_API.Controls
         delegate void setTabbedCallback(string newSymbol, string newMarket);
         public void setTabbed(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setTabbedCallback d = new setTabbedCallback(setTabbed);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -381,10 +424,10 @@ namespace TwEX_API.Controls
         delegate void setHorizontalCallback(string newSymbol, string newMarket);
         public void setHorizontal(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setHorizontalCallback d = new setHorizontalCallback(setHorizontal);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -406,10 +449,10 @@ namespace TwEX_API.Controls
         delegate void setSummaryCallback(string newSymbol, string newMarket);
         public void setSummary(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setSummaryCallback d = new setSummaryCallback(setSummary);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -431,10 +474,10 @@ namespace TwEX_API.Controls
         delegate void setHistoricalCallback(string newSymbol, string newMarket);
         public void setHistorical(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setHistoricalCallback d = new setHistoricalCallback(setHistorical);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -481,10 +524,10 @@ namespace TwEX_API.Controls
         delegate void setConverterCallback(string newSymbol, string newMarket);
         public void setConverter(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setConverterCallback d = new setConverterCallback(setConverter);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -506,10 +549,10 @@ namespace TwEX_API.Controls
         delegate void setHeaderV2Callback(string newSymbol, string newMarket);
         public void setHeaderV2(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setHeaderV2Callback d = new setHeaderV2Callback(setHeaderV2);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {
@@ -531,10 +574,10 @@ namespace TwEX_API.Controls
         delegate void setHeaderV3Callback(string newSymbol, string newMarket);
         public void setHeaderV3(string newSymbol, string newMarket)
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 setHeaderV3Callback d = new setHeaderV3Callback(setHeaderV3);
-                this.Invoke(d, new object[] { newSymbol, newMarket });
+                Invoke(d, new object[] { newSymbol, newMarket });
             }
             else
             {

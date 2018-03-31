@@ -43,7 +43,7 @@
             this.toolStripButton_History = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_Orders = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel_Exchanges = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripButton_OrderTotal = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton_OrderTotals = new System.Windows.Forms.ToolStripButton();
             this.toolStrip_header2 = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton_menu = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_font = new System.Windows.Forms.ToolStripMenuItem();
@@ -166,7 +166,7 @@
             this.toolStripButton_History,
             this.toolStripButton_Orders,
             this.toolStripLabel_Exchanges,
-            this.toolStripButton_OrderTotal});
+            this.toolStripButton_OrderTotals});
             this.toolStrip_header.Location = new System.Drawing.Point(0, 0);
             this.toolStrip_header.Name = "toolStrip_header";
             this.toolStrip_header.Size = new System.Drawing.Size(484, 25);
@@ -227,17 +227,17 @@
             this.toolStripLabel_Exchanges.Size = new System.Drawing.Size(72, 22);
             this.toolStripLabel_Exchanges.Text = "# Exchanges";
             // 
-            // toolStripButton_OrderTotal
+            // toolStripButton_OrderTotals
             // 
-            this.toolStripButton_OrderTotal.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_OrderTotal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton_OrderTotal.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_OrderTotal.Image")));
-            this.toolStripButton_OrderTotal.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_OrderTotal.Name = "toolStripButton_OrderTotal";
-            this.toolStripButton_OrderTotal.Size = new System.Drawing.Size(85, 22);
-            this.toolStripButton_OrderTotal.Text = "ORDER TOTAL";
-            this.toolStripButton_OrderTotal.ToolTipText = "ORDER TOTAL";
-            this.toolStripButton_OrderTotal.Click += new System.EventHandler(this.toolStripButton_OrderTotal_Click);
+            this.toolStripButton_OrderTotals.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_OrderTotals.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton_OrderTotals.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_OrderTotals.Image")));
+            this.toolStripButton_OrderTotals.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_OrderTotals.Name = "toolStripButton_OrderTotals";
+            this.toolStripButton_OrderTotals.Size = new System.Drawing.Size(51, 22);
+            this.toolStripButton_OrderTotals.Text = "ORDER:";
+            this.toolStripButton_OrderTotals.ToolTipText = "ORDER TOTAL";
+            this.toolStripButton_OrderTotals.Click += new System.EventHandler(this.toolStripButton_OrderTotal_Click);
             // 
             // toolStrip_header2
             // 
@@ -271,21 +271,21 @@
             // toolStripMenuItem_font
             // 
             this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
-            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_font.Tag = "Font";
             this.toolStripMenuItem_font.Text = "Font";
             // 
             // toolStripMenuItem_fontIncrease
             // 
             this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
-            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
             this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
             // 
             // toolStripMenuItem_fontDecrease
             // 
             this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
-            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
             this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
             // 
@@ -378,6 +378,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_font;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
-        private System.Windows.Forms.ToolStripButton toolStripButton_OrderTotal;
+        private System.Windows.Forms.ToolStripButton toolStripButton_OrderTotals;
     }
 }

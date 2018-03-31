@@ -48,6 +48,8 @@
             this.column_email = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_lastLogin = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.toolStripButton_toggleHeight = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
@@ -60,6 +62,8 @@
             this.toolStripButton_timer,
             this.toolStripSeparator2,
             this.toolStripLabel_title,
+            this.toolStripButton_toggleHeight,
+            this.toolStripSeparator3,
             this.toolStripLabel_total});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
@@ -88,45 +92,45 @@
             // toolStripMenuItem_font
             // 
             this.toolStripMenuItem_font.Name = "toolStripMenuItem_font";
-            this.toolStripMenuItem_font.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_font.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_font.Tag = "Font";
             this.toolStripMenuItem_font.Text = "Font";
             // 
             // toolStripMenuItem_fontIncrease
             // 
             this.toolStripMenuItem_fontIncrease.Name = "toolStripMenuItem_fontIncrease";
-            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontIncrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontIncrease.Tag = "FontIncrease";
             this.toolStripMenuItem_fontIncrease.Text = "Increase Font";
             // 
             // toolStripMenuItem_fontDecrease
             // 
             this.toolStripMenuItem_fontDecrease.Name = "toolStripMenuItem_fontDecrease";
-            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_fontDecrease.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_fontDecrease.Tag = "FontDecrease";
             this.toolStripMenuItem_fontDecrease.Text = "Decrease Font";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(145, 6);
             // 
             // toolStripMenuItem_AddAccount
             // 
             this.toolStripMenuItem_AddAccount.Name = "toolStripMenuItem_AddAccount";
-            this.toolStripMenuItem_AddAccount.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_AddAccount.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_AddAccount.Tag = "AddAccount";
             this.toolStripMenuItem_AddAccount.Text = "Add Account";
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(145, 6);
             // 
             // toolStripMenuItem_update
             // 
             this.toolStripMenuItem_update.Name = "toolStripMenuItem_update";
-            this.toolStripMenuItem_update.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem_update.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem_update.Tag = "Update";
             this.toolStripMenuItem_update.Text = "Update";
             // 
@@ -218,6 +222,23 @@
             this.column_lastLogin.FillsFreeSpace = true;
             this.column_lastLogin.Text = "Last Login";
             // 
+            // toolStripButton_toggleHeight
+            // 
+            this.toolStripButton_toggleHeight.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_toggleHeight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_toggleHeight.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_toggleHeight.Image")));
+            this.toolStripButton_toggleHeight.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_toggleHeight.Name = "toolStripButton_toggleHeight";
+            this.toolStripButton_toggleHeight.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_toggleHeight.Text = "Toggle Height";
+            this.toolStripButton_toggleHeight.Click += new System.EventHandler(this.toolStripButton_toggleHeight_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
             // EarnGGManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -257,5 +278,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_total;
+        private System.Windows.Forms.ToolStripButton toolStripButton_toggleHeight;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
