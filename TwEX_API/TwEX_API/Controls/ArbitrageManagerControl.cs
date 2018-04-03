@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using TwEX_API.Market;
 using static TwEX_API.ExchangeManager;
 using static TwEX_API.PreferenceManager;
+//using static TwEX_API.WalletManager;
 
 namespace TwEX_API.Controls
 {
@@ -33,7 +34,15 @@ namespace TwEX_API.Controls
             
             if (ArbitragePreferences.CurrentWatchList.Length > 0)
             {
-                toolStripDropDownButton_watchlists.Text = ArbitragePreferences.CurrentWatchList;
+                if (!ArbitragePreferences.CurrentWatchList.Contains('|'))
+                {
+                    toolStripDropDownButton_watchlists.Text = ArbitragePreferences.CurrentWatchList;
+                }
+                else
+                {
+                    string[] split = ArbitragePreferences.CurrentWatchList.Split('|');
+                    toolStripDropDownButton_watchlists.Text = split[0];
+                }
             }
             else
             {
@@ -301,22 +310,54 @@ namespace TwEX_API.Controls
                 {
                     foreach (ArbitrageWatchList listItem in ArbitragePreferences.WatchLists)
                     {
-                        ToolStripMenuItem menuItem = new ToolStripMenuItem() { Text = listItem.Name };
-                        toolStripDropDownButton_watchlists.DropDown.Items.Add(menuItem);
-                        menuItem.Click += WatchlistItem_Click;
+                        if (!listItem.Name.Contains('|'))
+                        {
+                            ToolStripMenuItem menuItem = new ToolStripMenuItem() { Text = listItem.Name };
+                            menuItem.Click += WatchlistItem_Click;
+                            toolStripDropDownButton_watchlists.DropDown.Items.Add(menuItem);
+                        }
                     }
+                }
 
-                    ToolStripMenuItem editItem = new ToolStripMenuItem() { Text = "Edit Watchlists" };
-                    toolStripDropDownButton_watchlists.DropDown.Items.Add(editItem);
-                    editItem.Click += EditWatchlistItem_Click;
-                }
-                else
+                // EDIT
+                ToolStripMenuItem editItem = new ToolStripMenuItem() { Text = "Edit Watchlists" };
+                toolStripDropDownButton_watchlists.DropDown.Items.Add(editItem);
+                editItem.Click += EditWatchlistItem_Click;
+
+                // PRESETS
+                ToolStripMenuItem presetItem = new ToolStripMenuItem() { Text = "Presets" };
+                // EXCHANGE
+                ToolStripMenuItem exchangeInventory = new ToolStripMenuItem() { Text = "Exchange Inventory" };
+                ToolStripMenuItem exchangeAllItem = new ToolStripMenuItem() { Text = "All" };
+                exchangeInventory.DropDown.Items.Add(exchangeAllItem);
+                exchangeAllItem.Click += PresetItem_Click;
+                foreach (ExchangeManager.Exchange exchange in Exchanges)
                 {
-                    toolStripDropDownButton_watchlists.Text = "Edit Watchlists";
-                    ToolStripMenuItem editItem = new ToolStripMenuItem() { Text = "Edit Watchlists" };
-                    toolStripDropDownButton_watchlists.DropDown.Items.Add(editItem);
-                    editItem.Click += EditWatchlistItem_Click;
+                    ToolStripMenuItem exchangeItem = new ToolStripMenuItem() { Text = exchange.Name };
+                    exchangeInventory.DropDown.Items.Add(exchangeItem);
+                    exchangeItem.Click += PresetItem_Click;
                 }
+                presetItem.DropDown.Items.Add(exchangeInventory);
+                
+                // WALLETS
+                ToolStripMenuItem walletInventory = new ToolStripMenuItem() { Text = "Wallet Inventory" };
+                ToolStripMenuItem walletAllItem = new ToolStripMenuItem() { Text = "All" };
+                walletInventory.DropDown.Items.Add(walletAllItem);
+                walletAllItem.Click += PresetItem_Click;
+
+                var roots = WalletPreferences.Wallets.Select(b => b.WalletName).Distinct();
+                
+                foreach (var wallet in roots)
+                {
+                    //LogManager.AddLogMessage(Name, "UpdateWatchlists", "wallet=" + wallet, LogManager.LogMessageType.DEBUG);
+                    ToolStripMenuItem walletItem = new ToolStripMenuItem() { Text = wallet };
+                    walletInventory.DropDown.Items.Add(walletItem);
+                    walletItem.Click += PresetItem_Click;
+
+                }
+                presetItem.DropDown.Items.Add(walletInventory);
+                
+                toolStripDropDownButton_watchlists.DropDown.Items.Add(presetItem);               
             }
         }
         #endregion
@@ -324,12 +365,6 @@ namespace TwEX_API.Controls
         #region EventHandlers
         private void EditWatchlistItem_Click(object sender, EventArgs e)
         {
-            //throw new NotImplementedException();
-            //ToolStripMenuItem item = sender as ToolStripMenuItem;
-            //LogManager.AddLogMessage(Name, "WatchlistItem_Click", item.Text, LogManager.LogMessageType.DEBUG);
-            //toolStripDropDownButton_watchlists.Text = item.Text;
-            //FormManager.OpenUrl(item.Tag.ToString());
-
             Form form = new Form()
             {
                 Text = "Edit Arbitrage Watchlists",
@@ -347,6 +382,17 @@ namespace TwEX_API.Controls
 
             form.Show();
 
+        }
+        private void PresetItem_Click(object sender, EventArgs e)
+        {
+            //LogManager.AddLogMessage(Name, "WatchlistItem_Click", sender.ToString(), LogManager.LogMessageType.DEBUG);
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            //LogManager.AddLogMessage(Name, "WatchlistItem_Click", "parent=" + item.OwnerItem.Text, LogManager.LogMessageType.DEBUG);
+
+            toolStripDropDownButton_watchlists.Text = item.Text;
+            ArbitragePreferences.CurrentWatchList = item.Text + "|" + item.OwnerItem.Text;
+            UpdatePreferenceFile(PreferenceType.Arbitrage);
+            SetWatchlist(true, true);
         }
         private void SetOptionsMenu()
         {
@@ -528,11 +574,38 @@ namespace TwEX_API.Controls
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             //LogManager.AddLogMessage(Name, "WatchlistItem_Click", item.Text, LogManager.LogMessageType.DEBUG);
             toolStripDropDownButton_watchlists.Text = item.Text;
-            PreferenceManager.ArbitragePreferences.CurrentWatchList = item.Text;
-            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Arbitrage);
+            ArbitragePreferences.CurrentWatchList = item.Text;
+            UpdatePreferenceFile(PreferenceType.Arbitrage);
             //UpdateOverviews();
             SetWatchlist(true, true);
         }
         #endregion
     }
 }
+
+
+/*
+                else
+                {
+                    ToolStripMenuItem presetItem = new ToolStripMenuItem() { Text = "Presets" };
+                    ToolStripMenuItem exchangeInventory = new ToolStripMenuItem() { Text = "Exchange Inventory" };
+
+                    foreach (ExchangeManager.Exchange exchange in Exchanges)
+                    {
+                        ToolStripMenuItem exchangeItem = new ToolStripMenuItem() { Text = exchange.Name };
+                        exchangeInventory.DropDown.Items.Add(exchangeItem);
+                        exchangeItem.Click += ExchangeItem_Click;
+                    }
+                    presetItem.DropDown.Items.Add(exchangeInventory);
+                    toolStripDropDownButton_watchlists.DropDown.Items.Add(presetItem);
+                    
+
+                    //editItem.Click += EditWatchlistItem_Click;
+
+
+                    toolStripDropDownButton_watchlists.Text = "Edit Watchlists";
+                    ToolStripMenuItem editItem = new ToolStripMenuItem() { Text = "Edit Watchlists" };
+                    toolStripDropDownButton_watchlists.DropDown.Items.Add(editItem);
+                    editItem.Click += EditWatchlistItem_Click;
+                }
+                */

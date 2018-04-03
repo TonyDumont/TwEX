@@ -3423,6 +3423,55 @@ namespace TwEX_API
             UpdateFormPreferences(form, true);
             return true;
         }
+        public static List<ExchangeTicker> GetPresetWatchlist(string name, string preset)
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+
+            switch (preset)
+            {
+                case "Exchange Inventory":
+                    // GET BALANCES FOR EXCHANGE
+                    ExchangeManager.Exchange exchange = Exchanges.FirstOrDefault(item => item.Name == name);
+
+                    if (exchange != null)
+                    {
+                        //watchlist.Items = new List<ExchangeTicker>();
+                        // GET LIST OF SYMBOLS WITH BALANCES
+                        List<ExchangeBalance> balances = exchange.BalanceList.FindAll(item => item.Balance > 0);
+                        // BUILD LIST
+                        foreach (ExchangeBalance balance in balances)
+                        {
+
+                            ExchangeTicker ticker = new ExchangeTicker()
+                            {
+                                symbol = balance.Symbol,
+                                market = "BTC",
+                                exchange = balance.Exchange,
+                            };
+
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == balance.Symbol);
+
+                            if (priceItem != null)
+                            {
+                                ticker.last = priceItem.price_btc;
+                            }
+
+                            list.Add(ticker);
+                        }
+                    }
+                    break;
+
+                case "Wallet Inventory":
+                    
+                    break;
+
+                default:
+                    //AddLogMessage(Name, "OpenForm", "FORM NOT DEFINED!!! : " + name, LogMessageType.DEBUG);
+                    break;
+            }
+
+            return list;
+        }
         #endregion
 
         #region Updaters
@@ -3895,33 +3944,12 @@ namespace TwEX_API
         // CUSTOM PREFERENCES
         public class ArbitragePreference
         {
-            //public bool ShowCharts { get; set; } = true;
-            //public bool ShowLists { get; set; } = true;
             public int minChartWidth { get; set; } = 300;
             public int minChartHeight { get; set; } = 265;
             public int maxListCount { get; set; } = 8;
             public string market { get; set; } = "USD";
             public CryptoCompareChartPeriod ChartPeriod { get; set; } = CryptoCompareChartPeriod.Day_1D;
-            /*
-            public List<ExchangeTicker> ArbitrageWatchList { get; set; } = new List<ExchangeTicker>();
-            public List<ExchangeTicker> GetWatchList()
-            {
-                List<ExchangeTicker> list = new List<ExchangeTicker>();
-                foreach(ExchangeTicker ticker in ArbitrageWatchList)
-                {
-                    CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
-                    if (priceItem != null)
-                    {
-                        ticker.last = priceItem.price_btc;
-                    }
-                    list.Add(ticker);
-                }
-
-                return list.OrderByDescending(item => item.last).ToList();
-            }
-            */
             public string CurrentWatchList { get; set; } = string.Empty;
-            //public ArbitrageWatchList currentWatchList { get; set; } = new ArbitrageWatchList();
             public List<ArbitrageWatchList> WatchLists { get; set; } = new List<ArbitrageWatchList>();
             public ArbitrageWatchList GetCurrentWatchList()
             {
@@ -3931,47 +3959,54 @@ namespace TwEX_API
                 if (CurrentWatchList.Length > 0)
                 {
                     watchlist = WatchLists.FirstOrDefault(item => item.Name == CurrentWatchList);
+
                     if (watchlist != null)
                     {
-                        //list = listItem.Items;
-                        foreach (ExchangeTicker ticker in watchlist.Items)
+                        if (!CurrentWatchList.Contains('|'))
                         {
-                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
-                            if (priceItem != null)
+                            foreach (ExchangeTicker ticker in watchlist.Items)
                             {
-                                ticker.last = priceItem.price_btc;
+                                CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
+                                if (priceItem != null)
+                                {
+                                    ticker.last = priceItem.price_btc;
+                                }
                             }
-                            //list.Add(ticker);
                         }
+                        else
+                        {
+                            // PRESET
+                            //AddLogMessage(Name, "GetCurrentWatchList", "PRESET = " + CurrentWatchList, LogMessageType.DEBUG);
+                            string[] data = CurrentWatchList.Split('|');
+                            string name = data[0];
+                            string preset = data[1];
+
+                            watchlist.Items = GetPresetWatchlist(name, preset);
+                        }                   
+                    }
+                    else
+                    {
+                        // NOT IN LIST - ADD
+                        watchlist = new ArbitrageWatchList()
+                        {
+                            Name = CurrentWatchList
+                        };
+
+                        if (CurrentWatchList.Contains('|'))
+                        {
+                            string[] data = CurrentWatchList.Split('|');
+                            string name = data[0];
+                            string preset = data[1];
+
+                            watchlist.Items = GetPresetWatchlist(name, preset);
+
+                        }
+                        WatchLists.Add(watchlist);
                     }
                 }
                 //return list.OrderByDescending(item => item.last).ToList();
                 return watchlist;
-            }
-            /*
-            public List<ExchangeTicker> GetCurrentWatchList()
-            {
-                List<ExchangeTicker> list = new List<ExchangeTicker>();
-                if (CurrentWatchList.Length > 0)
-                {
-                    ArbitrageWatchList listItem = WatchLists.FirstOrDefault(item => item.Name == CurrentWatchList);
-                    if (listItem != null)
-                    {
-                        //list = listItem.Items;
-                        foreach (ExchangeTicker ticker in listItem.Items)
-                        {
-                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
-                            if (priceItem != null)
-                            {
-                                ticker.last = priceItem.price_btc;
-                            }
-                            list.Add(ticker);
-                        }
-                    }
-                }
-                return list.OrderByDescending(item => item.last).ToList();
-            }
-            */
+            }            
         }
         
         public class ArbitrageWatchList
@@ -4400,5 +4435,49 @@ namespace TwEX_API
             default:
                 //AddLogMessage(Name, "UpdateColorControls", "CONTROL NOT DEFINED : " + myControl.GetType(), LogMessageType.DEBUG);
                 break;
+        }
+        */
+
+/*
+        public List<ExchangeTicker> GetCurrentWatchList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+            if (CurrentWatchList.Length > 0)
+            {
+                ArbitrageWatchList listItem = WatchLists.FirstOrDefault(item => item.Name == CurrentWatchList);
+                if (listItem != null)
+                {
+                    //list = listItem.Items;
+                    foreach (ExchangeTicker ticker in listItem.Items)
+                    {
+                        CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
+                        if (priceItem != null)
+                        {
+                            ticker.last = priceItem.price_btc;
+                        }
+                        list.Add(ticker);
+                    }
+                }
+            }
+            return list.OrderByDescending(item => item.last).ToList();
+        }
+        */
+
+/*
+        public List<ExchangeTicker> ArbitrageWatchList { get; set; } = new List<ExchangeTicker>();
+        public List<ExchangeTicker> GetWatchList()
+        {
+            List<ExchangeTicker> list = new List<ExchangeTicker>();
+            foreach(ExchangeTicker ticker in ArbitrageWatchList)
+            {
+                CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
+                if (priceItem != null)
+                {
+                    ticker.last = priceItem.price_btc;
+                }
+                list.Add(ticker);
+            }
+
+            return list.OrderByDescending(item => item.last).ToList();
         }
         */

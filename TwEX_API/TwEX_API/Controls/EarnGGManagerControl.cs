@@ -173,18 +173,16 @@ namespace TwEX_API.Controls
         }
         private void toolStripButton_toggleHeight_Click(object sender, EventArgs e)
         {
+            EarnGGAccount account = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Find(item => item.email == "grrinder@live.com");
+
+            if (account != null)
+            {
+                LogManager.AddLogMessage(Name, "toolStripButton_toggleHeight_Click", account.email + " | ", LogManager.LogMessageType.DEBUG);
+            }
+            /*
             PreferenceManager.EarnGGPreferences.collapsed = !PreferenceManager.EarnGGPreferences.collapsed;
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.EarnGG);
             toggleView();
-            /*
-            if (PreferenceManager.EarnGGPreferences.collapsed)
-            {
-                
-            }
-            else
-            {
-                
-            }
             */
         }
         private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)

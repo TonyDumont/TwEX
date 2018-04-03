@@ -19,10 +19,10 @@ namespace TwEX_API.Faucet
         {
             try
             {
-                //LogManager.AddDebugMessage(thisClassName, "UpdateEarnGGMachines", "Name=" + machine.machineName + " | " + machine.key + " | " + machine.secret);
                 RestClient client = new RestClient("https://api.earn.gg");
                 var request = new RestRequest("/account/get?key=" + key + "&secret=" + secret, Method.GET);
                 var response = client.Execute(request);
+                //LogManager.AddLogMessage(Name, "UpdateEarnGGMachines", "Name=" + response.Content);
                 var jsonObject = JObject.Parse(response.Content);
                 EarnGGRootMessage message = jsonObject.ToObject<EarnGGRootMessage>();
                 return message.result;

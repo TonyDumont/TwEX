@@ -516,7 +516,7 @@ namespace TwEX_API.Controls
                 {
                     
                     List<ExchangeBalance> list = Balances.Where(item => item.Balance > 0).ToList();
-                    List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
+                    List<ExchangeBalance> wallets = GetWalletBalances();
                     list.AddRange(wallets);
 
                     var roots = list.Select(b => b.Symbol).Distinct();
