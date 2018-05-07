@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using TwEX_API.Market;
+using static TwEX_API.Exchange.TradeSatoshi;
+//using static TwEX_API.Exchange.TradeSatoshi;
 using static TwEX_API.PreferenceManager;
 
 namespace TwEX_API.Controls
@@ -256,7 +258,7 @@ namespace TwEX_API.Controls
         }
         #endregion
 
-        #region Event_Handlers
+        #region EventHandlers
         private void EditAPI_Menu_Click(object sender, EventArgs e)
         {
             if (listView.SelectedObject != null)
@@ -366,9 +368,22 @@ namespace TwEX_API.Controls
             //ExchangeManager.updateBalances();
             UpdateUI(true);
         }
-        private void toolStripButton_OrderTotal_Click(object sender, EventArgs e)
+        private async void toolStripButton_OrderTotal_Click(object sender, EventArgs e)
         {
-            ExchangeManager.updateOrders();
+            //ExchangeManager.updateOrders();
+            /*
+            foreach(ExchangeManager.ExchangeApi api in PreferenceManager.preferences.ApiList)
+            {
+                LogManager.AddLogMessage(Name, "toolStripButton_OrderTotal_Click", api.exchange + " | " + api.key + " | " + api.secret, LogManager.LogMessageType.DEBUG);
+            }
+            */
+
+
+            //List<TradeSatoshiBalance> list = await GetTSBalances();
+            TradeSatoshiBalance balance = await GetBalance("BTCP");
+            LogManager.AddLogMessage(Name, "toolStripButton_OrderTotal_Click", "count=" + balance.Currency, LogManager.LogMessageType.DEBUG);
+            
+            //updateExchangeBalanceList();
         }
         private void toolStripButton_Refresh_Click(object sender, EventArgs e)
         {

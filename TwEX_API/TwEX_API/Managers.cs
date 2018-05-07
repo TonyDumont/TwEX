@@ -6,6 +6,8 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -23,6 +25,7 @@ using TwEX_API.Faucet;
 using TwEX_API.Market;
 using TwEX_API.Wallet;
 using static TwEX_API.ExchangeManager;
+using static TwEX_API.Faucet.EarnGG;
 using static TwEX_API.LogManager;
 using static TwEX_API.Market.CoinMarketCap;
 using static TwEX_API.Market.CryptoCompare;
@@ -77,6 +80,7 @@ namespace TwEX_API
             new ImageFile(){ Name = "FontIncrease", Url = "https://glanmirekennels.com.au/wp-content/themes/glanmire-kennels/img/font-larger.png" },
             //new ImageFile(){ Name = "Fork", Url = "https://i.pinimg.com/originals/89/38/85/893885b2204d5ec2af653f9ee90a6ec7.png" },
             new ImageFile(){ Name = "Fork", Url = "https://www.crypto-economy.net/wp-content/uploads/2017/04/Bitcoin-Hard-Fork.png" },
+            new ImageFile(){ Name = "Forks", Url = "https://www.crypto-economy.net/wp-content/uploads/2017/04/Bitcoin-Hard-Fork.png" },
             new ImageFile(){ Name = "Form", Url = "http://www.iconeasy.com/icon/png/System/Stainless/preferences.png" },
             new ImageFile(){ Name = "Import", Url = "http://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/128x128/import.png" },
             new ImageFile(){ Name = "LogManager", Url = "https://image.flaticon.com/icons/png/512/28/28822.png" },
@@ -119,6 +123,10 @@ namespace TwEX_API
         };
         public static List<Website> WebsiteUrlList = new List<Website>()
         {
+            new Website() { Name = "BTCDiv", Url = "https://btcdiv.com/", IconUrl = "https://btcdiv.com/g/favicon.ico", Category = "Forks"},
+            new Website() { Name = "FindMyCoins", Url = "http://www.findmycoins.ninja/", IconUrl = "http://www.findmycoins.ninja/static/spoon/favicon.99b870f29bcd.png", Category = "Forks"},
+            new Website() { Name = "ForksNET", Url = "http://forks.net/list", IconUrl = "http://forks.net/faveicon.png", Category = "Forks"},
+
             new Website() { Name = "AltCoinToday", Url = "https://altcointoday.com/", IconUrl = "https://altcointoday.com/wp-content/uploads/2016/05/Favicon.png", Category = "News"},
             new Website() { Name = "CCN", Url = "https://www.ccn.com/", IconUrl = "https://248qms3nhmvl15d4ne1i4pxl-wpengine.netdna-ssl.com/wp-content/uploads/fbrfg/favicon-32x32.png?v=8j6Rkk2EwR", Category = "News"},
             new Website() { Name = "CoinDesk", Url = "https://www.coindesk.com/", IconUrl = "https://media.coindesk.com/uploads/2017/05/cropped-coindesk-new-favicon-32x32.png", Category = "News"},
@@ -139,10 +147,15 @@ namespace TwEX_API
         {
             new ImageFile(){ Name = "Armory", Url = "https://pbs.twimg.com/profile_images/378800000443755723/365662ad79083b1cf8d1975741bb8d2b_400x400.png" },
             new ImageFile(){ Name = "BlockIO", Url = "https://block.io/favicon.ico" },
+            new ImageFile(){ Name = "Coinomi", Url = "https://pbs.twimg.com/profile_images/565590637240545280/FlmBNYWw_400x400.png" },
+            new ImageFile(){ Name = "CoinPot", Url = "https://steemitimages.com/DQmf8u19jCFBZn2Q9aWe2skJXJnDDw14ftDmbMt8U7LgixX/image.png" },
             new ImageFile(){ Name = "CounterWallet", Url = "https://cdn-images-1.medium.com/max/250/1*tmaViKNbk3IDgYJbFGcbEw.png" },
             new ImageFile(){ Name = "Electrum", Url = "http://icons.iconarchive.com/icons/alecive/flatwoken/512/Apps-Electrum-icon.png"},
             new ImageFile(){ Name = "Exodus", Url = "https://www.exodus.io/favicon-32x32.png?v=oLLkoG3aJr" },
-            new ImageFile(){ Name = "Ledger", Url = "http://bitcoin2140.com/wp-content/uploads/2017/08/wallets-icons-360x360-ledger@2x.png" }
+            new ImageFile(){ Name = "FreeBitcoin", Url = "https://pbs.twimg.com/profile_images/771941643004051458/ScAR5Tf2.jpg" },
+            new ImageFile(){ Name = "Ledger", Url = "http://bitcoin2140.com/wp-content/uploads/2017/08/wallets-icons-360x360-ledger@2x.png" },
+            new ImageFile(){ Name = "MinerGate", Url = "https://minergate.com/assets/apple-touch-icon.png" },
+            new ImageFile(){ Name = "WPN", Url = "https://www.bitcoinspoker.com/wp-content/uploads/2017/10/winning-poker-network.jpg" }
         };
         #endregion
 
@@ -637,6 +650,99 @@ namespace TwEX_API
             }
         }
 
+        public static Image GetForkSymbolIcon(string symbol, string url)
+        {
+            Image image = GetIcon("Unknown");
+
+            // check imagelist for exist
+            //if (symbol != null)
+            //{
+                if (SymbolIconList.Images.ContainsKey(symbol.ToUpper()))
+                {
+                    return SymbolIconList.Images[symbol];
+                }
+                else
+                {
+                // set it up for later
+                //string url = url;
+                WebClient wc = new WebClient();
+                byte[] bytes = wc.DownloadData(url);
+                MemoryStream ms = new MemoryStream(bytes);
+                Image img = Image.FromStream(ms);
+                /*
+                if (symbol.Contains("*"))
+                {
+                    symbol = symbol.Replace("*", "");
+                }
+                */
+                SymbolIconList.Images.Add(symbol.ToUpper(), img);
+                img.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+
+                return img;
+
+
+                /*
+                try
+                {
+                    //if (symbol != "USD")
+                    //{
+
+                    CryptoCompareCoin coin = CryptoComparePreferences.CoinList.FirstOrDefault(listItem => listItem.Name == symbol);
+
+                    if (coin != null)
+                    {
+                        if (coin.ImageUrl.Length > 0)
+                        {
+                            string url = "https://www.cryptocompare.com" + coin.ImageUrl;
+                            WebClient wc = new WebClient();
+                            byte[] bytes = wc.DownloadData(url);
+                            MemoryStream ms = new MemoryStream(bytes);
+                            Image img = Image.FromStream(ms);
+
+                            if (symbol.Contains("*"))
+                            {
+                                symbol = symbol.Replace("*", "");
+                            }
+
+                            SymbolIconList.Images.Add(symbol.ToUpper(), img);
+                            img.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+
+                            return img;
+                        }
+                        else
+                        {
+                            image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+                            return image;
+                        }
+                    }
+
+                    else
+                    {
+                        image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+                        return image;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
+                    // USE GENERIC ICON
+                    image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+                    return image;
+                }
+                */
+            }
+            //}
+        /*
+            else
+            {
+                AddLogMessage(Name, "GetSymbolIcon", symbol + " | IsNULL", LogMessageType.DEBUG);
+                // USE GENERIC ICON
+                image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+                return image;
+            }
+            */
+        }
+
         public static Image GetSymbolIcon(string symbol)
         {
             Image image = GetIcon("Unknown");
@@ -689,24 +795,12 @@ namespace TwEX_API
                                 image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
                                 return image;
                             }
-                        //}
-                        /*
-                        else
-                        {
-                            // SET USD
-                            Image usdIcon = GetIcon("USD");
-                            SymbolIconList.Images.Add("USD", usdIcon);
-                            usdIcon.Save(DataDirectory + "\\symbols\\" + "USD.png", ImageFormat.Png);
-                            return usdIcon;
-                        }
-                        */
-
                     }
                     catch (Exception ex)
                     {
                         AddLogMessage(Name, "GetSymbolIcon", symbol + " | " + ex.Message, LogMessageType.EXCEPTION);
                         // USE GENERIC ICON
-                        image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
+                        //image.Save(DataDirectory + "\\symbols\\" + symbol.ToUpper() + ".png", ImageFormat.Png);
                         return image;
                     }
                 }
@@ -861,6 +955,162 @@ namespace TwEX_API
         #endregion
     }
     // -------------------------------
+
+    public class DataManager
+    {
+        #region Properties
+        private static string Name = "DataManager";
+        #endregion
+
+        public static DataTable GetDataSet(string SQL)
+        {
+            DataTable ds = new DataTable();
+            string ConnString = GetDBConnectionString();
+
+            if (ConnString.Length > 0)
+            {
+                AddLogMessage(Name, "GetDataSet", "conn=" + ConnString, LogMessageType.DEBUG);
+                SqlDataAdapter msql = new SqlDataAdapter();
+                SqlConnection conn = new SqlConnection(ConnString);
+                //SqlConnection conn = new SqlConnection();
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = SQL;
+                da.SelectCommand = cmd;
+
+                try
+                {
+                    conn.Open();
+                    try
+                    {
+                        da.Fill(ds);
+                    }
+                    catch (Exception e)
+                    {
+                        AddLogMessage(Name, "GetDataSet", e.Message, LogMessageType.EXCEPTION);
+                    }
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+
+            return ds;
+        }
+        public static string GetDBConnectionString()
+        {
+            if (preferences.UseDB)
+            {
+                return "Data Source=" + preferences.DBSource + ";Initial Catalog=" + preferences.DBName + ";User ID=" + preferences.DBID + ";Password=" + preferences.DBPassword;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+        public static DataTable GetMachinesTable()
+        {
+            DataTable record = new DataTable();
+            string sqlcommand = "SELECT * from PBW_Machines where IsPlayer = 1";
+            record = GetDataSet(sqlcommand);
+            return record;
+        }
+        /*
+        public static List<Machine> GetMachineList()
+        {
+            DataTable dtable = GetMachinesTable();
+            List<Machine> machineList = new List<Machine>();
+
+            //List<Machine> MachineList = new List<Machine>();
+
+            //MachineList.Clear();
+
+            for (int i = 0; i < dtable.Rows.Count; i++)
+            {
+                DataRow drow = dtable.Rows[i];
+                Machine machine = new Machine();
+                machine.autID = Convert.ToInt32(drow["autID"]);
+                machine.MachineName = drow["MachineName"].ToString();
+                machine.PlayerName = drow["PlayerName"].ToString();
+                machine.IsPlayer = Convert.ToBoolean(drow["IsPlayer"]);
+                machine.IsActive = Convert.ToBoolean(drow["IsActive"]);
+                machine.CardRoom = drow["CardRoom"].ToString();
+                machine.Balance = Convert.ToDecimal(drow["Balance"]);
+                machine.Bucks = Convert.ToDecimal(drow["Bucks"]);
+                machine.Points = Convert.ToDecimal(drow["Points"]);
+                machine.LastKnownIP = drow["LastKnownIP"].ToString();
+                machine.LastLogged = Convert.ToDateTime(drow["LastLogged"]);
+                machine.MachineData = drow["MachineData"].ToString();
+
+                MemoryStream mem = new MemoryStream((byte[])drow["Icon"]);
+                machine.Icon = Image.FromStream(mem);
+
+                machine.AutoSchedule = Convert.ToBoolean(drow["AutoSchedule"]);
+                machine.AutoRegister = Convert.ToBoolean(drow["AutoRegister"]);
+                machine.RegisterCount = Convert.ToInt32(drow["RegisterCount"]);
+                machine.StartHour = Convert.ToInt32(drow["StartHour"]);
+                machine.EndHour = Convert.ToInt32(drow["EndHour"]);
+                machine.MaxTables = Convert.ToInt32(drow["MaxTables"]);
+
+                machine.CardRoomNetwork = drow["CardRoomNetwork"].ToString();
+                machine.VPNName = drow["VPNName"].ToString();
+                machine.VPNMonitor = drow["VPNMonitor"].ToString();
+                machine.VPNOwner = drow["VPNOwner"].ToString();
+                machine.VMHost = drow["VMHost"].ToString();
+                machine.IsVMHost = Convert.ToBoolean(drow["IsVMHost"]);
+                machine.IsVPNMonitor = Convert.ToBoolean(drow["IsVPNMonitor"]);
+                machine.IsScraper = Convert.ToBoolean(drow["IsScraper"]);
+                machine.IsMessaging = Convert.ToBoolean(drow["IsMessaging"]);
+                machine.IsMonitor = Convert.ToBoolean(drow["IsMonitor"]);
+
+                machineList.Add(machine);
+                //MachineList.Add(machine);
+            }
+            AddLogMessage(Name, "GetMachineList", "Successfully Loaded " + machineList.Count + " Items");
+            return machineList;
+        }         
+
+        public class Machine
+        {
+            public int autID { get; set; }
+            public string MachineName { get; set; }
+            public string PlayerName { get; set; }
+            public Boolean IsPlayer { get; set; }
+            public Boolean IsActive { get; set; }
+            public string CardRoom { get; set; }
+            public Decimal Balance { get; set; }
+            public Decimal Bucks { get; set; }
+            public Decimal Points { get; set; }
+            public string LastKnownIP { get; set; }
+            public DateTime LastLogged { get; set; }
+            public string MachineData { get; set; }
+            public Image Icon { get; set; }
+            public string IconString { get; set; }
+            public Boolean AutoSchedule { get; set; }
+            public Boolean AutoRegister { get; set; }
+            public int RegisterCount { get; set; }
+            public int StartHour { get; set; }
+            public int EndHour { get; set; }
+            public int MaxTables { get; set; }
+            public String CardRoomNetwork { get; set; }
+            public String VPNName { get; set; }
+            public String VPNMonitor { get; set; }
+            public String VPNOwner { get; set; }
+            public String VMHost { get; set; }
+            public Boolean IsVMHost { get; set; }
+            public Boolean IsVPNMonitor { get; set; }
+            public Boolean IsScraper { get; set; }
+            public Boolean IsMessaging { get; set; }
+            public Boolean IsMonitor { get; set; }
+            public Machine ShallowCopy()
+            {
+                return (Machine)this.MemberwiseClone();
+            }
+        }
+        */
+    }
+
     public class ExchangeManager
     {
         #region Properties
@@ -893,7 +1143,7 @@ namespace TwEX_API
 
                         exchange.USDSymbol = type.GetProperty("USDSymbol", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();
                         exchange.TradingView = type.GetProperty("TradingView", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString();                  
-                        //LogManager.AddLogMessage(Name, "InitializeExchangeList", "type !+ null for " + exchange.SiteName + " | " + preferences.apiList.Count, LogManager.LogMessageType.DEBUG);
+                        //LogManager.AddLogMessage(Name, "InitializeExchangeList", "type !+ null for " + exchange.Name + " | " + type.Name, LogManager.LogMessageType.DEBUG);
 
                         ExchangeApi api = preferences.ApiList.FirstOrDefault(a => a.exchange.ToLower() == exchange.Name.ToLower());
                         if (api != null)
@@ -901,16 +1151,22 @@ namespace TwEX_API
                             exchange.HasAPI = true;
                             SetExchangeApi(api);
                         }
+                        else
+                        {
+                            LogManager.AddLogMessage(Name, "InitializeExchanges", "API is NULL for : " + exchange.Name, LogMessageType.DEBUG);
+                        }
 
                         Task.Factory.StartNew(() => type.InvokeMember("InitializeExchange",
                                 BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
                                 null,
                                 type,
                                 null));
+
+                        AddLogMessage(Name, "InitializeExchanges", exchange.Name + " INITIALIZED", LogMessageType.OTHER);
                     }
                     catch (Exception ex)
                     {
-                        AddLogMessage(Name, "InitializeExchangeList", ex.Message, LogMessageType.EXCEPTION);
+                        AddLogMessage(Name, "InitializeExchanges", ex.Message, LogMessageType.EXCEPTION);
                     }
                 }
                 else
@@ -1323,11 +1579,15 @@ namespace TwEX_API
             foreach (var type in classList)
             {
                 //Console.WriteLine("type=" + type.ToString() + " | " + type.Name + " | " + type.IsNested);
+                //LogManager.AddLogMessage(Name, "getExchangeList", "name=" + type.Name + " | " + type.IsNested, LogMessageType.DEBUG);
+
                 if (type.IsNested == false && type.Name != "TEMPLATE")
                 {
+                    //LogManager.AddLogMessage(Name, "getExchangeList", "name=" + type.Name + " | " + type.IsNested, LogMessageType.DEBUG);
                     list.Add(type.Name);
                 }
             }
+            //LogManager.AddLogMessage(Name, "getExchangeList", "ExchangeList Count=" + list.Count, LogMessageType.CONSOLE);
             return list;
         }
 
@@ -1887,7 +2147,8 @@ namespace TwEX_API
             public List<ExchangeTicker> TickerList { get { return Tickers.Where(ticker => ticker.exchange == Name).ToList(); } }
             // STATUS
             public int ErrorCount { get { return Convert.ToInt32(type.GetProperty("ErrorCount", BindingFlags.Public | BindingFlags.Static).GetValue(null)); } }
-            public DateTime LastUpdate { get { return Convert.ToDateTime(type.GetProperty("LastUpdate", BindingFlags.Public | BindingFlags.Static).GetValue(null)).ToUniversalTime(); } }
+            //public DateTime LastUpdate { get { return Convert.ToDateTime(type.GetProperty("LastUpdate", BindingFlags.Public | BindingFlags.Static).GetValue(null)).ToUniversalTime(); } }
+            public DateTime LastUpdate { get; set; } = DateTime.Now;
             public string LastMessage { get { return type.GetProperty("LastMessage", BindingFlags.Public | BindingFlags.Static).GetValue(null).ToString(); } }
         }
         public class ExchangeApi
@@ -2176,12 +2437,12 @@ namespace TwEX_API
                 switch (name)
                 {
                     case "ArbitrageManager":
-                            ArbitrageManagerControl control = new ArbitrageManagerControl() { Dock = DockStyle.Fill };
-                        //form.Controls.Add(new ArbitrageManagerControl() { Dock = DockStyle.Fill });
+                        ArbitrageManagerControl control = new ArbitrageManagerControl() { Dock = DockStyle.Fill };
                         form.FormClosing += delegate { arbitrageManagerControl = null; };
                         form.FormClosing += delegate { control.DisposeTimer(); };
                         form.Controls.Add(control);
-                            
+                        //form.FormClosing += delegate { arbitrageManagerControl.DisposeTimer(); };
+                        //form.Controls.Add(arbitrageManagerControl);
                         break;
 
                     case "BalanceManager":
@@ -2214,14 +2475,16 @@ namespace TwEX_API
                         form.Controls.Add(tradeControl);
                         
                         break;
-                        
-                        
-/*
-                    case "ExchangeEditor":
-                        form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
-                        form.FormClosing += delegate { exchangeManagerControl = null; };
+
+                    case "ForkManager":
+                        form.Controls.Add(new ForkManagerControl() { Dock = DockStyle.Fill });
                         break;
-                        */
+                    /*
+                                        case "ExchangeEditor":
+                                            form.Controls.Add(new ExchangeManagerControl() { Dock = DockStyle.Fill });
+                                            form.FormClosing += delegate { exchangeManagerControl = null; };
+                                            break;
+                                            */
 
                     case "LogManager":
                         form.FormClosing += delegate { logManagerControl = null; };
@@ -2329,16 +2592,20 @@ namespace TwEX_API
             }
         }
         */
+        
+        
         public static void UpdateArbitrageManager(bool resize = false)
         {
             if (arbitrageManagerControl != null)
             {
                 //arbitrageManagerControl.SetWatchlist();
                 //arbitrageManagerControl.UpdateUI(resize);
-                arbitrageManagerControl.SetWatchlist();
+                //arbitrageManagerControl.SetWatchlist();
+                Task.Factory.StartNew(() => arbitrageManagerControl.SetWatchlist());
             }
             //UpdatePreferenceFile(PreferenceType.Arbitrage);
         }
+        
         public static void UpdateBalanceManager(bool resize = false)
         {
             if (balanceManagerControl != null)
@@ -2400,7 +2667,6 @@ namespace TwEX_API
             {
                 walletManagerControl.UpdateUI(resize);
             }
-            //UpdatePreferenceFile(PreferenceType.Wallet);
         }
         public static void UpdateToolStrip(bool resize = false)
         {
@@ -3292,70 +3558,7 @@ namespace TwEX_API
         }
         #endregion
 
-        /*
-        #region ArbitrageWatchList
         
-        public static bool AddArbitrageWatchListItem(string symbol, string market)
-        {
-            
-            ExchangeTicker listItem = ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
-            if (listItem == null)
-            {
-                ExchangeTicker newItem = new ExchangeTicker()
-                {
-                    market = market,
-                    symbol = symbol
-                };
-                ArbitragePreferences.ArbitrageWatchList.Add(newItem);
-                FormManager.UpdateArbitrageManager();
-            }
-            
-            return true;
-        }
-        
-        public static bool RemoveWatchlistItem(string market, string symbol)
-        {
-            
-            ExchangeTicker listItem = ArbitragePreferences.ArbitrageWatchList.Find(item => item.market == market && item.symbol == symbol);
-            if (listItem != null)
-            {
-                ArbitragePreferences.ArbitrageWatchList.Remove(listItem);
-                FormManager.UpdateArbitrageManager();
-            }
-            
-            return true;
-        }
-        public static void MoveWatchlistItem(string market, string symbol, string direction)
-        {
-            
-            //ExchangePrice listItem = symbolPriceLists.Find(item => item.market == market && item.symbol == symbol);
-            int index = ArbitragePreferences.ArbitrageWatchList.FindIndex(item => item.market == market && item.symbol == symbol);
-
-            if (index != -1)
-            {
-
-                if (direction == "up")
-                {
-                    if (index > 0)
-                    {
-                        ArbitragePreferences.ArbitrageWatchList.Move(index, MoveDirection.Up);
-                    }
-
-                }
-                else
-                {
-                    if (index < ArbitragePreferences.ArbitrageWatchList.Count - 1)
-                    {
-                        ArbitragePreferences.ArbitrageWatchList.Move(index, MoveDirection.Down);
-                    }
-                }
-                FormManager.UpdateArbitrageManager();
-            }
-            
-        }
-        
-        #endregion
-        */
 
         #region SymbolWatchList
         public static void AddSymbolToWatchlist(string symbol)
@@ -3430,27 +3633,57 @@ namespace TwEX_API
             switch (preset)
             {
                 case "Exchange Inventory":
-                    // GET BALANCES FOR EXCHANGE
-                    ExchangeManager.Exchange exchange = Exchanges.FirstOrDefault(item => item.Name == name);
-
-                    if (exchange != null)
+                    if (!name.Contains("All"))
                     {
-                        //watchlist.Items = new List<ExchangeTicker>();
-                        // GET LIST OF SYMBOLS WITH BALANCES
-                        List<ExchangeBalance> balances = exchange.BalanceList.FindAll(item => item.Balance > 0);
-                        // BUILD LIST
-                        foreach (ExchangeBalance balance in balances)
-                        {
+                        // GET BALANCES FOR EXCHANGE
+                        ExchangeManager.Exchange exchange = Exchanges.FirstOrDefault(item => item.Name == name);
 
+                        if (exchange != null)
+                        {
+                            //watchlist.Items = new List<ExchangeTicker>();
+                            // GET LIST OF SYMBOLS WITH BALANCES
+                            List<ExchangeBalance> balances = exchange.BalanceList.FindAll(item => item.Balance > 0);
+                            // BUILD LIST
+                            foreach (ExchangeBalance balance in balances)
+                            {
+                                /*
+                                if (balance.Symbol == "USD")
+                                {
+                                    balance.Symbol = "USDT";
+                                }
+                                */
+                                ExchangeTicker ticker = new ExchangeTicker()
+                                {
+                                    symbol = balance.Symbol,
+                                    market = "BTC",
+                                    exchange = balance.Exchange,
+                                };
+
+                                CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == balance.Symbol);
+
+                                if (priceItem != null)
+                                {
+                                    ticker.last = priceItem.price_btc;
+                                }
+
+                                list.Add(ticker);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        List<ExchangeBalance> balances = Balances.Where(item => item.Balance > 0).ToList();
+                        var roots = balances.Select(item => item.Symbol).Distinct();
+
+                        foreach (string symbol in roots)
+                        {
                             ExchangeTicker ticker = new ExchangeTicker()
                             {
-                                symbol = balance.Symbol,
+                                symbol = symbol,
                                 market = "BTC",
-                                exchange = balance.Exchange,
+                                //exchange = balance.Exchange,
                             };
-
-                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == balance.Symbol);
-
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == symbol);
                             if (priceItem != null)
                             {
                                 ticker.last = priceItem.price_btc;
@@ -3462,15 +3695,164 @@ namespace TwEX_API
                     break;
 
                 case "Wallet Inventory":
-                    
+                    if (!name.Contains("All"))
+                    {
+                        List<WalletBalance> wallets = WalletPreferences.Wallets.FindAll(item => item.WalletName == name).ToList();
+                        var roots = wallets.Select(item => item.Symbol).Distinct();
+
+                        foreach (string symbol in roots)
+                        {
+                            ExchangeTicker ticker = new ExchangeTicker()
+                            {
+                                symbol = symbol,
+                                market = "BTC",
+                                //exchange = balance.Exchange,
+                            };
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == symbol);
+                            if (priceItem != null)
+                            {
+                                ticker.last = priceItem.price_btc;
+                            }
+                            list.Add(ticker);
+                        }
+                    }
+                    else
+                    {
+                        //List<WalletBalance> wallets = WalletPreferences.Wallets.FindAll(item => item.WalletName == name).ToList();
+                        var roots = WalletPreferences.Wallets.Select(item => item.Symbol).Distinct();
+
+                        foreach (string symbol in roots)
+                        {
+                            ExchangeTicker ticker = new ExchangeTicker()
+                            {
+                                symbol = symbol,
+                                market = "BTC",
+                                //exchange = balance.Exchange,
+                            };
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == symbol);
+                            if (priceItem != null)
+                            {
+                                ticker.last = priceItem.price_btc;
+                            }
+                            list.Add(ticker);
+                        }
+                    }
+                    break;
+
+                case "Fork Inventory":
+                    if (!name.Contains("All"))
+                    {
+                        List<ForkData> forks = ForkList.FindAll(item => item.Blockchain == name).ToList();
+                        
+                        foreach (ForkData fork in forks)
+                        {
+                            ExchangeTicker ticker = new ExchangeTicker()
+                            {
+                                symbol = fork.Symbol,
+                                market = "BTC",
+                                //exchange = balance.Exchange,
+                            };
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.Symbol);
+                            if (priceItem != null)
+                            {
+                                ticker.last = priceItem.price_btc;
+                            }
+                            list.Add(ticker);
+                        }
+                    }
+                    else
+                    {
+                        foreach (ForkData fork in ForkList)
+                        {
+                            ExchangeTicker ticker = new ExchangeTicker()
+                            {
+                                symbol = fork.Symbol,
+                                market = "BTC",
+                                //exchange = balance.Exchange,
+                            };
+                            CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.Symbol);
+                            if (priceItem != null)
+                            {
+                                ticker.last = priceItem.price_btc;
+                            }
+                            list.Add(ticker);
+                        }
+                    }
                     break;
 
                 default:
                     //AddLogMessage(Name, "OpenForm", "FORM NOT DEFINED!!! : " + name, LogMessageType.DEBUG);
                     break;
             }
-
             return list;
+        }
+        public static String GetPresetWatchlistTotals(string name, string preset)
+        {
+            //List<ExchangeTicker> list = new List<ExchangeTicker>();
+            LogManager.AddLogMessage(Name, "GetPresetWatchlistTotals", name + " | " + preset, LogMessageType.DEBUG);
+            string total = "Empty";
+
+            switch (preset)
+            {
+                case "Exchange Inventory":
+                    if (!name.Contains("All"))
+                    {
+                        // GET BALANCES FOR EXCHANGE
+                        ExchangeManager.Exchange exchange = Exchanges.FirstOrDefault(item => item.Name == name);
+
+                        if (exchange != null)
+                        {
+                            //watchlist.Items = new List<ExchangeTicker>();
+                            // GET LIST OF SYMBOLS WITH BALANCES
+                            List<ExchangeBalance> balances = exchange.BalanceList.FindAll(item => item.Balance > 0);
+                            total = balances.Count + " Coins | " + balances.Sum(item => item.TotalInBTC) + " | " + balances.Sum(item => item.TotalInUSD);
+
+                        }
+                    }
+                    else
+                    {
+                        List<ExchangeBalance> balances = Balances.Where(item => item.Balance > 0).ToList();
+                        total = balances.Count + " Coins | " + balances.Sum(item => item.TotalInBTC) + " | " + balances.Sum(item => item.TotalInUSD);
+
+                    }
+                    break;
+
+                case "Wallet Inventory":
+                    if (!name.Contains("All"))
+                    {
+                        List<WalletBalance> wallets = WalletPreferences.Wallets.FindAll(item => item.WalletName == name).ToList();
+                        total = wallets.Count + " Coins | " + wallets.Sum(item => item.TotalInBTC) + " | " + wallets.Sum(item => item.TotalInUSD);
+                    }
+                    else
+                    {
+                        //List<WalletBalance> wallets = WalletPreferences.Wallets.FindAll(item => item.WalletName == name).ToList();
+                        total = WalletPreferences.Wallets.Count + " Coins | " + WalletPreferences.Wallets.Sum(item => item.TotalInBTC) + " | " + WalletPreferences.Wallets.Sum(item => item.TotalInUSD);
+
+                    }
+                    break;
+
+                case "Fork Inventory":
+                    if (!name.Contains("All"))
+                    {
+                        //List<ForkData> forks = ForkList.FindAll(item => item.Blockchain == name).ToList();
+                        //return forks.Count + " Coins";
+                        total = "Forks";
+                        
+                    }
+                    else
+                    {
+                        //return forks.Count + " Coins
+                        total = "Forks";
+                        
+                    }
+                    break;
+
+                default:
+                    //AddLogMessage(Name, "OpenForm", "FORM NOT DEFINED!!! : " + name, LogMessageType.DEBUG);
+                    
+                    break;
+            }
+            return total;
         }
         #endregion
 
@@ -3918,7 +4300,14 @@ namespace TwEX_API
             public ThemePreference Theme { get; set; } = new ThemePreference();
             public BalanceViewType BalanceView { get; set; } = BalanceViewType.balance;
 
+            public bool UseDB { get; set; } = false;
+            public string DBSource { get; set; } = "";
+            public string DBName { get; set; } = "";
+            public string DBID { get; set; } = "";
+            public string DBPassword { get; set; } = "";
+            
             //public int BalanceSplitDistance { get; set; } = 0;
+            public bool HideZeroBalances { get; set; } = false;
 
             public bool ShowOnlyAPIExchanges { get; set; } = false;
             public List<ExchangeApi> ApiList { get; set; } = new List<ExchangeApi>();
@@ -4034,7 +4423,19 @@ namespace TwEX_API
         public class EarnGGPreference
         {
             public bool collapsed { get; set; } = true;
-            public List<EarnGG.EarnGGAccount> EarnGGAccounts { get; set; } = new List<EarnGG.EarnGGAccount>();
+            public List<EarnGGAccount> EarnGGAccounts { get; set; } = new List<EarnGG.EarnGGAccount>();
+            public List<EarnGGMachine> Machines { get; set; } = new List<EarnGGMachine>()
+            {
+                new EarnGGMachine(){ email = "pokerxchange@gmail.com", name = "Delilah" },
+                new EarnGGMachine(){ email = "friscobtc@gmail.com", name = "Frisco" },
+                new EarnGGMachine(){ email = "tonisd1@gmail.com", name = "Goliath" },
+                new EarnGGMachine(){ email = "minionbtc@gmail.com", name = "Minion" },
+                new EarnGGMachine(){ email = "delawareus@savethesmiles.org", name = "Pavilion" },
+                new EarnGGMachine(){ email = "l1lrascal@comcast.net", name = "Rover" },
+                new EarnGGMachine(){ email = "grrinder@live.com", name = "Samson" },
+                new EarnGGMachine(){ email = "tonyrdumont@gmail.com", name = "Tiny" },
+                new EarnGGMachine(){ email = "tonisd100@gmail.com", name = "Vaio" },
+            };
         }
         public class ExchangePreference
         {
@@ -4105,8 +4506,9 @@ namespace TwEX_API
         }
         public class WalletPreference
         {
-            public List<Fork> Forks { get; set; } = new List<Fork>();
+            //public List<Fork> Forks { get; set; } = new List<Fork>();
             public List<WalletBalance> Wallets { get; set; } = new List<WalletBalance>();
+            public List<WalletBalance> WalletForks { get; set; } = new List<WalletBalance>();
         }
 
         public class TypeListItem
@@ -4161,6 +4563,67 @@ namespace TwEX_API
         private static string Name { get; } = "WalletManager";
         //public static WalletManagerControl walletManagerControl;
         public static ImageList WalletIconList = new ImageList();
+
+        public static List<ForkData> ForkList = new List<ForkData>()
+        {    
+            // BCH
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoincandy.png", Name = "Bitcoin Candy", Url = "http://forks.net/fork/Bitcoin-Candy", Symbol = "CDY", Blockchain = "BCH", Status = "Redeemable", Date = DateTime.Parse("Saturday, January 13, 2018"), Conversion = 1000M, Explorer = "https://block.cdy.one/" },
+            // BTC 
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "BTP", Url = "http://www.btceasypay.com", Name = "Bitcoin Pay", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Dec. 15, 2017"), Conversion = 10M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "BICC", Url = "http://bicc.io", Name = "Bitclassic Coin", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Dec. 18, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "BEC", Url = "http://biteco.io", Name = "Bitcoin Eco", Blockchain = "BTC", Status = "Pending", Date = DateTime.Parse("Dec. 18, 2017"), Conversion = 10000M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "FBTC", Url = "https://fbtc.pro", Name = "Fast Bitcoin", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Dec. 27, 2017"), Conversion = 1M, Explorer = "http://www.fbtc.tv/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "BCP", Url = "http://www.bitcoincashplus.org", Name = "Bitcoin Cash Plus", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Dec. 28, 2017"), Conversion = 1M, Explorer = "http://www.bcpexp.org/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "WBTC", Url = "http://www.wbtcteam.org", Name = "World Bitcoin", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Jan. 12, 2018"), Conversion = 100M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "BTSQ", Url = "http://btsq.top", Name = "Bitcoin Community", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Jan. 25, 2018"), Conversion = 10000M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "BBC", Url = "http://bigbitcoins.org", Name = "Big Bitcoin", Blockchain = "BTC", Status = "Pending", Date = DateTime.Parse("Feb. 16, 2018"), Conversion = 10M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Symbol = "BTI", Url = "http://www.btcti.org", Name = "Bitcoin Ti", Blockchain = "BTC", Status = "Pending", Date = DateTime.Parse("March 5, 2018"), Conversion = 1M, Explorer = "" },
+
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Name = "Bitcoin Lite", Url = "http://forks.net/fork/Bitcoin-Lite", Symbol = "BTCL", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, January 30, 2018"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinatom.png", Name = "Bitcoin Atom", Url = "http://forks.net/fork/Bitcoin-Atom", Symbol = "BCA", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, January 30, 2018"), Conversion = 1M, Explorer = "https://explorer.bitcoinatom.io/", Claimed = true },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/faveicon.png", Name = "Bitcoin Interest", Url = "http://forks.net/fork/Bitcoin-Interest", Symbol = "BCI", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Monday, January 22, 2018"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinsmart.png", Name = "Bitcoin Smart", Url = "http://forks.net/fork/Bitcoin-Smart", Symbol = "BCS", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Sunday, January 21, 2018"), Conversion = 100M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitvote.png", Name = "BitVote", Url = "http://forks.net/fork/BitVote", Symbol = "BTV", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Sunday, January 21, 2018"), Conversion = 1M, Explorer = "https://block.bitvote.one/" },        
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinrhodium.png", Name = "Bitcoin Rhodium", Url = "http://forks.net/fork/Bitcoin-Rhodium", Symbol = "BTR", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Wednesday, January 10, 2018"), Conversion = 1M, Explorer = "" },          
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinprivate.png", Name = "Bitcoin Private", Url = "http://forks.net/fork/Bitcoin-Private", Symbol = "BTCP", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Monday, January 01, 2018"), Conversion = 1M, Explorer = "https://explorer.btcprivate.org/", Claimed = true },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinall.png", Name = "Bitcoin All", Url = "http://forks.net/fork/Bitcoin-All", Symbol = "BTA", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Monday, January 01, 2018"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinpizza.png", Name = "Bitcoin Pizza", Url = "http://forks.net/fork/Bitcoin-Pizza", Symbol = "BPA", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Monday, January 01, 2018"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinboy.png", Name = "BitcoinBoy", Url = "http://forks.net/fork/BitcoinBoy", Symbol = "BCB", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Sunday, December 31, 2017"), Conversion = 100M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinore.png", Name = "Bitcoin Ore", Url = "http://forks.net/fork/Bitcoin-Ore", Symbol = "BCO", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Sunday, December 31, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Name = "Bitcoin Uranium", Url = "http://forks.net/fork/Bitcoin-Uranium", Symbol = "BUM", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Sunday, December 31, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/quantombitcoin.png", Name = "Quantum Bitcoin", Url = "http://forks.net/fork/Quantum-Bitcoin", Symbol = "QBTC", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Thursday, December 28, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/segwit2x.png", Name = "Bitcoin SegWit2X x11", Url = "http://forks.net/fork/Bitcoin-SegWit2X-x11", Symbol = "B2X", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Thursday, December 28, 2017"), Conversion = 1M, Explorer = "https://explorer.b2x-segwit.io/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinfile.png", Name = "Bitcoin File", Url = "http://forks.net/fork/Bitcoin-File", Symbol = "BIFI", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Wednesday, December 27, 2017"), Conversion = 1000M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/BitcoinGOD.png", Name = "Bitcoin God", Url = "http://forks.net/fork/Bitcoin-God", Symbol = "GOD", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Wednesday, December 27, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcointop.png", Name = "Bitcoin Top", Url = "http://forks.net/fork/Bitcoin-Top", Symbol = "BTT", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 26, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinnew.png", Name = "Bitcoin New", Url = "http://forks.net/fork/Bitcoin-New", Symbol = "BTN", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Monday, December 25, 2017"), Conversion = 1M, Explorer = "http://explorer.btn.org/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinfaith.png", Name = "Bitcoin Faith", Url = "http://forks.net/fork/Bitcoin-Faith", Symbol = "BTF", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 19, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/lightningbitcoin.png", Name = "Lightning Bitcoin", Url = "http://forks.net/fork/Lightning-Bitcoin", Symbol = "LBTC", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 19, 2017"), Conversion = 1M, Explorer = "http://explorer.lbtc.io/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinstake.png", Name = "Bitcoin Stake", Url = "http://forks.net/fork/Bitcoin-Stake", Symbol = "BTCS", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 19, 2017"), Conversion = 100M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/btw.png", Name = "Bitcoin World", Url = "http://forks.net/fork/Bitcoin-World", Symbol = "BTW", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Sunday, December 17, 2017"), Conversion = 10000M, Explorer = "" },            
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/united-bitcoin.png", Name = "UnitedBitcoin", Url = "http://forks.net/fork/UnitedBitcoin", Symbol = "UB", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 12, 2017"), Conversion = 1M, Explorer = "https://www.ub.com/explorer" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/superbitcoin.jpg", Name = "Super Bitcoin", Url = "http://forks.net/fork/Super-Bitcoin", Symbol = "SBTC", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 12, 2017"), Conversion = 1M, Explorer = "http://block.superbtc.org/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinhot.png", Name = "Bitcoin Hot", Url = "http://forks.net/fork/Bitcoin-Hot", Symbol = "BTH", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 12, 2017"), Conversion = 100M, Explorer = "http://block.bithot.org/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinx.png", Name = "BitcoinX", Url = "http://forks.net/fork/BitcoinX", Symbol = "BCX", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, December 12, 2017"), Conversion = 10000M, Explorer = "https://bcx.info/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinnano.png", Name = "Bitcoin Nano", Url = "http://forks.net/fork/Bitcoin-Nano", Symbol = "BTN", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Friday, December 01, 2017"), Conversion = 1000M, Explorer = "http://explorer.btcnano.org/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/nologo.png", Name = "Bitcoin Silver", Url = "http://forks.net/fork/Bitcoin-Silver", Symbol = "BTSI", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Friday, December 01, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoindiamond.png", Name = "Bitcoin Diamond", Url = "http://forks.net/fork/Bitcoin-Diamond", Symbol = "BCD", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Friday, November 24, 2017"), Conversion = 10M, Explorer = "http://explorer.btcd.io/#/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcore.png", Name = "Bitcore", Url = "http://forks.net/fork/Bitcore", Symbol = "BTX", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Thursday, November 02, 2017"), Conversion = 0.5M, Explorer = "https://chainz.cryptoid.info/btx/", Claimed = true },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoingold.png", Name = "Bitcoin Gold", Url = "http://forks.net/fork/Bitcoin-Gold", Symbol = "BTG", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, October 10, 2017"), Conversion = 1M, Explorer = "https://explorer.bitcoingold.org/insight/", Claimed = true },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bytether.png", Name = "Bytether", Url = "http://forks.net/fork/Bytether", Symbol = "BTH", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, August 01, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoinclashic.jpg", Name = "Bitcoin Clashic", Url = "http://forks.net/fork/Bitcoin-Clashic", Symbol = "BCHC-B", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, August 01, 2017"), Conversion = 1M, Explorer = "http://explorer.bitcoinclashic.io/" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/oilbtc.png", Name = "Oil BTC", Url = "http://forks.net/fork/Oil-BTC", Symbol = "OBTC", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, August 01, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/bitcoincash.png", Name = "Bitcoin Cash", Url = "http://forks.net/fork/Bitcoin-Cash", Symbol = "BCH", Blockchain = "BTC", Status = "Redeemable", Date = DateTime.Parse("Tuesday, August 01, 2017"), Conversion = 1M, Explorer = "https://blockchair.com/bitcoin-cash/blocks", Claimed = true },
+            // ETH
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/etherzero.png", Name = "EtherZero", Url = "http://forks.net/fork/EtherZero", Symbol = "ETZ", Blockchain = "ETH", Status = "Redeemable", Date = DateTime.Parse("Friday, January 19, 2018"), Conversion = 1M, Explorer = "https://explorer.etherzero.org/home" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/emo.png", Name = "Ethereum Modification", Url = "http://forks.net/fork/Ethereum-Modification", Symbol = "EMO", Blockchain = "ETH", Status = "Redeemable", Date = DateTime.Parse("Friday, December 15, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/ethercoin.png", Name = "EtherGold", Url = "http://forks.net/fork/EtherGold", Symbol = "ETG", Blockchain = "ETH", Status = "Redeemable", Date = DateTime.Parse("Thursday, December 14, 2017"), Conversion = 1M, Explorer = "" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/etf.png", Name = "EthereumFog", Url = "http://forks.net/fork/EthereumFog", Symbol = "ETF", Blockchain = "ETH", Status = "Redeemable", Date = DateTime.Parse("Monday, January 01, 2018"), Conversion = 1M, Explorer = "" },
+            // LTC
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/lcc.png", Name = "Litecoin Cash", Url = "http://forks.net/fork/Litecoin-Cash", Symbol = "LCC", Blockchain = "LTC", Status = "Redeemable", Date = DateTime.Parse("Sunday, February 18, 2018"), Conversion = 1M, Explorer = "https://litecoinca.sh/#forkdetails" },
+            new ForkData() { IconUrl = "http://forks.net/assets/images/forks/superlitecoin.png", Name = "Super Litecoin", Url = "http://forks.net/fork/Super-Litecoin", Symbol = "SLTC", Blockchain = "LTC", Status = "Redeemable", Date = DateTime.Parse("Wednesday, January 17, 2018"), Conversion = 1M, Explorer = "" },
+        };
+
         #endregion
 
         #region Initialize
@@ -4177,24 +4640,8 @@ namespace TwEX_API
         */
         #endregion
 
-        #region Getters
-        /*
-    public static Bitmap GetWalletIcon(string walletName)
-    {
-        switch (walletName)
-        {
-            case "BlockIO":
-                return ContentManager.GetIconByUrl(ContentManager.BlockIOIconUrl);
-
-            case "Exodus":
-                //return ContentManager.ResizeImage(ContentManager.GetIconByUrl(ContentManager.BalanceIconUrl), 32, 32);
-                return ContentManager.GetIconByUrl(ContentManager.ExodusIconUrl);
-
-            default:
-                return new Bitmap(ContentManager.GetIcon("WalletManager"));
-        }
-    }
-    */
+        #region Getters   
+            /*
         public static List<ExchangeBalance> GetForkBalances()
         {
             List<ExchangeBalance> list = new List<ExchangeBalance>();
@@ -4221,11 +4668,124 @@ namespace TwEX_API
 
             return list;
         }
-        public static List<ExchangeBalance> GetWalletBalances()
+        */
+        public static List<ExchangeBalance> GetWalletBalances(string walletName = "")
         {
             List<ExchangeBalance> list = new List<ExchangeBalance>();
+            List<WalletBalance> wallets = new List<WalletBalance>();
+            if (walletName.Length > 0)
+            {
+                wallets = WalletPreferences.Wallets.Where(item => item.WalletName == walletName).ToList();
+            }
+            else
+            {
+                wallets = WalletPreferences.Wallets;
+            }
 
-            foreach (WalletBalance wallet in WalletPreferences.Wallets)
+            foreach (WalletBalance wallet in wallets)
+            {
+                if (wallet.Balance > 0)
+                {
+                    ExchangeBalance balance = new ExchangeBalance()
+                    {
+                        Balance = wallet.Balance,
+                        Exchange = wallet.WalletName,
+                        Name = wallet.Name,
+                        Symbol = wallet.Symbol,
+                        TotalInBTC = wallet.TotalInBTC,
+                        TotalInUSD = wallet.TotalInUSD
+                    };
+                    list.Add(balance);
+                }
+            }
+
+            if (preferences.HideZeroBalances)
+            {
+                return list.Where(item => item.Balance > 0).ToList();
+            }
+            else
+            {
+                return list;
+            }
+        }
+        public static List<ExchangeBalance> GetWalletForkBalances(string walletName = "")
+        {
+            List<ExchangeBalance> list = new List<ExchangeBalance>();
+            List<WalletBalance> wallets = new List<WalletBalance>();
+            if (walletName.Length > 0)
+            {
+                wallets = WalletPreferences.WalletForks.Where(item => item.WalletName == walletName).ToList();
+            }
+            else
+            {
+                wallets = WalletPreferences.WalletForks;
+            }
+
+            foreach (WalletBalance wallet in wallets)
+            {
+                if (wallet.Balance > 0)
+                {
+                    ExchangeBalance balance = new ExchangeBalance()
+                    {
+                        Balance = wallet.Balance,
+                        Exchange = wallet.WalletName,
+                        Name = wallet.Name,
+                        Symbol = wallet.Symbol,
+                        TotalInBTC = wallet.TotalInBTC,
+                        TotalInUSD = wallet.TotalInUSD
+                    };
+
+                    CoinMarketCapTicker ticker;
+
+                    if (wallet.Symbol != "LBTC")
+                    { 
+                        ticker = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == balance.Symbol);
+                    }
+                    else
+                    {
+                        ticker = CoinMarketCap.getTicker("lightning-bitcoin");
+                    }
+
+                    if (ticker != null)
+                    {
+                        wallet.TotalInBTC = balance.Balance * ticker.price_btc;
+                        wallet.TotalInUSD = balance.Balance * ticker.price_usd;
+                    }
+
+                    if (balance.Symbol == "BTW")
+                    {
+                        balance.TotalInBTC = 0;
+                        balance.TotalInUSD = 0;
+                    }
+
+                    list.Add(balance);
+                }
+            }
+
+            if (preferences.HideZeroBalances)
+            {
+                return list.Where(item => item.Balance > 0).ToList();
+            }
+            else
+            {
+                return list;
+            }
+        }
+        public static List<ExchangeBalance> GetWalletBalancesBySymbol(string symbol)
+        {
+            List<ExchangeBalance> list = new List<ExchangeBalance>();
+            /*
+            List<WalletBalance> wallets = new List<WalletBalance>();
+            if (walletName.Length > 0)
+            {
+                wallets = WalletPreferences.Wallets.Where(item => item.WalletName == walletName).ToList();
+            }
+            else
+            {
+                wallets = WalletPreferences.Wallets;
+            }
+            */
+            foreach (WalletBalance wallet in WalletPreferences.Wallets.Where(item => item.Symbol == symbol).ToList())
             {
                 if (wallet.Balance > 0)
                 {
@@ -4247,28 +4807,7 @@ namespace TwEX_API
         #endregion
 
         #region Updaters
-        /*
-        public static void UpdateUI()
-        {
-            if (FormManager.walletManagerControl != null)
-            {
-                FormManager.walletManagerControl.UpdateUI();
-            }
-        }
-        */
-        public static bool UpdateForks()
-        {
-            foreach (Fork fork in WalletPreferences.Forks)
-            {
-                fork.TotalInBTC = GetMarketCapBTCAmount(fork.ticker.ToUpper(), Convert.ToDecimal(fork.balance.expected));
-                fork.TotalInUSD = GetMarketCapUSDAmount(fork.ticker.ToUpper(), Convert.ToDecimal(fork.balance.expected));
-
-                //Thread.Sleep(2000);
-            }
-            UpdatePreferenceFile(PreferenceType.Wallet);
-            FormManager.UpdateBalanceManager();
-            return true;
-        }
+        
         public static bool UpdateWallets()
         {
             foreach (WalletBalance balance in WalletPreferences.Wallets)
@@ -4280,16 +4819,7 @@ namespace TwEX_API
                         case "BlockIO":
                             //AddLogMessage(Name, "updateWallets", "BlockIO : " + balance.Symbol, LogMessageType.DEBUG);
                             balance.Balance = BlockIO.getBalance(balance.Api);
-                            /*
-                            if (balance.Symbol != "BTC")
-                            {
-                                balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
-                            }
-                            else
-                            {
-                                balance.TotalInBTC = balance.Balance;
-                            }
-                            */
+                            
                             balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
                             balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
                             break;
@@ -4338,9 +4868,15 @@ namespace TwEX_API
                     balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
                 }
             }
-            //UpdatePreferenceSnapshots();
+
+            foreach (WalletBalance balance in WalletPreferences.WalletForks)
+            {
+                balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
+                balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
+            }
+
             UpdatePreferenceFile(PreferenceType.Wallet);
-            //UpdateUI();
+
             FormManager.UpdateWalletManager();
             return true;
         }
@@ -4352,7 +4888,6 @@ namespace TwEX_API
             public float expected { get; set; }
             public object actual { get; set; }
         }
-
         public class Fork
         {
             public string id { get; set; }
@@ -4366,7 +4901,6 @@ namespace TwEX_API
             public Decimal TotalInBTC { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
         }
-
         public class ForkImport
         {
             public string addr { get; set; }
@@ -4374,7 +4908,20 @@ namespace TwEX_API
             public int balance { get; set; }
             public List<Fork> forks { get; set; }
         }
+        public class ForkData
+        {
+            public string Blockchain { get; set; }
+            public string Symbol { get; set; }
+            public string IconUrl { get; set; }
+            public string Url { get; set; }
+            public string Explorer { get; set; }
+            public string Name { get; set; }
+            public string Status { get; set; }
+            public DateTime Date { get; set; }
+            public Decimal Conversion { get; set; }
 
+            public bool Claimed { get; set; } = false;
+        }
         public class WalletBalance
         {
             public string Api { get; set; }
@@ -4382,23 +4929,36 @@ namespace TwEX_API
             public string Name { get; set; }
             public string CoinName { get; set; }
             public string WalletName { get; set; }
-            public string Address { get; set; }
+            public string Address { get; set; }       
+            // BALANCES
+            public Decimal Balance { get; set; } = 0;
+            public Decimal TotalInBTC { get; set; } = 0;
+            public Decimal TotalInUSD { get; set; } = 0;
+            // FORK DATA
+            public bool IsForkBalance { get; set; } = false;
+            public bool Claimed { get; set; } = false;
+            public bool Verified { get; set; } = false;
+            public bool HODL { get; set; } = false;
+            //public List<WalletBalance> Forks { get; set; } = new List<WalletBalance>();
+        }
+        /*
+        public class WalletForkBalance
+        {
+            //public string Api { get; set; }
+            public string Symbol { get; set; }
+            public string Name { get; set; }
+            public string CoinName { get; set; }
+            //public string WalletName { get; set; }
+            //public string Address { get; set; }
             public bool IsForkBalance { get; set; } = false;
             public Decimal Balance { get; set; } = 0;
             public Decimal TotalInBTC { get; set; } = 0;
             public Decimal TotalInUSD { get; set; } = 0;
-        }
-        #endregion
-        /*
-        #region Enum
-        public enum WalletAPIType
-        {
-            none,
-            BlockCypher,
+
 
         }
-        #endregion
-    */
+        */
+        #endregion      
     }
     // -------------------------------
 }
@@ -4435,49 +4995,5 @@ namespace TwEX_API
             default:
                 //AddLogMessage(Name, "UpdateColorControls", "CONTROL NOT DEFINED : " + myControl.GetType(), LogMessageType.DEBUG);
                 break;
-        }
-        */
-
-/*
-        public List<ExchangeTicker> GetCurrentWatchList()
-        {
-            List<ExchangeTicker> list = new List<ExchangeTicker>();
-            if (CurrentWatchList.Length > 0)
-            {
-                ArbitrageWatchList listItem = WatchLists.FirstOrDefault(item => item.Name == CurrentWatchList);
-                if (listItem != null)
-                {
-                    //list = listItem.Items;
-                    foreach (ExchangeTicker ticker in listItem.Items)
-                    {
-                        CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
-                        if (priceItem != null)
-                        {
-                            ticker.last = priceItem.price_btc;
-                        }
-                        list.Add(ticker);
-                    }
-                }
-            }
-            return list.OrderByDescending(item => item.last).ToList();
-        }
-        */
-
-/*
-        public List<ExchangeTicker> ArbitrageWatchList { get; set; } = new List<ExchangeTicker>();
-        public List<ExchangeTicker> GetWatchList()
-        {
-            List<ExchangeTicker> list = new List<ExchangeTicker>();
-            foreach(ExchangeTicker ticker in ArbitrageWatchList)
-            {
-                CoinMarketCapTicker priceItem = CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == ticker.symbol);
-                if (priceItem != null)
-                {
-                    ticker.last = priceItem.price_btc;
-                }
-                list.Add(ticker);
-            }
-
-            return list.OrderByDescending(item => item.last).ToList();
         }
         */

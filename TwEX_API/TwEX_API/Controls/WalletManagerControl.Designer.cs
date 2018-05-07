@@ -53,6 +53,8 @@
             this.toolStripLabel_usd = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_btc = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton_zero = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -151,7 +153,9 @@
             this.toolStripSeparator3,
             this.toolStripLabel_usd,
             this.toolStripSeparator2,
-            this.toolStripLabel_btc});
+            this.toolStripLabel_btc,
+            this.toolStripSeparator6,
+            this.toolStripButton_zero});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(812, 25);
@@ -283,6 +287,20 @@
             this.toolStripLabel_btc.Size = new System.Drawing.Size(27, 22);
             this.toolStripLabel_btc.Text = "BTC";
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButton_zero
+            // 
+            this.toolStripButton_zero.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_zero.Image")));
+            this.toolStripButton_zero.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_zero.Name = "toolStripButton_zero";
+            this.toolStripButton_zero.Size = new System.Drawing.Size(61, 22);
+            this.toolStripButton_zero.Text = "Hide 0";
+            this.toolStripButton_zero.Click += new System.EventHandler(this.toolStripButton_zero_Click);
+            // 
             // WalletManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -326,5 +344,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton toolStripButton_collapse;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton toolStripButton_zero;
     }
 }

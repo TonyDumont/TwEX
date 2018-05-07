@@ -55,30 +55,48 @@ namespace TwEX_API.Controls
             { 
                 try
                 {
-                    List<ExchangeBalance> list = Balances.Where(item => item.Balance > 0).ToList();
+                    List<ExchangeBalance> list;
+
+                    if (PreferenceManager.preferences.HideZeroBalances)
+                    {
+                        list = Balances.Where(item => item.Balance > 0).ToList();
+                    }
+                    else
+                    {
+                        list = Balances.ToList();
+                    }
+
+                    //List<ExchangeBalance> list = Balances.Where(item => item.Balance > 0).ToList();
+
                     //List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
                     list.AddRange(WalletManager.GetWalletBalances());
+                    list.AddRange(WalletManager.GetWalletForkBalances());
+                    /*
                     list.AddRange(WalletManager.GetForkBalances());
-                    //List<ExchangeBalance> forks = WalletManager.GetForkBalances();
+                    */
                     listView.SetObjects(list.OrderByDescending(item => item.TotalInBTC));
-                    //listView.SetObjects(list.OrderByDescending(item => item.TotalInBTC).ThenByDescending(item => item.Name));
+                    
                     
                     switch (view)
                     {
                         case BalanceViewType.symbol:
+                            //listView.SetObjects(list.OrderByDescending(item => item.Symbol).ThenByDescending(item => item.TotalInBTC));
+                            //listView.SetObjects(list.OrderByDescending(item => item.TotalInBTC));
                             listView.Sort(column_Symbol, SortOrder.Ascending);
                             //listView.SetObjects(list.OrderByDescending(item => item.Symbol));
                             toolStripLabel_totals.Text = "";
                             break;
 
                         case BalanceViewType.exchange:
-                            //listView.Sort(column_Exchange, SortOrder.Ascending);
-                            listView.Sort(column_Name, SortOrder.Ascending);
+                            listView.SetObjects(list.OrderByDescending(item => item.Exchange).ThenByDescending(item => item.TotalInBTC));
+                            listView.Sort(column_Exchange, SortOrder.Ascending);
+                            //listView.Sort(column_Name, SortOrder.Ascending);
                             //listView.SetObjects(list.OrderByDescending(item => item.Name));
                             toolStripLabel_totals.Text = Exchanges.Count + " Exchanges";
                             break;
 
                         case BalanceViewType.balance:
+                            //listView.SetObjects(list.OrderByDescending(item => item.TotalInBTC));
                             listView.Sort(column_TotalInBTC, SortOrder.Descending);
                             //listView.SetObjects(list.OrderByDescending(item => item.TotalInBTC));
                             toolStripLabel_totals.Text = "";
@@ -492,20 +510,6 @@ namespace TwEX_API.Controls
             {
                 e.Item.BackColor = PreferenceManager.preferences.Theme.Yellow;
             }
-
-            /*
-            if (e.ColumnIndex == column_24hchange.Index)
-            {
-                if (ticker.percent_change_24h > 0)
-                {
-                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Green;
-                }
-                else
-                {
-                    e.SubItem.BackColor = PreferenceManager.preferences.Theme.Red;
-                }
-            }
-            */
         }
         private void ListView_GroupExpandingCollapsing(object sender, GroupExpandingCollapsingEventArgs e)
         {

@@ -42,14 +42,15 @@
             this.toolStripButton_timer = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_title = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton_toggleHeight = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel_total = new System.Windows.Forms.ToolStripLabel();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
             this.column_active = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_email = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_lastLogin = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.toolStripButton_toggleHeight = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.column_lastIP = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
@@ -161,6 +162,23 @@
             this.toolStripLabel_title.Size = new System.Drawing.Size(36, 22);
             this.toolStripLabel_title.Text = "TITLE";
             // 
+            // toolStripButton_toggleHeight
+            // 
+            this.toolStripButton_toggleHeight.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_toggleHeight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_toggleHeight.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_toggleHeight.Image")));
+            this.toolStripButton_toggleHeight.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_toggleHeight.Name = "toolStripButton_toggleHeight";
+            this.toolStripButton_toggleHeight.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_toggleHeight.Text = "Toggle Height";
+            this.toolStripButton_toggleHeight.Click += new System.EventHandler(this.toolStripButton_toggleHeight_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
             // toolStripLabel_total
             // 
             this.toolStripLabel_total.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -173,12 +191,14 @@
             this.listView.AllColumns.Add(this.column_active);
             this.listView.AllColumns.Add(this.column_email);
             this.listView.AllColumns.Add(this.column_balance);
+            this.listView.AllColumns.Add(this.column_lastIP);
             this.listView.AllColumns.Add(this.column_lastLogin);
             this.listView.CellEditUseWholeCell = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.column_active,
             this.column_email,
             this.column_balance,
+            this.column_lastIP,
             this.column_lastLogin});
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -222,22 +242,9 @@
             this.column_lastLogin.FillsFreeSpace = true;
             this.column_lastLogin.Text = "Last Login";
             // 
-            // toolStripButton_toggleHeight
+            // column_lastIP
             // 
-            this.toolStripButton_toggleHeight.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton_toggleHeight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_toggleHeight.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_toggleHeight.Image")));
-            this.toolStripButton_toggleHeight.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_toggleHeight.Name = "toolStripButton_toggleHeight";
-            this.toolStripButton_toggleHeight.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_toggleHeight.Text = "Toggle Height";
-            this.toolStripButton_toggleHeight.Click += new System.EventHandler(this.toolStripButton_toggleHeight_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            this.column_lastIP.AspectName = "lastIP";
             // 
             // EarnGGManagerControl
             // 
@@ -280,5 +287,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel_total;
         private System.Windows.Forms.ToolStripButton toolStripButton_toggleHeight;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private BrightIdeasSoftware.OLVColumn column_lastIP;
     }
 }

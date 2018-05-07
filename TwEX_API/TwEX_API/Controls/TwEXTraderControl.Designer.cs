@@ -54,6 +54,7 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_websites = new System.Windows.Forms.ToolStripDropDownButton();
             this.exchangeManagerControl = new TwEX_API.Controls.ExchangeManagerControl();
+            this.toolStripMenuItem_ForkManager = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -144,6 +145,7 @@
             this.toolStripMenuItem_CoinMarketCap,
             this.toolStripMenuItem_CryptoCompare,
             this.toolStripMenuItem_EarnGG,
+            this.toolStripMenuItem_ForkManager,
             this.toolStripMenuItem_TradingView,
             this.toolStripSeparator_3,
             this.toolStripMenuItem_PreferenceManager,
@@ -274,6 +276,13 @@
             this.exchangeManagerControl.Size = new System.Drawing.Size(494, 254);
             this.exchangeManagerControl.TabIndex = 6;
             // 
+            // toolStripMenuItem_ForkManager
+            // 
+            this.toolStripMenuItem_ForkManager.Name = "toolStripMenuItem_ForkManager";
+            this.toolStripMenuItem_ForkManager.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem_ForkManager.Tag = "ForkManager";
+            this.toolStripMenuItem_ForkManager.Text = "Fork Manager";
+            // 
             // TwEXTraderControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -317,5 +326,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontIncrease;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_fontDecrease;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_websites;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_ForkManager;
     }
 }

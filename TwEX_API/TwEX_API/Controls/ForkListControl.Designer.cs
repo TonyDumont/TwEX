@@ -33,12 +33,12 @@
             this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButton_collapse = new System.Windows.Forms.ToolStripButton();
             this.listView = new BrightIdeasSoftware.FastObjectListView();
-            this.column_ticker = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.column_Name = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_Balance = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_TotalInBTC = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_TotalInUSD = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.column_id = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_CoinName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.column_ForkSymbol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn3 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
             this.SuspendLayout();
@@ -73,20 +73,20 @@
             // 
             // listView
             // 
-            this.listView.AllColumns.Add(this.column_id);
-            this.listView.AllColumns.Add(this.column_ticker);
             this.listView.AllColumns.Add(this.column_Name);
-            this.listView.AllColumns.Add(this.column_Balance);
-            this.listView.AllColumns.Add(this.column_TotalInBTC);
-            this.listView.AllColumns.Add(this.column_TotalInUSD);
+            this.listView.AllColumns.Add(this.column_CoinName);
+            this.listView.AllColumns.Add(this.column_ForkSymbol);
+            this.listView.AllColumns.Add(this.olvColumn1);
+            this.listView.AllColumns.Add(this.olvColumn2);
+            this.listView.AllColumns.Add(this.olvColumn3);
             this.listView.CellEditUseWholeCell = false;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.column_id,
-            this.column_ticker,
             this.column_Name,
-            this.column_Balance,
-            this.column_TotalInBTC,
-            this.column_TotalInUSD});
+            this.column_CoinName,
+            this.column_ForkSymbol,
+            this.olvColumn1,
+            this.olvColumn2,
+            this.olvColumn3});
             this.listView.Cursor = System.Windows.Forms.Cursors.Default;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -103,7 +103,7 @@
             this.listView.ShowFilterMenuOnRightClick = false;
             this.listView.ShowGroups = false;
             this.listView.Size = new System.Drawing.Size(390, 435);
-            this.listView.TabIndex = 6;
+            this.listView.TabIndex = 11;
             this.listView.UseCellFormatEvents = true;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.UseHotControls = false;
@@ -112,47 +112,45 @@
             this.listView.VirtualMode = true;
             this.listView.AboutToCreateGroups += new System.EventHandler<BrightIdeasSoftware.CreateGroupsEventArgs>(this.aboutToCreateGroups);
             // 
-            // column_ticker
-            // 
-            this.column_ticker.AspectName = "ticker";
-            this.column_ticker.Text = "Ticker";
-            this.column_ticker.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.column_ticker.Width = 50;
-            // 
             // column_Name
             // 
-            this.column_Name.AspectName = "name";
-            this.column_Name.FillsFreeSpace = true;
+            this.column_Name.AspectName = "Name";
+            this.column_Name.IsVisible = false;
             this.column_Name.Text = "Name";
+            this.column_Name.Width = 0;
             // 
-            // column_Balance
+            // column_CoinName
             // 
-            this.column_Balance.AspectName = "";
-            this.column_Balance.AspectToStringFormat = "";
-            this.column_Balance.Text = "Balance";
-            this.column_Balance.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.column_CoinName.AspectName = "CoinName";
+            this.column_CoinName.Text = "CoinName";
             // 
-            // column_TotalInBTC
+            // column_ForkSymbol
             // 
-            this.column_TotalInBTC.AspectName = "";
-            this.column_TotalInBTC.AspectToStringFormat = "";
-            this.column_TotalInBTC.Text = "BTC";
-            this.column_TotalInBTC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.column_ForkSymbol.AspectName = "Symbol";
+            this.column_ForkSymbol.Text = "";
+            this.column_ForkSymbol.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.column_ForkSymbol.Width = 32;
             // 
-            // column_TotalInUSD
+            // olvColumn1
             // 
-            this.column_TotalInUSD.AspectName = "";
-            this.column_TotalInUSD.AspectToStringFormat = "";
-            this.column_TotalInUSD.Text = "USD";
-            this.column_TotalInUSD.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.olvColumn1.AspectName = "Balance";
+            this.olvColumn1.AspectToStringFormat = "{0:N8}";
+            this.olvColumn1.Text = "Balance";
+            this.olvColumn1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // column_id
+            // olvColumn2
             // 
-            this.column_id.AspectName = "id";
-            this.column_id.MaximumWidth = 0;
-            this.column_id.MinimumWidth = 0;
-            this.column_id.Text = "";
-            this.column_id.Width = 0;
+            this.olvColumn2.AspectName = "TotalInBTC";
+            this.olvColumn2.AspectToStringFormat = "{0:N8}";
+            this.olvColumn2.Text = "BTC";
+            this.olvColumn2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // olvColumn3
+            // 
+            this.olvColumn3.AspectName = "TotalInUSD";
+            this.olvColumn3.AspectToStringFormat = "{0:C}";
+            this.olvColumn3.Text = "USD";
+            this.olvColumn3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // ForkListControl
             // 
@@ -177,11 +175,11 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel_totals;
         private System.Windows.Forms.ToolStripButton toolStripButton_collapse;
         private BrightIdeasSoftware.FastObjectListView listView;
-        private BrightIdeasSoftware.OLVColumn column_ticker;
         private BrightIdeasSoftware.OLVColumn column_Name;
-        private BrightIdeasSoftware.OLVColumn column_Balance;
-        private BrightIdeasSoftware.OLVColumn column_TotalInBTC;
-        private BrightIdeasSoftware.OLVColumn column_TotalInUSD;
-        private BrightIdeasSoftware.OLVColumn column_id;
+        private BrightIdeasSoftware.OLVColumn olvColumn1;
+        private BrightIdeasSoftware.OLVColumn column_ForkSymbol;
+        private BrightIdeasSoftware.OLVColumn olvColumn2;
+        private BrightIdeasSoftware.OLVColumn olvColumn3;
+        private BrightIdeasSoftware.OLVColumn column_CoinName;
     }
 }

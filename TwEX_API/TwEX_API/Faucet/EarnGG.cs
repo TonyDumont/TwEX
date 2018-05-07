@@ -12,6 +12,7 @@ namespace TwEX_API.Faucet
         //public static string IconUrl { get; } = "https://earn.gg/img/favicon-32x32.png";
         public static EarnGGManagerControl earnGGManagerControl { get; set; }
         //public static List<EarnGGAccount> Accounts { get; set; } = new List<EarnGGAccount>();
+
         #endregion
 
         #region Getters
@@ -44,7 +45,14 @@ namespace TwEX_API.Faucet
 
                 if (data != null)
                 {
+                    account.lastBalance = account.balance;
                     account.balance = data.balance;
+
+                    if (account.balance != account.lastBalance)
+                    {
+                        account.lastBalanceChange = DateTime.Now;
+                    }
+
                     account.frozen = data.frozen;
                     account.frozenAt = data.frozenAt;
                     account.frozenCount = data.frozenCount;
@@ -71,7 +79,11 @@ namespace TwEX_API.Faucet
             public EarnGGApi api { get; set; } = new EarnGGApi();
             public string avatar { get; set; }
             public int badIPOffenses { get; set; }
+
             public int balance { get; set; }
+            public int lastBalance { get; set; }
+            public DateTime lastBalanceChange { get; set; }
+
             public string countryCode { get; set; }
             public DateTime createdAt { get; set; }
             public string createdIP { get; set; }
@@ -104,6 +116,11 @@ namespace TwEX_API.Faucet
             public string verifiedIP { get; set; }
             public double untrackedLeadsSum { get; set; }
             public string peanutCode { get; set; }
+        }
+        public class EarnGGMachine
+        {
+            public string email { get; set; }
+            public string name { get; set; }
         }
         public class EarnGGApi
         {

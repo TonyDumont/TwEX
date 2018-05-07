@@ -22,20 +22,26 @@ namespace TwEX_API.Controls
         }
         private void ForkListControl_Load(object sender, EventArgs e)
         {
-            listView.AlwaysGroupByColumn = column_id;
+            listView.AlwaysGroupByColumn = column_Name;
             listView.HasCollapsibleGroups = true;
             listView.ShowGroups = true;
-
+            /*
+            listView_groups.AlwaysGroupByColumn = column_id;
+            listView_groups.HasCollapsibleGroups = true;
+            listView_groups.ShowGroups = true;
+            */
             toolStripButton_collapse.Image = ContentManager.GetIcon("UpDown");
             listView.GroupExpandingCollapsing += ListView_GroupExpandingCollapsing;
             UpdateUI(true);
         }
         private void InitializeColumns()
         {
-            column_ticker.ImageGetter = new ImageGetterDelegate(aspect_Symbol);
-            column_Balance.AspectGetter = new AspectGetterDelegate(aspect_Balance);
-            column_TotalInBTC.AspectGetter = new AspectGetterDelegate(aspect_btc);
-            column_TotalInUSD.AspectGetter = new AspectGetterDelegate(aspect_usd);
+            
+            column_CoinName.ImageGetter = new ImageGetterDelegate(aspect_Symbol);
+            //column_Balance.AspectGetter = new AspectGetterDelegate(aspect_Balance);
+            //column_TotalInBTC.AspectGetter = new AspectGetterDelegate(aspect_btc);
+            //column_TotalInUSD.AspectGetter = new AspectGetterDelegate(aspect_usd);
+            
         }
         #endregion
 
@@ -52,38 +58,11 @@ namespace TwEX_API.Controls
             {
                 try
                 {
-                    listView.SetObjects(PreferenceManager.WalletPreferences.Forks);
-                    toolStripLabel_totals.Text = listView.OLVGroups.Count + " Addresses | " + PreferenceManager.WalletPreferences.Forks.Sum(item => item.TotalInBTC).ToString("N8") + " | " + PreferenceManager.WalletPreferences.Forks.Sum(item => item.TotalInUSD).ToString("C");
-                    /*
-                    List<ExchangeBalance> list = Balances.Where(item => item.Balance > 0).ToList();
-                    List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
-                    list.AddRange(wallets);
+                    //listView.SetObjects(PreferenceManager.WalletPreferences.Forks);
+                    listView.SetObjects(PreferenceManager.WalletPreferences.WalletForks);
+                    //toolStripLabel_totals.Text = listView.OLVGroups.Count + " Addresses | " + PreferenceManager.WalletPreferences.Forks.Sum(item => item.TotalInBTC).ToString("N8") + " | " + PreferenceManager.WalletPreferences.Forks.Sum(item => item.TotalInUSD).ToString("C");
+                    toolStripLabel_totals.Text = PreferenceManager.WalletPreferences.WalletForks.Count + " Forks : " + PreferenceManager.WalletPreferences.WalletForks.Sum(item => item.TotalInBTC).ToString("N8") + " (" + PreferenceManager.WalletPreferences.WalletForks.Sum(item => item.TotalInUSD).ToString("C") + ")";
 
-                    listView.SetObjects(list.OrderByDescending(item => item.TotalInBTC));
-
-                    switch (view)
-                    {
-                        case BalanceViewType.symbol:
-                            listView.Sort(column_Symbol, SortOrder.Ascending);
-                            toolStripLabel_totals.Text = "";
-                            break;
-
-                        case BalanceViewType.exchange:
-                            listView.Sort(column_Exchange, SortOrder.Ascending);
-                            toolStripLabel_totals.Text = Exchanges.Count + " Exchanges";
-                            break;
-
-                        case BalanceViewType.balance:
-                            listView.Sort(column_TotalInBTC, SortOrder.Descending);
-                            toolStripLabel_totals.Text = "";
-                            break;
-
-                        default:
-
-                            break;
-
-                    }
-                    */
                     if (resize)
                     {
                         ResizeUI();
@@ -106,124 +85,16 @@ namespace TwEX_API.Controls
             }
             else
             {
-
+                Visible = false;
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                     col.Width = col.Width + (listView.RowHeightEffective);
                 }
-
-                /*
-                //Visible = false;
-                int rowHeight = listView.RowHeightEffective;
-                //int formWidth = 0;
-
-                if (column_SymbolIcon.IsVisible)
-                {
-                    column_SymbolIcon.Width = listView.RowHeightEffective + 5;
-                }
-
-                if (column_ExchangeIcon.IsVisible)
-                {
-                    column_ExchangeIcon.Width = listView.RowHeightEffective + 5;
-                }
-
-                column_Symbol.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
-                column_Balance.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_Balance.Width = column_Balance.Width + listView.RowHeightEffective;
-                column_TotalInBTC.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_TotalInBTC.Width = column_TotalInBTC.Width + listView.RowHeightEffective;
-                column_TotalInUSD.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_TotalInUSD.Width = column_TotalInUSD.Width + listView.RowHeightEffective;
-                */
-
-                /*
-                if (view != BalanceViewType.balance)
-                {
-                    groups = true;
-                    collapsed = false;
-                    toggleCollapsed();
-                }
-                else
-                {
-                    groups = false;
-                }
-                */
-                //Visible = true;
+                column_Name.Width = 0;
+                Visible = true;
             }
         }
-        /*
-        delegate void SetViewCallback();
-        public void SetView()
-        {
-            if (InvokeRequired)
-            {
-                SetViewCallback d = new SetViewCallback(SetView);
-                Invoke(d, new object[] { });
-            }
-            else
-            {
-                switch (view)
-                {
-                    case BalanceViewType.symbol:
-                        listView.AlwaysGroupByColumn = column_Symbol;
-                        listView.HasCollapsibleGroups = true;
-                        listView.ShowGroups = true;
-
-                        column_Symbol.IsVisible = false;
-                        column_SymbolIcon.IsVisible = false;
-                        column_ExchangeIcon.IsVisible = true;
-                        column_Balance.IsVisible = true;
-
-                        listView.RebuildColumns();
-                        toolStripButton_collapse.Visible = true;
-                        listView.BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
-
-                        //BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
-                        break;
-
-                    case BalanceViewType.exchange:
-                        listView.AlwaysGroupByColumn = column_Exchange;
-                        listView.HasCollapsibleGroups = true;
-                        listView.ShowGroups = true;
-
-                        column_Symbol.IsVisible = true;
-                        column_SymbolIcon.IsVisible = true;
-                        column_ExchangeIcon.IsVisible = false;
-                        column_Balance.IsVisible = true;
-
-                        listView.RebuildColumns();
-                        toolStripButton_collapse.Visible = true;
-                        listView.BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
-
-                        //BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
-                        break;
-
-                    case BalanceViewType.balance:
-                        listView.AlwaysGroupByColumn = null;
-                        listView.HasCollapsibleGroups = false;
-                        listView.ShowGroups = false;
-
-                        column_Symbol.IsVisible = true;
-                        column_SymbolIcon.IsVisible = true;
-                        column_ExchangeIcon.IsVisible = true;
-                        column_Balance.IsVisible = true;
-
-                        listView.RebuildColumns();
-                        toolStripButton_collapse.Visible = false;
-                        listView.BackColor = PreferenceManager.preferences.Theme.FormBackground;
-                        BackColor = PreferenceManager.preferences.Theme.FormBackground;
-                        break;
-
-                    default:
-
-                        break;
-
-                }
-                UpdateUI(true);
-            }
-        }
-        */
         #endregion
 
         #region Getters
@@ -244,12 +115,19 @@ namespace TwEX_API.Controls
                     groupStates.Add(key, false);
                 }
 
-                List<Fork> forks = PreferenceManager.WalletPreferences.Forks.FindAll(item => item.id == key);
+                
+                List<WalletBalance> wallets = PreferenceManager.WalletPreferences.WalletForks.FindAll(item => item.Name == key);
+
+
                 //LogManager.AddLogMessage(Name, "aboutToCreateGroups", "GroupId=" + group.Items.Count + " | Header=" + group.Header + " | id=" + group.Id + " | Key=" + group.Key + " | name=" + group.Name + " | " + group.Collapsed);
-                decimal usdTotal = forks.Sum(item => item.TotalInUSD);
-                decimal btcTotal = forks.Sum(item => item.TotalInBTC);
-                group.Header = group.Header + " [" + forks.Count + " Forks]";
+                decimal usdTotal = wallets.Sum(item => item.TotalInUSD);
+                decimal btcTotal = wallets.Sum(item => item.TotalInBTC);
+                group.Header = group.Header + " [" + wallets.Count + " Forks]";
                 group.TitleImage = wallet.WalletName;
+                
+                
+                
+                
                 /*
                 if (group.Items.Count > 1)
                 {
@@ -260,18 +138,21 @@ namespace TwEX_API.Controls
                     group.Task = usdTotal.ToString("C");
                 }
                 */
+
+                
                 group.Task = usdTotal.ToString("C");
                 group.Subtitle = "(" + btcTotal.ToString("N8") + ")";
 
                 group.Collapsed = groupStates[key];
+                
             }
             
         }
         private object aspect_Symbol(object rowObject)
         {
-            Fork listItem = (Fork)rowObject;
+            WalletBalance listItem = (WalletBalance)rowObject;
             int rowheight = listView.RowHeightEffective - 3;
-            return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(listItem.ticker), rowheight, rowheight);
+            return ContentManager.ResizeImage(ContentManager.GetSymbolIcon(listItem.Symbol), rowheight, rowheight);
         }
         public object aspect_Balance(object rowObject)
         {
@@ -354,7 +235,7 @@ namespace TwEX_API.Controls
         {
             toggleCollapsed();
             /*
-            PreferenceManager.WalletPreferences.Forks.Clear();
+            PreferenceManager.WalletPreferences.WalletForks.Clear();
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Wallet);
             UpdateUI();
             */
@@ -376,3 +257,34 @@ namespace TwEX_API.Controls
         }
     }
 }
+
+/*
+                    List<ExchangeBalance> list = Balances.Where(item => item.Balance > 0).ToList();
+                    List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
+                    list.AddRange(wallets);
+
+                    listView.SetObjects(list.OrderByDescending(item => item.TotalInBTC));
+
+                    switch (view)
+                    {
+                        case BalanceViewType.symbol:
+                            listView.Sort(column_Symbol, SortOrder.Ascending);
+                            toolStripLabel_totals.Text = "";
+                            break;
+
+                        case BalanceViewType.exchange:
+                            listView.Sort(column_Exchange, SortOrder.Ascending);
+                            toolStripLabel_totals.Text = Exchanges.Count + " Exchanges";
+                            break;
+
+                        case BalanceViewType.balance:
+                            listView.Sort(column_TotalInBTC, SortOrder.Descending);
+                            toolStripLabel_totals.Text = "";
+                            break;
+
+                        default:
+
+                            break;
+
+                    }
+                    */

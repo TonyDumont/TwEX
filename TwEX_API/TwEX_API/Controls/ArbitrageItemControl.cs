@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using static TwEX_API.ExchangeManager;
 
 namespace TwEX_API.Controls
 {
@@ -12,6 +15,14 @@ namespace TwEX_API.Controls
             widgetType = Market.CryptoCompare.CryptoCompareWidgetType.Chart,
             Dock = DockStyle.Fill,
             hideScrollbars = true
+        };
+        private Label balanceLabel = new Label()
+        {
+            Name = "balanceLabel",
+            Dock = DockStyle.None,
+            //BackColor = Color.Black,
+            //ForeColor = Color.White,
+            //Width = 65
         };
         public string market { get; set; } = String.Empty;
         public string symbol { get; set; } = String.Empty;
@@ -25,8 +36,23 @@ namespace TwEX_API.Controls
         }
         private void ArbitrageItemControl_Load(object sender, EventArgs e)
         {         
-            panel.Height = PreferenceManager.ArbitragePreferences.minChartHeight;
+            panel.Height = PreferenceManager.ArbitragePreferences.minChartHeight + 5;
+
+            //statusLabel.BackgroundImageLayout = ImageLayout.Tile;
+            //statusLabel.Parent = panel;
+            balanceLabel.AutoSize = true;
+            balanceLabel.BorderStyle = BorderStyle.Fixed3D;
+            balanceLabel.BackgroundImage = null;
+            balanceLabel.BackColor = Color.Transparent;
+            balanceLabel.TextAlign = ContentAlignment.MiddleLeft;
+            //balanceLabel.Text = "00000.00000000";
+
+            panel.Controls.Add(balanceLabel);
+            //statusLabel.Location.Y = panel.Height;
+            //statusLabel.Width = panel.Width;
+            balanceLabel.Location = new Point(9, panel.Height - (balanceLabel.Height + 10));
             panel.Controls.Add(chart);
+            //statusLabel.BringToFront();
         }
         private void timer_Tick(object sender, EventArgs e)
         {
@@ -52,6 +78,7 @@ namespace TwEX_API.Controls
                         if (manager.WatchList.ShowCharts && chart != null)
                         {
                             chart.updateBrowser();
+                            SetBalance();
                         }
 
                         if (manager.WatchList.ShowLists)
@@ -117,6 +144,26 @@ namespace TwEX_API.Controls
                 ClientSize = new Size(Width, listHeight);
                 Size = new Size(Width, listHeight);
                 Visible = true;
+            }
+        }
+
+        private void SetBalance()
+        {
+            List<ExchangeBalance> balances = Balances.Where(item => item.Symbol == symbol).ToList();
+            List<ExchangeBalance> wallets = WalletManager.GetWalletBalancesBySymbol(symbol);          
+            balances.AddRange(wallets);
+
+            Decimal balance = balances.Sum(item => item.Balance);
+            Decimal usd = balances.Sum(item => item.TotalInUSD);
+
+            if (balance > 0)
+            {
+                balanceLabel.Text = balance.ToString("N8") + " (" + usd.ToString("C") + ")";
+                balanceLabel.Visible = true;
+            }
+            else
+            {
+                balanceLabel.Visible = false;
             }
         }
 

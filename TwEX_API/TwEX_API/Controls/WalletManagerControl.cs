@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TwEX_API.Wallet;
+using static TwEX_API.DataManager;
 using static TwEX_API.ExchangeManager;
 using static TwEX_API.WalletManager;
 
@@ -35,20 +36,6 @@ namespace TwEX_API.Controls
 
             toolStripButton_collapse.Image = ContentManager.GetIcon("UpDown");
             listView.GroupExpandingCollapsing += ListView_GroupExpandingCollapsing;
-            /*
-            column_Symbol.IsVisible = false;
-            column_SymbolIcon.IsVisible = false;
-            column_ExchangeIcon.IsVisible = true;
-            column_Balance.IsVisible = true;
-
-            listView.RebuildColumns();
-            toolStripButton_collapse.Visible = true;
-            listView.BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
-            //listView.BackgroundImage = null;
-            //listView.BackColor = Color.LightGray;
-            BackColor = PreferenceManager.preferences.Theme.AlternateBackground;
-            */
-            //listView.SetObjects(WalletManager.Wallets.Where(item => item.Balance > 0));
             UpdateUI(true);
         }
         private void InitializeColumns()
@@ -64,6 +51,7 @@ namespace TwEX_API.Controls
             toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
             toolStripMenuItem_add.Image = ContentManager.GetIcon("AddWallet");
             toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
+            updateZeroButton();
         }
         #endregion
 
@@ -78,13 +66,28 @@ namespace TwEX_API.Controls
             }
             else
             {
-                listView.SetObjects(PreferenceManager.WalletPreferences.Wallets);
+                List<WalletBalance> list;
+
+                if (PreferenceManager.preferences.HideZeroBalances)
+                {
+                    //listView.SetObjects();
+                    list = PreferenceManager.WalletPreferences.Wallets.FindAll(item => item.Balance > 0);
+                }
+                else
+                {
+                    //listView.SetObjects();
+                    list = PreferenceManager.WalletPreferences.Wallets;
+                }
+
+                listView.SetObjects(list);
                 //listView.SetObjects(PreferenceManager.WalletPreferences.Wallets.OrderBy(wallet => wallet.WalletName));
                 //listView.Sort(column_TotalInBTC, SortOrder.Descending);
 
-                toolStripLabel_title.Text = PreferenceManager.WalletPreferences.Wallets.Count + " Wallets";
-                toolStripLabel_btc.Text = PreferenceManager.WalletPreferences.Wallets.Sum(b => b.TotalInBTC).ToString("N8");
-                toolStripLabel_usd.Text = PreferenceManager.WalletPreferences.Wallets.Sum(b => b.TotalInUSD).ToString("C");
+                toolStripLabel_title.Text = list.Count + "/" + PreferenceManager.WalletPreferences.Wallets.Count + " Wallets";
+                //toolStripLabel_btc.Text = PreferenceManager.WalletPreferences.Wallets.Sum(b => b.TotalInBTC).ToString("N8");
+                //toolStripLabel_usd.Text = PreferenceManager.WalletPreferences.Wallets.Sum(b => b.TotalInUSD).ToString("C");
+                toolStripLabel_btc.Text = list.Sum(b => b.TotalInBTC).ToString("N8");
+                toolStripLabel_usd.Text = list.Sum(b => b.TotalInUSD).ToString("C");
 
                 toolStripButton_timer.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeTimerType.WALLETS) != ExchangeTimerType.NONE;
                 //toolStripButton_Tickers.Text = "TICKERS (" + ExchangeManager.Tickers.Count + ")";
@@ -446,10 +449,11 @@ namespace TwEX_API.Controls
         private void toolStripButton_toggleGroup_Click(object sender, EventArgs e)
         {
             toggleCollapsed();
+            //List<Machine> lit = DataManager.GetMachineList();
+
         }
         private void toggleCollapsed()
-        {
-            
+        {         
             collapsed = !collapsed;
             
             for (int i = 0; i < listView.OLVGroups.Count; i++)
@@ -463,26 +467,31 @@ namespace TwEX_API.Controls
             {
                 groupStates[item.Key] = collapsed;
             }
-
-            //decimal ba = BlockCypher.getBalance("ETH", "0xBf09539E0e928f9Be762240c4a4f5DA7CAf706A6");
-            //LogManager.AddLogMessage(Name, "UpdateWallets", "balance=" + ba, LogManager.LogMessageType.DEBUG);
-
-            //balance.TotalInBTC = GetMarketCapBTCAmount(balance.Symbol, balance.Balance);
-            //balance.TotalInUSD = GetMarketCapUSDAmount(balance.Symbol, balance.Balance);
-
-            //Decimal value = BlockTrail.getBalance("bcc", "14E9wmAbKPrCpP6XSYaH3u1CbW1suEHwyH");
-            //LogManager.AddLogMessage(Name, "toggleCollapsed", "value=" + value.ToString()); 
-            /*
-            RestClient client = new RestClient("https://www.ub.com/explorer");
-            var request = new RestRequest("/address?address=17R9JYUUTq2rzgRq2kxSXPi9597jBjMb2g", Method.GET);
-            var response = client.Execute(request);
-            LogManager.AddLogMessage(Name, "getTicker", "response.Content=" + response.Content, LogManager.LogMessageType.OTHER);
-            //var jsonObject = JObject.Parse(response.Content);
-
-            //AddressBalanceEndpoint balance = jsonObject.ToObject<AddressBalanceEndpoint>();
-            //Decimal value = balance.balance / 100000000;
-            */
         }
         #endregion
+
+        private void toolStripButton_zero_Click(object sender, EventArgs e)
+        {
+            PreferenceManager.preferences.HideZeroBalances = !PreferenceManager.preferences.HideZeroBalances;
+            PreferenceManager.UpdatePreferenceFile();
+            updateZeroButton();
+            UpdateUI();
+        }
+
+        private void updateZeroButton()
+        {
+            toolStripButton_zero.Checked = PreferenceManager.preferences.HideZeroBalances;
+
+            if (PreferenceManager.preferences.HideZeroBalances)
+            {
+                toolStripButton_zero.Text = "Show 0";
+                toolStripButton_zero.Image = Properties.Resources.ConnectionStatus_ERROR;
+            }
+            else
+            {
+                toolStripButton_zero.Text = "Hide 0";
+                toolStripButton_zero.Image = Properties.Resources.ConnectionStatus_ACTIVE;
+            }
+        }
     }
 }

@@ -15,12 +15,13 @@ namespace TwEX_API.Controls
             InitializeComponent();
             earnGGManagerControl = this;
             InitializeColumns();
-            InitializeIcons();
+            
         }
         private void EarnGGManagerControl_Load(object sender, EventArgs e)
         {
             //toolStripButton_Font.Image = ContentManager.GetIconByUrl(ContentManager.FontIconUrl);
-            toggleView();
+            InitializeIcons();
+            //toggleView();
             UpdateUI(true);
         }
         private void InitializeColumns()
@@ -28,6 +29,7 @@ namespace TwEX_API.Controls
             column_active.ImageGetter = new ImageGetterDelegate(aspect_active);
             column_balance.AspectGetter = new AspectGetterDelegate(aspect_balance);
             column_lastLogin.AspectGetter = new AspectGetterDelegate(aspect_lastLogin);
+            column_email.AspectGetter = new AspectGetterDelegate(aspect_email);
         }
         private void InitializeIcons()
         {
@@ -56,7 +58,7 @@ namespace TwEX_API.Controls
                 toolStripButton_timer.Checked = (PreferenceManager.preferences.TimerFlags & ExchangeManager.ExchangeTimerType.EARNGG) != ExchangeManager.ExchangeTimerType.NONE;
                 toolStripButton_timer.Image = ContentManager.GetActiveIcon(toolStripButton_timer.Checked);
 
-                listView.SetObjects(PreferenceManager.EarnGGPreferences.EarnGGAccounts.OrderByDescending(item => item.lastLogin));
+                listView.SetObjects(PreferenceManager.EarnGGPreferences.EarnGGAccounts.OrderByDescending(item => item.lastBalanceChange));
                 int totalPoints = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Sum(item => item.balance);
                 toolStripLabel_title.Text = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Count + " EarnGG Accounts";
                 toolStripLabel_total.Text = decimal.Multiply(totalPoints, .00001M).ToString("C"); 
@@ -84,18 +86,22 @@ namespace TwEX_API.Controls
                 int padding = rowHeight / 2;
                 int iconSize = rowHeight - 2;
 
-                int listHeight = 0;
+                //int listHeight = 0;
 
                 column_email.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                column_email.Width += padding;
+                column_email.Width = column_email.Width + (padding * 3);
                 column_balance.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 column_balance.Width += padding;
+                column_lastIP.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                column_lastIP.Width += padding;
                 /*
                 foreach (ColumnHeader col in listView.ColumnsInDisplayOrder)
                 {
                     //listWidth += col.Width;
                 }
                 */
+                toggleView();
+                /*
                 if (listView.Items.Count > 0)
                 {
                     var last = listView.Items[listView.Items.Count - 1];
@@ -106,6 +112,7 @@ namespace TwEX_API.Controls
                 listView.Height = listHeight;
                 ClientSize = new Size(Width, listHeight);
                 Size = new Size(Width, listHeight);
+                */
             }
         }
         #endregion
@@ -113,23 +120,18 @@ namespace TwEX_API.Controls
         #region Getters
         private object aspect_active(object rowObject)
         {
-            /*
-            ExchangeManager.Exchange exchange = (ExchangeManager.Exchange)rowObject;
-            int rowheight = listView.RowHeightEffective - 3;
-            return ContentManager.ResizeImage(exchange.Icon, rowheight, rowheight);
-            */
             EarnGGAccount account = (EarnGGAccount)rowObject;
-            TimeSpan loginspan = DateTime.Now - account.lastLogin.ToLocalTime();
-            int iconSize = listView.RowHeightEffective - 5;
+            TimeSpan loginspan = DateTime.Now - account.lastBalanceChange.ToLocalTime();
+
+            int change = account.balance - account.lastBalance;
+            int iconSize = listView.RowHeightEffective - 4;
 
             if (loginspan.Hours < 1)
             {
-                //return loginspan.Minutes + " Minutes Ago";
                 return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_ACTIVE, iconSize, iconSize);
             }
             else
             {
-                //return loginspan.Days + " Days Ago";
                 return ContentManager.ResizeImage(Properties.Resources.ConnectionStatus_ERROR, iconSize, iconSize);
             }
         }
@@ -142,23 +144,40 @@ namespace TwEX_API.Controls
 
             return value.ToString("C");
         }
-        public object aspect_lastLogin(object rowObject)
+        public object aspect_email(object rowObject)
         {
             EarnGGAccount account = (EarnGGAccount)rowObject;
-            TimeSpan loginspan = DateTime.Now - account.lastLogin.ToLocalTime();
 
-            if (loginspan.Hours < 1)
+            EarnGGMachine machine = PreferenceManager.EarnGGPreferences.Machines.FirstOrDefault(item => item.email == account.email);
+
+            if (machine != null)
             {
-                return loginspan.Minutes + " Minutes Ago";
-            }
-            else if (loginspan.Days < 1)
-            {
-                return loginspan.Hours + " Hours Ago";
+                return machine.name;
             }
             else
             {
-                //return loginspan.Days + " Days Ago";
-                return account.lastLogin;
+                return account.email;
+            }
+        }
+        public object aspect_lastLogin(object rowObject)
+        {
+            EarnGGAccount account = (EarnGGAccount)rowObject;
+            TimeSpan loginspan = DateTime.Now - account.lastBalanceChange.ToLocalTime();
+
+            int change = account.balance - account.lastBalance;
+
+            if (loginspan.Hours < 1)
+            {
+                return "(" + change + ") " + loginspan.Minutes + " Minutes Ago";
+            }
+            else if (loginspan.Days < 1)
+            {
+                return "(" + change + ") " + loginspan.Hours + " Hours Ago";
+            }
+            else
+            {
+                return "(" + change + ") " + loginspan.Days + " Days Ago";
+                //return account.lastLogin;
             }
         }
         #endregion
@@ -173,17 +192,19 @@ namespace TwEX_API.Controls
         }
         private void toolStripButton_toggleHeight_Click(object sender, EventArgs e)
         {
+            /*
             EarnGGAccount account = PreferenceManager.EarnGGPreferences.EarnGGAccounts.Find(item => item.email == "grrinder@live.com");
 
             if (account != null)
             {
                 LogManager.AddLogMessage(Name, "toolStripButton_toggleHeight_Click", account.email + " | ", LogManager.LogMessageType.DEBUG);
             }
-            /*
+            */
+            
             PreferenceManager.EarnGGPreferences.collapsed = !PreferenceManager.EarnGGPreferences.collapsed;
             PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.EarnGG);
             toggleView();
-            */
+            
         }
         private void toolStripDropDownButton_menu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {

@@ -219,11 +219,12 @@ namespace TwEX_API.Controls
         }
         private void SetForksChart()
         {
-            List<Fork> list = PreferenceManager.WalletPreferences.Forks.Where(item => item.TotalInBTC > 0).ToList();
+            
+            List<WalletBalance> list = PreferenceManager.WalletPreferences.WalletForks.Where(item => item.TotalInBTC > 0).ToList();
             //List<ExchangeBalance> wallets = WalletManager.GetWalletBalances();
             //list.AddRange(wallets);
 
-            var roots = list.Select(fork => fork.id).Distinct();
+            var roots = list.Select(fork => fork.Symbol).Distinct();
 
             List<string> wallets = new List<string>();
             List<decimal> totals = new List<decimal>();
@@ -232,7 +233,7 @@ namespace TwEX_API.Controls
             {
                 //LogManager.AddLogMessage(Name, "InitializeChart", exchange, LogManager.LogMessageType.DEBUG);
                 wallets.Add(wallet);
-                totals.Add(list.Where(balance => balance.id == wallet).Sum(balance => balance.TotalInBTC));
+                totals.Add(list.Where(balance => balance.Symbol == wallet).Sum(balance => balance.TotalInBTC));
             }
 
             decimal[] yValues = totals.ToArray();
@@ -240,7 +241,7 @@ namespace TwEX_API.Controls
 
             chart.Series["Default"].Font = PreferenceManager.GetFormFont(ParentForm);
             chart.Titles[0].Font = chart.Series["Default"].Font;
-            chart.Titles[0].Text = wallets.Count + " WALLETS BY PERCENTAGE (" + list.Sum(balance => balance.TotalInBTC).ToString("N8") + ")";
+            chart.Titles[0].Text = wallets.Count + " FORKS BY PERCENTAGE (" + list.Sum(balance => balance.TotalInBTC).ToString("N8") + ")";
             chart.Series["Default"].Points.DataBindXY(xValues, yValues);
             chart.Series["Default"].ChartType = SeriesChartType.Pie;
             chart.Series["Default"]["PieLabelStyle"] = "Outside";
@@ -253,6 +254,7 @@ namespace TwEX_API.Controls
 
             chart.ChartAreas[0].Area3DStyle.Enable3D = true;
             chart.ChartAreas[0].Area3DStyle.Inclination = 0;
+            
         }
         private void SetOrdersChart()
         {
@@ -483,7 +485,7 @@ namespace TwEX_API.Controls
 
                     case BalanceViewType.forks:
                         //tabControl.SelectedIndex = 4;
-                        //SetForksChart();
+                        SetForksChart();
                         ForkListControl forkcontrol = tabControl.SelectedTab.Controls[0] as ForkListControl;
                         forkcontrol.UpdateUI(resize);
                         break;
@@ -664,82 +666,3 @@ namespace TwEX_API.Controls
         #endregion       
     }
 }
-
-/*
-                if (item.ToString() != "orders" || item.ToString() != "forks")
-                {
-                    TabPage tabPage = new TabPage()
-                    {
-                        Name = item.ToString(),
-                        Text = item.ToString(),
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0)
-                    };
-
-                    BalanceViewControl view = new BalanceViewControl()
-                    //BalanceDataViewControl view = new BalanceDataViewControl()
-                    {
-                        Dock = DockStyle.Fill,
-                        view = item,
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0),
-                        manager = this
-                    };
-                    view.SetView();
-                    tabPage.Controls.Add(view);
-                    tabControl.TabPages.Add(tabPage);
-                }
-                else
-                {
-                    TabPage tabPage = new TabPage()
-                    {
-                        Name = item.ToString(),
-                        Text = item.ToString(),
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0)
-                    };
-
-                    OrderViewControl view = new OrderViewControl()
-                    {
-                        Dock = DockStyle.Fill,
-                        //view = item,
-                        Margin = new Padding(0, 0, 0, 0),
-                        Padding = new Padding(0, 0, 0, 0),
-                        //manager = this
-                    };
-                    //view.SetView();
-                    view.UpdateUI(true);
-                    tabPage.Controls.Add(view);
-                    tabControl.TabPages.Add(tabPage);
-                    
-                }
-                */
-
-/*
-                string view = PreferenceManager.preferences.BalanceView.ToString();
-                //LogManager.AddLogMessage(Name, "UpdateUI", "tabIndex==" + view + " | " + tabControl.SelectedIndex, LogManager.LogMessageType.DEBUG);
-                //LogManager.AddLogMessage(Name, "UpdateUI", "view=" + view + " | " + tabControl.SelectedIndex, LogManager.LogMessageType.DEBUG);
-
-
-
-                if (view != "orders")
-                {
-                    if (tabControl.SelectedIndex != 1 || tabControl.SelectedIndex != 3)
-                    {
-                        SetSymbolsChart();
-                    }
-                    else
-                    {
-                        SetExchangesChart();
-                    }
-
-                    BalanceViewControl control = tabControl.SelectedTab.Controls[0] as BalanceViewControl;
-                    control.UpdateUI(resize);
-                }
-                else
-                {
-                    //LogManager.AddLogMessage(Name, "UpdateUI", "view=" + view, LogManager.LogMessageType.DEBUG);
-                    OrderViewControl control = tabControl.SelectedTab.Controls[0] as OrderViewControl;
-                    control.UpdateUI(resize);
-                }
-                */

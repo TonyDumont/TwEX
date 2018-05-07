@@ -22,26 +22,27 @@ namespace TwEX_API.Controls
         }
         private void InitializeIcons()
         {
-            toolStripButton_ExchangeEditor.Image = ContentManager.GetIcon("Exchange");
-            toolStripButton_Balance.Image = ContentManager.GetIcon("BalanceManager");
-            toolStripButton_Calculator.Image = ContentManager.GetIcon("CoinCalculator");
-            toolStripButton_Wallet.Image = ContentManager.GetIcon("WalletManager");
+            toolStripButton_ExchangeEditor.Image = GetIcon("Exchange");
+            toolStripButton_Balance.Image = GetIcon("BalanceManager");
+            toolStripButton_Calculator.Image = GetIcon("CoinCalculator");
+            toolStripButton_Wallet.Image = GetIcon("WalletManager");
 
             toolStripDropDownButton_menu.Image = Properties.Resources.TwEX_RoundIcon.ToBitmap();
-            toolStripDropDownButton_websites.Image = ContentManager.GetIcon("Website");
+            toolStripDropDownButton_websites.Image = GetIcon("Website");
 
-            toolStripMenuItem_LogManager.Image = ContentManager.GetIcon("LogManager");
-            toolStripMenuItem_ArbitrageManager.Image = ContentManager.GetIcon("ArbitrageManager");
-            toolStripMenuItem_CoinMarketCap.Image = ContentManager.GetIcon("CoinMarketCap");
-            toolStripMenuItem_CryptoCompare.Image = ContentManager.GetIcon("CryptoCompare");
-            toolStripMenuItem_EarnGG.Image = ContentManager.GetIcon("EarnGGManager");
-            toolStripMenuItem_TradingView.Image = ContentManager.GetIcon("TradingView");
+            toolStripMenuItem_LogManager.Image = GetIcon("LogManager");
+            toolStripMenuItem_ArbitrageManager.Image = GetIcon("ArbitrageManager");
+            toolStripMenuItem_CoinMarketCap.Image = GetIcon("CoinMarketCap");
+            toolStripMenuItem_CryptoCompare.Image = GetIcon("CryptoCompare");
+            toolStripMenuItem_EarnGG.Image = GetIcon("EarnGGManager");
+            toolStripMenuItem_ForkManager.Image = GetIcon("Fork");
+            toolStripMenuItem_TradingView.Image = GetIcon("TradingView");
 
-            toolStripMenuItem_font.Image = ContentManager.GetIcon("Font");
-            toolStripMenuItem_fontIncrease.Image = ContentManager.GetIcon("FontIncrease");
-            toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
+            toolStripMenuItem_font.Image = GetIcon("Font");
+            toolStripMenuItem_fontIncrease.Image = GetIcon("FontIncrease");
+            toolStripMenuItem_fontDecrease.Image = GetIcon("FontDecrease");
 
-            toolStripMenuItem_PreferenceManager.Image = ContentManager.GetIcon("Options");
+            toolStripMenuItem_PreferenceManager.Image = GetIcon("Options");
         }
         private void InitializeWebsitesMenu()
         {

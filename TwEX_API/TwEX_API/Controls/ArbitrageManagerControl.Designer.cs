@@ -55,12 +55,14 @@
             this.toolStripMenuItem_6M = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_1Y = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripLabel_period = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_market = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem_btc = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_usd = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton_watchlists = new System.Windows.Forms.ToolStripDropDownButton();
             this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel_totals = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,7 +80,9 @@
             this.toolStripLabel_period,
             this.toolStripSeparator3,
             this.toolStripDropDownButton_market,
-            this.toolStripDropDownButton_watchlists});
+            this.toolStripDropDownButton_watchlists,
+            this.toolStripSeparator4,
+            this.toolStripLabel_totals});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(804, 26);
@@ -280,6 +284,12 @@
             this.toolStripLabel_period.Size = new System.Drawing.Size(44, 23);
             this.toolStripLabel_period.Text = "Period:";
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 26);
+            // 
             // toolStripDropDownButton_market
             // 
             this.toolStripDropDownButton_market.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -305,12 +315,6 @@
             this.toolStripMenuItem_usd.Size = new System.Drawing.Size(96, 22);
             this.toolStripMenuItem_usd.Text = "USD";
             // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 26);
-            // 
             // toolStripDropDownButton_watchlists
             // 
             this.toolStripDropDownButton_watchlists.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -322,11 +326,23 @@
             // 
             // flowLayoutPanel
             // 
+            this.flowLayoutPanel.AutoScroll = true;
             this.flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel.Location = new System.Drawing.Point(0, 26);
             this.flowLayoutPanel.Name = "flowLayoutPanel";
             this.flowLayoutPanel.Size = new System.Drawing.Size(804, 418);
             this.flowLayoutPanel.TabIndex = 1;
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 26);
+            // 
+            // toolStripLabel_totals
+            // 
+            this.toolStripLabel_totals.Name = "toolStripLabel_totals";
+            this.toolStripLabel_totals.Size = new System.Drawing.Size(44, 23);
+            this.toolStripLabel_totals.Text = "Totals :";
             // 
             // ArbitrageManagerControl
             // 
@@ -378,5 +394,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton_watchlists;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel_totals;
     }
 }

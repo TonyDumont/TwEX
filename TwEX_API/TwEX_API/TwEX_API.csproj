@@ -215,6 +215,12 @@
     <Compile Include="Controls\CryptoCompareControl.Designer.cs">
       <DependentUpon>CryptoCompareControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DBPreferenceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DBPreferenceControl.Designer.cs">
+      <DependentUpon>DBPreferenceControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\EarnGGAccountEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -256,6 +262,12 @@
     </Compile>
     <Compile Include="Controls\ForkListControl.Designer.cs">
       <DependentUpon>ForkListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ForkManagerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ForkManagerControl.Designer.cs">
+      <DependentUpon>ForkManagerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\FormPreferenceControl.cs">
       <SubType>UserControl</SubType>
@@ -381,6 +393,7 @@
     <Compile Include="Exchange\LiveCoin.cs" />
     <Compile Include="Exchange\Poloniex.cs" />
     <Compile Include="Exchange\TEMPLATE.cs" />
+    <Compile Include="Exchange\TradeSatoshi.cs" />
     <Compile Include="Exchange\YoBit.cs" />
     <Compile Include="Faucet\EarnGG.cs" />
     <Compile Include="Managers.cs" />
@@ -463,6 +476,9 @@
     <EmbeddedResource Include="Controls\CryptoCompareControl.resx">
       <DependentUpon>CryptoCompareControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DBPreferenceControl.resx">
+      <DependentUpon>DBPreferenceControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\EarnGGAccountEditorControl.resx">
       <DependentUpon>EarnGGAccountEditorControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -483,6 +499,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ForkListControl.resx">
       <DependentUpon>ForkListControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ForkManagerControl.resx">
+      <DependentUpon>ForkManagerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FormPreferenceControl.resx">
       <DependentUpon>FormPreferenceControl.cs</DependentUpon>

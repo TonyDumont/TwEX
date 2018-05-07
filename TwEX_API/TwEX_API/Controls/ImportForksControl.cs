@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using BrightIdeasSoftware;
 using static TwEX_API.Market.CoinMarketCap;
 using System.Linq;
-using static TwEX_API.Market.CryptoCompare;
 
 namespace TwEX_API.Controls
 {
@@ -282,23 +281,15 @@ namespace TwEX_API.Controls
                 MessageBox.Show("Make sure you copied 'Full Report' from FindMyCoins.ninja", "INVALID DATA IN CLIPBOARD", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }          
         }
-        private void toolStripButton_view_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(wallet.Address);
-            FormManager.OpenUrl("http://www.findmycoins.ninja/");
-            //LogManager.AddLogMessage(Name, "toolStripButton_view_Click", wallet.Symbol + " | " + wallet.Address, LogManager.LogMessageType.DEBUG);
-        }
-        #endregion
-
         private void toolStripButton_save_Click(object sender, EventArgs e)
         {
             foreach (Fork fork in forks)
-            {
-                Fork listItem = PreferenceManager.WalletPreferences.Forks.FirstOrDefault(item => item.addr == fork.addr && item.ticker == fork.ticker);
+            {             
+                WalletBalance listItem = PreferenceManager.WalletPreferences.WalletForks.FirstOrDefault(item => item.Name == wallet.Name && item.Symbol == fork.ticker.ToUpper());
 
                 if (listItem == null)
                 {
-                    fork.id = wallet.Name;
+                    //fork.id = wallet.Name;
 
                     Decimal balance = Decimal.Parse(fork.balance.expected.ToString(), System.Globalization.NumberStyles.Float) / 100000000;
                     CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.ticker.ToUpper() && item.name == fork.name);
@@ -311,20 +302,36 @@ namespace TwEX_API.Controls
                         fork.TotalInUSD = balance * ticker.price_usd;
                     }
 
-                    PreferenceManager.WalletPreferences.Forks.Add(fork);
+                    WalletBalance newBalance = new WalletBalance()
+                    {
+                        Address = fork.addr,
+                        Balance = balance,
+                        CoinName = fork.name,
+                        IsForkBalance = true,
+                        Name = wallet.Name,
+                        Symbol = fork.ticker.ToUpper(),
+                        TotalInBTC = fork.TotalInBTC,
+                        TotalInUSD = fork.TotalInUSD,
+                        WalletName = wallet.WalletName,
+                        Verified = true
+                    };
+                    PreferenceManager.WalletPreferences.WalletForks.Add(newBalance);
                 }
                 else
                 {
                     Decimal balance = Decimal.Parse(fork.balance.expected.ToString(), System.Globalization.NumberStyles.Float) / 100000000;
                     CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.ticker.ToUpper() && item.name == fork.name);
+
                     if (ticker != null)
                     {
-                        listItem.balance = fork.balance;
+                        listItem.Address = fork.addr;
+                        listItem.Verified = true;
+                        listItem.Balance = balance;
                         listItem.TotalInBTC = balance * ticker.price_btc;
                         listItem.TotalInUSD = balance * ticker.price_usd;
                     }
                 }
-                
+
                 PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Wallet);
                 FormManager.UpdateBalanceManager(true);
                 //FormManager.UpdateWalletManager();
@@ -332,56 +339,20 @@ namespace TwEX_API.Controls
                 {
                     ParentForm.Close();
                 }
-                
+
             }
         }
-
-        /*
-        private void toolStripButton_save_Click(object sender, EventArgs e)
+        private void toolStripButton_view_Click(object sender, EventArgs e)
         {
-            foreach (Fork fork in forks)
-            {
-                Decimal balance = Decimal.Parse(fork.balance.expected.ToString(), System.Globalization.NumberStyles.Float) / 100000000;
-                CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.ticker.ToUpper() && item.name == fork.name);
-                decimal btcTotal = 0;
-                decimal usdTotal = 0;
-
-                if (ticker != null)
-                {
-                    btcTotal = balance * ticker.price_btc;
-                    usdTotal = balance * ticker.price_usd;
-                }
-
-                if (balance > 0)
-                {
-                    WalletBalance wbalance = new WalletBalance()
-                    {
-                        Address = wallet.Address,
-                        Balance = balance,
-                        CoinName = fork.name,
-                        Symbol = fork.ticker.ToUpper(),
-                        IsForkBalance = true,
-                        Name = wallet.Name,
-                        WalletName = wallet.WalletName,
-                        TotalInBTC = btcTotal,
-                        TotalInUSD = usdTotal
-                    };
-
-                    WalletBalance listItem = PreferenceManager.WalletPreferences.Wallets.FirstOrDefault(b => b.Address == wbalance.Address && b.Symbol == wbalance.Symbol);
-
-                    if (listItem == null)
-                    {
-                        PreferenceManager.WalletPreferences.Wallets.Add(wbalance);
-                    }
-                    
-                }
-                PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Wallet);
-                FormManager.UpdateBalanceManager();
-                FormManager.UpdateWalletManager();
-                //ParentForm.Close();
-            }
+            Clipboard.SetText(wallet.Address);
+            FormManager.OpenUrl("http://www.findmycoins.ninja/");
+            //LogManager.AddLogMessage(Name, "toolStripButton_view_Click", wallet.Symbol + " | " + wallet.Address, LogManager.LogMessageType.DEBUG);
         }
-        */
+        #endregion
+
+        
+
+        
     }
 }
 
@@ -475,3 +446,91 @@ namespace TwEX_API.Controls
                 }
                 listView.SetObjects(balances);
                 */
+
+/*
+    private void toolStripButton_save_Click(object sender, EventArgs e)
+    {
+        foreach (Fork fork in forks)
+        {
+            Decimal balance = Decimal.Parse(fork.balance.expected.ToString(), System.Globalization.NumberStyles.Float) / 100000000;
+            CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.ticker.ToUpper() && item.name == fork.name);
+            decimal btcTotal = 0;
+            decimal usdTotal = 0;
+
+            if (ticker != null)
+            {
+                btcTotal = balance * ticker.price_btc;
+                usdTotal = balance * ticker.price_usd;
+            }
+
+            if (balance > 0)
+            {
+                WalletBalance wbalance = new WalletBalance()
+                {
+                    Address = wallet.Address,
+                    Balance = balance,
+                    CoinName = fork.name,
+                    Symbol = fork.ticker.ToUpper(),
+                    IsForkBalance = true,
+                    Name = wallet.Name,
+                    WalletName = wallet.WalletName,
+                    TotalInBTC = btcTotal,
+                    TotalInUSD = usdTotal
+                };
+
+                WalletBalance listItem = PreferenceManager.WalletPreferences.Wallets.FirstOrDefault(b => b.Address == wbalance.Address && b.Symbol == wbalance.Symbol);
+
+                if (listItem == null)
+                {
+                    PreferenceManager.WalletPreferences.Wallets.Add(wbalance);
+                }
+
+            }
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Wallet);
+            FormManager.UpdateBalanceManager();
+            FormManager.UpdateWalletManager();
+            //ParentForm.Close();
+        }
+    }
+    */
+
+/*
+            Fork listItem = PreferenceManager.WalletPreferences.Forks.FirstOrDefault(item => item.addr == fork.addr && item.ticker == fork.ticker);
+
+            if (listItem == null)
+            {
+                fork.id = wallet.Name;
+
+                Decimal balance = Decimal.Parse(fork.balance.expected.ToString(), System.Globalization.NumberStyles.Float) / 100000000;
+                CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.ticker.ToUpper() && item.name == fork.name);
+                //decimal btcTotal = 0;
+                //decimal usdTotal = 0;
+
+                if (ticker != null)
+                {
+                    fork.TotalInBTC = balance * ticker.price_btc;
+                    fork.TotalInUSD = balance * ticker.price_usd;
+                }
+
+                PreferenceManager.WalletPreferences.Forks.Add(fork);
+            }
+            else
+            {
+                Decimal balance = Decimal.Parse(fork.balance.expected.ToString(), System.Globalization.NumberStyles.Float) / 100000000;
+                CoinMarketCapTicker ticker = PreferenceManager.CoinMarketCapPreferences.Tickers.FirstOrDefault(item => item.symbol == fork.ticker.ToUpper() && item.name == fork.name);
+                if (ticker != null)
+                {
+                    listItem.balance = fork.balance;
+                    listItem.TotalInBTC = balance * ticker.price_btc;
+                    listItem.TotalInUSD = balance * ticker.price_usd;
+                }
+            }
+
+            PreferenceManager.UpdatePreferenceFile(PreferenceManager.PreferenceType.Wallet);
+            FormManager.UpdateBalanceManager(true);
+            //FormManager.UpdateWalletManager();
+            if (ParentForm != null)
+            {
+                ParentForm.Close();
+            }
+*/

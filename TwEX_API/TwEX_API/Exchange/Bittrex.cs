@@ -744,31 +744,7 @@ namespace TwEX_API.Exchange
             //updateExchangeTickerList();
         }
         // GETTERS
-        /*
-        public static List<ExchangeBalance> getExchangeBalanceList()
-        {
-            List<ExchangeBalance> list = new List<ExchangeBalance>();
-            List<BittrexBalance> requestList = getBalanceList();
-            
-            foreach (BittrexBalance balance in requestList)
-            {
-                list.Add(balance.GetExchangeBalance());
-            }
-            return list;
-        }
         
-        public static List<ExchangeTicker> getExchangeTickerList()
-        {
-            List<ExchangeTicker> list = new List<ExchangeTicker>();
-            List<BittrexMarketSummary> tickerList = getMarketSummariesList();
-
-            foreach (BittrexMarketSummary ticker in tickerList)
-            {
-                list.Add(ticker.GetExchangeTicker());
-            }
-            return list;
-        }
-        */
         // UPDATERS
         public static void updateExchangeBalanceList(bool clear = false)
         {
@@ -1021,6 +997,12 @@ namespace TwEX_API.Exchange
                     high = High,
                     low = Low,                
                 };
+
+                if (ticker.symbol == "BCC")
+                {
+                    ticker.symbol = "BCH";
+                }
+
                 return ticker;
             }
         }
@@ -1051,7 +1033,8 @@ namespace TwEX_API.Exchange
             public Decimal TotalInUSD { get; set; } = 0;
             public ExchangeBalance GetExchangeBalance()
             {
-                return new ExchangeBalance()
+                ExchangeManager.ExchangeBalance balance = new ExchangeManager.ExchangeBalance()
+                //return new ExchangeBalance()
                 {
                     Exchange = Name,
                     Symbol = Currency,
@@ -1061,6 +1044,12 @@ namespace TwEX_API.Exchange
                     TotalInBTCOrders = TotalInBTCOrders,
                     TotalInUSD = TotalInUSD
                 };
+
+                if (balance.Symbol == "BCC")
+                {
+                    balance.Symbol = "BCH";
+                }
+                return balance;
             }
         }
         public class BittrexBuySellResult
@@ -1102,31 +1091,7 @@ namespace TwEX_API.Exchange
                 }
             }
         }
-            /*
-            ExchangeTransaction transaction 
-                // KEYS
-                public string id { get; set; }
-                // STANDARD
-                public string currency { get; set; }
-                public string address { get; set; }
-                public Double amount { get; set; }
-                public int confirmations { get; set; }
-                public long timestamp { get; set; }
-                public DateTime datetime
-                {
-                    get
-                    {
-                        return DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime.ToLocalTime();
-                    }
-
-                }
-                public string status { get; set; }
-                // ADDON
-                public string exchange { get; set; }
-                public ExchangeTransactionType type { get; set; }
-                */
-            //}
-        //}
+            
         public class BittrexDepositMessage
         {
             public bool success { get; set; }
@@ -1291,4 +1256,54 @@ namespace TwEX_API.Exchange
                 };
                 processOrder(eOrder);
             }
+            */
+
+/*
+    public static List<ExchangeBalance> getExchangeBalanceList()
+    {
+        List<ExchangeBalance> list = new List<ExchangeBalance>();
+        List<BittrexBalance> requestList = getBalanceList();
+
+        foreach (BittrexBalance balance in requestList)
+        {
+            list.Add(balance.GetExchangeBalance());
+        }
+        return list;
+    }
+
+    public static List<ExchangeTicker> getExchangeTickerList()
+    {
+        List<ExchangeTicker> list = new List<ExchangeTicker>();
+        List<BittrexMarketSummary> tickerList = getMarketSummariesList();
+
+        foreach (BittrexMarketSummary ticker in tickerList)
+        {
+            list.Add(ticker.GetExchangeTicker());
+        }
+        return list;
+    }
+    */
+
+/*
+        ExchangeTransaction transaction 
+            // KEYS
+            public string id { get; set; }
+            // STANDARD
+            public string currency { get; set; }
+            public string address { get; set; }
+            public Double amount { get; set; }
+            public int confirmations { get; set; }
+            public long timestamp { get; set; }
+            public DateTime datetime
+            {
+                get
+                {
+                    return DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime.ToLocalTime();
+                }
+
+            }
+            public string status { get; set; }
+            // ADDON
+            public string exchange { get; set; }
+            public ExchangeTransactionType type { get; set; }
             */

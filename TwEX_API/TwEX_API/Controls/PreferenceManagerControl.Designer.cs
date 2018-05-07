@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.exchangePreferenceEditorControl1 = new TwEX_API.Controls.ExchangePreferenceControl();
-            this.formPreferenceEditorControl1 = new TwEX_API.Controls.FormPreferenceControl();
+            this.exchangePreferenceEditorControl = new TwEX_API.Controls.ExchangePreferenceControl();
+            this.formPreferenceEditorControl = new TwEX_API.Controls.FormPreferenceControl();
             this.preferenceEditorControl = new TwEX_API.Controls.PreferenceEditorControl();
-            this.applicationPreferenceControl1 = new TwEX_API.Controls.ApplicationPreferenceControl();
+            this.applicationPreferenceControl = new TwEX_API.Controls.ApplicationPreferenceControl();
+            this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.dbPreferenceControl = new TwEX_API.Controls.DBPreferenceControl();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
@@ -47,10 +48,11 @@
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.Controls.Add(this.pictureBox, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.exchangePreferenceEditorControl1, 0, 1);
-            this.tableLayoutPanel.Controls.Add(this.formPreferenceEditorControl1, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.exchangePreferenceEditorControl, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.formPreferenceEditorControl, 1, 1);
             this.tableLayoutPanel.Controls.Add(this.preferenceEditorControl, 2, 1);
-            this.tableLayoutPanel.Controls.Add(this.applicationPreferenceControl1, 3, 1);
+            this.tableLayoutPanel.Controls.Add(this.applicationPreferenceControl, 3, 1);
+            this.tableLayoutPanel.Controls.Add(this.dbPreferenceControl, 4, 1);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(5, 5);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -59,6 +61,38 @@
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.Size = new System.Drawing.Size(740, 440);
             this.tableLayoutPanel.TabIndex = 0;
+            // 
+            // exchangePreferenceEditorControl
+            // 
+            this.exchangePreferenceEditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.exchangePreferenceEditorControl.Location = new System.Drawing.Point(3, 133);
+            this.exchangePreferenceEditorControl.Name = "exchangePreferenceEditorControl";
+            this.exchangePreferenceEditorControl.Size = new System.Drawing.Size(125, 304);
+            this.exchangePreferenceEditorControl.TabIndex = 0;
+            // 
+            // formPreferenceEditorControl
+            // 
+            this.formPreferenceEditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.formPreferenceEditorControl.Location = new System.Drawing.Point(134, 133);
+            this.formPreferenceEditorControl.Name = "formPreferenceEditorControl";
+            this.formPreferenceEditorControl.Size = new System.Drawing.Size(73, 304);
+            this.formPreferenceEditorControl.TabIndex = 0;
+            // 
+            // preferenceEditorControl
+            // 
+            this.preferenceEditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.preferenceEditorControl.Location = new System.Drawing.Point(213, 133);
+            this.preferenceEditorControl.Name = "preferenceEditorControl";
+            this.preferenceEditorControl.Size = new System.Drawing.Size(138, 304);
+            this.preferenceEditorControl.TabIndex = 1;
+            // 
+            // applicationPreferenceControl
+            // 
+            this.applicationPreferenceControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.applicationPreferenceControl.Location = new System.Drawing.Point(357, 133);
+            this.applicationPreferenceControl.Name = "applicationPreferenceControl";
+            this.applicationPreferenceControl.Size = new System.Drawing.Size(130, 304);
+            this.applicationPreferenceControl.TabIndex = 2;
             // 
             // pictureBox
             // 
@@ -71,37 +105,13 @@
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             // 
-            // exchangePreferenceEditorControl1
+            // dbPreferenceControl
             // 
-            this.exchangePreferenceEditorControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.exchangePreferenceEditorControl1.Location = new System.Drawing.Point(3, 133);
-            this.exchangePreferenceEditorControl1.Name = "exchangePreferenceEditorControl1";
-            this.exchangePreferenceEditorControl1.Size = new System.Drawing.Size(125, 304);
-            this.exchangePreferenceEditorControl1.TabIndex = 0;
-            // 
-            // formPreferenceEditorControl1
-            // 
-            this.formPreferenceEditorControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.formPreferenceEditorControl1.Location = new System.Drawing.Point(134, 133);
-            this.formPreferenceEditorControl1.Name = "formPreferenceEditorControl1";
-            this.formPreferenceEditorControl1.Size = new System.Drawing.Size(138, 304);
-            this.formPreferenceEditorControl1.TabIndex = 0;
-            // 
-            // preferenceEditorControl
-            // 
-            this.preferenceEditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.preferenceEditorControl.Location = new System.Drawing.Point(278, 133);
-            this.preferenceEditorControl.Name = "preferenceEditorControl";
-            this.preferenceEditorControl.Size = new System.Drawing.Size(122, 304);
-            this.preferenceEditorControl.TabIndex = 1;
-            // 
-            // applicationPreferenceControl1
-            // 
-            this.applicationPreferenceControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.applicationPreferenceControl1.Location = new System.Drawing.Point(406, 133);
-            this.applicationPreferenceControl1.Name = "applicationPreferenceControl1";
-            this.applicationPreferenceControl1.Size = new System.Drawing.Size(130, 304);
-            this.applicationPreferenceControl1.TabIndex = 2;
+            this.dbPreferenceControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dbPreferenceControl.Location = new System.Drawing.Point(493, 133);
+            this.dbPreferenceControl.Name = "dbPreferenceControl";
+            this.dbPreferenceControl.Size = new System.Drawing.Size(244, 304);
+            this.dbPreferenceControl.TabIndex = 3;
             // 
             // PreferenceManagerControl
             // 
@@ -123,9 +133,10 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.PictureBox pictureBox;
-        private FormPreferenceControl formPreferenceEditorControl1;
-        private ExchangePreferenceControl exchangePreferenceEditorControl1;
+        private FormPreferenceControl formPreferenceEditorControl;
+        private ExchangePreferenceControl exchangePreferenceEditorControl;
         private PreferenceEditorControl preferenceEditorControl;
-        private ApplicationPreferenceControl applicationPreferenceControl1;
+        private ApplicationPreferenceControl applicationPreferenceControl;
+        private DBPreferenceControl dbPreferenceControl;
     }
 }

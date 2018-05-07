@@ -207,10 +207,15 @@
             this.comboBox_wallet.Items.AddRange(new object[] {
             "Armory",
             "BlockIO",
+            "Coinomi",
+            "CoinPot",
             "CounterWallet",
             "Electrum",
             "Exodus",
-            "Ledger"});
+            "FreeBitcoin",
+            "Ledger",
+            "MinerGate",
+            "WPN"});
             this.comboBox_wallet.Location = new System.Drawing.Point(60, 60);
             this.comboBox_wallet.Name = "comboBox_wallet";
             this.comboBox_wallet.Size = new System.Drawing.Size(203, 21);

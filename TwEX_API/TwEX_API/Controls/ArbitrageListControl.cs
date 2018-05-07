@@ -24,7 +24,7 @@ namespace TwEX_API.Controls
         }
         private void ArbitrageListControl_Load(object sender, EventArgs e)
         {
-            InitializeIcons();
+            //InitializeIcons();
         }
         private void InitializeColumns()
         {
@@ -157,6 +157,7 @@ namespace TwEX_API.Controls
             }
             else
             {
+                InitializeIcons();
                 //ParentForm.Font = PreferenceManager.GetFormFont(ParentForm);
                 //toolStrip_btc.Font = ParentForm.Font;
                 //toolStrip_usd.Font = ParentForm.Font;

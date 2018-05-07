@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using TwEX_API.Market;
 using static TwEX_API.ExchangeManager;
 using static TwEX_API.PreferenceManager;
-//using static TwEX_API.WalletManager;
 
 namespace TwEX_API.Controls
 {
@@ -13,7 +12,7 @@ namespace TwEX_API.Controls
     {
         #region Properties
         public ArbitrageWatchList WatchList = new ArbitrageWatchList();
-        public static Timer timer = new Timer() { Interval = 60000 };
+        public static Timer timer = new Timer() { Interval = 120000 };
         #endregion
 
         #region Initialize
@@ -41,7 +40,17 @@ namespace TwEX_API.Controls
                 else
                 {
                     string[] split = ArbitragePreferences.CurrentWatchList.Split('|');
-                    toolStripDropDownButton_watchlists.Text = split[0];
+
+                    if (!split[0].Contains("All"))
+                    {
+                        toolStripDropDownButton_watchlists.Text = split[0];
+                    }
+                    else
+                    {
+                        toolStripDropDownButton_watchlists.Text = split[0] + " " + split[1];
+                    }
+
+                    
                 }
             }
             else
@@ -63,7 +72,7 @@ namespace TwEX_API.Controls
             toolStripMenuItem_fontDecrease.Image = ContentManager.GetIcon("FontDecrease");
             toolStripMenuItem_update.Image = ContentManager.GetIcon("Refresh");
             toolStripMenuItem_btc.Image = ContentManager.GetSymbolIcon("BTC");
-            toolStripMenuItem_usd.Image = ContentManager.GetSymbolIcon("USD");
+            toolStripMenuItem_usd.Image = ContentManager.GetIcon("USDSymbol");
         }
         private void timer_Tick(object sender, EventArgs e)
         {
@@ -111,6 +120,18 @@ namespace TwEX_API.Controls
                             ArbitrageItemControl item = control as ArbitrageItemControl;
                             item.UpdateUI(resize);
                         }
+                    }
+
+                    if (ArbitragePreferences.CurrentWatchList.Contains('|'))
+                    {
+                        string[] data = ArbitragePreferences.CurrentWatchList.Split('|');
+                        string name = data[0];
+                        string preset = data[1];
+                        toolStripLabel_totals.Text = GetPresetWatchlistTotals(name, preset);
+                    }
+                    else
+                    {
+                        toolStripLabel_totals.Text = "NO";
                     }
 
                     toolStripLabel_lastUpdate.Text = "Last Update : " + DateTime.Now;
@@ -172,7 +193,19 @@ namespace TwEX_API.Controls
                 {
                     flowLayoutPanel.Controls.Clear();
                 }
-
+                /*
+                if (ArbitragePreferences.CurrentWatchList.Contains('|'))
+                {
+                    string[] data = ArbitragePreferences.CurrentWatchList.Split('|');
+                    string name = data[0];
+                    string preset = data[1];
+                    toolStripLabel_totals.Text = GetPresetWatchlistTotals(name, preset);
+                }
+                else
+                {
+                    toolStripLabel_totals.Text = "NO";
+                }
+                */
                 WatchList = ArbitragePreferences.GetCurrentWatchList();
                 SetOptionsMenu();
 
@@ -327,20 +360,20 @@ namespace TwEX_API.Controls
                 // PRESETS
                 ToolStripMenuItem presetItem = new ToolStripMenuItem() { Text = "Presets" };
                 // EXCHANGE
-                ToolStripMenuItem exchangeInventory = new ToolStripMenuItem() { Text = "Exchange Inventory" };
+                ToolStripMenuItem exchangeInventory = new ToolStripMenuItem() { Text = "Exchange Inventory", Image = ContentManager.GetIcon("Exchange") };
                 ToolStripMenuItem exchangeAllItem = new ToolStripMenuItem() { Text = "All" };
                 exchangeInventory.DropDown.Items.Add(exchangeAllItem);
                 exchangeAllItem.Click += PresetItem_Click;
                 foreach (ExchangeManager.Exchange exchange in Exchanges)
                 {
-                    ToolStripMenuItem exchangeItem = new ToolStripMenuItem() { Text = exchange.Name };
+                    ToolStripMenuItem exchangeItem = new ToolStripMenuItem() { Text = exchange.Name, Image = ContentManager.GetExchangeIcon(exchange.Name) };
                     exchangeInventory.DropDown.Items.Add(exchangeItem);
                     exchangeItem.Click += PresetItem_Click;
                 }
                 presetItem.DropDown.Items.Add(exchangeInventory);
                 
                 // WALLETS
-                ToolStripMenuItem walletInventory = new ToolStripMenuItem() { Text = "Wallet Inventory" };
+                ToolStripMenuItem walletInventory = new ToolStripMenuItem() { Text = "Wallet Inventory", Image = ContentManager.GetIcon("Wallet") };
                 ToolStripMenuItem walletAllItem = new ToolStripMenuItem() { Text = "All" };
                 walletInventory.DropDown.Items.Add(walletAllItem);
                 walletAllItem.Click += PresetItem_Click;
@@ -350,13 +383,31 @@ namespace TwEX_API.Controls
                 foreach (var wallet in roots)
                 {
                     //LogManager.AddLogMessage(Name, "UpdateWatchlists", "wallet=" + wallet, LogManager.LogMessageType.DEBUG);
-                    ToolStripMenuItem walletItem = new ToolStripMenuItem() { Text = wallet };
+                    ToolStripMenuItem walletItem = new ToolStripMenuItem() { Text = wallet, Image = ContentManager.GetWalletIcon(wallet) };
                     walletInventory.DropDown.Items.Add(walletItem);
                     walletItem.Click += PresetItem_Click;
 
                 }
                 presetItem.DropDown.Items.Add(walletInventory);
-                
+                // FORKS
+                ToolStripMenuItem forkInventory = new ToolStripMenuItem() { Text = "Fork Inventory", Image = ContentManager.GetIcon("Forks") };
+                ToolStripMenuItem forkAllItem = new ToolStripMenuItem() { Text = "All" };
+                forkInventory.DropDown.Items.Add(forkAllItem);
+                forkAllItem.Click += PresetItem_Click;
+
+                var forkroots = WalletManager.ForkList.Select(b => b.Blockchain).Distinct();
+
+                foreach (var walletFork in forkroots)
+                {
+                    //LogManager.AddLogMessage(Name, "UpdateWatchlists", "wallet=" + wallet, LogManager.LogMessageType.DEBUG);
+                    ToolStripMenuItem forkItem = new ToolStripMenuItem() { Text = walletFork, Image = ContentManager.GetSymbolIcon(walletFork) };
+                    forkInventory.DropDown.Items.Add(forkItem);
+                    forkItem.Click += PresetItem_Click;
+
+                }
+                presetItem.DropDown.Items.Add(forkInventory);
+
+                // END
                 toolStripDropDownButton_watchlists.DropDown.Items.Add(presetItem);               
             }
         }
@@ -387,9 +438,15 @@ namespace TwEX_API.Controls
         {
             //LogManager.AddLogMessage(Name, "WatchlistItem_Click", sender.ToString(), LogManager.LogMessageType.DEBUG);
             ToolStripMenuItem item = sender as ToolStripMenuItem;
-            //LogManager.AddLogMessage(Name, "WatchlistItem_Click", "parent=" + item.OwnerItem.Text, LogManager.LogMessageType.DEBUG);
 
-            toolStripDropDownButton_watchlists.Text = item.Text;
+            if (item.Text.Contains("All"))
+            {
+                toolStripDropDownButton_watchlists.Text = item.Text + " " + item.OwnerItem.Text;
+            }
+            else
+            {
+                toolStripDropDownButton_watchlists.Text = item.Text;
+            }
             ArbitragePreferences.CurrentWatchList = item.Text + "|" + item.OwnerItem.Text;
             UpdatePreferenceFile(PreferenceType.Arbitrage);
             SetWatchlist(true, true);
